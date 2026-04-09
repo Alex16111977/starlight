@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&family=Montserrat:wght@100;200;300&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;background:#04050f;overflow:hidden;font-family:'Montserrat',sans-serif}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.18) 0%,rgba(40,80,200,.10) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.10) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+.scene{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px}
+.cline{display:flex;align-items:center;gap:12px;margin-bottom:52px;opacity:0;animation:riseIn 1.4s .4s ease forwards}
+.cdot{width:3px;height:3px;border-radius:50%;background:#c8d8ff;opacity:.5}
+.cdot.big{width:5px;height:5px;opacity:.9;box-shadow:0 0 8px #c8d8ff}
+.cbar{width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.3),transparent)}
+.logo{position:relative;margin-bottom:28px;opacity:0;animation:riseIn 1.6s .8s ease forwards}
+.logo-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(64px,13vw,140px);letter-spacing:.18em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;line-height:1;position:relative;z-index:2}
+.logo::before{content:'Starlight';font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(64px,13vw,140px);letter-spacing:.18em;position:absolute;inset:0;background:linear-gradient(135deg,#6090ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;color:transparent;filter:blur(28px);opacity:.5;animation:glowPulse 4s ease-in-out infinite alternate;z-index:1}
+@keyframes glowPulse{from{opacity:.3;filter:blur(20px)}to{opacity:.7;filter:blur(36px)}}
+.tagline{font-size:clamp(9px,1.5vw,12px);font-weight:200;letter-spacing:.55em;color:rgba(200,216,255,.45);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1.4s 1.2s ease forwards}
+.nav{display:flex;gap:28px;opacity:0;animation:riseIn 1.2s 1.8s ease forwards}
+.nav-item{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.35);text-transform:uppercase;text-decoration:none;cursor:pointer;transition:color .4s;position:relative;padding-bottom:6px}
+.nav-item::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:0;height:1px;background:rgba(200,216,255,.5);transition:width .4s}
+.nav-item:hover{color:rgba(200,216,255,.9)}
+.nav-item:hover::after{width:100%}
+.sig{position:fixed;bottom:36px;left:50%;transform:translateX(-50%);z-index:10;display:flex;align-items:center;gap:16px;opacity:0;animation:riseIn 1.2s 2.4s ease forwards}
+.sig-line{width:40px;height:1px;background:rgba(200,216,255,.15)}
+.sig-text{font-size:9px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.2);text-transform:uppercase;white-space:nowrap}
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+<div class="scene">
+<div class="cline">
+<div class="cdot"></div><div class="cbar"></div>
+<div class="cdot big"></div><div class="cbar"></div>
+<div class="cdot"></div><div class="cbar"></div>
+<div class="cdot big"></div><div class="cbar"></div>
+<div class="cdot"></div>
+</div>
+<div class="logo"><span class="logo-text">Starlight</span></div>
+<p class="tagline">where every moment shines</p>
+<nav class="nav">
+<a class="nav-item">About</a>
+<a class="nav-item">Work</a>
+<a class="nav-item">Vision</a>
+<a class="nav-item">Contact</a>
+</nav>
+</div>
+<div class="sig"><div class="sig-line"></div><span class="sig-text">Est. 2026</span><div class="sig-line"></div></div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>
