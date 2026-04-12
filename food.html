@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Їжа</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#04050f;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.12) 0%,rgba(40,80,200,.06) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.07) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+
+/* Header */
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.35);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+/* Title */
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.35);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+/* Divider */
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+/* Sections */
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(200,216,255,.9);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.6);margin-bottom:16px}
+
+/* Cards */
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.03);border:1px solid rgba(200,216,255,.08);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.06);border-color:rgba(200,216,255,.15);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(200,216,255,.85);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.5)}
+
+/* Step cards */
+.steps-grid{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.step-card{background:rgba(200,216,255,.03);border:1px solid rgba(200,216,255,.08);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:24px;align-items:flex-start}
+.step-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.step-card:hover{background:rgba(200,216,255,.06);border-color:rgba(200,216,255,.15);transform:translateY(-4px)}
+.step-card:hover::before{opacity:1}
+.step-num{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:48px;color:rgba(138,176,255,.25);line-height:1;flex-shrink:0;width:40px;text-align:center}
+.step-body{flex:1}
+
+/* Swap table */
+.swap-table{width:100%;margin-top:20px;border-collapse:separate;border-spacing:0}
+.swap-table th{font-size:9px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;color:rgba(200,216,255,.35);padding:12px 16px;text-align:left;border-bottom:1px solid rgba(200,216,255,.1)}
+.swap-table td{font-size:13px;font-weight:200;color:rgba(200,216,255,.6);padding:14px 16px;border-bottom:1px solid rgba(200,216,255,.04)}
+.swap-table tr:hover td{color:rgba(200,216,255,.85);background:rgba(200,216,255,.02)}
+.bad{color:rgba(255,130,130,.5);text-decoration:line-through;font-style:italic}
+.good{color:rgba(130,220,160,.7)}
+.arrow{color:rgba(255,130,130,.3);text-align:center;font-size:14px;font-weight:300}
+.reason{font-size:12px;font-weight:200;line-height:1.7;color:rgba(200,216,255,.45)}
+
+/* Tips list */
+.tips{list-style:none;margin-top:16px}
+.tips li{font-size:13px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.55);padding:12px 0 12px 28px;border-bottom:1px solid rgba(200,216,255,.04);position:relative}
+.tips li::before{content:'';position:absolute;left:8px;top:20px;width:4px;height:4px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 6px #8ab0ff}
+
+/* Food list compact */
+.food-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:20px}
+.food-item{background:rgba(200,216,255,.02);border:1px solid rgba(200,216,255,.05);border-radius:12px;padding:18px 20px;transition:all .3s}
+.food-item:hover{background:rgba(200,216,255,.05);border-color:rgba(200,216,255,.12)}
+.food-label{font-size:9px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;color:rgba(138,176,255,.5);margin-bottom:8px}
+.food-val{font-size:12px;font-weight:200;line-height:1.7;color:rgba(200,216,255,.55)}
+
+/* Warning cards */
+.warn-card{background:rgba(255,130,130,.04);border:1px solid rgba(255,130,130,.1);border-radius:16px;padding:28px 24px;margin-bottom:16px;transition:all .4s}
+.warn-card:hover{background:rgba(255,130,130,.07);border-color:rgba(255,130,130,.18)}
+.warn-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(255,160,160,.8);margin-bottom:10px}
+.warn-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.5)}
+
+/* Rules mini */
+.rules-list{list-style:none;margin-top:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:12px}
+.rules-list li{font-size:12px;font-weight:200;line-height:1.7;color:rgba(200,216,255,.5);padding:14px 16px 14px 32px;background:rgba(200,216,255,.02);border:1px solid rgba(200,216,255,.05);border-radius:10px;position:relative}
+.rules-list li::before{content:'';position:absolute;left:14px;top:20px;width:4px;height:4px;border-radius:50%;background:rgba(212,175,110,.6);box-shadow:0 0 6px rgba(212,175,110,.3)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+/* Shooting stars */
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Їжа</h1>
+  <p class="page-subtitle">Харчування для найкращої версії себе</p>
+
+  <!-- Intro -->
+  <div class="section" style="animation-delay:.9s">
+    <p>Головна ідея проста: потрібно знизити інсулін, тому що саме він блокує спалювання жиру. Поки інсулін високий — тіло накопичує. Коли інсулін низький — тіло починає використовувати жир як паливо. Для цього — жодних перекусів і менше прийомів їжі.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- General rules -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Загальні правила</h2>
+    <p>Базові принципи, на яких тримається все. Без них нічого не працює.</p>
+
+    <ul class="rules-list">
+      <li>Харчуйся 3-4 рази на день, без перекусів між прийомами їжі</li>
+      <li>Готуй правильно: тушкування, варіння, запікання, гриль, сирі овочі. Смаження на оливковій олії — рідко</li>
+      <li>Пий 1,5-2 літри води на добу — за 30-40 хв до або через 2 год після їжі</li>
+      <li>Обмеж доданий цукор та насичені жири</li>
+      <li>Їж домашню їжу — виключи фастфуд та напівфабрикати</li>
+      <li>Головне — не ЩО їсти, а СКІЛЬКИ. Отримав більше, ніж витратив — набрав вагу</li>
+    </ul>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 3 Steps -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">3 кроки до результату</h2>
+    <p>Плавний перехід — без стресу для організму. Кожен крок тримай кілька днів, поки не звикнеш, і переходь до наступного.</p>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="card-title">3 рази на день, 3 дні</div>
+          <div class="card-text">Їж три рази на день, але повністю прибери перекуси. Жодного снеку між прийомами їжі — навіть маленького. Кожен перекус піднімає інсулін і зупиняє спалювання жиру.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="card-title">2 рази на день</div>
+          <div class="card-text">Прибери один прийом їжі (зазвичай сніданок). Їж тільки обід і вечерю. Інтервальне голодування починається — вікно їжі скорочується до 6-8 годин.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="card-title">1.5 рази на день</div>
+          <div class="card-text">Один повноцінний прийом їжі + один маленький (наприклад, зелений смузі або кейл-шейк). Це максимальний режим жироспалювання. Інсулін мінімальний — тіло бере енергію з жиру.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- What to eat -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Що їсти</h2>
+    <p>Твоя тарілка має виглядати так: багато овочів, трохи білка і корисні жири. Жир не підвищує інсулін — це твій союзник.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🥬</span>
+        <div class="card-title">Багато овочів</div>
+        <div class="card-text">7-10 склянок на день. Шпинат, капуста, кейл, брокколі, кабачки, огірки, перець, цвітна капуста — мало вуглеводів, багато вітамінів та клітковини.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🍗</span>
+        <div class="card-title">Помірно білка</div>
+        <div class="card-text">Порція розміром з долоню. Курка, риба, яйця, м'ясо на траві. Не переїдай білок — надлишок теж може підняти інсулін.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🥑</span>
+        <div class="card-title">Корисні жири</div>
+        <div class="card-text">Авокадо, оливкова олія, кокосова олія, горіхи, вершкове масло, насіння. Жир дає ситність і НЕ підвищує інсулін — це ключ до всього.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧂</span>
+        <div class="card-title">Електроліти</div>
+        <div class="card-text">Морська сіль, калій (авокадо, зелень), магній. При інтервальному голодуванні електроліти — маст-хев, щоб уникнути слабкості.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Detailed food list -->
+  <div class="section" style="animation-delay:1.35s">
+    <h2 class="section-title">Детальний список продуктів</h2>
+    <p>Конкретно що можна покласти в кошик у магазині.</p>
+
+    <div class="food-grid">
+      <div class="food-item">
+        <div class="food-label">Хліб</div>
+        <div class="food-val">Цільнозерновий, бездріжджовий, з насінням</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Молочка</div>
+        <div class="food-val">Нежирний творог, кефір, простий йогурт, нежирний сир</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">М'ясо та риба</div>
+        <div class="food-val">Курка, індичка, кролик, яловичина, телятина, біла та червона риба, морепродукти</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Супи</div>
+        <div class="food-val">Овочеві, крем-супи, на другому бульйоні (перший злити), юшка з нежирної риби</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Жири</div>
+        <div class="food-val">Оливкова олія extra virgin (кислотність нижче 0,8), лляна олія, авокадо, кокосова олія</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Яйця</div>
+        <div class="food-val">2-4 штуки на тиждень: варені, омлет, пашот, всмятку</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Крупи</div>
+        <div class="food-val">Цільнозернові — вівсяна, гречана, пшенична, чечевиця, полба, булгур. Макарони з твердих сортів пшениці</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Овочі</div>
+        <div class="food-val">Помідори, огірки, кабачки, баклажани, стручкова квасоля, брокколі, спаржа, шпинат, капуста (всі види), редис</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Фрукти</div>
+        <div class="food-val">1-3 фрукти на день (при кето — обмежити ще більше)</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Закуски</div>
+        <div class="food-val">Оливки, горіхи, насіння, ікра, креветки</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Солодощі</div>
+        <div class="food-val">Грецький йогурт з ягодами, фруктовий салат, стевія</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Напої</div>
+        <div class="food-val">Вода, чай, кава, настої трав, компоти без цукру</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- What NOT to eat -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Що не можна</h2>
+    <p>Все, що підвищує інсулін — твій ворог. Навіть "здорова" їжа може гальмувати жироспалювання.</p>
+
+    <table class="swap-table">
+      <thead>
+        <tr>
+          <th>Заборонено</th>
+          <th></th>
+          <th>Чому</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td class="bad">Цукор та солодощі</td><td class="arrow">!</td><td class="reason">Шоколад, цукерки, торти, морозиво, мед — максимальний інсуліновий удар.</td></tr>
+        <tr><td class="bad">Білий хліб, випічка, здоба</td><td class="arrow">!</td><td class="reason">Швидкі вуглеводи — листкове і здобне тісто, смажені пиріжки, булочки.</td></tr>
+        <tr><td class="bad">Рис, картопля, кукурудза, батат</td><td class="arrow">!</td><td class="reason">Крохмаль = цукор. Пастернак, буряк — теж обмежити.</td></tr>
+        <tr><td class="bad">Фасоля та бобові</td><td class="arrow">!</td><td class="reason">Занадто багато вуглеводів. Гальмують кетоз.</td></tr>
+        <tr><td class="bad">Фрукти та фруктоза</td><td class="arrow">!</td><td class="reason">Фруктоза переробляється печінкою в жир. Консервовані фрукти — повне табу.</td></tr>
+        <tr><td class="bad">Перекуси (навіть маленькі)</td><td class="arrow">!</td><td class="reason">Навіть одна цукерка, горішок або долька мандарина — вже перекус. Обнуляє прогрес.</td></tr>
+        <tr><td class="bad">Жирна молочка</td><td class="arrow">!</td><td class="reason">Творог 9-18%+, сметана 15%+, вершки 20%+, молоко 6%+, сири 40%+.</td></tr>
+        <tr><td class="bad">Ковбаси та копченості</td><td class="arrow">!</td><td class="reason">Ковбасні вироби, гамбургери, хот-доги, копчена та солена риба, консерви.</td></tr>
+        <tr><td class="bad">Жирне м'ясо</td><td class="arrow">!</td><td class="reason">Качка, гуска, свинина, баранина, печінка, нирки, мозок.</td></tr>
+        <tr><td class="bad">Шкідливі жири</td><td class="arrow">!</td><td class="reason">Вершкове масло (велика кількість), маргарин, сало, кулінарний жир, рафіновані олії.</td></tr>
+        <tr><td class="bad">Соуси та кетчуп</td><td class="arrow">!</td><td class="reason">Прихований цукор у кожній ложці. Завжди читай склад.</td></tr>
+        <tr><td class="bad">Напої</td><td class="arrow">!</td><td class="reason">Лимонади, какао, смузі та фреші з магазину, алкоголь.</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 6 tips -->
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">6 порад для зниження ваги</h2>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="card-title">Головне — не ЩО, а СКІЛЬКИ</div>
+          <div class="card-text">Баланс простий: отримав більше, ніж витратив — набрав вагу. Витратив більше — схуд. Контролюй об'єм порцій.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="card-title">Жодних перекусів</div>
+          <div class="card-text">Навіть одна цукерка, горішок або долька мандарина — вже перекус. Краще випий воду, чай або каву без цукру.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="card-title">Їж повільно</div>
+          <div class="card-text">Через 20-30 хвилин шлунок скоротиться і відчує ситість. Як тільки відчула легку ситість — зупинися, доїдати не потрібно.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="card-title">Менша тарілка</div>
+          <div class="card-text">Використовуй тарілку меншого розміру. Об'єм порції має поміщатися в твої долоні.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="card-title">Не наїдайся на ніч</div>
+          <div class="card-text">Організм худне вночі. Чим більший проміжок між вечерею і сніданком — тим ефективніше зниження ваги.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <div class="card-title">Регулярний рух</div>
+          <div class="card-text">Та активність, яку реально виконувати цілий рік: сходи замість ліфта, паркування за 1 км від роботи, присідання 2 рази на тиждень. Мінімум 5000 кроків на день, 30 хвилин активності 5 днів на тиждень.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- How to not want to eat -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Як не хотіти їсти</h2>
+    <p>Коли ти їси правильні жири і прибираєш цукор — голод зникає сам. Але на початку може бути складно. Ось що допоможе:</p>
+
+    <ul class="tips">
+      <li>Додавай більше жирів до їжі — саме жир дає ситність на години. Авокадо, олія, горіхи — не бійся жиру.</li>
+      <li>Пий воду, чай або каву без цукру — рідина допомагає пережити вікно голодування. Кава навіть підсилює кетоз.</li>
+      <li>Якщо дуже хочеться їсти — з'їж ложку кокосової олії або жменю горіхів. Це не перекус — це "швидка допомога" жиром.</li>
+      <li>Не рахуй калорії — рахуй прийоми їжі. Головне — не "скільки", а "як часто". Менше прийомів = менше інсуліну.</li>
+      <li>Висипайся — кортизол від недосипу підвищує інсулін. 7-8 годин сну критично важливі для результату.</li>
+      <li>Їж повільно та до ситості — не вставай з-за столу голодною. Якщо їси рідко — їж досита, інакше зірвешся.</li>
+      <li>Яблучний оцет (1 ст.л. на склянку води перед їжею) — знижує інсуліновий відгук і покращує травлення.</li>
+      <li>Рухайся — прогулянка після їжі знижує цукор у крові. Не спортзал — просто ходьба.</li>
+      <li>Перші 3-5 днів найважчі — потім тіло адаптується до жиру як палива і голод зникає. Просто протримайся.</li>
+    </ul>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- How not to think about food -->
+  <div class="section" style="animation-delay:1.75s">
+    <h2 class="section-title">Як не думати про їжу</h2>
+    <p>Коли мозок постійно повертається до думок про їжу — це не про голод. Це про звичку, нудьгу або емоції. Ось як перемкнути фокус:</p>
+
+    <ul class="tips">
+      <li>Займи руки і голову — коли ти захоплена справою, мозку просто ніколи думати про їжу. Робота, хобі, книжка, прогулянка, малювання — що завгодно, аби бути в процесі.</li>
+      <li>Прибери їжу з очей — те, що ти бачиш, те і хочеш. Сховай снеки, не тримай тарілку з печивом на столі. З поля зору — з голови.</li>
+      <li>Не гортай фото їжі в інстаграмі — це прямий тригер. Алгоритми показують смаколики щосекунди, і мозок починає хотіти. Відпишись від food-блогерів на період.</li>
+      <li>Зміни маршрут — якщо по дорозі додому ти завжди заходиш у кав'ярню за булочкою, просто йди іншою вулицею. Звичка ламається через зміну контексту.</li>
+      <li>Пий воду з лимоном або м'ятою — смак у роті обманює мозок. Часто думка "хочу їсти" насправді означає "хочу відчуття у роті".</li>
+      <li>Визначай емоцію — запитай себе: "Я голодна чи мені сумно/нудно/тривожно?" Якщо це емоція — їжа її не вирішить. Обійми, поплач, подихай, зателефонуй подрузі.</li>
+      <li>Правило 10 хвилин — коли з'являється думка про їжу, скажи собі "через 10 хвилин". Часто за цей час бажання просто зникає саме по собі.</li>
+      <li>Не роби їжу нагородою — "я добре попрацювала, тому заслужила торт". Знайди інші нагороди: ванна, серіал, покупка, масаж. Їжа — це паливо, а не приз.</li>
+      <li>Їж за столом, без телефону — коли ти їси усвідомлено, без відволікань, мозок реєструє прийом їжі. Якщо їси перед екраном — мозок не запам'ятовує і скоро знову хоче.</li>
+      <li>Плануй їжу наперед — коли ти знаєш, що і коли будеш їсти, мозок перестає про це думати. Невизначеність породжує нав'язливі думки про їжу.</li>
+      <li>Рухайся фізично — прогулянка, танець, йога, розтяжка. Тіло в русі = голова звільняється. Емоційний голод часто зникає за 15 хвилин ходьби.</li>
+      <li>Зроби свій простір красивим — коли навколо тебе чисто, затишно і приємно, менше хочеться "заїдати" порожнечу. Їжа часто заповнює те, що має заповнювати краса життя.</li>
+    </ul>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Two mistakes -->
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Дві головні помилки</h2>
+    <p>Уникай їх будь-якою ціною — вони знищують весь прогрес.</p>
+
+    <div class="warn-card">
+      <div class="warn-title">Жорстке голодування</div>
+      <div class="warn-text">Сповільнює основний обмін — організм переходить у режим "виживання" на мінімумі. Будь-який зрив після цього дає різкий набір ваги. Тіло починає запасати все підряд. Не голодуй — їж правильно і рідше.</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title">Інтенсивні тренування, які неможливо тримати постійно</div>
+      <div class="warn-text">Якщо ти ходиш у зал 6 разів на тиждень, а потім пропускаєш — це пропущене заняття перетворюється на зайві калорії в запас. Обирай ту активність, яку реально робити цілий рік за будь-яких обставин.</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Motivation -->
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Пам'ятай</h2>
+    <p>Це не дієта — це перепрограмування тіла. Ти вчиш свій організм використовувати жир замість цукру. Перші дні будуть складними, але коли тіло увійде в кетоз — енергії стане більше, голод зникне, а жир почне йти. Довіряй процесу.</p>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>
