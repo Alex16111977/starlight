@@ -4,16 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Starlight</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300&family=Montserrat:wght@100;200;300&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100%;height:100%;background:#04050f;overflow:hidden;font-family:'Montserrat',sans-serif}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
 canvas{position:fixed;inset:0;z-index:0}
 .nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
-.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.18) 0%,rgba(40,80,200,.10) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
-.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.10) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.28) 0%,rgba(40,80,200,.16) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
 @keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
-.scene{position:fixed;inset:0;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px}
+
+/* Hero section */
+.hero{position:relative;z-index:10;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:100vh;padding:60px 32px}
 .cline{display:flex;align-items:center;gap:12px;margin-bottom:52px;opacity:0;animation:riseIn 1.4s .4s ease forwards}
 .cdot{width:3px;height:3px;border-radius:50%;background:#c8d8ff;opacity:.5}
 .cdot.big{width:5px;height:5px;opacity:.9;box-shadow:0 0 8px #c8d8ff}
@@ -22,15 +25,53 @@ canvas{position:fixed;inset:0;z-index:0}
 .logo-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(64px,13vw,140px);letter-spacing:.18em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;line-height:1;position:relative;z-index:2}
 .logo::before{content:'Starlight';font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(64px,13vw,140px);letter-spacing:.18em;position:absolute;inset:0;background:linear-gradient(135deg,#6090ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;color:transparent;filter:blur(28px);opacity:.5;animation:glowPulse 4s ease-in-out infinite alternate;z-index:1}
 @keyframes glowPulse{from{opacity:.3;filter:blur(20px)}to{opacity:.7;filter:blur(36px)}}
-.tagline{font-size:clamp(9px,1.5vw,12px);font-weight:200;letter-spacing:.55em;color:rgba(200,216,255,.45);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1.4s 1.2s ease forwards}
-.nav{display:flex;gap:28px;opacity:0;animation:riseIn 1.2s 1.8s ease forwards}
-.nav-item{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.35);text-transform:uppercase;text-decoration:none;cursor:pointer;transition:color .4s;position:relative;padding-bottom:6px}
-.nav-item::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:0;height:1px;background:rgba(200,216,255,.5);transition:width .4s}
-.nav-item:hover{color:rgba(200,216,255,.9)}
-.nav-item:hover::after{width:100%}
-.sig{position:fixed;bottom:36px;left:50%;transform:translateX(-50%);z-index:10;display:flex;align-items:center;gap:16px;opacity:0;animation:riseIn 1.2s 2.4s ease forwards}
+.tagline{font-size:clamp(9px,1.5vw,12px);font-weight:200;letter-spacing:.55em;color:rgba(200,216,255,.65);text-transform:uppercase;margin-bottom:48px;opacity:0;animation:riseIn 1.4s 1.2s ease forwards}
+.scroll-hint{opacity:0;animation:riseIn 1.2s 2s ease forwards}
+.scroll-hint a{font-size:9px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.5);text-transform:uppercase;text-decoration:none;transition:color .4s;display:flex;flex-direction:column;align-items:center;gap:12px}
+.scroll-hint a:hover{color:rgba(200,216,255,.8)}
+.scroll-arrow{font-size:18px;animation:bounce 2s ease-in-out infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(8px)}}
+
+/* Navigation grid */
+.nav-section{position:relative;z-index:10;max-width:960px;margin:0 auto;padding:20px 32px 100px}
+.nav-title{text-align:center;font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(28px,5vw,42px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:12px;opacity:0;animation:riseIn 1s ease forwards}
+.nav-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:48px;opacity:0;animation:riseIn 1s .2s ease forwards}
+
+.nav-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px}
+.nav-card{background:rgba(200,216,255,.10);border:1px solid rgba(200,216,255,.22);border-radius:20px;padding:32px 28px;text-decoration:none;transition:all .4s;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:12px;opacity:0;animation:riseIn .8s ease forwards;box-shadow:0 4px 24px rgba(0,0,0,.3),inset 0 1px 0 rgba(200,216,255,.08)}
+.nav-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.5),transparent);opacity:1;transition:opacity .4s}
+.nav-card:hover{background:rgba(200,216,255,.16);border-color:rgba(200,216,255,.35);transform:translateY(-6px);box-shadow:0 8px 32px rgba(0,0,0,.4),0 0 20px rgba(138,176,255,.08),inset 0 1px 0 rgba(200,216,255,.12)}
+.nav-card:hover::before{opacity:1}
+.nav-card:hover .nav-card-title{color:#fff}
+.nav-card:hover .nav-card-arrow{opacity:1;transform:translateX(4px)}
+
+.nav-card:nth-child(1){animation-delay:.1s}
+.nav-card:nth-child(2){animation-delay:.15s}
+.nav-card:nth-child(3){animation-delay:.2s}
+.nav-card:nth-child(4){animation-delay:.25s}
+.nav-card:nth-child(5){animation-delay:.3s}
+.nav-card:nth-child(6){animation-delay:.35s}
+.nav-card:nth-child(7){animation-delay:.4s}
+.nav-card:nth-child(8){animation-delay:.45s}
+.nav-card:nth-child(9){animation-delay:.5s}
+
+.nav-card-emoji{font-size:32px;margin-bottom:4px}
+.nav-card-top{display:flex;align-items:center;justify-content:space-between}
+.nav-card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:22px;letter-spacing:.05em;color:#fff;transition:color .4s}
+.nav-card-arrow{font-size:14px;color:rgba(200,216,255,.7);opacity:.5;transition:all .4s;font-weight:200}
+.nav-card-desc{font-size:12px;font-weight:300;line-height:1.7;color:rgba(200,216,255,.75)}
+
+/* Divider */
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+/* Footer */
+.sig{text-align:center;padding:40px 0 60px;position:relative;z-index:10;display:flex;align-items:center;gap:16px;justify-content:center}
 .sig-line{width:40px;height:1px;background:rgba(200,216,255,.15)}
 .sig-text{font-size:9px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.2);text-transform:uppercase;white-space:nowrap}
+
 @keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 .shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
 .shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
@@ -39,26 +80,129 @@ canvas{position:fixed;inset:0;z-index:0}
 <body>
 <canvas id="stars"></canvas>
 <div class="nebula"></div>
-<div class="scene">
-<div class="cline">
-<div class="cdot"></div><div class="cbar"></div>
-<div class="cdot big"></div><div class="cbar"></div>
-<div class="cdot"></div><div class="cbar"></div>
-<div class="cdot big"></div><div class="cbar"></div>
-<div class="cdot"></div>
+
+<!-- Hero -->
+<div class="hero">
+  <div class="cline">
+    <div class="cdot"></div><div class="cbar"></div>
+    <div class="cdot big"></div><div class="cbar"></div>
+    <div class="cdot"></div><div class="cbar"></div>
+    <div class="cdot big"></div><div class="cbar"></div>
+    <div class="cdot"></div>
+  </div>
+  <div class="logo"><span class="logo-text">Starlight</span></div>
+  <p class="tagline">where every moment shines</p>
+  <div class="scroll-hint">
+    <a href="#pages">
+      <span>Відкрий для себе</span>
+      <span class="scroll-arrow">↓</span>
+    </a>
+  </div>
 </div>
-<div class="logo"><span class="logo-text">Starlight</span></div>
-<p class="tagline">where every moment shines</p>
-<nav class="nav">
-<a class="nav-item" href="self.html">Розуміння себе</a>
-<a class="nav-item" href="food.html">Їжа</a>
-<a class="nav-item" href="thoughts.html">Думки</a>
-<a class="nav-item" href="vision.html">Vision</a>
-<a class="nav-item" href="control.html">Спокій</a>
-<a class="nav-item">Contact</a>
-</nav>
+
+<!-- Navigation cards -->
+<div class="nav-section" id="pages">
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <h2 class="nav-title">Шлях до спокою</h2>
+  <p class="nav-subtitle">Крок за кроком</p>
+
+  <div class="nav-grid">
+    <a class="nav-card" href="self.html">
+      <div class="nav-card-emoji">🧠</div>
+      <div class="nav-card-top">
+        <div class="nav-card-title">Розуміння себе</div>
+        <span class="nav-card-arrow">→</span>
+      </div>
+      <div class="nav-card-desc">Чого ти насправді хочеш, що тебе тригерить і чому ти переживаєш</div>
+    </a>
+
+    <a class="nav-card" href="control.html">
+      <div class="nav-card-emoji">💭</div>
+      <div class="nav-card-top">
+        <div class="nav-card-title">Відпусти контроль</div>
+        <span class="nav-card-arrow">→</span>
+      </div>
+      <div class="nav-card-desc">Що ти можеш контролювати, а що ні — і як це прийняти</div>
+    </a>
+
+    <a class="nav-card" href="thoughts.html">
+      <div class="nav-card-emoji">😶</div>
+      <div class="nav-card-top">
+        <div class="nav-card-title">Думки і тривога</div>
+        <span class="nav-card-arrow">→</span>
+      </div>
+      <div class="nav-card-desc">Як працюють думки і як перестати накручувати себе</div>
+    </a>
+
+    <a class="nav-card" href="selflove.html">
+      <div class="nav-card-emoji">❤️</div>
+      <div class="nav-card-top">
+        <div class="nav-card-title">Любов до себе</div>
+        <span class="nav-card-arrow">→</span>
+      </div>
+      <div class="nav-card-desc">Самокритика, порівняння з іншими і прийняття себе</div>
+    </a>
+
+    <a class="nav-card" href="expectations.html">
+      <div class="nav-card-emoji">🌍</div>
+      <div class="nav-card-top">
+        <div class="nav-card-title">Очікування від життя</div>
+        <span class="nav-card-arrow">→</span>
+      </div>
+      <div class="nav-card-desc">Коли очікування ≠ реальність і як із цим жити</div>
+    </a>
+
+    <a class="nav-card" href="people.html">
+      <div class="nav-card-emoji">🧩</div>
+      <div class="nav-card-top">
+        <div class="nav-card-title">Відносини з людьми</div>
+        <span class="nav-card-arrow">→</span>
+      </div>
+      <div class="nav-card-desc">Чужі думки — це не ти, і не всім треба подобатись</div>
+    </a>
+
+    <a class="nav-card" href="present.html">
+      <div class="nav-card-emoji">⏳</div>
+      <div class="nav-card-top">
+        <div class="nav-card-title">Тут і зараз</div>
+        <span class="nav-card-arrow">→</span>
+      </div>
+      <div class="nav-card-desc">Фокус на теперішньому моменті — єдиному, який реальний</div>
+    </a>
+
+    <a class="nav-card" href="food.html">
+      <div class="nav-card-emoji">🍽️</div>
+      <div class="nav-card-top">
+        <div class="nav-card-title">Їжа</div>
+        <span class="nav-card-arrow">→</span>
+      </div>
+      <div class="nav-card-desc">Усвідомлене харчування та зв'язок тіла з емоціями</div>
+    </a>
+
+    <a class="nav-card" href="vision.html">
+      <div class="nav-card-emoji">👁️</div>
+      <div class="nav-card-top">
+        <div class="nav-card-title">Vision</div>
+        <span class="nav-card-arrow">→</span>
+      </div>
+      <div class="nav-card-desc">Бачення, напрямок і сенс</div>
+    </a>
+  </div>
+
+  <div class="divider" style="margin-top:64px">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
 </div>
+
 <div class="sig"><div class="sig-line"></div><span class="sig-text">Est. 2026</span><div class="sig-line"></div></div>
+
 <script>
 const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
 let W,H,stars=[],mx=0,my=0;
@@ -72,6 +216,10 @@ let t=0;
 function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
 function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
 function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+
+/* Animate cards on scroll */
+const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.style.animationPlayState='running'}})},{threshold:.1});
+document.querySelectorAll('.nav-card,.nav-title,.nav-subtitle').forEach(el=>{el.style.animationPlayState='paused';observer.observe(el)});
 </script>
 </body>
 </html>

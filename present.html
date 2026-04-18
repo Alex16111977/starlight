@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Starlight — Відпусти контроль</title>
+<title>Starlight — Життя тут і зараз</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -17,23 +17,19 @@ canvas{position:fixed;inset:0;z-index:0}
 
 .content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
 
-/* Header */
 .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
 .back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
 .back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
 .page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
 
-/* Title */
 .page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
 .page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
 
-/* Divider */
 .divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
 .div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
 .div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
 .div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
 
-/* Sections */
 .section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
 
 .section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
@@ -41,7 +37,6 @@ canvas{position:fixed;inset:0;z-index:0}
 
 .section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
 
-/* Hero quote */
 .hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
 .hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
 .hero-quote::before{top:0}
@@ -49,16 +44,14 @@ canvas{position:fixed;inset:0;z-index:0}
 .hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
 .hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
 
-/* Key phrases */
 .phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
 .phrase{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
 .phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
 .phrase:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
 .phrase:hover::before{opacity:1}
-.phrase-num{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:44px;color:rgba(138,176,255,.25);line-height:1;flex-shrink:0;width:36px;text-align:center}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
 .phrase-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(220,230,255,.92)}
 
-/* Mechanism cards */
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
 .card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
 .card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
@@ -68,13 +61,21 @@ canvas{position:fixed;inset:0;z-index:0}
 .card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
 .card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.72)}
 
-/* Highlight box */
 .highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
 .highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
 .highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.82);margin:0}
 .highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
 
-/* Final quote */
+/* Timeline visual */
+.timeline{display:flex;align-items:center;justify-content:center;gap:0;margin:28px 0;padding:20px 0;position:relative}
+.timeline-segment{flex:1;text-align:center;position:relative;padding:20px 12px}
+.timeline-label{font-size:10px;font-weight:200;letter-spacing:.3em;text-transform:uppercase;color:rgba(200,216,255,.35);margin-bottom:12px}
+.timeline-emotion{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:15px;color:rgba(200,216,255,.5)}
+.timeline-segment.now{background:rgba(212,175,110,.06);border-radius:16px;border:1px solid rgba(212,175,110,.2)}
+.timeline-segment.now .timeline-label{color:rgba(212,175,110,.7);font-weight:300}
+.timeline-segment.now .timeline-emotion{color:rgba(212,175,110,.9);font-size:17px}
+.timeline-arrow{font-size:16px;color:rgba(200,216,255,.15);flex-shrink:0}
+
 .final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
 .final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
 .final-quote::before{top:0}
@@ -84,7 +85,6 @@ canvas{position:fixed;inset:0;z-index:0}
 
 @keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 
-/* Shooting stars */
 .shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
 .shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
 </style>
@@ -99,16 +99,16 @@ canvas{position:fixed;inset:0;z-index:0}
     <span class="page-logo">Starlight</span>
   </div>
 
-  <h1 class="page-title">Відпусти контроль</h1>
-  <p class="page-subtitle">Мудрість спокою з буддійської філософії</p>
+  <h1 class="page-title">Тут і зараз</h1>
+  <p class="page-subtitle">Єдиний момент, який справді існує</p>
 
   <!-- Hero quote -->
   <div class="section" style="animation-delay:.9s">
     <div class="hero-quote">
-      <div class="hero-text">"Корінь страждання — прив'язаність"</div>
-      <div class="hero-author">Будда Шак'ямуні</div>
+      <div class="hero-text">"Минуле — це спогад. Майбутнє — це фантазія. Єдине, що реальне — це цей подих"</div>
+      <div class="hero-author">Тхіть Нят Хань</div>
     </div>
-    <p>Тривога з приводу контролю — це спроба утримати воду в кулаці. Чим сильніше стискаєш — тим більше витікає. Буддизм вчить протилежному: відпусти — і отримаєш більше, ніж намагалась втримати. Ця сторінка — про те, як перестати тривожитись через те, що ти не можеш контролювати.</p>
+    <p>Тривога живе у двох місцях: у минулому і в майбутньому. "Чому я тоді так сказала?" — це минуле. "А що, якщо буде погано?" — це майбутнє. А прямо зараз, у цю мить, поки ти читаєш ці слова — з тобою все в порядку. Тривога не може існувати в теперішньому моменті. Вона може існувати лише в думках про те, чого вже нема або ще нема.</p>
   </div>
 
   <div class="divider">
@@ -117,53 +117,30 @@ canvas{position:fixed;inset:0;z-index:0}
     <div class="div-dot"></div>
   </div>
 
-  <!-- Why we cling to control -->
+  <!-- Де живе тривога -->
   <div class="section" style="animation-delay:1.1s">
-    <h2 class="section-title">Чому ми чіпляємось за контроль</h2>
-    <p>Мозок сприймає невизначеність як загрозу. Коли ти не знаєш, що буде далі, тіло вмикає режим "бий або тікай". Тому ти намагаєшся контролювати все: людей, результат, майбутнє. Але правда в тому, що 90% того, що ти намагаєшся контролювати — не залежить від тебе взагалі.</p>
-    <p>Буддизм каже: страждання виникає не від самих подій, а від твого опору їм. Ти страждаєш не тому, що щось пішло не так, а тому що ти вирішила, що мало бути інакше. Відпустити контроль — це не здатися. Це перестати воювати з реальністю.</p>
-  </div>
+    <h2 class="section-title">Де живе тривога</h2>
+    <p>Подивись на цю шкалу часу. Тривога завжди або ліворуч, або праворуч. Ніколи — посередині.</p>
 
-  <div class="divider">
-    <div class="div-dot"></div><div class="div-line"></div>
-    <div class="div-dot big"></div><div class="div-line"></div>
-    <div class="div-dot"></div>
-  </div>
+    <div class="timeline">
+      <div class="timeline-segment">
+        <div class="timeline-label">Минуле</div>
+        <div class="timeline-emotion">Жаль, сором, біль, "якби я тоді..."</div>
+      </div>
+      <div class="timeline-arrow">→</div>
+      <div class="timeline-segment now">
+        <div class="timeline-label">✦ Зараз ✦</div>
+        <div class="timeline-emotion">Спокій. Ти тут. Ти дихаєш. Все ок.</div>
+      </div>
+      <div class="timeline-arrow">→</div>
+      <div class="timeline-segment">
+        <div class="timeline-label">Майбутнє</div>
+        <div class="timeline-emotion">Страх, тривога, "а що, якщо..."</div>
+      </div>
+    </div>
 
-  <!-- 4 Noble truths adapted -->
-  <div class="section" style="animation-delay:1.3s">
-    <h2 class="section-title">4 Благородні Істини про тривогу</h2>
-    <p>Будда сформулював чотири істини про страждання. Ось як вони стосуються твоєї тривоги з приводу контролю.</p>
-
-    <div class="phrases">
-      <div class="phrase">
-        <div class="phrase-num">1</div>
-        <div class="phrase-text">
-          <div class="card-title" style="margin-bottom:8px">Тривога існує</div>
-          <div class="card-text">Не борись із нею, не заперечуй. Визнай: так, мені тривожно. Це перший крок. Будда не казав "не страждай" — він казав "зрозумій природу страждання". Тривога — це не ворог, це сигнал.</div>
-        </div>
-      </div>
-      <div class="phrase">
-        <div class="phrase-num">2</div>
-        <div class="phrase-text">
-          <div class="card-title" style="margin-bottom:8px">Причина — прив'язаність</div>
-          <div class="card-text">Тривога виникає, коли ти прив'язана до конкретного результату. "Має бути саме так". "Він має відповісти саме це". "Все має піти за планом". Щоразу, коли ти вимагаєш від реальності бути певною — ти створюєш собі страждання.</div>
-        </div>
-      </div>
-      <div class="phrase">
-        <div class="phrase-num">3</div>
-        <div class="phrase-text">
-          <div class="card-title" style="margin-bottom:8px">Звільнення можливе</div>
-          <div class="card-text">Можна жити без постійної тривоги. Це не утопія — це навичка. Мільйони людей навчилися відпускати. Спокій — це не відсутність проблем, а здатність бути в них без паніки.</div>
-        </div>
-      </div>
-      <div class="phrase">
-        <div class="phrase-num">4</div>
-        <div class="phrase-text">
-          <div class="card-title" style="margin-bottom:8px">Є шлях</div>
-          <div class="card-text">Шлях — це щоденна практика. Не один раз "зрозуміти і відпустити", а кожного дня вибирати довіру замість контролю. Усвідомленість, прийняття, дихання, присутність — це інструменти, а не абстракції.</div>
-        </div>
-      </div>
+    <div class="highlight">
+      <p>Депресія тягне в минуле. Тривога штовхає в майбутнє. Спокій — <em>завжди в теперішньому</em>. Коли ти повертаєш увагу в "зараз" — тривозі нема де жити. Вона просто зникає, бо їй нема на чому триматися.</p>
     </div>
   </div>
 
@@ -173,26 +150,26 @@ canvas{position:fixed;inset:0;z-index:0}
     <div class="div-dot"></div>
   </div>
 
-  <!-- Practical Buddhist tools -->
-  <div class="section" style="animation-delay:1.5s">
-    <h2 class="section-title">Практики відпускання</h2>
-    <p>Конкретні речі, які можна робити щодня, щоб послабити хватку контролю.</p>
+  <!-- Чому ми не в моменті -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Чому ми не в моменті</h2>
+    <p>Бути "тут і зараз" звучить просто — але мозок активно цьому опирається. Він еволюційно запрограмований аналізувати минуле і прогнозувати майбутнє. Це допомагало виживати. Але зараз, коли тигри не ганяються за нами — цей механізм просто генерує нескінченну тривогу.</p>
 
     <div class="cards">
       <div class="card">
-        <span class="card-icon">🌊</span>
-        <div class="card-title">Непостійність</div>
-        <div class="card-text">Все змінюється. Кожна мить — нова. Поганий момент пройде. Хороший — теж. Коли розумієш це по-справжньому, перестаєш чіплятися за конкретний результат. Нічого не треба "утримувати" — все тече саме.</div>
+        <span class="card-icon">🔙</span>
+        <div class="card-title">Залипання в минулому</div>
+        <div class="card-text">"Чому я тоді не сказала інакше?" "Якби я тоді вчинила по-іншому..." Мозок прокручує минулі сцени, шукаючи "правильний" варіант. Але минуле вже відбулось. Ти не можеш його змінити — ти можеш лише перестати жити в ньому.</div>
       </div>
       <div class="card">
-        <span class="card-icon">🧘</span>
-        <div class="card-title">Спостереження</div>
-        <div class="card-text">Замість реагувати на тривогу — спостерігай за нею. "О, тривога прийшла. Цікаво." Не придушуй і не розкручуй. Просто дивись. Як хмара — вона пройде, якщо не чіплятись.</div>
+        <span class="card-icon">🔜</span>
+        <div class="card-title">Біг у майбутнє</div>
+        <div class="card-text">"Що буде, якщо..." "А раптом..." "Мені потрібен план на всі випадки." Мозок намагається контролювати те, чого ще нема. Але майбутнє — це лише думка. Його ще не існує. І 97% катастроф, які ти собі уявляла — ніколи не збулись.</div>
       </div>
       <div class="card">
-        <span class="card-icon">🫁</span>
-        <div class="card-title">Дихання</div>
-        <div class="card-text">Повільний видих довший за вдих — активує парасимпатичну нервову систему. 4 секунди вдих, 7 секунд видих. Це не езотерика — це фізіологія. Тіло заспокоюється, і розум слідує за ним.</div>
+        <span class="card-icon">📱</span>
+        <div class="card-title">Відволікання</div>
+        <div class="card-text">Телефон, стрічка, серіали, їжа — все, щоб не бути "тут". Бо бути "тут" іноді означає відчути те, від чого ти тікаєш. Відволікання — це не відпочинок. Це втеча. А від себе не втечеш — ти завжди тут.</div>
       </div>
     </div>
   </div>
@@ -203,48 +180,39 @@ canvas{position:fixed;inset:0;z-index:0}
     <div class="div-dot"></div>
   </div>
 
-  <!-- What you can and can't control -->
-  <div class="section" style="animation-delay:1.7s">
-    <h2 class="section-title">Що ти справді контролюєш</h2>
-    <div class="highlight">
-      <p>Ти не контролюєш: інших людей, їхні рішення, їхні емоції, погоду, минуле, майбутнє, хвороби, економіку, чужу думку про тебе. І це нормально.</p>
-    </div>
-    <div class="highlight" style="margin-top:16px">
-      <p>Ти контролюєш: свою реакцію, свою увагу, свої слова, свої дії прямо зараз, своє дихання, свій вибір — <em>як ти ставишся до того, що відбувається</em>. І цього достатньо.</p>
-    </div>
-  </div>
-
-  <div class="divider">
-    <div class="div-dot"></div><div class="div-line"></div>
-    <div class="div-dot big"></div><div class="div-line"></div>
-    <div class="div-dot"></div>
-  </div>
-
-  <!-- 5 Buddhist reminders -->
-  <div class="section" style="animation-delay:1.8s">
-    <h2 class="section-title">5 нагадувань на кожен день</h2>
-    <p>Фрази, які варто перечитувати, коли тривога знову намагається взяти контроль над тобою.</p>
+  <!-- Як повернутись в момент -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Як повернутись у момент</h2>
+    <p>Повернення в "зараз" — це навичка. Не талант, не дар — навичка, яку можна тренувати щодня. Ось конкретні способи.</p>
 
     <div class="phrases">
       <div class="phrase">
-        <div class="phrase-num">1</div>
-        <div class="phrase-text">Я не зобов'язана знати, як все складеться. Моя справа — зробити наступний крок</div>
+        <div class="phrase-icon">🫁</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Дихання</div>
+          <div class="card-text">Найпростіший і найшвидший якір. Зроби один свідомий вдих — і ти вже в моменті. 4 секунди вдих, 7 секунд видих. Відчуй, як повітря заходить і виходить. Ти не думаєш про минуле чи майбутнє — ти відчуваєш "зараз" через тіло.</div>
+        </div>
       </div>
       <div class="phrase">
-        <div class="phrase-num">2</div>
-        <div class="phrase-text">Те, що мені призначене — не пройде повз. Мені не треба за це боротись</div>
+        <div class="phrase-icon">👐</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Тіло</div>
+          <div class="card-text">Відчуй ступні на підлозі. Температуру повітря на шкірі. Вагу тіла на стільці. Дотик одягу. Тіло завжди в теперішньому — тільки думки мандрують у часі. Поверни увагу в тіло — і ти автоматично повертаєшся в "зараз".</div>
+        </div>
       </div>
       <div class="phrase">
-        <div class="phrase-num">3</div>
-        <div class="phrase-text">Кожна ситуація тимчасова. І ця — теж пройде</div>
+        <div class="phrase-icon">👀</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">5-4-3-2-1</div>
+          <div class="card-text">Назви 5 речей, які бачиш. 4 звуки, які чуєш. 3 речі, які відчуваєш дотиком. 2 запахи. 1 смак. Ця техніка примусово переключає мозок із думок у відчуття. З голови — в реальність. З тривоги — в момент.</div>
+        </div>
       </div>
       <div class="phrase">
-        <div class="phrase-num">4</div>
-        <div class="phrase-text">Контроль — це ілюзія. Довіра — це сила</div>
-      </div>
-      <div class="phrase">
-        <div class="phrase-num">5</div>
-        <div class="phrase-text">Я обираю спокій. Не тому що все добре, а тому що паніка нічого не вирішує</div>
+        <div class="phrase-icon">🍵</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Одна дія з повною увагою</div>
+          <div class="card-text">Пий чай — і тільки пий чай. Не скроль телефон, не думай про плани. Відчуй тепло чашки, смак, аромат. Мий посуд — відчуй воду, текстуру губки. Будь-яка рутинна дія стає медитацією, коли ти робиш її з повною присутністю.</div>
+        </div>
       </div>
     </div>
   </div>
@@ -255,11 +223,26 @@ canvas{position:fixed;inset:0;z-index:0}
     <div class="div-dot"></div>
   </div>
 
-  <!-- Middle way -->
-  <div class="section" style="animation-delay:1.85s">
-    <h2 class="section-title">Серединний шлях</h2>
-    <div class="highlight">
-      <p>Будда вчив серединному шляху — не крайнощі. Відпустити контроль не означає стати байдужою чи пасивною. Це означає: <em>робити все, що від тебе залежить, і відпускати результат</em>. Ти сієш насіння — але не тягнеш паросток із землі руками. Довірся процесу. Зроби свою частину — і дозволь реальності зробити свою.</p>
+  <!-- Що дає присутність -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Що дає присутність</h2>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🔇</span>
+        <div class="card-title">Тиша в голові</div>
+        <div class="card-text">Коли ти в моменті — нескінченний внутрішній монолог стихає. Не зникає повністю — але стає тихішим. Замість шторму думок — м'який фон. Замість хаосу — простір. І в цьому просторі можна нарешті почути себе.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌈</span>
+        <div class="card-title">Більше радості</div>
+        <div class="card-text">Радість завжди в деталях: як пахне кава, як світить сонце через вікно, як хтось сміється. Але ти це пропускаєш, коли думками в іншому часі. Присутність — це вміння помічати красу, яка вже є в твоєму житті прямо зараз.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚓</span>
+        <div class="card-title">Стабільність</div>
+        <div class="card-text">Коли ти заякорена в моменті — зовнішній хаос не зносить тебе. Люди, новини, проблеми — все це хвилі. А ти — дно океану. Хвилі нагорі бушують — а внизу тихо і спокійно. Присутність — це твоя глибина.</div>
+      </div>
     </div>
   </div>
 
@@ -269,11 +252,45 @@ canvas{position:fixed;inset:0;z-index:0}
     <div class="div-dot"></div>
   </div>
 
-  <!-- Final conclusion -->
+  <!-- Нагадування -->
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Нагадування</h2>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">1</div>
+        <div class="phrase-text">Прямо зараз, у цю мить — зі мною все в порядку</div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">2</div>
+        <div class="phrase-text">Я не живу в минулому. Я не живу в майбутньому. Я живу зараз</div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">3</div>
+        <div class="phrase-text">Один свідомий вдих — і я вже тут</div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">4</div>
+        <div class="phrase-text">Тривога не може жити в теперішньому моменті. Тільки в думках</div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">5</div>
+        <div class="phrase-text">Мені не потрібно вирішувати все життя прямо зараз. Достатньо прожити цю хвилину</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Final -->
   <div class="section" style="animation-delay:1.9s">
     <h2 class="section-title">Висновок</h2>
     <div class="final-quote">
-      <div class="final-text">Відпусти те, що не можеш змінити. Зосередься на тому, що можеш. Живи <strong>в моменті</strong>, а не в голові. Тривога живе в майбутньому — ти живи зараз. Спокій — це не місце, куди ти приходиш. Це вибір, який ти робиш щомиті.</div>
+      <div class="final-text">Ти витрачаєш роки, живучи в минулому чи майбутньому — і пропускаєш єдине, що справді маєш: <strong>цю мить</strong>. Поверни увагу сюди. Відчуй дихання. Подивись навколо. Ти жива. Ти тут. І цього достатньо. Все інше — лише думки.</div>
     </div>
   </div>
 
