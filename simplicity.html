@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Простота</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(220,230,255,.92)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.72)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.82);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(200,216,255,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.35);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(26px,4vw,36px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Простота</h1>
+  <p class="page-subtitle">Менше — значить глибше</p>
+
+  <!-- Hero quote -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-text-wrap"></div>
+    <div class="hero-quote">
+      <div class="hero-text">"Простота — це найвища форма витонченості"</div>
+      <div class="hero-author">Леонардо да Вінчі</div>
+    </div>
+    <p>Простота — це не бідність і не обмеження. Це звільнення. Коли ти прибираєш усе зайве — речі, стосунки, обовʼязки, думки — лишається простір. А в просторі нарешті зʼявляється ти сама. Не та, що біжить. Не та, що відповідає. А справжня. Ця сторінка — про те, як менше означає більше.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Речі крадуть увагу -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Речі крадуть увагу</h2>
+    <p>Кожна річ у твоєму просторі — це не просто предмет. Це маленька вимога уваги. Вирішити, куди її покласти. Знайти, коли шукаєш. Почистити. Полагодити. Подумати, чи ще потрібна. Помножити це на тисячі дрібниць — і ти розумієш, чому в квартирі повно речей, а сил на життя немає.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🪞</span>
+        <div class="card-title">Кожна річ — це рішення</div>
+        <div class="card-text">Коли в шафі 40 светрів, щоранку ти приймаєш на одне рішення більше. Це не метафора — дослідження decision fatigue показують, що здатність до виборів вичерпна. Стів Джобс носив ту саму водолазку не з дивацтва, а щоб зберегти ресурс для важливого.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">👗</span>
+        <div class="card-title">Ідентичність зашита в речах</div>
+        <div class="card-text">"Цю сукню я вдягну колись". "Ця книжка — це ж ніби про мене". Речі зберігають твої старі та потенційні Я. Позбутись їх страшно, бо виникає питання: "хто я без цього?". Але саме в цій порожнечі зʼявляється місце для справжньої себе.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎁</span>
+        <div class="card-title">Речі як замінник почуттів</div>
+        <div class="card-text">Купую — значить заспокоююсь. Купую — значить заслуговую. Купую — значить не порожньо. Це retail therapy, і вона працює 20 хвилин. Потім поверне сум, плюс покупка, яка тепер займає місце і в шафі, і в совісті.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⏳</span>
+        <div class="card-title">Речі вимагають часу</div>
+        <div class="card-text">Ти не можеш "просто мати" річ. Ти маєш її зберігати, знаходити їй місце, витирати пил, іноді ремонтувати, колись викидати. Кожна річ — це невидима підписка на твій час. І її не скасувати, поки річ у тебе.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Мінімалізм у думках -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Мінімалізм у думках</h2>
+    <p>Зовнішній хаос — це дзеркало внутрішнього. Але й навпаки: коли в голові 47 "відкритих вкладок" — важко бути присутньою у власному житті. Простота починається зсередини.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">📰</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Менше інформаційного шуму</div>
+          <div class="card-text">Ти не маєш читати всі новини. Не маєш знати думку всіх блогерів. Більшість того, що сьогодні здається важливим, за тиждень забудеться. Тобі не потрібно бути в курсі всього — тобі потрібно бути в контакті із собою.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🎯</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Одне завдання в момент</div>
+          <div class="card-text">Мультитаскінг — це міф. Мозок не робить два завдання паралельно, він швидко перемикається, і кожне перемикання коштує концентрації. Одна справа до кінця — глибше, ніж пʼять наполовину. І значно спокійніше.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🗂️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Закривай ментальні вкладки</div>
+          <div class="card-text">Незакінчені розмови, непрочитані листи, нерозвʼязані конфлікти — все це займає памʼять. Психологи називають це ефектом Зейгарнік: мозок тримає незавершене в активній памʼяті. Запиши на папері — і мозок відпустить.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🕊️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">"Буду коли..." — зараз</div>
+          <div class="card-text">Буду щасливою, коли схудну, переїду, зароблю. Це відкладання життя на завтра. А завтра зʼявиться нове "коли". Простота — це дозволити собі жити у теперішньому недосконалому, а не чекати ідеального.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Простота в стосунках -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Простота в стосунках</h2>
+    <p>Не всі, хто в твоєму житті зараз, повинні в ньому лишатись. Іноді найбільша ніжність до себе — це дозволити людям віддалитись без пояснень. Простота стосунків — це не холодність. Це чесність.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🌿</span>
+        <div class="card-title">Не кожна людина — твоя</div>
+        <div class="card-text">Ти зустрінеш сотні людей. Близьких буде одиниці. Це нормально. Намагатись бути близькою з усіма — це виснажувати себе до нуля. Глибина можлива тільки з небагатьма. Решта — шанобливе знайомство.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚖️</span>
+        <div class="card-title">"Так" одним = "ні" іншим</div>
+        <div class="card-text">Час скінченний. Кожне "так" цій зустрічі, цій розмові, цьому обовʼязку — це автоматичне "ні" чомусь іншому. Коли це бачиш чесно, вибір стає простішим: чи варто "так" тут того "ні", яке воно забирає?</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💫</span>
+        <div class="card-title">Якість звʼязку &gt; кількість</div>
+        <div class="card-text">Одна щира розмова раз на місяць годує душу більше, ніж 50 поверхневих повідомлень у день. Не рахуй, скільки в тебе "друзів". Спитай: з ким із них ти можеш говорити про те, що дійсно болить?</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🚪</span>
+        <div class="card-title">Право тихо піти</div>
+        <div class="card-text">Ти можеш віддалитись від людини без драми, без пояснень, без виправдань. Просто менше писати, менше відповідати, менше зустрічатись. Це не жорстокість. Це турбота про власний простір. Не всі заслуговують доступу до тебе.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Як почати -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Як почати</h2>
+    <p>Простота не приходить за один день, і не треба викидати пів квартири одразу. Маленькі стабільні кроки зроблять більше, ніж героїчний штурм, після якого все повернеться.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🗃️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Одна шухлядка сьогодні</div>
+          <div class="card-text">Не "весь дім", не "вся шафа". Одна шухлядка. 15 хвилин. Дістань усе, подивись на кожну річ, залиш тільки те, що реально любиш і використовуєш. Завтра — інша шухлядка. За місяць — інший дім.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🔄</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Одна прийшла — одна пішла</div>
+          <div class="card-text">Купила нову футболку — стара йде. Нову чашку — одна зі старих їде. Це просте правило зупиняє нарощування, навіть якщо ти й далі любиш купувати. Обʼєм залишається стабільним, речі — свідомими.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🚫</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">30 днів без нових покупок</div>
+          <div class="card-text">Окрім їжі та ліків — нічого нового місяць. Ти помітиш, як часто рука тягнеться "купити щось маленьке", щоб заспокоїтись. І помітиш, що й без цього живеш. Гроші та увага повертаються тобі.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🧘</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Прибирання як медитація</div>
+          <div class="card-text">Коли ти повільно протираєш стіл, складаєш одяг, миєш чашку — це не рутина, а практика присутності. Руки роблять — голова затихає. Дзен-монахи не дарма так старанно підмітають двір. Це не про пил.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Ключове питання -->
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Ключове питання</h2>
+    <p>Коли тримаєш річ у руках, відчиняєш календар, перечитуєш список контактів — зупинись на хвилину й запитай чесно.</p>
+
+    <div class="question-card">
+      <div class="question-label">Запитай себе</div>
+      <div class="question-main">"Що тут зайве — і що це за собою приховує?"</div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Зайве — це не просто мотлох. За ним майже завжди ховається страх. Страх бути без, страх не встигнути, страх виявитись "недостатньою". Коли ти прибираєш річ — ти зустрічаєшся зі страхом. І <em>саме ця зустріч звільняє</em>, а не сам порядок.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Final -->
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Висновок</h2>
+    <div class="final-quote">
+      <div class="final-text">Ти не те, що у тебе є. І не сума справ у календарі. Ти — <strong>простір, який вмістить справжнє</strong>. Звільни його — і побачиш, як багато в тобі місця для життя, якого ти давно хотіла.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>
