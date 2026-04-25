@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Спілкування</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(220,230,255,.92)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.72)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.82);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(200,216,255,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.35);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(26px,4vw,36px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Спілкування</h1>
+  <p class="page-subtitle">Як говорити і бути почутою</p>
+
+  <!-- Hero quote -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Найбільша проблема в комунікації — ілюзія, що вона відбулась"</div>
+      <div class="hero-author">Джордж Бернард Шоу</div>
+    </div>
+    <p>Ми говоримо щодня — і дивуємось, чому нас не чують. Пишемо довгі повідомлення — і відчуваємо порожнечу. Мовчимо поруч із близькими — бо "і так зрозуміло". Спілкування здається простим, доки ти не пробуєш сказати щось важливе. І тоді виявляється: слова — це найтонший інструмент, яким ми володіємо найгірше.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Чому важко говорити про себе -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Чому важко говорити про себе</h2>
+    <p>Розповісти про щось зовнішнє — легко. Розповісти про себе, про свої почуття, про те, що болить — раптом стає неможливо. І це не лінь і не закритість. Це захисні механізми, яким ми навчились ще давно.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">👁️</span>
+        <div class="card-title">Страх осудження</div>
+        <div class="card-text">"Що про мене подумають? А раптом вирішать, що я слабка, дивна, нестабільна?" Мозок моделює чужу реакцію наперед — і часто гіршу, ніж вона буде в реальності. Це еволюційний захист: колись бути відкинутою плем'ям означало смерть. Тепер — просто незручну розмову.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🤏</span>
+        <div class="card-title">"Мої проблеми не такі важливі"</div>
+        <div class="card-text">У когось гірше, у когось реальні біди, а в мене — "та ні, це дрібниці". Це знецінення себе в чистому вигляді. Твої переживання реальні, навіть якщо хтось страждає більше. Біль не змагається — він просто є. І ти маєш право про нього говорити.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🤐</span>
+        <div class="card-title">Звичка мовчати</div>
+        <div class="card-text">Якщо в дитинстві не було безпечно говорити — тебе обривали, висміювали, карали за чесність — психіка вивчила: мовчати безпечніше. Ця звичка залишається навіть тоді, коли оточення вже давно змінилось. Тіло досі очікує удару за щирість.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌫️</span>
+        <div class="card-title">Не можу підібрати слова</div>
+        <div class="card-text">Ти відчуваєш — але не знаєш, як це назвати. "Мені погано", "щось не так", "не знаю, як пояснити". Це не відсутність розуму — це нерозвинений словник емоцій. Його можна тренувати: чим точніше назвеш, тим легше говорити.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Як ми спілкуємось -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Де розмова йде не туди</h2>
+    <p>Навіть коли ми говоримо, комунікація часто ламається. Слова вилітають — а по той бік чується зовсім інше. Ось кілька типових пасток, у які потрапляють майже всі.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🎭</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Говоримо одне — маємо на увазі інше</div>
+          <div class="card-text">"Та нічого" = "мені боляче, але я не скажу". "Як хочеш" = "я насправді хочу, щоб ти вибрав сам, але так, як мені подобається". Ми натяками захищаємось від відмови — а потім ображаємось, що нас не розгадали. Інша людина не телепат. Якщо не сказано — не існує.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🐍</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Пасивна агресія</div>
+          <div class="card-text">Саркастичний коментар, "забула" відповісти, холодний тон, "я не ображалась" із крижаним обличчям. Це злість, яку заборонено висловити прямо — і яка виходить боком. Це не характер, це звичка. Виражена злість — чесніша й менш руйнівна, ніж замаскована.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🧊</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Мовчання як покарання</div>
+          <div class="card-text">"Я не буду говорити, поки він сам не зрозуміє". Звучить як захист — працює як зброя. Мовчання не вирішує проблему, воно заморожує її. Людина по той бік ходить по мінному полі й все одно не знає, на що наступила. Мовчати можна. Карати мовчанням — форма агресії.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">📖</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Читаємо між рядків того, чого там нема</div>
+          <div class="card-text">"Він не відповів — значить, не любить". "Вона сухо написала — значить, злиться". Мозок заповнює пробіли найгіршими гіпотезами. У 90% випадків причина нейтральна: зайнята, втома, телефон на зарядці. Перш ніж робити висновок — спитай. Це зекономить тобі тижні нервів.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Близькість і довіра -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Близькість будується словами</h2>
+    <p>Близькість — не про кількість часу разом, а про якість сказаного. Можна прожити з людиною десять років і залишатись чужими. Можна розкритись незнайомцю за вечір. Різниця — не в людях, а в тому, що саме говориться.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">📢</span>
+        <div class="card-title">"Розповісти" ≠ "поділитися"</div>
+        <div class="card-text">Розповісти — це факти: де була, що робила, що сказали. Поділитися — це вразливість: що відчувала, чого боялась, за що соромно. Перше — звіт. Друге — довіра. Більшість стосунків тримаються на звітах і тонуть у відсутності поділеного.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔓</span>
+        <div class="card-title">Вразливість — це сила</div>
+        <div class="card-text">Дослідниця Брене Браун показала: саме вразливість створює близькість, мужність і зв'язок. Сказати "я боюсь", "я не впораюсь", "мені потрібна ти" — не слабкість. Це найсміливіший хід, який можна зробити. І саме він відкриває двері, які роками стояли зачиненими.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌱</span>
+        <div class="card-title">Довіра росте поступово</div>
+        <div class="card-text">Не одним великим кроком, а сотнями маленьких. Розповіла щось особисте — не зрадили. Попросила про допомогу — допомогли. Показала слабкість — не висміяли. Так цегла за цеглою будується те, що потім називають близькістю.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💔</span>
+        <div class="card-title">Руйнується за секунду</div>
+        <div class="card-text">Одна зрада, один різкий коментар у вразливий момент, одне видане комусь секретне — і роки будування падають. Довіру не можна "полагодити" — її можна тільки почати будувати знову, з нуля. Тому її варто берегти — свою й чужу.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Складні ситуації -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Складні розмови</h2>
+    <p>Деякі розмови важкі не через тему, а через те, як мало нас вчили з ними обходитись. Сказати "ні", попросити про допомогу, висловити образу без скандалу — це навички, а не риси характеру. Їх можна тренувати.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🕊️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Коли ображена — але не хочеш сварки</div>
+          <div class="card-text">Формула проста, хоч і не легка: "Коли [конкретна дія], я почуваюсь [почуття], бо для мене важливо [цінність]". Без "ти завжди", без діагнозів. Це не звинувачення — це запрошення до діалогу. І дивним чином, саме така мова відкриває іншу людину замість того, щоб її закрити.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🤝</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Як просити про допомогу</div>
+          <div class="card-text">Якщо звикла все робити сама — прохання здається капітуляцією. Насправді це навик довіри: визнати, що ти людина, і тобі теж треба. Чим конкретніша просьба — тим легше відповісти. Не "підтримай мене" — а "посидь зі мною 20 хвилин", "скажи, що я не з'їхала з глузду". Ясність — подарунок обом.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🚫</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Сказати "ні" без провини</div>
+          <div class="card-text">"Ні" — повне речення. Воно не потребує виправдань, 15 причин і 3 вибачень. "Дякую, що спитала, але не зможу". Крапка. Провина за відмову часто не твоя — вона прийшла з дитинства, де "хороші дівчатка завжди погоджувались". Ти вже не дитина. І твоє "ні" вартує стільки ж, скільки твоє "так".</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🔄</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Коли тебе не чують</div>
+          <div class="card-text">Можна повторити тричі, сформулювати інакше, перевірити, чи все зрозуміло. Але якщо після цього людина досі "не чує" — це вже її вибір, а не твоя вина. Ти не мусиш ламатись, щоб тебе нарешті почули. Деякі вуха закриті — і це не про тебе.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Стилі спілкування -->
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Як ти спілкуєшся</h2>
+    <p>У кожного є свій стиль — зазвичай сформований у дитинстві й автоматичний. Його не видно зсередини, але він визначає більшість наших проблем у стосунках. Знання свого стилю — це половина шляху до змін.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🫥</span>
+        <div class="card-title">Пасивний</div>
+        <div class="card-text">"Як скажеш", "мені все одно", "не хочу турбувати". Такі люди уникають конфліктів ціною власних потреб. Їх зручно любити, але важко знати по-справжньому — бо вони ховають справжню себе під згодою.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🗯️</span>
+        <div class="card-title">Агресивний</div>
+        <div class="card-text">Голосно, різко, "я знаю, як правильно". Такий стиль нібито захищає — але насправді ранить обох. За агресією часто ховається страх бути непочутою: "якщо я говоритиму тихо — мене проігнорують".</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚖️</span>
+        <div class="card-title">Асертивний</div>
+        <div class="card-text">Прямо, чесно, з повагою до себе й до іншого. "Я хочу", "мені важливо", "я не можу". Без вибачень і без агресії. Це не характер — це навик, якого можна навчитись. І найздоровіший зі стилів, якщо мета — реальні стосунки, а не гра в ролі.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔋</span>
+        <div class="card-title">Інтроверсія і виснаження</div>
+        <div class="card-text">Якщо після спілкування ти виснажена — це не проблема, це особливість. Інтроверт відновлюється в самоті, не в натовпі. Тобі не треба "переломити себе". Треба дозувати: менше людей, більше глибини, право на тишу після.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Ключове питання -->
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Ключове питання</h2>
+    <p>Коли розмова буксує, або коли хочеш сказати, але не знаєш як — зупинись на секунду й спитай себе.</p>
+
+    <div class="question-card">
+      <div class="question-label">Запитай себе</div>
+      <div class="question-main">"Що я хочу, щоб людина зрозуміла насправді?"</div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Не "що сказати, щоб вона мене пожаліла". Не "як довести, що я права". А саме — <em>що в моєму серці, що я намагаюсь донести?</em> Коли знаєш відповідь — слова знаходяться самі. І розмова перестає бути боєм — стає мостом.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Final -->
+  <div class="section" style="animation-delay:2s">
+    <h2 class="section-title">Висновок</h2>
+    <div class="final-quote">
+      <div class="final-text">Тебе не завжди зрозуміють — і це ок. Головне — щоб ти сама себе чула. <strong>Говорити про себе — не слабкість, а мужність</strong>. Мовчання зберігає мир на поверхні й руйнує всередині. Краще незграбна чесність, ніж красиве мовчання, від якого самотньо. Твій голос — твій. І ти маєш право його мати.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Starlight — Цифровий детокс</title>
+<title>Starlight — Телефон і соцмережі</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -70,6 +70,12 @@ canvas{position:fixed;inset:0;z-index:0}
 .question-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.35);margin-bottom:18px}
 .question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(26px,4vw,36px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
 
+.loop{display:flex;justify-content:center;gap:18px;flex-wrap:wrap;margin-top:24px}
+.loop-node{background:rgba(200,216,255,.08);border:1px solid rgba(200,216,255,.2);border-radius:14px;padding:18px 26px;text-align:center;min-width:150px;position:relative}
+.loop-node .n-label{font-size:9px;font-weight:300;letter-spacing:.4em;text-transform:uppercase;color:rgba(200,216,255,.45);margin-bottom:6px}
+.loop-node .n-text{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:400;font-size:18px;color:rgba(220,230,255,.95)}
+.loop-arrow{font-size:20px;color:rgba(212,175,110,.6);display:flex;align-items:center}
+
 .final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
 .final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
 .final-quote::before{top:0}
@@ -81,6 +87,8 @@ canvas{position:fixed;inset:0;z-index:0}
 
 .shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
 .shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+
+@media(max-width:520px){.loop-arrow{transform:rotate(90deg)}}
 </style>
 </head>
 <body>
@@ -93,16 +101,16 @@ canvas{position:fixed;inset:0;z-index:0}
     <span class="page-logo">Starlight</span>
   </div>
 
-  <h1 class="page-title">Цифровий детокс</h1>
-  <p class="page-subtitle">Коли телефон керує тобою</p>
+  <h1 class="page-title">Телефон і соцмережі</h1>
+  <p class="page-subtitle">Коли ти керуєш, а не тебе</p>
 
   <!-- Hero quote -->
   <div class="section" style="animation-delay:.9s">
     <div class="hero-quote">
-      <div class="hero-text">"Твоя увага перетворена на товар — і її продають тому, хто більше заплатить"</div>
+      <div class="hero-text">"Увага — це валюта XXI століття. І хтось весь час намагається її у тебе забрати"</div>
       <div class="hero-author">Трістан Гарріс</div>
     </div>
-    <p>Телефон — не ворог. Ворог — це дизайн, за яким він зроблений. За кожним екраном сидять найкращі у світі інженери уваги, і їхня задача — утримати тебе тут якомога довше. Не тому, що це корисно для тебе. А тому, що кожна твоя секунда — це гроші для когось іншого. Детокс — не про відмову від технологій. Це про повернення собі авторства над власною увагою.</p>
+    <p>Якщо після години в телефоні ти відчуваєш себе гірше, а не краще — це не ти "знов не стрималась". Це дизайн. Додатки створені так, щоб тебе втримати. Ти не воюєш зі своєю лінню — ти воюєш із армією інженерів, які десятиліттями вдосконалюють гачки. Добра новина: коли бачиш систему — її вже можна обійти.</p>
   </div>
 
   <div class="divider">
@@ -111,31 +119,31 @@ canvas{position:fixed;inset:0;z-index:0}
     <div class="div-dot"></div>
   </div>
 
-  <!-- Що соцмережі роблять із мозком -->
+  <!-- Як це працює в мозку -->
   <div class="section" style="animation-delay:1.1s">
-    <h2 class="section-title">Що соцмережі роблять із мозком</h2>
-    <p>Ти відкриваєш застосунок "на хвилинку" — а виринаєш через годину з відчуттям порожнечі. Це не слабка воля. Це нейробіологія, яку навмисно використали проти тебе.</p>
+    <h2 class="section-title">Як це працює в мозку</h2>
+    <p>Соцмережі не випадково "затягують". Вони побудовані на тих самих принципах, що й гральні автомати — бо використовують ту саму біологію. Ось чому рука тягнеться до телефона сама.</p>
 
     <div class="cards">
       <div class="card">
         <span class="card-icon">🎰</span>
-        <div class="card-title">Дофамінові петлі</div>
-        <div class="card-text">Лайк, коментар, нове повідомлення — кожен такий сигнал вивільняє дофамін. Мозок вчиться: "тут нагорода". І починає хотіти ще. Проблема в тому, що нагорода непередбачувана — як в ігровому автоматі. Саме непередбачуваність створює найсильнішу залежність.</div>
+        <div class="card-title">Дофамінова петля</div>
+        <div class="card-text">Дофамін виділяється не від нагороди, а від передчуття нагороди. Не знати, чи буде щось цікаве у стрічці — і є наркотик. Якщо знаєш результат — нецікаво. Саме тому "невизначена винагорода" тримає сильніше за гарантовану.</div>
       </div>
       <div class="card">
-        <span class="card-icon">📉</span>
-        <div class="card-title">Порівняння і тривога</div>
-        <div class="card-text">Ти дивишся ретушовані фрагменти чужого життя — і порівнюєш їх зі своїм "зсередини". Це нечесне порівняння завжди програшне. Дослідження показують: 30 хвилин у стрічці — і рівень тривоги та незадоволеності собою вимірно зростає.</div>
+        <span class="card-icon">♾️</span>
+        <div class="card-title">Нескінченна стрічка</div>
+        <div class="card-text">Її винайшов інженер Aza Raskin — і публічно шкодував про це. Без природного "кінця" (як у старій газеті) мозок ніколи не отримує сигналу зупинитись. Дизайн спеціально прибирає точку, де можна було б сказати: "все, досить".</div>
       </div>
       <div class="card">
-        <span class="card-icon">⚡</span>
-        <div class="card-title">FOMO як постійний фон</div>
-        <div class="card-text">Fear Of Missing Out — страх щось пропустити. Мозок тримається в стані гіпернастороженості: "а раптом там зараз щось важливе?". Це хронічний мікрострес, який виснажує не гірше за великі події. Ти не відпочиваєш — навіть коли лежиш.</div>
+        <span class="card-icon">💓</span>
+        <div class="card-title">Лайки як мікродоза</div>
+        <div class="card-text">Кожне сповіщення — маленький спалах дофаміну. Мозок не відрізняє "лайк" від будь-якої іншої соціальної нагороди. За тиждень формується рефлекс: нудно / тривожно → перевірити телефон. Як собака Павлова, тільки замість дзвоника — вібрація.</div>
       </div>
       <div class="card">
-        <span class="card-icon">🧩</span>
-        <div class="card-title">Фрагментація уваги</div>
-        <div class="card-text">Кожні 40 секунд — нове відео, нова думка, новий стимул. Мозок відвикає тримати довгу лінію — читати, слухати, думати глибоко. Це не "у мене СДУГ". Це тренована втрата здатності до концентрації. І її можна відновити.</div>
+        <span class="card-icon">🪝</span>
+        <div class="card-title">Психологія проти тебе</div>
+        <div class="card-text">Pull-to-refresh повторює жест гральних автоматів. Червоні бейджі експлуатують реакцію на загрозу. Stories з таймером — страх пропустити. Це не параноя — це задокументовані техніки, за які платять UX-дослідникам.</div>
       </div>
     </div>
   </div>
@@ -146,38 +154,52 @@ canvas{position:fixed;inset:0;z-index:0}
     <div class="div-dot"></div>
   </div>
 
-  <!-- Дизайн залежності -->
+  <!-- Що відбувається з нами -->
   <div class="section" style="animation-delay:1.3s">
-    <h2 class="section-title">Дизайн залежності</h2>
-    <p>Тебе не "не вистачає сили волі". Тебе перемагає команда з сотень людей, які роками вивчали, як саме твій мозок можна хакнути. Це нечесний бій. Побачити його — перший крок, щоб вийти.</p>
+    <h2 class="section-title">Що відбувається з нами</h2>
+    <p>Ти це відчуваєш тілом — просто не завжди зв'язуєш із телефоном. Тривога без причини, важкість у голові, розсіяність. Часто джерело — в кишені.</p>
 
     <div class="phrases">
       <div class="phrase">
-        <div class="phrase-icon">♾️</div>
+        <div class="phrase-icon">😰</div>
         <div class="phrase-text">
-          <div class="card-title" style="margin-bottom:8px">Нескінченна стрічка</div>
-          <div class="card-text">Раніше газета закінчувалась — і ти вставала. Тепер стрічка не закінчується ніколи. Цей механізм (infinite scroll) придумав Аза Раскін, і він публічно вибачився за нього. Без природної точки зупинки мозок не отримує сигналу "досить".</div>
+          <div class="card-title" style="margin-bottom:8px">Тривога від порівняння</div>
+          <div class="card-text">Ти бачиш 50 "найкращих моментів" 50 різних людей і порівнюєш це зі своїм звичайним вівторком. Мозок не фільтрує — він просто вбирає. Після години стрічки — відчуття, що твоє життя тьмяне. Це не правда. Це статистичний трюк.</div>
         </div>
       </div>
       <div class="phrase">
-        <div class="phrase-icon">🎰</div>
+        <div class="phrase-icon">🌀</div>
         <div class="phrase-text">
-          <div class="card-title" style="margin-bottom:8px">Потягни, щоб оновити</div>
-          <div class="card-text">Цей жест скопійований з одноруких бандитів. Ти смикаєш — чекаєш — отримуєш нагороду (або ні). Це класичний Б.Ф. Скіннер: змінний режим підкріплення формує найстійкішу залежність у тварин і людей однаково.</div>
+          <div class="card-title" style="margin-bottom:8px">FOMO — страх пропустити</div>
+          <div class="card-text">Fear Of Missing Out. Відчуття, що десь зараз відбувається щось важливе без тебе. Соцмережі показують це у концентрованому вигляді: усі веселяться, подорожують, досягають. Парадокс — чим більше дивишся, тим сильніше "пропускаєш" власне життя.</div>
         </div>
       </div>
       <div class="phrase">
-        <div class="phrase-icon">🔔</div>
+        <div class="phrase-icon">🌙</div>
         <div class="phrase-text">
-          <div class="card-title" style="margin-bottom:8px">Сповіщення як укол дофаміну</div>
-          <div class="card-text">Червона цятка, вібрація, звук — це не інформація, це гачок. Мозок реагує так само, як на сигнал можливої винагороди в дикій природі. За день таких уколів — сотні. До вечора дофамінова система виснажена, і реальне життя здається прісним.</div>
+          <div class="card-title" style="margin-bottom:8px">Телефон перед сном руйнує сон</div>
+          <div class="card-text">Синє світло гальмує вироблення мелатоніну — гормону сну. Плюс емоційні стимули (новини, суперечки, відео) активують нервову систему. Лягаєш о 23:00 — засинаєш о 01:00 — прокидаєшся розбитою. І тіло звинувачуєш, хоча винен екран.</div>
         </div>
       </div>
       <div class="phrase">
-        <div class="phrase-icon">🪞</div>
+        <div class="phrase-icon">🧩</div>
         <div class="phrase-text">
-          <div class="card-title" style="margin-bottom:8px">Алгоритм знає тебе краще</div>
-          <div class="card-text">Після ~300 твоїх реакцій алгоритм TikTok або Instagram передбачає твої смаки точніше, ніж твій найближчий партнер. Він показує те, що зачепить твої тригери. Це не зловживання персональними даними — це зловживання твоєю психікою.</div>
+          <div class="card-title" style="margin-bottom:8px">Кліпове мислення</div>
+          <div class="card-text">Коли мозок звикає до 15-секундних відео, довга книга здається нестерпною. Це не "ти дурна" — це справжня зміна у здатності утримувати увагу. Добра новина: оборотна. Мозок пластичний. Але потрібен час без короткого контенту.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">📳</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Фантомні вібрації</div>
+          <div class="card-text">Відчуваєш, що телефон вібрує — а він ні. Це не дивина — це ознака, що нервова система в режимі постійного очікування. Мозок став надчутливим до будь-якого сигналу, бо очікує нагороди. Ознака втоми від сповіщень.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🫥</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Чому після години в телефоні гірше</div>
+          <div class="card-text">Ти споживала емоції інших людей, рекламу, обурення, порівняння — і майже нічого не віддавала. Мозок виснажений, нервова система перегріта, а відчуття — нібито нічого й не зробила. Бо реально не зробила — лише поглинала.</div>
         </div>
       </div>
     </div>
@@ -189,31 +211,74 @@ canvas{position:fixed;inset:0;z-index:0}
     <div class="div-dot"></div>
   </div>
 
-  <!-- Правила для себе -->
+  <!-- Петля звички -->
   <div class="section" style="animation-delay:1.5s">
-    <h2 class="section-title">Правила для себе</h2>
-    <p>Сила волі — вичерпний ресурс. Кожне "треба втриматись" виснажує її. Розумніше не боротись із собою, а змінити умови так, щоб спокуса не виникала. Дизайн середовища сильніший за характер.</p>
+    <h2 class="section-title">Петля, яка тебе тримає</h2>
+    <p>Рука тягнеться до телефона не від "слабкості", а за чіткою схемою. Побачиш її — почнеш помічати момент, де можна вийти.</p>
+
+    <div class="loop">
+      <div class="loop-node">
+        <div class="n-label">1 · Тригер</div>
+        <div class="n-text">Нудно / тривожно</div>
+      </div>
+      <div class="loop-arrow">→</div>
+      <div class="loop-node">
+        <div class="n-label">2 · Дія</div>
+        <div class="n-text">Відкриваєш стрічку</div>
+      </div>
+      <div class="loop-arrow">→</div>
+      <div class="loop-node">
+        <div class="n-label">3 · Нагорода</div>
+        <div class="n-text">Відволікання</div>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top:32px">
+      <p>Секрет не у "більшій силі волі". Секрет у <em>перерізанні петлі</em>. Якщо помітиш себе між тригером і дією — хоч на секунду — можеш вибрати щось інше. Не обов'язково "корисне". Просто інше: склянка води, глибокий вдих, подивитись у вікно.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що з цим робити -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Що з цим робити</h2>
+    <p>Повна відмова — майже завжди провал. Мозок не любить різких заборон. Працюють маленькі налаштування, які роблять дію <em>трохи складнішою</em>. Пара секунд тертя — і рука не тягнеться на автопілоті.</p>
 
     <div class="cards">
       <div class="card">
-        <span class="card-icon">🌅</span>
-        <div class="card-title">Перші 60 хвилин без екрана</div>
-        <div class="card-text">До кави, до новин, до повідомлень — побудь із собою. Перша година задає тон усьому дню. Якщо мозок одразу потрапляє в чужу стрічку, він втрачає шанс почути власні думки.</div>
-      </div>
-      <div class="card">
-        <span class="card-icon">🌙</span>
-        <div class="card-title">Сплячий режим із 22:00</div>
-        <div class="card-text">Телефон іде спати раніше за тебе. Фізично в іншу кімнату, не поряд із ліжком. Будильник купи звичайний. Це одна зміна — і якість сну, ранку та настрою повертається.</div>
+        <span class="card-icon">📊</span>
+        <div class="card-title">Спочатку — цифра</div>
+        <div class="card-text">Увімкни Screen Time або Digital Wellbeing і подивись чесно: скільки годин на день. Без засуджень — просто факт. Часто одна цифра робить більше за десять статей. Побачиш "5 годин в TikTok" — і щось само зрушиться.</div>
       </div>
       <div class="card">
         <span class="card-icon">🔕</span>
-        <div class="card-title">Сповіщення тільки від живих людей</div>
-        <div class="card-text">Вимкни все: додатки, маркетплейси, ігри, новини. Залиш тільки дзвінки й месенджери від близьких. Ти побачиш, наскільки тихіше стає в голові. Ти переходиш із режиму "реактивна" в режим "власниця часу".</div>
+        <div class="card-title">Вимкни сповіщення</div>
+        <div class="card-text">Усі. Окрім дзвінків і месенджерів від близьких. Кожне сповіщення — запрошення перервати життя. Ти нічого важливого не пропустиш — подивишся, коли сама захочеш. А тривога знизиться протягом тижня.</div>
       </div>
       <div class="card">
         <span class="card-icon">🎨</span>
-        <div class="card-title">Чорно-білий екран</div>
-        <div class="card-text">У налаштуваннях доступності — grayscale mode. Без яскравих кольорів мозок перестає так сильно реагувати на іконки й картинки. Застосунок більше не "світиться" — і тримати його в руках стає нудно. Саме так, як і має бути.</div>
+        <div class="card-title">Зроби екран нудним</div>
+        <div class="card-text">Чорно-білий режим (Grayscale) прибирає половину принади миттєво. Мозок любить кольори — без них стрічка справді менш цікава. Можна вмикати на вечір: іконка Accessibility Shortcut тричі натиснути.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📦</span>
+        <div class="card-title">Прибери з першого екрана</div>
+        <div class="card-text">Instagram, TikTok, X — у папку на останньому екрані, або взагалі вийди і заходь через браузер. Відкривати через 3 жести замість 1 — і половина "автоматичних заходів" просто не відбувається.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌑</span>
+        <div class="card-title">Спальня — без телефона</div>
+        <div class="card-text">Заряджай його на кухні. Купи звичайний будильник. Це одна зміна робить більше, ніж десять "спроб лягати раніше". І ранок починається не зі стрічки, а з тебе самої.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧘</span>
+        <div class="card-title">Детокс — м'яко</div>
+        <div class="card-text">Не "ніколи більше", а "неділя без соцмереж". Або година після пробудження. Або 24 години раз на місяць. Ціль — на цікавість: що я відчуваю без нього? Де лізуть думки? Без суворих правил, як експеримент.</div>
       </div>
     </div>
   </div>
@@ -224,38 +289,38 @@ canvas{position:fixed;inset:0;z-index:0}
     <div class="div-dot"></div>
   </div>
 
-  <!-- Чим заповнити порожнечу -->
-  <div class="section" style="animation-delay:1.7s">
-    <h2 class="section-title">Чим заповнити порожнечу</h2>
-    <p>Коли ти забираєш звичну стимуляцію — лишається тиша. Вона може здаватись нестерпною спочатку. Це ломка, а не характер. За 3-7 днів мозок перекалібровується — і звичайні речі знову стають смачними.</p>
+  <!-- Здорові стосунки з телефоном -->
+  <div class="section" style="animation-delay:1.85s">
+    <h2 class="section-title">Здорові стосунки з телефоном</h2>
+    <p>Ціль — не "менше телефона". Ціль — щоб він служив тобі, а не ти йому. Коли <em>ти</em> вирішуєш, коли його взяти і коли відкласти — це вже інше життя.</p>
 
     <div class="phrases">
       <div class="phrase">
-        <div class="phrase-icon">📖</div>
+        <div class="phrase-icon">🎯</div>
         <div class="phrase-text">
-          <div class="card-title" style="margin-bottom:8px">Паперова книга</div>
-          <div class="card-text">Сторінки не рухаються. Світло не блимає. Немає куди "свайпнути". Мозок спочатку протестує — а потім згадує, як це: бути у глибокому контакті з однією думкою довше хвилини. Це відновлення затопленої мʼязи уваги.</div>
+          <div class="card-title" style="margin-bottom:8px">Навіщо я зараз беру телефон?</div>
+          <div class="card-text">Запитай себе перед тим, як розблокувати. "Хочу написати подрузі" — беру, пишу, кладу. "Нудно" — стоп. Нудьга — не помилка, а простір для ідей. Саме там народжуються думки, яких не буває під час скролінгу.</div>
         </div>
       </div>
       <div class="phrase">
-        <div class="phrase-icon">🌿</div>
+        <div class="phrase-icon">🪟</div>
         <div class="phrase-text">
-          <div class="card-title" style="margin-bottom:8px">Прогулянка без телефону</div>
-          <div class="card-text">Залиш його вдома. 30 хвилин тільки ти, вулиця, дерева, чужі обличчя. Спочатку буде незручно. Потім — тихо. Потім — зʼявляться думки, яких не чула місяцями. Нудьга — це двері до творчості, а не проблема.</div>
+          <div class="card-title" style="margin-bottom:8px">Що робити замість скролінгу</div>
+          <div class="card-text">Не обов'язково "щось корисне". Подивитись у вікно. Потягнутись. Випити води. Послухати один трек без картинки. Подзвонити мамі. Помити одну чашку. Маленькі реальні дії — проти нескінченної віртуальної.</div>
         </div>
       </div>
       <div class="phrase">
-        <div class="phrase-icon">☕</div>
+        <div class="phrase-icon">👥</div>
         <div class="phrase-text">
-          <div class="card-title" style="margin-bottom:8px">Розмова наживо</div>
-          <div class="card-text">Кава з подругою, без того, щоб хтось клав телефон на стіл екраном вгору. Жодне повідомлення не замінить того, що відбувається, коли людина дивиться тобі в очі й слухає. Присутність — це валюта, яку не можна переслати.</div>
+          <div class="card-title" style="margin-bottom:8px">Присутність поряд із людьми</div>
+          <div class="card-text">Телефон на столі — навіть вимкнений — знижує якість розмови. Мозок частково тримає його в увазі. Перед зустріччю — поклади у сумку, переверни екраном донизу, переведи в режим "не турбувати". Подаруй людині повну себе.</div>
         </div>
       </div>
       <div class="phrase">
-        <div class="phrase-icon">🌌</div>
+        <div class="phrase-icon">🌱</div>
         <div class="phrase-text">
-          <div class="card-title" style="margin-bottom:8px">Нудьга як пауза</div>
-          <div class="card-text">Стоячи в черзі — не діставай телефон. Їдучи в метро — не діставай. Чекаючи на каву — не діставай. У цих порожніх хвилинах мозок робить свою невидиму роботу: звʼязує ідеї, переварює емоції. Без них ти не маєш простору бути собою.</div>
+          <div class="card-title" style="margin-bottom:8px">Усвідомлене використання</div>
+          <div class="card-text">Не "ніколи", а "з наміром". Зайшла в Instagram побачити сторіс подруги — вийшла. Без двох годин "заодно". Це тренування як м'яза: спочатку незручно, потім стає нормою. Ти — знову за кермом.</div>
         </div>
       </div>
     </div>
@@ -268,17 +333,17 @@ canvas{position:fixed;inset:0;z-index:0}
   </div>
 
   <!-- Ключове питання -->
-  <div class="section" style="animation-delay:1.8s">
+  <div class="section" style="animation-delay:1.9s">
     <h2 class="section-title">Ключове питання</h2>
-    <p>Перш ніж наступного разу взяти телефон у руки — зроби одну паузу на секунду й запитай себе чесно.</p>
+    <p>Замість сварити себе за годину в стрічці — спитай м'якше. Часто за імпульсом до телефона стоїть щось зовсім інше: втома, самотність, тривога, нудьга. І телефон — лише знеболювальне.</p>
 
     <div class="question-card">
       <div class="question-label">Запитай себе</div>
-      <div class="question-main">"Хто тут господар — я чи телефон?"</div>
+      <div class="question-main">"Від чого я зараз відволікаюсь?"</div>
     </div>
 
     <div class="highlight" style="margin-top:24px">
-      <p>Якщо ти не можеш пробути 10 хвилин без екрана — це не ти ледача. Це означає, що <em>хтось інший зараз сильніший за твої бажання</em>. І цього "когось" можна посунути. Не одразу, не ідеально, але можна.</p>
+      <p>Майже завжди під "хочу в телефон" є <em>щось справжнє</em>: тіло втомлене й просить пауз, душа самотня і хоче контакту, є емоція, яку не хочеться відчувати. Телефон — найшвидший спосіб не бути з цим. Помітивши це — уже маєш вибір: зникнути в стрічці чи побути з собою.</p>
     </div>
   </div>
 
@@ -289,10 +354,10 @@ canvas{position:fixed;inset:0;z-index:0}
   </div>
 
   <!-- Final -->
-  <div class="section" style="animation-delay:1.9s">
+  <div class="section" style="animation-delay:1.95s">
     <h2 class="section-title">Висновок</h2>
     <div class="final-quote">
-      <div class="final-text">Твоя увага — це твоя валюта. Не менш цінна, ніж час, бо саме нею ти платиш за все, що стає твоїм життям. <strong>Витрачай її мудро</strong> — там, де ти сама обрала, а не там, де тебе спіймали.</div>
+      <div class="final-text">Телефон — <strong>інструмент</strong>, а не продовження руки. Ти можеш відкласти його — і світ не розвалиться. Там, за екраном, тебе чекає твоє справжнє життя. Тихе, не таке глянцеве — і твоє.</div>
     </div>
   </div>
 

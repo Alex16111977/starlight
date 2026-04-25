@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Підтримка</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(220,230,255,.92)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.72)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.82);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(200,216,255,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.35);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(26px,4vw,36px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+/* Bad vs Good phrases — comparison */
+.compare{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;margin-top:24px}
+.compare-col{background:rgba(200,216,255,.05);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:24px 24px}
+.compare-col.bad{border-color:rgba(220,120,120,.22);background:rgba(220,120,120,.04)}
+.compare-col.good{border-color:rgba(150,200,160,.22);background:rgba(150,200,160,.04)}
+.compare-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;margin-bottom:16px}
+.compare-col.bad .compare-label{color:rgba(220,160,160,.7)}
+.compare-col.good .compare-label{color:rgba(180,220,190,.7)}
+.compare-list{list-style:none;display:flex;flex-direction:column;gap:10px}
+.compare-list li{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;line-height:1.5;color:rgba(220,230,255,.88);padding-left:20px;position:relative}
+.compare-col.bad .compare-list li::before{content:'✕';position:absolute;left:0;top:0;color:rgba(220,140,140,.8);font-style:normal;font-weight:300}
+.compare-col.good .compare-list li::before{content:'•';position:absolute;left:0;top:-4px;color:rgba(180,220,190,.8);font-style:normal;font-size:22px}
+
+/* Emergency note */
+.emergency{background:linear-gradient(135deg,rgba(220,140,140,.08),rgba(220,180,120,.05));border:1px solid rgba(220,180,160,.25);border-radius:20px;padding:32px 32px;margin-top:24px;position:relative;overflow:hidden}
+.emergency::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(220,160,140,.5),transparent)}
+.emergency-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(220,180,160,.75);margin-bottom:14px;display:flex;align-items:center;gap:12px}
+.emergency-label::after{content:'';flex:1;height:1px;background:linear-gradient(to right,rgba(220,180,160,.3),transparent)}
+.emergency p{font-size:13px;font-weight:300;line-height:1.85;color:rgba(220,210,200,.85);margin-bottom:12px}
+.emergency strong{color:rgba(240,220,200,1);font-weight:400}
+.emergency-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:22px;color:rgba(240,200,170,.95);margin-right:12px}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Підтримка</h1>
+  <p class="page-subtitle">Як бути поруч, коли комусь погано</p>
+
+  <!-- Hero quote -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Інколи найбільше, що ми можемо зробити, — це бути поруч. І цього достатньо"</div>
+      <div class="hero-author">Генрі Нувен</div>
+    </div>
+    <p>Ніхто не вчив нас підтримувати. У школі — математика, але не "що казати подрузі, яка щойно втратила маму". І коли доходить до справи — ми замовкаємо, починаємо говорити дурниці або зникаємо зовсім. Не тому, що байдуже. А тому, що страшно зробити гірше. Ця сторінка — про те, як бути поруч так, щоб справді допомагало.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Чому це важко -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Чому це так важко</h2>
+    <p>Коли поруч комусь боляче — наша власна нервова система реагує. Ми відчуваємо дискомфорт і несвідомо шукаємо, як його прибрати. І часто "виправити людину" — це спроба виправити саме себе.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🌀</span>
+        <div class="card-title">Чужий біль — наш біль</div>
+        <div class="card-text">Дзеркальні нейрони мозку фактично "дзеркалять" емоції поруч. Ти справді відчуваєш уламок чужого страждання. Тому поруч із плачучим хочеться швидше, щоб він перестав — не для нього, а для себе.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔧</span>
+        <div class="card-title">Режим "вирішити"</div>
+        <div class="card-text">Мозок любить задачі. Побачив проблему — шукає рішення. Але біль — не задача. Його не треба "вирішувати", з ним треба бути. Люди часто хочуть не поради, а свідка: щоб хтось просто побачив, що їм погано.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">😶</span>
+        <div class="card-title">Страх зробити гірше</div>
+        <div class="card-text">"А якщо скажу не те? А якщо розбережу?" Через цей страх багато людей не пишуть зовсім. Але мовчання ранить сильніше за незграбні слова. Майже будь-яке "я з тобою" краще за повну тишу.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎭</span>
+        <div class="card-title">Власна тривога заважає</div>
+        <div class="card-text">Якщо ти сама не в ресурсі — підтримувати важко. Ти починаєш рятувати, бо не витримуєш. Або уникаєш, бо не маєш сил. Своя стійкість — основа для чужої.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що НЕ допомагає -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Що НЕ допомагає</h2>
+    <p>Часто саме "правильні" слова ранять найбільше. Вони сказані з добрих намірів — але несуть тихе повідомлення: "не почувайся так, мені незручно". Ось фрази, які звучать добре — але зазвичай закривають людину, а не відкривають.</p>
+
+    <div class="compare">
+      <div class="compare-col bad">
+        <div class="compare-label">Замість цього</div>
+        <ul class="compare-list">
+          <li>"Все буде добре"</li>
+          <li>"Інші живуть гірше"</li>
+          <li>"Я знаю, як ти почуваєшся"</li>
+          <li>"Ти мусиш бути сильною"</li>
+          <li>"Не думай про це"</li>
+          <li>"Час усе лікує"</li>
+          <li>"Усе не так і страшно"</li>
+          <li>"А от у мене була подібна ситуація…"</li>
+        </ul>
+      </div>
+      <div class="compare-col good">
+        <div class="compare-label">Краще так</div>
+        <ul class="compare-list">
+          <li>"Це справді складно. Я з тобою"</li>
+          <li>"Тобі зараз боляче. Це має сенс"</li>
+          <li>"Я не знаю, як це — але хочу зрозуміти"</li>
+          <li>"Ти не мусиш триматись при мені"</li>
+          <li>"Розкажеш, якщо захочеш. Я слухаю"</li>
+          <li>"Скільки треба часу — стільки можна"</li>
+          <li>"Це справжня причина так почуватись"</li>
+          <li>"Розкажи більше. Що саме сталось?"</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Спільна риса "поганих" фраз — вони <em>закривають</em> тему й заспокоюють того, хто говорить, а не того, кому погано. "Хороші" — відкривають простір, де можна бути справжнім без прикрас.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що допомагає -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Що реально допомагає</h2>
+    <p>Хороша новина — підтримувати не складно. Складно лише змиритись, що ти не мусиш нічого "виправити". Твоя присутність — це вже 80% допомоги. Решта — просто не заважати.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🫂</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Просто бути поруч</div>
+          <div class="card-text">Іноді людині не потрібні слова. Посидіти разом. Зварити чай. Подивитись фільм мовчки. Тиша поруч із кимось, хто не тисне, — зцілює. Ти — не "група підтримки", ти жива людина, яка не йде геть.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🕯️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">"Я тут. Я чую тебе"</div>
+          <div class="card-text">Найпростіші слова часто найсильніші. Не намагайся звучати мудро. "Я з тобою", "Я тут", "Розкажи, якщо хочеш" — цього достатньо. Людина не чекає літературного шедевра. Вона чекає сигналу, що не сама.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">❓</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Спитай, що треба</div>
+          <div class="card-text">"Тобі зараз краще побути одній чи хочеш, щоб я прийшла?" "Хочеш, щоб я слухала, чи щоб допомогла подумати?" Людина сама знає, що їй потрібно — просто рідко хтось питає. Не вирішуй за неї.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🌾</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Не зникай після першого разу</div>
+          <div class="card-text">Підтримка — не одна розмова, а процес. Напиши через три дні. Через тиждень. "Думаю про тебе". Біль не проходить за вечір, і саме в дні, коли "вже ніби все нормально", людина буває найсамотнішою.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🥣</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Маленькі дії замість великих слів</div>
+          <div class="card-text">Принести їжу. Написати доброго ранку. Запропонувати прогулятись. У горі людина часто не може навіть приготувати вечерю — і вибачається за це. Не чекай, поки попросить. Просто зроби.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Як говорити -->
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">Як говорити і як слухати</h2>
+    <p>Справжнє слухання — це не пауза між твоїми репліками. Це коли ти повністю тут, а все твоє "хочу щось сказати" — відкладено. Це важче, ніж здається. Але цього навчаються.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🫧</span>
+        <div class="card-title">Запитай "як ти?" — але справжнє</div>
+        <div class="card-text">Формальне "як справи" люди відбивають "норм". Спробуй інакше: "Як ти <em>насправді</em>?" або "Ти з того часу не виходиш на звʼязок — я хвилююсь. Що в тебе?" Конкретика й турбота вмикають справжню відповідь.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">👂</span>
+        <div class="card-title">Слухати — значить не готувати відповідь</div>
+        <div class="card-text">Більшість із нас слухає на 30%, а на 70% уже думає, що відповісти. Спробуй зворотне: слухай на 100%, а говори — коли пауза природна. І став уточнення: "а що ти тоді відчула?" замість "а ось у мене…"</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🪞</span>
+        <div class="card-title">Відображай, не інтерпретуй</div>
+        <div class="card-text">"Звучить, ніби ти виснажена". "Схоже, тобі зараз дуже самотньо". Людина чує, що її емоції справжні й видимі. Не давай діагнозів — просто назви те, що бачиш. І питай: "Це так?"</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌫️</span>
+        <div class="card-title">"Не знаю що сказати" — це теж нормально</div>
+        <div class="card-text">Чесність сильніша за фальшиві мудрості. "Я не знаю, що тут сказати. Але я хочу, щоб ти знала — мені не байдуже" — це абсолютно повноцінна відповідь. І вона не обманює.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Різні види болю -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Різні види болю — різна підтримка</h2>
+    <p>Не всі "погано" однакові. Те, що працює при втраті, може ранити при депресії. Тонкість у тому, щоб чути, який саме біль зараз — і не підміняти його знайомим тобі.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🕊️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Втрата близького</div>
+          <div class="card-text">Не кажи "він був чудовою людиною, ти згадуватимеш добре" — це стерильно. Кажи імʼя померлого. Згадуй конкретні спогади. Горе хоче, щоб людина не зникла з розмов. І не очікуй, що "з часом пройде" — воно не проходить, просто вчиться поруч жити.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">💔</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Розставання</div>
+          <div class="card-text">Стримайся говорити "він тебе не заслуговував" у перші тижні — людина його ще любить, і це звучить як знецінення її вибору. Краще: "це боляче, навіть якщо правильне рішення. Плач скільки треба". Пізніше, коли сама почне бачити, — тоді можна і про "ти заслуговуєш більше".</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🌫️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Депресія і тривога</div>
+          <div class="card-text">"Вийди на прогулянку, тобі стане краще" — для депресії це як сказати людині зі зламаною ногою "просто ходи". Не пропонуй рішення. Пропонуй дії разом: "я зайду до тебе, поп'ємо чаю". Саме товариство, а не поради, тримає людину на плаву.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🔥</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Невдача або сором</div>
+          <div class="card-text">Тут головне — не "втішати рейтингом" ("не переймайся, це дрібниці"). Сором боїться бути побаченим і прийнятим. Скажи: "Розумію, чому тобі зараз так. Це не робить тебе гіршою". Прийняття розчиняє сором швидше за будь-які "ти молодець".</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🌑</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Коли погано — і сама не знає чому</div>
+          <div class="card-text">Не вимагай пояснень. Не треба "причини", щоб бути з нею. "Іноді просто важко, і це теж можна". Сиди поруч у незнанні — цього достатньо. Часом людина сама починає розуміти, що відбувається, саме в безпечній тиші.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Межі підтримки -->
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Межі підтримки</h2>
+    <p>Ти не психолог. І не мусиш ним бути. Взяти на себе чийсь біль повністю — значить повільно тонути разом. Справжня підтримка тримає обох живими — і того, кому зараз погано, і тебе.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🪴</span>
+        <div class="card-title">Турбота без злиття</div>
+        <div class="card-text">"Бути поруч" — не значить "прожити за іншого". Біль лишається його, відповідальність — його. Ти свідок, не рятівник. Ця різниця тримає тебе на плаву і людину — у власній силі.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⛺</span>
+        <div class="card-title">Право не бути 24/7</div>
+        <div class="card-text">Можна відповісти завтра. Можна сказати: "Сьогодні в мене немає сил слухати, але я повернусь". Це не зрада. Це чесність. Підтримка, яка ламає тебе — недовговічна. І непотрібна.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧭</span>
+        <div class="card-title">Запропонувати фахівця</div>
+        <div class="card-text">Не соромлячись. "Те, що ти переживаєш — це багато. З такими речами ти не мусиш справлятись сама. Психолог — не тому, що ти "зламана", а тому, що ти себе береш серйозно". Поділись контактом, якщо знаєш. Іноді навіть пропозиція — вже крок.</div>
+        </div>
+      <div class="card">
+        <span class="card-icon">🔦</span>
+        <div class="card-title">Ти не можеш врятувати</div>
+        <div class="card-text">Це найважче усвідомлення. Навіть якщо дуже хочеш — не можеш. Можеш бути поруч, любити, підтримувати. Але людина йде своїм шляхом. Якщо їй не стане краще — це не твоя провина. Це просто межа можливого.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Emergency -->
+  <div class="section" style="animation-delay:1.85s">
+    <h2 class="section-title">Коли йдеться про життя</h2>
+    <p>Якщо людина говорить про самопошкодження, небажання жити, або конкретні плани — це не провокація і не "просто драма". Це SOS. Ось що важливо.</p>
+
+    <div class="emergency">
+      <div class="emergency-label">Важливо</div>
+      <p><strong>1. Сприйми серйозно.</strong> Не переконуй "та ні, ти таке не думаєш". Спитай прямо: "Ти думаєш про те, щоб щось із собою зробити?" Пряме питання не "підказує" — воно відкриває розмову.</p>
+      <p><strong>2. Слухай без шоку.</strong> Реакція паніки закриває людину. Твоє спокійне "розкажи мені більше" дозволяє їй не залишатись із цим сама.</p>
+      <p><strong>3. Не обіцяй тримати в таємниці.</strong> "Я тебе люблю й саме тому не можу мовчати. Нам потрібна допомога — разом". Це не зрада довіри. Це рятівний круг.</p>
+      <p><strong>4. Допоможи з наступним кроком.</strong> Разом знайти психолога. Разом подзвонити на лінію довіри. Не "ось номер — дзвони сама", а "я зараз поруч, зробімо це".</p>
+      <p style="margin-top:18px;padding-top:18px;border-top:1px solid rgba(220,180,160,.2)"><span class="emergency-num">7333</span><strong>Лінія запобігання самогубствам (Україна)</strong> — безкоштовно, цілодобово. Також можна звернутись до <strong>Lifeline Ukraine: 7333</strong> або <strong>112</strong> при гострій загрозі.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Ключове питання -->
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Ключове питання</h2>
+    <p>Найчастіше ми починаємо з "що мені сказати". А треба починати з зовсім іншого. Одне питання — і все стає на свої місця.</p>
+
+    <div class="question-card">
+      <div class="question-label">Запитай себе</div>
+      <div class="question-main">"Що цій людині зараз потрібно — і чи це в мене є?"</div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Іноді потрібні слова. Іноді — тиша. Іноді — їжа. Іноді — професіонал, не ти. Твоя задача — <em>не вгадати</em>, а <em>дізнатись</em>. І чесно відповісти собі, чи можеш ти дати це зараз. І те, й інше — добре.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Final -->
+  <div class="section" style="animation-delay:1.95s">
+    <h2 class="section-title">Висновок</h2>
+    <div class="final-quote">
+      <div class="final-text">Ти не мусиш знати всіх правильних слів. Ти не мусиш рятувати. Ти мусиш просто <strong>залишитись</strong> — навіть коли не зручно, навіть коли не знаєш що сказати. Присутність — найрідкісніший і найціннніший подарунок, який можна дати людині.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>

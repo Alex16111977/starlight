@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Розставання</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.72)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.82);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(200,216,255,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.35);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(26px,4vw,36px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Розставання</h1>
+  <p class="page-subtitle">Як пережити і повернутись до себе</p>
+
+  <!-- Hero quote -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Серце, яке розбивається відкрито, — це серце, яке може знову любити"</div>
+      <div class="hero-author">Рупі Каур</div>
+    </div>
+    <p>Розставання — одна з найчесніших зустрічей із собою. Не тому, що "все на краще" і не тому, що "зроблять сильнішою". А тому, що зриває з тебе роль, маску, звичку — і ставить перед дзеркалом: хто ти без цих стосунків? Відповідь не швидка. І боляче. Але саме з цього болю починається повернення.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що відбувається всередині -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Що відбувається всередині</h2>
+    <p>Розставання — це не "сумно, нічого страшного". Це реальна криза для мозку й тіла. Розуміння, що саме з тобою коїться, не прибирає біль — але дає право його відчувати, не соромлячись.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🧠</span>
+        <div class="card-title">Мозок реагує як на травму</div>
+        <div class="card-text">МРТ-дослідження показують: під час розставання активуються ті ж ділянки, що й при фізичному болю. Коли ти кажеш "мені боляче" — це не метафора. Мозок буквально переживає "рану". Тому знеболювальні (навіть парацетамол у дослідженнях) трохи полегшують душевний біль.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💊</span>
+        <div class="card-title">Розставання = справжня ломка</div>
+        <div class="card-text">Людина, яку ти любила, була джерелом дофаміну й окситоцину роками. Коли її нема — нервова система переживає відміну, як при залежності. Нав'язливі думки, тремор, безсоння, втрата апетиту — це не слабкість. Це біологія. І вона мине.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌊</span>
+        <div class="card-title">Хвилі, не пряма лінія</div>
+        <div class="card-text">Сьогодні ти йдеш, смієшся, уже "ок". Завтра — ридаєш від одного кадру. Це нормально. Горе йде хвилями — між ними є плоскі ділянки. Прогрес не в тому, щоб не відкочуватись. Прогрес у тому, що хвилі стають рідшими й м'якшими з часом.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚖️</span>
+        <div class="card-title">Болить, навіть якщо ти пішла</div>
+        <div class="card-text">"Я ж сама вирішила — чому так важко?" Бо рішення голови не відміняє зв'язок тіла. Ти втратила те, що було твоїм, хай навіть погано. І навіть якщо стосунки були руйнівними — втрата є втратою. Мозок плаче не за "добрим", а за знайомим.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Емоції які нормальні -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Усе це нормально</h2>
+    <p>У розставанні всередині одночасно може кипіти те, що здається несумісним. Ти можеш хотіти його й ненавидіти, плакати й сміятись, шкодувати і радіти за свободу. Це не "роздвоєння" — це правда про любов і втрату.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🌪️</div>
+        <div>
+          <div class="card-title" style="margin-bottom:8px">Усе одночасно</div>
+          <div class="card-text">Злість на нього. Сум за ним. Полегшення, що воно закінчилось. Провина, що ти чомусь рада. Страх, що більше ніколи нікого не зустрінеш. Усі ці почуття можуть жити в тобі в один день — і це не "ти плутаєшся", це багатошаровість справжнього досвіду.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">📱</div>
+        <div>
+          <div class="card-title" style="margin-bottom:8px">Бажання написати — навіть знаючи, що не треба</div>
+          <div class="card-text">Це не твоя "слабкість" і не доказ, що "ти все ще любиш". Це мозок, який звик до дози контакту і тепер просить її. Як курець тягнеться до пачки. Не відповідай цьому бажанню — і через кілька днів воно стане тихішим. Відповіси — і лічильник почнеться з початку.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🔁</div>
+        <div>
+          <div class="card-title" style="margin-bottom:8px">Нав'язливі думки по колу</div>
+          <div class="card-text">Ти прокручуєш останню розмову сотий раз. Перечитуєш старі повідомлення. Шукаєш, де "все пішло не так". Мозок намагається знайти контроль там, де його немає. Це не допомагає — але це нормально. Назви цьому процесу ім'я: "мій мозок знову думає". Це вже трохи віддаляє.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🌹</div>
+        <div>
+          <div class="card-title" style="margin-bottom:8px">Ідеалізація після розставання</div>
+          <div class="card-text">Через тиждень після розриву в голові залишаються лише найкращі моменти. А всі причини, через які ви розійшлись, тьмяніють. Це теж мозок — він схильний до "рожевої ностальгії". Напиши собі список конкретних причин. Перечитуй у момент спокуси повернутись. Це твій якір у реальності.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Типові пастки -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Пастки, у які падають усі</h2>
+    <p>Розставання має свої типові помилки — ніби кожне серце мусить пройти через них. Знаючи їх наперед, легше не залипнути. Не неможливо — легше.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🔙</span>
+        <div class="card-title">Повернутись бо самотньо</div>
+        <div class="card-text">Самотність у перші тижні — найсильніший біль. Здається: "поверну, і воно зникне". Зникне — на тиждень. А потім проблеми, через які розійшлись, повернуться. І ти знову тут — тільки виснажена ще одним колом. Самотність — не причина для повернення. Це частина горя, яку треба прожити, а не заїсти стосунками.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📵</span>
+        <div class="card-title">Слідкувати в соцмережах</div>
+        <div class="card-text">Ти обіцяєш собі "тільки подивитись". Але кожен перегляд — це нова доза болю. Бачиш, що в нього "все добре" — болить, що ти йому не треба. Бачиш сум — болить, що не ти поруч. Ніщо з цього не лікує. Відписка, mute, блок — не дрібниці, а здорова гігієна на період відновлення.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎭</span>
+        <div class="card-title">"Якщо я зміню себе — повернеться"</div>
+        <div class="card-text">Ти починаєш худнути, вчити мови, записуватися на тренінги — щоб "стати такою, якою він хотів". Це пастка надії. Стосунки не повертаються від нових кілограмів. А якщо ти міняєш себе не для себе, а для нього — ти втрачаєш залишки себе. Мотивація має бути зсередини, не "щоб він побачив".</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🍷</span>
+        <div class="card-title">Заглушити біль</div>
+        <div class="card-text">Алкоголь, їжа, шопінг, робота, нові люди в ліжку. Усе, що дає дозу дофаміну й відволікає від порожнечі всередині. Тимчасово — працює. У сумі — продовжує біль на місяці. Те, від чого ти тікаєш, чекає в коридорі. Воно нікуди не дінеться, доки ти його не проживеш.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Як відновлюватись -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Як проживати, а не тікати</h2>
+    <p>"Час лікує" — правда, але не сам. Час без присутності до себе — це просто час. Лікує час + усвідомленість + базова турбота. Ось що реально допомагає проживати, а не затягувати.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🕯️</div>
+        <div>
+          <div class="card-title" style="margin-bottom:8px">Перші дні — мінімум</div>
+          <div class="card-text">Не плануй нічого. Не стався до себе як до проєкту, який треба терміново "направити". Їж. Спи. Пий воду. Якщо можеш вийти на повітря — вийди. Якщо не можеш — не вийди. На перший тиждень ціль одна: не зробити собі гірше. Усе решта — пізніше.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">😢</div>
+        <div>
+          <div class="card-title" style="margin-bottom:8px">Дай собі горювати</div>
+          <div class="card-text">Не квап "коли я нарешті пройду". Коли пройдеш, тоді пройдеш. Плач. Писай листи, які не відправиш. Слухай сумну музику. Горе, яке проживається, йде. Горе, яке придушується, осідає — і випливає через роки, у найнедоречніший момент.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">📦</div>
+        <div>
+          <div class="card-title" style="margin-bottom:8px">Що робити з речами</div>
+          <div class="card-text">Не мусиш викидати все в перший тиждень — не мусиш і зберігати. Склади в коробку й винеси з очей на деякий час. Подарунки, світлини, одяг. Коли буде готова — вирішиш, що лишити, що віддати, що викинути. Простір довкола впливає на те, що всередині.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🚪</div>
+        <div>
+          <div class="card-title" style="margin-bottom:8px">Правило "no contact"</div>
+          <div class="card-text">Місяць без контакту. Без дзвінків, повідомлень, сторіз, "як справи". Це не про образу — це про нервову систему, яка не може відучитись від доз, якщо їх продовжують давати. Мінімум 30 днів тиші. Потім — сама побачиш, чи справді хочеться говорити.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Повернення до себе -->
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Повернення до себе</h2>
+    <p>У довгих стосунках ми часто поступово втрачаємо шматки себе — звички, хобі, друзів, власні смаки. Розставання — болючий, але справжній шанс зібрати їх назад. Не "хто я без нього", а — хто я взагалі.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🧩</span>
+        <div class="card-title">Пригадай, якою була до</div>
+        <div class="card-text">Що тобі подобалось до нього? Які книжки, фільми, музика? Які друзі? Які плани? Багато з цього пішло, не тому що розхотілось — а тому що "в нього іншого вкусу". Повернення до цих речей — один із найглибших способів відновитись.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🫂</span>
+        <div class="card-title">Поверни друзів</div>
+        <div class="card-text">Ті, кого ти бачила рідко "бо пара". Ті, хто не дружив із ним. Пиши, зустрічайся, заново входь у їхні життя. Ти здивуєшся, наскільки вони готові тебе прийняти — і наскільки ти втратила глибоких зв'язків, поки все життя було в двох.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🪞</span>
+        <div class="card-title">Відновлення самооцінки</div>
+        <div class="card-text">Якщо стосунки були токсичними — у голові залишилось багато чужих слів про тебе. "Ти надто", "ти замало", "з тобою важко". Почни свідомо помічати, що з цих слів чуже, а не твоє. Фрази, що осіли в голові — не діагнози. Це забруднення, яке можна змити.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌿</span>
+        <div class="card-title">Без самозвинувачення</div>
+        <div class="card-text">"Я мала робити інакше", "якби я була кращою". Ні. Стосунки закінчуються не тому, що хтось один "поганий", а тому що не склалось. Ти могла бути недосконалою — і це не робило тебе винною у розриві. Любов не виграється старанністю.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що далі -->
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Що далі</h2>
+    <p>Не поспішай до "наступного". Але й не тримай себе в горі довше, ніж треба. Ось кілька чесних орієнтирів, як зрозуміти, де ти зараз і куди рухатись.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🌱</span>
+        <div class="card-title">Як зрозуміти, що готова</div>
+        <div class="card-text">Коли думати про колишнього — не болить, а просто сумно, м'яко. Коли ти можеш уявити когось нового без порівняння "чи буде як він". Коли хочеш стосунків не щоб "заповнити дірку", а щоб поділитись своїм повним життям. Це різні стани — і ти відчуєш різницю.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📖</span>
+        <div class="card-title">Не нести травми у нове</div>
+        <div class="card-text">Якщо не пропрацювати старе — воно проектується на нового. Будеш чекати від нього образ колишнього. Будеш боятись того, чим той ранив. Робота з психотерапевтом або глибоке самодослідження — не "щоб усе було ідеально", а щоб наступний партнер не платив за попереднього.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎁</span>
+        <div class="card-title">Що ці стосунки дали</div>
+        <div class="card-text">Через рік, два, п'ять ти зможеш побачити: цей досвід навчив тебе чогось про себе, про любов, про межі. Це не "все було не дарма" у сенсі виправдання болю. А — "з цього виросло щось, чого без нього не було". Це зовсім інше.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💫</span>
+        <div class="card-title">"На краще" — коли правда, коли ні</div>
+        <div class="card-text">Казати "все на краще" людині, що тільки розійшлась — це знецінення. Але через час ти сама можеш побачити: добре, що воно закінчилось. Не тому, що життя було жорстоким — а тому, що звільнило місце для іншого. Не кажи це собі рано. Але й не відкидай, коли само прийде.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Ключове питання -->
+  <div class="section" style="animation-delay:2s">
+    <h2 class="section-title">Ключове питання</h2>
+    <p>Коли здається, що не вибереш, коли хочеться повернутись або зникнути — зупинись і спитай себе інакше.</p>
+
+    <div class="question-card">
+      <div class="question-label">Запитай себе</div>
+      <div class="question-main">"Що мені зараз потрібно — не від нього, а від себе?"</div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Не "як повернути те, що було". А — <em>що я можу дати собі просто зараз</em>? Може, їжу. Може, сон. Може, довгу ходьбу. Може, дозвіл плакати годину. Може, дзвінок подрузі. Ти — єдина, хто зі мною завжди. Стосунки з собою — те, куди ти зараз повертаєшся. І ці стосунки варті турботи.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Final -->
+  <div class="section" style="animation-delay:2.1s">
+    <h2 class="section-title">Висновок</h2>
+    <div class="final-quote">
+      <div class="final-text">Це мине. Не сьогодні, не завтра, можливо, не через місяць. Але мине. Ти не зламана — ти <strong>зламалась тимчасово</strong>, і це різне. Людина, якою ти будеш через рік, подякує тобі за те, що ти сьогодні не зламала себе остаточно. Просто продовжуй дихати. Цього достатньо.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>
