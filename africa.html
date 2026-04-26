@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Африка</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(220,230,255,.92)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.72)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.82);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Африка</h1>
+  <p class="page-subtitle">Континент, який вирішить XXI століття</p>
+
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Якщо XX століття було американським, а кінець XX — китайським, то XXI може стати африканським"</div>
+      <div class="hero-author">Тоні Блер</div>
+    </div>
+    <p>Більшість із нас уявляє Африку як одну велику пустелю з львами, бідністю і війнами. Це уявлення відстало на 30 років. Сьогодні Африка — найшвидше зростаючий регіон світу за населенням, з мегаполісами на 20+ мільйонів, мобільними платежами, які обігнали Європу, і ресурсами, без яких не зробити жодного електромобіля. Знати, що там відбувається, — означає бачити, куди йде світ.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 🌍 Хто така Африка сьогодні -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">🌍 Хто така Африка сьогодні</h2>
+    <p>Африка — не країна. Це 54 держави з різними мовами, культурами, рівнем доходу. Найбагатша країна континенту і найбідніша відрізняються за рівнем життя у 30 разів. Узагальнення про "Африку" — як говорити "про Євразію" в одному реченні.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🗺️</span>
+        <div class="card-title">54 країни, 2000+ мов</div>
+        <div class="card-text">Ніхто не каже "європейська їжа" — є італійська, грецька, шведська. З Африкою — навпаки. А там Нігерія (220 млн людей, нафта, кіно "Нолівуд"), Південна Африка (золото, IT, найрозвиненіша економіка), Єгипет (стародавня цивілізація, Суецький канал), Кенія (мобільні платежі, технохаб). 2000 мов, 3000 етнічних груп.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎭</span>
+        <div class="card-title">Звідки стереотипи</div>
+        <div class="card-text">Західні медіа десятиліттями показували одне: голод, війну, благодійність. Це продавалось — але викривлювало картину. Реальність: міста з хмарочосами, університети, заводи, креативні індустрії, мільйонери. Для Інстаграма не зняти — тому ми цього не бачимо. Брак інформації — теж форма стереотипу.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💰</span>
+        <div class="card-title">Найбагатші і найбідніші</div>
+        <div class="card-text">Сейшели, Маврикій, Габон — рівень життя як у Східній Європі. ПАР, Ботсвана — середні країни. Бурунді, ЦАР, Судан — серед найбідніших у світі. Між цими полюсами — увесь спектр. Не існує "пересічного африканця", як не існує "пересічного європейця".</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🚀</span>
+        <div class="card-title">Де зосереджений ріст</div>
+        <div class="card-text">Найшвидші економіки світу останнього десятиліття: Ефіопія, Руанда, Гана, Кот-д'Івуар, Кенія. Темпи росту 6-9% на рік (для порівняння: ЄС ~1-2%). Це не "наздоганяння", а нова модель — мобільні технології, послуги, креативна економіка. Часто без проходження "індустріальної" фази.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 👥 Населення і молодість -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">👥 Населення і молодість</h2>
+    <p>Найголовніший факт про Африку, який мало хто усвідомлює: вона стрімко стає молодим континентом, поки решта світу старіє. Це міняє все — від ринків праці до глобальної політики.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">📊</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Демографічний вибух</div>
+          <div class="card-text">Зараз в Африці живе 1.4 млрд людей — приблизно стільки, як у Китаї або Індії. До 2050 — буде 2.5 млрд, тобто кожна 4-та людина на планеті. До 2100 — 4 млрд. Це найбільший демографічний зсув в історії людства за один вік.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">👶</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Найймолодший континент</div>
+          <div class="card-text">Середній вік в Африці — 19 років. У Європі — 45. У Японії — 49. Це означає колосальний потенціал робочої сили на тлі старіючого Заходу. Якщо цій молоді дати освіту і роботу — Африка стане економічним центром планети. Якщо ні — отримаємо 2 мільярди розчарованих молодих людей.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🏙️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Урбанізація на швидкості</div>
+          <div class="card-text">Африканські міста ростуть швидше, ніж будь-які інші у світі. Лагос (Нігерія) уже близько 20 млн жителів і додає по мільйону на рік. До 2100 він може стати найбільшим містом планети — більшим за Токіо. Кіншаса, Каїр, Йоганнесбург — теж серед лідерів зростання.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">✈️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Міграція — наслідок, не причина</div>
+          <div class="card-text">Європу хвилює "хвиля мігрантів" з Африки. Але реальність: 80% африканських мігрантів залишаються всередині Африки. До Європи їдуть, коли вдома немає роботи й безпеки. Якщо Африка розвивається — потоки слабшають, як це сталось з Південною Європою у 1970-х. Розвиток — найкращий "захист кордонів".</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- ⛏️ Ресурси -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">⛏️ Ресурси — прокляття чи шанс</h2>
+    <p>Африка має приблизно 30% світових мінеральних ресурсів. І при цьому її країни нерідко серед найбідніших. Цей парадокс називають "ресурсним прокляттям" — і його логіка важлива для розуміння всього, що відбувається на континенті.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">💎</span>
+        <div class="card-title">Що там є</div>
+        <div class="card-text">Кобальт (70% світового — Конго), літій (Зімбабве), платина (ПАР), золото, алмази, нафта (Нігерія, Ангола, Лівія), уран, рідкоземельні метали. Майже все, що потрібно для смартфонів, електромобілів, батарей — родом звідти. Африка буквально живить індустріальну революцію XXI ст.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚠️</span>
+        <div class="card-title">Ресурсне прокляття</div>
+        <div class="card-text">Парадокс: чим більше ресурсів — тим часто бідніша країна. Тому що: іноземні компанії контролюють видобуток, гроші осідають у елітних колах, корупція квітне, інші галузі (сільське господарство, виробництво) не розвиваються. Норвегія змогла уникнути цього з нафтою. Більшість африканських країн — ні.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔋</span>
+        <div class="card-title">Кобальт і Tesla</div>
+        <div class="card-text">Без кобальту немає літій-іонних батарей. Без батарей — електромобілів і "зеленої революції". 70% кобальту — у Конго, де великa частина видобувається в нелюдських умовах, часто дітьми. Tesla, Apple, Samsung — судяться за це. Парадокс зеленої економіки: щоб врятувати клімат, треба часто не зважати на людські права.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌾</span>
+        <div class="card-title">Земля і вода</div>
+        <div class="card-text">Африка має 60% невикористаних орних земель планети. У світі, де клімат тисне на врожаї, це стратегічний ресурс. Китай, ОАЕ, Саудівська Аравія активно скуповують або орендують африканську землю — десятки мільйонів гектарів. Це називають "land grab" — нова форма колоніалізму.</div>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Ключове розуміння: <em>багатство ресурсів автоматично не дає процвітання</em>. Все вирішує — хто володіє, хто переробляє, куди йдуть гроші. Африка століттями віддає сирі ресурси і купує готові продукти — це найгірша економічна позиція. Перевернути цю логіку — головне завдання континенту на найближчі десятиліття.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 🎮 Велика гра -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">🎮 Велика гра — хто і навіщо</h2>
+    <p>Африка перетворилась на арену для всіх великих гравців планети. Кожен заходить зі своєю стратегією, інструментами, обіцянками. Африканці грають із цього карту — погоджуючись з тим, у кого вигідніші умови сьогодні.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🇨🇳</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Китай — головний гравець</div>
+          <div class="card-text">Найбільший торговий партнер Африки. Стратегія: ми будуємо вам інфраструктуру (дороги, порти, залізниці, стадіони), ви даєте нам ресурси і ринки. Понад $150 млрд кредитів за останні 20 років. Критики кажуть "боргова пастка" — африканці часто кажуть "Китай хоча б щось будує, на відміну від Заходу, який тільки говорить".</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🇺🇸</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">США — конкуренція з Китаєм</div>
+          <div class="card-text">Військові бази (особливо в Джибуті, Нігері), програми допомоги, нещодавно — спроба наздогнати Китай в інвестиціях (ініціатива PGI — $200 млрд). Виглядає реактивно. Багато слів про "цінності" і "демократію", менше реальних інвестицій. Африканські лідери це помічають.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🇷🇺</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Росія — зброя і Вагнер</div>
+          <div class="card-text">Не може конкурувати грошима — конкурує брутальним інструментарієм. Зброя в обмін на золото і вплив. ПВК "Вагнер" (зараз "Африкорпус") у Малі, ЦАР, Судані, Лівії. Дезінформаційні мережі в соцмережах, які формують антизахідні настрої. Дешево, цинічно, ефективно.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🇪🇺</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">ЄС — повільність і колоніальний слід</div>
+          <div class="card-text">Найбільший партнер Африки історично, але не може діяти єдиним голосом — 27 країн з різними інтересами. Постколоніальний слід (особливо Франція, Британія) ускладнює довіру. Багато програм допомоги, мало реальних інвестицій. У Сахелі (Малі, Буркіна-Фасо) Францію взагалі вигнали — місцеві вибрали Росію як альтернативу.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🌐</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Нові гравці</div>
+          <div class="card-text">Туреччина — Erdogan відкрив 40+ посольств, інвестує в інфраструктуру, продає дрони Bayraktar (популярні в Африці). Індія — фокус на освіту, IT, медицину. ОАЕ — порти, агропромисловість, золото. Ізраїль — кібербезпека, агротех. Бразилія — сільське господарство. Ще 10 років тому половини цих гравців тут не було.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 🏛️ Політика і нестабільність -->
+  <div class="section" style="animation-delay:1.85s">
+    <h2 class="section-title">🏛️ Політика і нестабільність</h2>
+    <p>За останні 5 років в Африці відбулось понад 10 успішних військових переворотів — більше, ніж у будь-якому регіоні. Розуміти, чому — означає бачити структурні проблеми, які заважають континенту реалізувати свій потенціал.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">⚔️</span>
+        <div class="card-title">Перевороти повертаються</div>
+        <div class="card-text">Малі, Буркіна-Фасо, Гвінея, Нігер, Габон, Чад. Військові скидають уряди, посилаючись на корупцію, неефективність, "західну зраду". Народ часто радіє — бо реальні життя не покращуються. Але історія показує: військові режими рідко лікують те, на що скаржаться. Просто крадуть інакше.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔥</span>
+        <div class="card-title">Сахель — пояс пожежі</div>
+        <div class="card-text">Смуга на південь від Сахари: Малі, Буркіна-Фасо, Нігер, Чад, Судан. Бідність, ісламістські угрупування (ISIS, Аль-Каїда), кліматичні зміни (опустелювання), демографічний вибух. Справжня "duga подвійна криза". Цей пояс впливатиме на Європу через міграцію наступні 30 років.</div>
+        </div>
+      <div class="card">
+        <span class="card-icon">📜</span>
+        <div class="card-title">Чому демократія важко</div>
+        <div class="card-text">Більшість африканських країн зробили з кордонів, які європейці провели лінійкою на мапі — без огляду на племена, мови, культури. У результаті — країни без єдиної ідентичності, де лояльність до етносу часто сильніша за лояльність до держави. Демократія припускає націю; нації часто немає.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💸</span>
+        <div class="card-title">Корупція як система</div>
+        <div class="card-text">Не моральний дефект, а структура. Низькі зарплати чиновників, слабкі інституції, культура подарунків, відсутність альтернативи "державному корму". Транспаренсі Інтернешнл: 9 з 10 найкорумпованіших країн — африканські. Втрати від корупції — $148 млрд на рік. Це більше, ніж уся міжнародна допомога.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 📈 Економіка і майбутнє -->
+  <div class="section" style="animation-delay:2s">
+    <h2 class="section-title">📈 Економіка і майбутнє</h2>
+    <p>Поряд із кризами існує інша Африка — де щодня запускаються стартапи, ростуть IT-компанії, створюється нова економіка, яку західні медіа практично не висвітлюють. Ось ця Африка — вона теж справжня.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🤝</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">AfCFTA — найбільша зона торгівлі</div>
+          <div class="card-text">Африканська континентальна зона вільної торгівлі (запущена 2021) об'єднує 54 країни, 1.4 млрд споживачів — найбільша у світі за кількістю учасників. Якщо запрацює повноцінно (а це довгий процес) — Африка отримає внутрішній ринок розміром з Китай. Це може стати поворотним моментом століття.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🚀</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Технологічні хаби</div>
+          <div class="card-text">Найробі (Кенія) — "Силіконова Савана", Лагос (Нігерія), Кейптаун (ПАР), Каїр. Понад 600 техностартапів-"єдинорогів" і кандидатів. Flutterwave, Andela, M-Pesa. Венчурні інвестиції в африканські стартапи: $5 млрд у 2022. Молодь, яка вчилась за кордоном, повертається будувати тут.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">📱</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Мобільні платежі — Африка #1</div>
+          <div class="card-text">M-Pesa в Кенії: понад 50% ВВП країни проходить через цей сервіс. Платять SMS, без банкам. Це випередило Європу і США. Логіка: банків було мало, але мобільні були в усіх — і Африка просто перескочила цілий етап банківської інфраструктури. Тепер західні фінтехи вивчають як вчителі.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🏭</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Чи буде Африка новим Китаєм</div>
+          <div class="card-text">Китай дорогшає — компанії шукають дешевшу робочу силу. Ефіопія, Кенія, Гана активно приймають фабрики. Виробництво одягу, електроніки, авто. Тривога: чи це справжня індустріалізація, чи просто транзитний пункт перед автоматизацією. Можливо, AI забере цей шанс — і Африка пропустить промисловий етап.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 🔮 Ким Африка стане -->
+  <div class="section" style="animation-delay:2.15s">
+    <h2 class="section-title">🔮 Ким Африка стане</h2>
+    <p>Майбутнє Африки — одне з найголовніших питань століття. Реалістичних сценаріїв три. Який реалізується — залежить від рішень, які ухвалюються вже зараз. Не лише там, а й тут.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🪤</span>
+        <div class="card-title">1. Залежність продовжується</div>
+        <div class="card-text">Африка лишається постачальником сировини для всіх. Ресурси їдуть, готові товари приїжджають. Великі гравці (Китай, США, Росія) розігрують свою гру через посередників. Корупція, перевороти, міграція — норма. Цей сценарій — найбільш імовірний "як зараз". І він — програшний для всіх, навіть для тих, хто думає, що виграє.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💥</span>
+        <div class="card-title">2. Хаос і нестабільність</div>
+        <div class="card-text">Демографічний вибух без розвитку. 2 мільярди молоді без роботи. Кліматичні кризи (Сахара рухається на південь). Масові міграції — спочатку всередині континенту, потім до Європи. Радикалізація. Дестабілізація розширюється. Гірший сценарій, до якого ми поступово рухаємось, якщо нічого не зміниться.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌅</span>
+        <div class="card-title">3. Справжній суверенітет</div>
+        <div class="card-text">Африка інвестує в освіту, переробляє ресурси сама, торгує всередині континенту, розвиває технології, створює власні політичні інституції. Через 30 років — глобальний центр поряд із Азією. Цей сценарій можливий — є приклади (Руанда, Маврикій, Ботсвана). Але вимагає внутрішніх реформ і чесних партнерів зовні.</div>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Ключове питання: <em>хто володіє "панафриканізмом"</em> — ідеєю єдиної Африки, яка діє разом. Її просували великі лідери минулого: Нкрума, Ньєрере, Манделa. Сьогодні Африканський Союз існує, але слабкий. Якщо нове покоління зможе реалізувати цю ідею — третій сценарій реальний. Якщо ні — перші два.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:2.3s">
+    <h2 class="section-title">Замість висновку</h2>
+    <div class="final-quote">
+      <div class="final-text">Африка — не "проблема для світу" і не "об'єкт допомоги". Це <strong>головний сюжет XXI століття</strong>. Те, що там буде, визначить, чи стане наше століття часом нової рівноваги — чи серії криз, які зачеплять усіх. Ігнорувати Африку — значить ігнорувати своє майбутнє. Дізнатись про неї — перший крок, який кожен може зробити вже сьогодні.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>

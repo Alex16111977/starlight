@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Краса і стиль</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(220,230,255,.92)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.72)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.82);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(200,216,255,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.35);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(26px,4vw,36px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Краса і стиль</h1>
+  <p class="page-subtitle">Як себе виражати без втрати себе</p>
+
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Стиль — це спосіб сказати, хто ти, без слів"</div>
+      <div class="hero-author">Рейчел Зо</div>
+    </div>
+    <p>Краса і стиль — суперечлива тема. Хтось каже "це поверхнево". Хтось — "це найглибше з можливого". Реальність складніша. Те, як ти виглядаєш, впливає на самовідчуття, на те, як з тобою говорять, на твоє місце в кімнаті. Ігнорувати — наївно. Підкорятись — виснажливо. Знайти свій баланс — і є справжня тема цієї сторінки.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 💄 Свій стиль -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">💄 Як знайти свій стиль</h2>
+    <p>Стиль — не "бути в тренді". Це послідовність між тим, ким ти є всередині, і тим, як ти виглядаєш зовні. Знайти його — означає менше витрачати, рідше плутатись у магазинах і кожного ранку одягатись швидко й впевнено.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🪞</span>
+        <div class="card-title">Стиль — продовження ідентичності</div>
+        <div class="card-text">Спочатку питай не "що зараз модно", а — "ким я хочу здаватись". Спокійною? Зухвалою? М'якою? Сильною? Стиль починається з трьох слів про себе. Без них ти купуєш випадкові речі, які потім лежать у шафі, бо "не моє". З ними — у магазині бачиш одразу: ось це я, а це не я.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎨</span>
+        <div class="card-title">Дослідження через одяг</div>
+        <div class="card-text">Збирай мудборд (Pinterest, фото, що чіпляють). За місяць подивись — побачиш патерн. Кольори, силуети, ера, настрій. Це не "копіювати" — це знайти свою візуальну мову. Більшість людей одягається наосліп, бо ніколи не сідала чесно подивитись, що їм реально подобається.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧺</span>
+        <div class="card-title">Капсульний гардероб</div>
+        <div class="card-text">20-30 речей, які поєднуються між собою у десятках комбінацій. Базова палітра (3-4 кольори), що пасує тобі. Класичні силуети, акценти. Парадокс: чим менше речей — тим більше "що одягнути". Бо все працює одне з одним. Менше плутанини, менше витрат, більше задоволення.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📐</span>
+        <div class="card-title">Не "тренди", а "що пасує"</div>
+        <div class="card-text">Тренди роблять для всіх, але пасують не всім. Знай свою форму тіла, свої кольори (тепла vs холодна палітра), пропорції. Те, що чудово на манекені, на тобі може "не зайти". І навпаки. Стиль — це коли ти знаєш саме своє "я гарна в цьому", і не потребуєш тренду, щоб себе підтвердити.</div>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Хороший тест: <em>якщо ти прокидаєшся вранці, відкриваєш шафу — і знаєш, що в ній все "твоє"</em>. Без речей з ярликами, які ти не носиш. Без "куплено випадково". Без "схудну і одягну". Це ознака, що стиль знайдено. Не бренди. Не дорого. Своє.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 🪞 Краса і самооцінка -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">🪞 Краса і самооцінка</h2>
+    <p>"Зовнішність — не головне" — звичайна фраза, яка приховує реальність. Зовнішність впливає на життя. Це не справедливо, не правильно — але це факт, від якого варто йти, не заперечуючи його.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🧬</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Біологія атракції</div>
+          <div class="card-text">Мозок несвідомо зчитує: симетрія обличчя, ясна шкіра, блискуче волосся, пропорції — як ознаки здорового організму, з яким "безпечно мати потомство". Це чесна еволюційна біологія, не моральне судження. Розуміючи це, перестаєш сприймати реакції людей як "вони мене недостойні", або "я недостойна їх".</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">⚖️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Beauty privilege — реальний</div>
+          <div class="card-text">Дослідження фіксують: вродливим дають кращі чайові, посади, оцінки в школі. Менше штрафують у судах. Купують їхні товари охочіше. Це не означає "красою все вирішується". Це означає, що краса — реальний капітал, як і IQ, освіта, знайомства. Хтось має його з народження. Усім корисно це визнавати, не обманюючи себе про "чесний світ".</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">📱</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Соцмережі і нереалістичні стандарти</div>
+          <div class="card-text">Те, що ти бачиш у Instagram — фільтри, кращий ракурс, освітлення, FaceTune, ретуш. Часто навіть пластика. Коли порівнюєш своє ранкове обличчя з ідеальним фото — це не порівняння. Це нечесний бій. Дослідження прямо повʼязують годину Instagram на день із падінням самооцінки у підлітків.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🌫️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Розрив із віддзеркаленням</div>
+          <div class="card-text">"Дисморфофобія" — стан, коли ти бачиш себе зовсім інакше, ніж тебе бачать інші. У слабкій формі — у багатьох. Здається — ніс величезний, шкіра жахлива, фігура спотворена. На фото — нормальна жінка. Розрив між "віддзеркаленням" і "реальністю" — частина нашої епохи. Не дзеркало правда. Часто — ні те, ні те.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🕊️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Здорова дистанція</div>
+          <div class="card-text">Зрілі стосунки з красою — це не "вона неважлива", а "вона важлива, але не центральна". Так, я вкладаюсь у вигляд. Так, мені приємно подобатись. І — я не зведена до зовнішності. Моя цінність ширша за обличчя. Це не один день рішення — це рік-два пропрацювання. Але результат — спокій, який не залежить від світла у дзеркалі.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 👗 Мода -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">👗 Мода — мистецтво vs маніпуляція</h2>
+    <p>Мода живе на двох полюсах одночасно. На одному — справжнє мистецтво, культурне дзеркало епохи. На другому — машина, що працює на твоє "ще". Жоден полюс не вичерпний — тому варто бачити обидва.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🎨</span>
+        <div class="card-title">Мода як культурне дзеркало</div>
+        <div class="card-text">Шанель у 1920-х звільнила жінок від корсетів і ввела штани — це соціальна революція. Сен-Лоран зробив смокінг жіночим. Маккуїн перетворив подіум на театр травм і краси. Велика мода — це філософія, що носиться. Вона фіксує, як змінюється уявлення суспільства про себе. Знати її — як знати кіно: збагачує погляд.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚙️</span>
+        <div class="card-title">Як працює fashion-індустрія</div>
+        <div class="card-text">Сезон → тренд → "усі носять" → а через рік "вже не модно". Це не випадковість. Це бізнес-цикл. Завдання — змусити тебе купувати знов, навіть якщо в тебе є все. Штучний дефіцит ("колекція обмежена"), кампанії з зірками, інфлюенсери. Усе працює на одну мету: "тобі чогось не вистачає".</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌍</span>
+        <div class="card-title">Темний бік fast fashion</div>
+        <div class="card-text">Zara, H&M, Shein. Дешеві речі — за рахунок чого? Бангладеські швачки за $90 на місяць у небезпечних умовах. Текстильна індустрія — другий найбільший забрудник води у світі. Кожна футболка за €5 — це чийсь день за виснажливим верстатом. Знаючи це, кожна покупка стає трохи свідомішим вибором.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌿</span>
+        <div class="card-title">Поза модою — це теж стиль</div>
+        <div class="card-text">Можна бути в моді — стежити, експериментувати, наслідувати. Можна бути поза нею — носити те саме роками, не знати імен дизайнерів, мати "анти-стиль", який і є стиль. Обидва вибори валідні. Зрілість — у тому, щоб обирати свідомо, а не за інерцією або страхом виглядати "не так".</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 💅 Догляд як любов до себе -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">💅 Догляд як акт любові до себе</h2>
+    <p>"Догляд" звучить легковажно, поки не побачиш, скільки в нього входить. Не лише косметика — це щоденна репетиція стосунків із власним тілом. Хто його доглядає, чий час на нього витрачається, кому воно "цінне". Хороший догляд — це коли всі ці відповіді: "ти".</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">💛</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Це не марнославство — це турбота</div>
+          <div class="card-text">Витратити 15 хвилин на крем для обличчя — це не "пуста жіноча розкіш". Це повідомлення тілу: ти важлива. Ти варта уваги. Я не біжу повз тебе. Особливо якщо ти весь день дбаєш про когось іншого — діти, робота, родичі. Ці 15 хвилин — інколи єдина частина дня, де ти існуєш для себе.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🌿</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Маленькі ритуали як медитація</div>
+          <div class="card-text">Вмивання, нанесення крему, чищення нігтів, зачіска. Якщо робити їх повільно, без телефона — це форма медитації для тіла. Тут і зараз. Дотик. Запах. Тепло води. Психіка отримує те, що не отримує більше ніде в дні: чистого контакту з власним тілом, без оцінювання, без вимог.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🎯</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Догляд для себе vs для інших</div>
+          <div class="card-text">Маркер: ти доглядаєш так само, коли нікого не побачиш кілька днів? Якщо так — це твоя любов до себе. Якщо догляд зникає, як тільки ти "сама" — це була робота для чужих очей. Перше живить. Друге виснажує. Перевір це чесно — і ти зрозумієш, де саме ти зараз.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🎭</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Косметика — захист чи маска</div>
+          <div class="card-text">Косметика — інструмент. Як підкреслює очі — чудово. Якщо без неї боїшся вийти зі своєї квартири — варто запитати себе, чи це дійсно вибір. Тонка грань: коли макіяж робить тебе більше собою, і коли він стає шаром, без якого ти "не справжня". Друге — сигнал зайнятись стосунками з обличчям без фарби.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">✨</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Гігієнічний мінімум</div>
+          <div class="card-text">Не багато — треба робити кожному, незалежно від тендеру і "віку". Чистити зуби двічі. Мити обличчя ввечері (фабрика бруду за день). Зволожувати шкіру. SPF (кожен день, не лише на пляжі — найбільший фактор старіння). Пити воду. Нігті. Це не "косметика" — це просто гігієна, від якої залежить, як ти виглядатимеш у 50.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Ключове питання -->
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Ключове питання</h2>
+    <p>Замість запитання "чи я гарна" — спробуй інше. Воно повертає фокус від оцінки до автентичності.</p>
+
+    <div class="question-card">
+      <div class="question-label">Запитай себе</div>
+      <div class="question-main">"Я виглядаю як та, ким я є?"</div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Не "чи я гарна для когось". А — <em>чи моя зовнішність відповідає тій жінці, якою я хочу бути</em>. Якщо ти м'яка — а виглядаєш суворо, бо так "професійно". Якщо ти креативна — а одягаєшся в офісний шаблон, бо "так треба". Якщо ти любиш барви — а ходиш у чорному, бо "стрункіше". Тут є розрив. І саме цей розрив виснажує більше за будь-який зовнішній недолік.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:2.05s">
+    <h2 class="section-title">Замість висновку</h2>
+    <div class="final-quote">
+      <div class="final-text">Краса і стиль — не про "виглядати ідеально". Це про <strong>відповідність</strong>: між тобою всередині і тобою у дзеркалі. Коли є відповідність — є спокій, і тоді одяг, шкіра, помада стають радістю, не обовʼязком. Коли немає — будь-яка дорога річ виглядає ніяково. Шукай не ідеал. Шукай себе.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>

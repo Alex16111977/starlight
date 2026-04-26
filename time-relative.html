@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Час</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(220,230,255,.92)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.72)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.82);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(200,216,255,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.35);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(26px,4vw,36px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Час</h1>
+  <p class="page-subtitle">Чому він відносний — і що це означає</p>
+
+  <!-- Hero quote -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Розрізнення між минулим, теперішнім і майбутнім — це лише вперта ілюзія, яка чомусь не зникає"</div>
+      <div class="hero-author">Альберт Ейнштейн</div>
+    </div>
+    <p>Ми вважаємо час абсолютним. Тиктає годинник, він однаково йде для всіх — для дитини в Києві, для астронавта на МКС, для тебе в кафе. Так підказує здоровий глузд. Ейнштейн показав, що це не так. Час залежить від того, як ти рухаєшся і де знаходишся. І це не теорія в підручнику — це доведено експериментами і працює щодня в твоєму смартфоні.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що таке відносність -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Що таке відносність</h2>
+    <p>Перш ніж говорити про парадокси, варто зрозуміти базу. Ейнштейн зробив дві теорії з різницею в десять років. Разом вони перевернули фізику — і саме поняття часу.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🚄</span>
+        <div class="card-title">Спеціальна теорія, 1905</div>
+        <div class="card-text">Ейнштейн показав: для того, хто рухається швидко, час уповільнюється відносно нерухомого спостерігача. Чим ближча швидкість до швидкості світла — тим сильніше. На повсякденних швидкостях ефект мізерний, але він є завжди.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌍</span>
+        <div class="card-title">Загальна теорія, 1915</div>
+        <div class="card-text">Через десять років Ейнштейн пішов далі: гравітація теж уповільнює час. Чим сильніше гравітаційне поле — тим повільніше йде час. На вершині гори час іде швидше, ніж біля моря. Біля чорної діри — у тисячі разів повільніше.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⏱️</span>
+        <div class="card-title">Не "здається"</div>
+        <div class="card-text">Це важливо: час реально йде повільніше. Не "так сприймається", не "оптична ілюзія". Якщо ти полетиш на швидкій ракеті й повернешся — годинник на руці буде показувати менше часу, ніж той, що залишився вдома. І біологічний вік теж.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🛰️</span>
+        <div class="card-title">GPS — щоденний доказ</div>
+        <div class="card-text">Без виправлення на відносність GPS у твоєму телефоні помилявся б приблизно на 11 кілометрів за добу. Супутники на орбіті рухаються швидко (час уповільнюється) і відчувають слабшу гравітацію (час прискорюється). Інженери враховують обидва ефекти кожну секунду.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Експерименти, що довели -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Експерименти, що довели</h2>
+    <p>Гарна теорія — це одне. Експериментальне підтвердження — інше. За століття після Ейнштейна вчені провели десятки досліджень. Кожне підтвердило: він мав рацію. Ось чотири найвідоміших.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">✈️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Hafele-Keating, 1971</div>
+          <div class="card-text">Двоє вчених взяли надточні атомні годинники, посадили їх у пасажирські літаки і облетіли Землю. Інші такі самі залишили на землі. Після рейсу різниця склала десятки наносекунд — точно стільки, скільки передбачили формули Ейнштейна. Перший прямий експеримент із сповільненням часу.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">⚛️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Швидкі частинки</div>
+          <div class="card-text">Космічні мюони народжуються у верхніх шарах атмосфери і "повинні" розпастись задовго до того, як долетять до землі — але долітають. Чому? Бо рухаються близько до швидкості світла, і для них час уповільнюється. У прискорювачах це підтверджено тисячі разів — швидкі частинки живуть довше.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">📍</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">GPS працює тому, що Ейнштейн правий</div>
+          <div class="card-text">Кожен супутник GPS коригує свій атомний годинник за двома формулами Ейнштейна — спеціальною і загальною. Без цих поправок навігація розсипалась би за лічені години. Кожен раз, коли карта показує тебе на правильному перехресті, це підтвердження теорії відносності.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">👯</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Близнюки Келлі, NASA</div>
+          <div class="card-text">Скотт і Марк Келлі — близнюки-астронавти. Скотт провів рік на МКС, Марк — на Землі. Після повернення Скотт виявився приблизно на 5 мілісекунд молодшим за брата. Маленька різниця, але вона реальна, виміряна, і саме така, як передбачила теорія.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Парадокс близнюків -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Парадокс близнюків</h2>
+    <p>Найвідоміший уявний експеримент Ейнштейна. Він звучить як фантастика — але саме він показує, наскільки реальна відносність часу. І, як видно з історії з NASA, це навіть не зовсім "уявний" уже.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🚀</span>
+        <div class="card-title">Один летить</div>
+        <div class="card-text">Один з близнюків сідає в космічний корабель, що рухається зі швидкістю, близькою до світлової. Він прямує до далекої зірки, доходить туди, розвертається і повертається додому. З його точки зору минуло, скажімо, 5 років.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🏠</span>
+        <div class="card-title">Інший залишається</div>
+        <div class="card-text">Другий брат увесь цей час залишається на Землі. Живе звичайним життям — працює, ходить на каву, дивиться у небо. З його точки зору минуло, скажімо, 50 років. Він постарів на десятиліття, поки брат був у польоті.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">👴</span>
+        <div class="card-title">Зустріч</div>
+        <div class="card-text">Коли подорожній повертається — він зустрічає старого брата. Сам залишається молодим. Це не магія і не художній прийом. Це прямий наслідок законів фізики, де час для рухомого об'єкта йде повільніше.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📊</span>
+        <div class="card-title">Підтверджено в малому</div>
+        <div class="card-text">У такому масштабі ще не випробуване — у нас немає кораблів, що летять на 99% швидкості світла. Але для коротких часів і менших швидкостей перевірено сотні разів. Близнюки Келлі — найкраща біологічна ілюстрація. Парадокс — реальність.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Стрілка часу -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Стрілка часу</h2>
+    <p>Якщо час відносний — чому ми все одно відчуваємо, що він тече "вперед"? Чому минуле відрізняється від майбутнього? Тут починається ще одна загадка, яку фізика і досі не до кінця розв'язала.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🔄</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Закони не розрізняють напрямок</div>
+          <div class="card-text">Майже всі фундаментальні закони фізики — від механіки Ньютона до квантових рівнянь — працюють однаково в обидва боки часу. Виняток один: Друге начало термодинаміки. Ентропія (хаос) у замкненій системі тільки росте. Це і є фізична "стрілка часу".</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🍵</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Стрілка часу = напрям хаосу</div>
+          <div class="card-text">Розбита чашка не збирається назад. Кава не виходить з молока. Дим не повертається в сигарету. Чому? Бо в усіх цих процесах ентропія зростає. Зворотні сценарії не заборонені фізикою — просто статистично майже неможливі. "Майбутнє" — це бік, де хаосу більше.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🌌</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Чи існує "тепер"?</div>
+          <div class="card-text">З теорії Ейнштейна випливає: те, що для тебе "зараз", для спостерігача в іншій точці Всесвіту або в іншому русі — буде минулим або майбутнім. Це привело до концепції "блокового Всесвіту": минуле, теперішнє і майбутнє існують одночасно, як 3D-карта. Ми просто рухаємось крізь неї.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🧠</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Психологічний час ≠ фізичний</div>
+          <div class="card-text">Той, хто весело, відчуває час як швидший. Той, кому нудно, — як повільніший. Дитячі літа здаються нескінченними; рік у дорослому віці пролітає миттєво. Це нейробіологія: мозок міряє час кількістю нової інформації. Чим більше нового — тим довшим здається проміжок.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що з цим робити -->
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Що з цим робити</h2>
+    <p>Час — не нейтральний фон, на якому розгортаються події. Це частина тканини Всесвіту, з якою працює гравітація і рух. Біля чорної діри час іде в десятки разів повільніше. На вершині гори — швидше, ніж у долині (на наносекунди). На борту літака — повільніше, ніж на землі. Усе це не філософія, а вимірюване — і виміряне.</p>
+
+    <div class="highlight">
+      <p>Це означає, що "час" — не одна універсальна річ. Кожен з нас рухається крізь власний час. У космонавта і в шахтаря — різні. У тебе на дивані і в когось у горах — різні. Різниці мізерні, але вони є. <em>Час — найособистіше явище, яке тільки може бути</em>. Він не належить календарю. Він належить тобі — твоєму руху, твоєму місцю, твоїй тривалості життя.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Ключове питання -->
+  <div class="section" style="animation-delay:1.85s">
+    <h2 class="section-title">Ключове питання</h2>
+    <p>Якщо час твій — і тільки твій — то відношення до нього стає головним питанням життя.</p>
+
+    <div class="question-card">
+      <div class="question-label">Запитай себе</div>
+      <div class="question-main">"Як я ставлюсь до часу — як до того, що мене несе, чи як до того, що я творю?"</div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Більшість живуть у режимі "несе". Тиждень за тижнем, рік за роком, не помічаючи. Психологічний час прискорюється, бо нового мало. Інший варіант — "творю". Свідомо вибираєш, що сповільнює і наповнює. <em>Подорож, нова навичка, глибока розмова, перший раз у житті</em>. Це не магія — це нейробіологія в дії. Чим більше нового, тим довшим стає життя зсередини.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Final -->
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Висновок</h2>
+    <div class="final-quote">
+      <div class="final-text">Час — найдивніша і <strong>найособистіша</strong> річ у Всесвіті. Він не однаковий для всіх. Він залежить від того, де ти, як рухаєшся, що відчуваєш. Він не справедливий і не несправедливий — він просто є. І він — все, що в нас є. Тому єдине розумне, що з ним можна зробити, — наповнювати.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>

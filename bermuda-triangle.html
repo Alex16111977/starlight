@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Бермудський трикутник</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(220,230,255,.92)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.72)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.82);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(200,216,255,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.35);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(26px,4vw,36px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="mysteries.html">Назад</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Бермудський трикутник</h1>
+  <p class="page-subtitle">Найвідоміший у світі міф про небезпечне море</p>
+
+  <!-- Hero quote -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Океан не любить бути загадковим. Це люди такими його роблять"</div>
+      <div class="hero-author">Морський фольклор</div>
+    </div>
+    <p>Уяви: ділянка океану, в якій безслідно зникають кораблі та літаки, виходять з ладу прилади, час сповільнюється. Усе це — Бермудський трикутник, відомий нам з 1970-х. Книги, фільми, документалки про "загадку століття". Але якщо подивитись на цифри і статистику, виявляється: трикутник — насправді один із найбезпечніших регіонів океану. Чому ж легенда так живе? Бо людський мозок любить історію більше за статистику.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що це -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Що це таке</h2>
+    <p>Трикутник із трьох точок: Маямі (США), Сан-Хуан (Пуерто-Ріко) і Бермудські острови. Ділянка близько 1.3 мільйона квадратних кілометрів — більша за всю Україну. Через нього проходить один із найзавантаженіших морських і повітряних коридорів планети.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">📰</span>
+        <div class="card-title">Винайдено в 1964</div>
+        <div class="card-text">Термін "Бермудський трикутник" з'явився не у науці, а в журналі pulp fiction "Argosy" — статтю написав Вінсент Гаддіс. У 1974 Чарльз Берліц видав бестселер "Бермудський трикутник" — і міф пішов світом. До 1964 моряки знали ці води як "звичайно небезпечні", але без містики.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📊</span>
+        <div class="card-title">Не більше зникнень</div>
+        <div class="card-text">У 2013 World Wide Fund for Nature перевірив топ-10 найнебезпечніших морських регіонів — Бермудського трикутника серед них немає. Lloyd's of London — головний світовий страховик кораблів — давно стверджує: страхові тарифи там нормальні, не вищі за середні. Статистика не підтверджує містику.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">✈️</span>
+        <div class="card-title">Рейс 19 — справжня історія</div>
+        <div class="card-text">Найвідоміший випадок: у 1945 п'ять літаків TBM Avenger зникли у польоті над трикутником. У легенді — "розчинились у повітрі". Реальність: командир заблукав через несправний компас, екіпаж панікував, паливо закінчилось, літаки впали в океан у ніч. Звичайна, але трагічна авіакатастрофа.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📡</span>
+        <div class="card-title">USS Cyclops — 1918</div>
+        <div class="card-text">Найбільша катастрофа без виявлених тіл — корабель ВМС США, 309 людей, зник 4 березня 1918. Жодного сигналу, жодного уламка. Найбільш імовірно — потонув під час шторму через перевантаження марганцевою рудою. У ті роки не було радарів і GPS, тому такі речі траплялися. Тіло корабля на дні досі не знайдене.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Чому небезпечно -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Чому там реально небезпечно</h2>
+    <p>Бермудський трикутник — небезпечний, але не містично. Просто там сходяться кілька цілком земних, фізичних факторів, які створюють ризик. Все пояснюється — без прибульців.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🌊</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Гольфстрім</div>
+          <div class="card-text">Найшвидша океанська течія Атлантики — до 9 км/год — проходить просто через трикутник. Якщо корабель потонув, його уламки за добу віднесе на сотні кілометрів. Ось чому "не залишилось жодного сліду" — сліди є, просто не там, де шукають. Природне пояснення зникнення тіл.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">⛈️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Раптові шторми</div>
+          <div class="card-text">У трикутнику зустрічаються тропічне повітря з Карибів і холодне з півночі. Це породжує миттєві шторми, циклони і "хвилі-вбивці" висотою до 30 метрів. Ще в 1940-х метеорологи знали: цей регіон — один із найбільш мінливих у світі. Літак чи корабель може потрапити в негоду за 15 хвилин.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🧭</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Магнітна аномалія</div>
+          <div class="card-text">Трикутник — одне з небагатьох місць на Землі, де магнітний компас показує справжній (географічний) північ замість магнітного. Якщо штурман не знає цього і не зробить поправку, легко відхилитись від курсу на сотні кілометрів. Особливо вночі чи у шторм. Не "магічна аномалія" — а звичайна геологія.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🛢️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Газові гідрати</div>
+          <div class="card-text">На дні трикутника — поклади метангідратів. Якщо такий пухир раптом виходить — океан над ним перетворюється на піну. Корабель втрачає плавучість і моментально тоне. Це гіпотеза, яку перевіряли в лабораторіях — і вона працює. Може пояснити частину "безслідних" зникнень.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Психологія міфу -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Чому міф такий сильний</h2>
+    <p>Найцікавіше у Бермудському трикутнику — не самі зникнення, а те, як працює людський мозок при зустрічі з інформацією. Той самий механізм пояснює, чому ми віримо в гороскопи, теорії змов і "це не випадковість".</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🧠</span>
+        <div class="card-title">Confirmation bias</div>
+        <div class="card-text">Підтверджувальне упередження. Якщо ти чув про "загадку трикутника" — ти запам'ятаєш кожне зникнення там. А зникнення в інших регіонах залишишся непомітними. Мозок "знаходить" візерунок, який вже очікує. Якраз тому міфи такі стійкі: кожен новий випадок здається доказом.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📖</span>
+        <div class="card-title">Селективна історія</div>
+        <div class="card-text">Дослідник Ларрі Куше у 1975 переглянув усі "трагедії трикутника" з оригінальних звітів. Виявилось: у багатьох випадках корабель зник не в трикутнику, або взагалі не зник, або причина була записана в журналі. Берліц і інші просто опускали "невигідні" деталі. Книжка "Розвінчаний трикутник" — обов'язкове чтиво, але мало хто її читає.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">😱</span>
+        <div class="card-title">Тяга до загадки</div>
+        <div class="card-text">Людський мозок не любить "просто статистики". Йому потрібна історія: герой, негоди, таємниця. Шторм — нудно. Прибульці на дні океану — захоплююче. Тому сухе пояснення завжди програє яскравому міфу. Це не помилка — це особливість, яка робить нас людьми. І нею ж нас можна обманути.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📺</span>
+        <div class="card-title">Медіа любить таємниці</div>
+        <div class="card-text">Документалки про "трикутник" — стабільний хіт ТБ. Розслідування Ларрі Куше — нудний матеріал. Тому коли журналіст пише про "ще одне зникнення", він знає: цей текст прочитають. Спростування — ні. Тому міф росте десятиліттями, а скептики залишаються в тіні.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Чи є взагалі загадка -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Чи є взагалі загадка</h2>
+    <p>Якщо подивитись на справу неупереджено — що залишається після пояснень? Чи є у трикутнику щось, що наука досі не розуміє?</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">📈</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Кількість зникнень — нормальна</div>
+          <div class="card-text">Якщо взяти будь-який однаково завантажений морський коридор у світі (наприклад, Південно-Китайське море або Північна Атлантика) — там стільки ж аварій. Більше навіть. Ілюзія "трикутника" виникає тому, що регіон має красиве ім'я. Якби існував "Прямокутник Тихого океану" — про нього теж знімали б серіали.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🔬</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Що каже NOAA</div>
+          <div class="card-text">Національне управління океанографії і атмосфери США (NOAA) офіційно: "немає доказів, що в Бермудському трикутнику зникнення відбуваються частіше, ніж в інших регіонах океану з аналогічним рухом". Це не "ховають правду" — це публічна позиція уряду, з даними. Скептикам не потрібно нічого приховувати.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🌪️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Хвилі-вбивці існують</div>
+          <div class="card-text">До 1995 моряцькі історії про "хвилі-стіни", що з'являються нізвідки і занурюють кораблі за хвилину, вважалися байкою. У 1995 у Північному морі вперше задокументували таку хвилю — 25.6 метра. Тепер відомо: вони виникають у різних місцях планети, у тому числі в Атлантиці. Та сама фізика — саме звичайна, але страшна.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🌐</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Велика статистика</div>
+          <div class="card-text">Через трикутник щороку проходить понад 150 тисяч кораблів і десятки тисяч літаків. Кілька зникнень на цей трафік — звичайний відсоток. У 2020-х майже всі судна обладнані GPS, AIS і супутниковим зв'язком — "загадкових зникнень" уже практично немає. Технологія розвіяла міф остаточно.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Урок -->
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Чому ця історія важлива</h2>
+    <p>Бермудський трикутник — найкращий навчальний приклад для критичного мислення. Не тому, що там нічого нема — а тому, що показує, як цілий світ може повірити в те, чого нема.</p>
+
+    <div class="highlight">
+      <p>Той самий механізм, що зробив "трикутник" знаменитим, працює і в інших речах. У теоріях змов. У фейкових новинах. У переконаннях про "це не може бути випадково". Ми всі схильні бачити візерунок там, де його немає, — бо мозок еволюційно налаштований на це. У давнину це рятувало життя ("шум у траві = тигр"). А сьогодні часом нас обманює. <em>Бермудський трикутник — це не загадка води. Це загадка психіки</em>. І вивчати її — корисніше, ніж шукати АТЛАНТИДУ під океаном.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Ключове питання -->
+  <div class="section" style="animation-delay:1.85s">
+    <h2 class="section-title">Ключове питання</h2>
+    <p>Цей міф вчить дивовижного — і не про море, а про нас самих.</p>
+
+    <div class="question-card">
+      <div class="question-label">Запитай себе</div>
+      <div class="question-main">"У які "трикутники" вірю я?"</div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Кожен з нас має свої "Бермудські трикутники" — переконання, які стали нашими, бо їх багато повторювали. "Я невдаха в стосунках". "Зі мною нічого не виходить". "Усі мене кидають". Кожен раз, коли щось погане трапляється, ми "запам'ятовуємо" його як підтвердження. А вдалі моменти проходять повз, бо не вписуються в історію. <em>Іноді найкраще, що можна зробити — це переглянути свої "трикутники" з логом подій. Можливо, там нема нічого містичного, окрім самої історії, яку ми собі переказуємо</em>.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Final -->
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Висновок</h2>
+    <div class="final-quote">
+      <div class="final-text">Бермудський трикутник — найкрасивіша ілюзія століття. <strong>Загадка не в океані — а в тому, як ми любимо загадки</strong>. Океан там — звичайний, шторми — звичайні, фізика — звичайна. Незвичайне — наша готовність бачити "візерунок" і повторювати його століттями. Може, найбільший урок цієї історії: <strong>перш ніж шукати містику в чомусь — варто перевірити, чи нема статистики поруч</strong>. І не боятися, що "нічого містичного" — це теж відповідь.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>

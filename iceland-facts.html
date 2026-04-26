@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Ісландія</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(220,230,255,.92)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.72)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.82);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(200,216,255,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.35);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(26px,4vw,36px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Ісландія</h1>
+  <p class="page-subtitle">Земля льоду, вогню і ельфів</p>
+
+  <!-- Hero quote -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Той, хто не живе у згоді з природою цієї землі, ніколи не зрозуміє її людей"</div>
+      <div class="hero-author">Гальдор Лакснесс</div>
+    </div>
+    <p>Ісландія — країна, що живе всупереч географії. 372 тисячі мешканців — менше, ніж у Львові. Більше книжок на душу населення, ніж у будь-якій країні світу. Жодного McDonald's — і це принципово. І 54% людей не виключають, що ельфи реальні. Це не казка. Це сучасна європейська держава, де голову уряду можна зустріти в кафе без охорони, і де поліцейські діляться селфі з пончиками в інстаграмі.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Природа -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Природа</h2>
+    <p>Ісландія — місце, де земля ще не закінчила формуватись. Тут можна стояти на двох континентах одночасно, побачити нову лаву, що тече вперше за людську пам'ять, і дізнатись, що слово "гейзер" — ісландське.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🧊</span>
+        <div class="card-title">Ватнайокудль</div>
+        <div class="card-text">Найбільший льодовик Європи — і він займає 8% території всієї країни. Під ним сім вулканів. Коли вони вибухають, лід тане за лічені години — і несе мости, дороги, цілі долини. Ісландці звикли. Перебудовують.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔥</span>
+        <div class="card-title">130 вулканів</div>
+        <div class="card-text">У середньому виверження раз на 5 років. У 2010 вулкан Ейяф'ятлайокутль (так, це справжня назва) зупинив авіасполучення над усією Європою на тиждень. Місцеві ставляться спокійно: "ну, він ожив". Як до сусіда, що повернувся з відпустки.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💧</span>
+        <div class="card-title">Слово "гейзер" звідси</div>
+        <div class="card-text">Geysir — спочатку власна назва конкретного джерела на півдні Ісландії. Воно настільки вразило туристів XVIII століття, що ім'я стало загальним для всіх таких джерел у світі. Ось як маленька країна може дати слово всім мовам планети.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌍</span>
+        <div class="card-title">Між двома континентами</div>
+        <div class="card-text">У парку Тінґветлір розходяться Євразійська і Північноамериканська тектонічні плити. Можна буквально стояти між двома континентами. Щороку вони віддаляються на 2 см. Тобто Ісландія повільно розривається — і це вона так "росте".</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Культура -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Культура</h2>
+    <p>Ісландці — нащадки вікінгів, які доплили сюди тисячу років тому і залишились. І від тих часів — мова, прізвища, любов до історій і трохи чарівного мислення.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">📖</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Мова не змінилась з ХІІІ ст.</div>
+          <div class="card-text">Сучасний ісландець може взяти давні саги XIII століття і читати їх в оригіналі. Без перекладу. Без словника. Бо мова майже не змінилась за 800 років. Уяви: ти береш літописи Київської Русі і читаєш як ранкову газету. Ось так живе ісландець.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">👨‍👧</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Прізвищ як таких немає</div>
+          <div class="card-text">У них патроніми: ім'я + ім'я батька + son (для хлопця) або dóttir (для дівчини). Бйорк Ґвюндмюндсдоттір — означає "Бйорк, донька Ґвюндмюнда". У сім'ї всі мають різні "прізвища". Телефонні довідники в Ісландії алфавітизовані за іменем, а не за прізвищем.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">✍️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Найбільше письменників на душу</div>
+          <div class="card-text">У них кажуть: "у кожного ісландця в шухляді є рукопис". 1 з 10 публікує книгу за життя. Це найвищий показник у світі. Темні зимові місяці породжують літературу — коли надворі темно 20 годин на добу, добре сидіти і писати.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🎁</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Йолабокафлоудур — потоп книжок</div>
+          <div class="card-text">95% книжок продаються восени. Бо є традиція: на Різдво даруй книгу. Ввечері 24 грудня всі сидять у шкарпетках з какао і читають свої нові книжки. Це називається йолабокафлоудур — "різдвяний потоп книжок". Найкраща різдвяна традиція світу.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Дивовижні факти -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Дивовижні факти</h2>
+    <p>Список речей, які звучать як неможливі — поки не дізнаєшся, що це і є щоденна реальність ісландців.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🍔</span>
+        <div class="card-title">Жодного McDonald's</div>
+        <div class="card-text">Останній McDonald's закрили 2009 року після фінансової кризи — стало невигідно імпортувати продукти за міжнародними стандартами мережі. Останній бургер виставлено в музеї. Він не плісніє вже 16 років. Це багато чого розповідає про McDonald's.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🍷</span>
+        <div class="card-title">Голосувати — у 18, пити — у 20</div>
+        <div class="card-text">Цікавий парадокс: ти можеш обирати президента, бути обраним, одружитись — але не випити пива в барі. Ще одна цікава деталь: до 1989 року в Ісландії взагалі було заборонено пиво. День його легалізації — 1 березня — досі святкують як "Bjórdagurinn".</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📋</span>
+        <div class="card-title">Ім'я має бути затверджене</div>
+        <div class="card-text">Існує Комітет ісландських імен — державний орган, що схвалює нові імена. Ім'я мусить відповідати ісландській граматиці і традиції. Нові батьки часом місяцями чекають дозволу. Хочеш назвати дитину "Бруклін" — комітет скаже "ні", це не ісландське слово.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">☮️</span>
+        <div class="card-title">Найбільш мирна країна світу</div>
+        <div class="card-text">13 років підряд — перше місце у Global Peace Index. Армії немає взагалі. Поліція не носить вогнепальної зброї (за всю історію країни поліцейський убив людину лише раз — 2013 року, і це був національний шок).</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧝</span>
+        <div class="card-title">54% не виключають ельфів</div>
+        <div class="card-text">Опитування Ісландського університету: 54% населення кажуть, що "не можна точно сказати, що ельфів немає". Дороги офіційно змінюють траєкторію, щоб не зачепити "ельфійські скелі". Це не маркетинг для туристів. Це щира повага до місць, які "відчуваються по-особливому".</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Історія -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Історія</h2>
+    <p>Ісландія — наймолодша і найстаріша одночасно. Молода як країна, але одна з найдавніших демократій планети.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">⛵</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Заселили вікінги ~870 року</div>
+          <div class="card-text">Перші поселенці прибули з Норвегії — тікали від короля Гаральда. Відтоді — генетична загадка: 100% сучасних ісландців нащадки тих перших 10 000 поселенців. Завдяки малій ізольованій популяції, ісландські генетики зробили проривні відкриття у медицині — це найкраще вивчена ДНК у світі.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🏛️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Альтинг — найстаріший парламент</div>
+          <div class="card-text">Заснований 930 року. Чи розумієш ти масштаб? Це коли в Києві ще князював Ігор. Парламент Ісландії старший за ВСІ інші парламенти Європи. Зустрічались просто неба, у долині Тінґветлір. Це не була "перша спроба" — це й сьогодні чинний орган.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">👑</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">700 років під чужою владою</div>
+          <div class="card-text">З 1262 — під Норвегією, потім під Данією. 700 років без власної держави. Незалежність — лише 1944 року, коли Данія була окупована нацистами і не могла заперечити. Ось так Ісландія "стрибнула у вікно" Другої світової — і назад уже не повернулась.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🐟</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Тріскова війна з Британією</div>
+          <div class="card-text">З 1958 до 1976 року Ісландія воювала з Великою Британією. За тріску. Без жартів — справжній збройний конфлікт. Ісландія тричі розширювала свої рибальські води, Британія слала військові кораблі. Ісландія перемогла. Тому що пригрозила вийти з НАТО — а саме там була стратегічна база. Відтоді — найкраще риболовство у світі.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Сьогодні -->
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Сьогодні</h2>
+    <p>Сучасна Ісландія — це перевірка гіпотези: що буде, якщо маленька країна буде ставитись до природи, людей і прав з повагою. Виявляється — буде дуже добре.</p>
+
+    <div class="highlight">
+      <p>99% електрики — з відновлюваних джерел. Геотермальна (тепло з-під землі) і гідро (з річок). Бензин для машин — імпортується, але ціль до 2040 року — повний перехід на електрику. Найвища тривалість життя в Європі. У 1980 році Вігдіс Фіннбоґадоттір стала першою в світі обраною жінкою-президенткою. Можна викликати поліцію через додаток. Можна замовити доставку від мера, якщо ти переїхав в Рейкʼявік. Ця країна <em>показує: цивілізованість — не питання розміру</em>. Це питання вибору і поваги.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Ключове питання -->
+  <div class="section" style="animation-delay:1.85s">
+    <h2 class="section-title">Ключове питання</h2>
+    <p>Ісландія — країна, що ставиться до своєї суворої природи з ніжністю. Скеля може бути домом ельфа. Гарячий струмок — місцем для розмови з другом. Це інше ставлення.</p>
+
+    <div class="question-card">
+      <div class="question-label">Запитай себе</div>
+      <div class="question-main">"Що з ісландського ставлення до природи я можу взяти у своє життя?"</div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Не "поставити сонячні панелі" і не "переїхати в село". А — <em>ставитись до місця, де живеш, як до живого</em>. Залишити дерево, навіть якщо воно "заважає". Не зривати квітку просто так. Помічати скелю біля дороги. Це здається сентиментальним. Але саме з такого ставлення виростає 99% зеленої електрики і країна, де поліцейський за все життя одного разу вистрілив у людину.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Final -->
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Висновок</h2>
+    <div class="final-quote">
+      <div class="final-text">Ісландія доводить — навіть найсуворіша земля може стати <strong>домом</strong>, якщо ставитись до неї з повагою. Лід і вогонь не вибиратимуть м'якших мешканців. Але якщо ти не воюєш з місцем, а вчишся жити з ним у згоді — воно дає тобі неймовірно багато. Книги, тривалість життя, мир. І ельфів. Хто знає.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>

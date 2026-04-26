@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Стоїцизм</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.12) 0%,rgba(40,80,200,.06) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.07) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.55)}
+
+.steps-grid{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.step-card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:24px;align-items:flex-start}
+.step-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.step-card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.step-card:hover::before{opacity:1}
+.step-num{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:48px;color:rgba(138,176,255,.25);line-height:1;flex-shrink:0;width:40px;text-align:center}
+.step-body{flex:1}
+
+.tips{list-style:none;margin-top:16px}
+.tips li{font-size:13px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.6);padding:12px 0 12px 28px;border-bottom:1px solid rgba(200,216,255,.04);position:relative}
+.tips li::before{content:'';position:absolute;left:8px;top:20px;width:4px;height:4px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 6px #8ab0ff}
+
+.rules-list{list-style:none;margin-top:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:12px}
+.rules-list li{font-size:12px;font-weight:200;line-height:1.7;color:rgba(200,216,255,.55);padding:14px 16px 14px 32px;background:rgba(200,216,255,.02);border:1px solid rgba(200,216,255,.05);border-radius:10px;position:relative}
+.rules-list li::before{content:'';position:absolute;left:14px;top:20px;width:4px;height:4px;border-radius:50%;background:rgba(212,175,110,.6);box-shadow:0 0 6px rgba(212,175,110,.3)}
+
+/* Dichotomy of control */
+.dicho{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px}
+@media (max-width:600px){.dicho{grid-template-columns:1fr}}
+.dicho-col{background:rgba(200,216,255,.04);border:1px solid rgba(200,216,255,.1);border-radius:16px;padding:28px 24px}
+.dicho-col.yes{background:linear-gradient(180deg,rgba(130,200,140,.08),rgba(130,200,140,.02));border-color:rgba(130,200,140,.18)}
+.dicho-col.no{background:linear-gradient(180deg,rgba(255,150,130,.06),rgba(255,150,130,.01));border-color:rgba(255,150,130,.14)}
+.dicho-head{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:20px;margin-bottom:12px;display:flex;align-items:center;gap:10px}
+.dicho-col.yes .dicho-head{color:rgba(160,220,170,.95)}
+.dicho-col.no .dicho-head{color:rgba(255,170,150,.95)}
+.dicho-list{list-style:none}
+.dicho-list li{font-size:13px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.7);padding:8px 0 8px 22px;position:relative}
+.dicho-list li::before{position:absolute;left:0;top:8px;font-size:13px}
+.dicho-col.yes .dicho-list li::before{content:'✓';color:rgba(160,220,170,.7)}
+.dicho-col.no .dicho-list li::before{content:'×';color:rgba(255,170,150,.7)}
+
+/* Person card */
+.person-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:24px}
+.person{background:rgba(200,216,255,.04);border:1px solid rgba(200,216,255,.12);border-radius:16px;padding:28px 24px;transition:all .4s}
+.person:hover{background:rgba(200,216,255,.08);border-color:rgba(200,216,255,.22);transform:translateY(-4px)}
+.person-name{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:24px;color:rgba(230,238,255,.95);margin-bottom:4px}
+.person-meta{font-size:9px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;color:rgba(212,175,110,.7);margin-bottom:16px}
+.person-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.6);margin-bottom:14px}
+.person-quote{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;line-height:1.6;color:rgba(220,230,255,.85);padding-left:14px;border-left:2px solid rgba(138,176,255,.4)}
+
+.quote{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.4vw,22px);line-height:1.6;color:rgba(220,230,255,.85);text-align:center;padding:32px 24px;border-top:1px solid rgba(200,216,255,.1);border-bottom:1px solid rgba(200,216,255,.1);margin:32px 0}
+.quote::before{content:'"';font-size:36px;color:rgba(138,176,255,.4);margin-right:6px;vertical-align:-6px}
+.quote::after{content:'"';font-size:36px;color:rgba(138,176,255,.4);margin-left:6px;vertical-align:-6px}
+.quote-cite{display:block;font-family:'Montserrat',sans-serif;font-style:normal;font-size:9px;font-weight:300;letter-spacing:.4em;text-transform:uppercase;color:rgba(212,175,110,.7);margin-top:14px}
+
+/* Myth cards */
+.myth-card{background:rgba(200,216,255,.04);border:1px solid rgba(200,216,255,.1);border-radius:16px;padding:24px;margin-bottom:14px;transition:all .4s}
+.myth-card:hover{background:rgba(200,216,255,.07);border-color:rgba(200,216,255,.2)}
+.myth-row{display:flex;gap:14px;align-items:flex-start;margin-bottom:10px}
+.myth-tag{font-size:9px;font-weight:400;letter-spacing:.3em;text-transform:uppercase;padding:4px 10px;border-radius:4px;flex-shrink:0;margin-top:2px}
+.myth-tag.bad{background:rgba(255,130,130,.12);color:rgba(255,170,150,.9);border:1px solid rgba(255,130,130,.2)}
+.myth-tag.good{background:rgba(130,200,140,.1);color:rgba(160,220,170,.9);border:1px solid rgba(130,200,140,.2)}
+.myth-text{font-size:13px;font-weight:200;line-height:1.7;color:rgba(220,230,255,.82)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Стоїцизм</h1>
+  <p class="page-subtitle">Давня філософія, яка працює сьогодні</p>
+
+  <!-- Intro -->
+  <div class="section" style="animation-delay:.9s">
+    <p>Стоїцизм народився в Афінах 2 300 років тому — на сходах розписаного портика (Stoa Poikile), звідки і назва. Це не релігія, не догма, не «бути холодним каменем». Це практична інструкція, як жити добре в світі, який тебе не питає.</p>
+    <p>Сьогодні стоїцизм переживає друге народження — на ньому збудовані когнітивно-поведінкова терапія, mindfulness, частина книжок Sept Habits, виступи Джокó і Раяна Голідея. Бо проблеми ті самі: тривога, втрати, образи, страх, бажання визнання. І відповіді — досі робочі.</p>
+  </div>
+
+  <div class="quote">
+    Не події хвилюють нас, а наші судження про них.
+    <span class="quote-cite">Епіктет</span>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Three figures -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Три голоси</h2>
+    <p>Усе, що ми сьогодні знаємо про стоїцизм, тримається на трьох постатях. Раб, заможний радник і імператор. Філософія, яка працює для всіх.</p>
+
+    <div class="person-grid">
+      <div class="person">
+        <div class="person-name">Епіктет</div>
+        <div class="person-meta">50–135 р. н.е. · раб → вчитель</div>
+        <div class="person-text">Народився рабом, кульгавий, бідний. Звільнився, став одним із найвпливовіших філософів Риму. Нічого не написав сам — учні записали лекції.</div>
+        <div class="person-quote">«Деякі речі залежать від нас, інші — ні. У цьому вся мудрість.»</div>
+      </div>
+      <div class="person">
+        <div class="person-name">Сенека</div>
+        <div class="person-meta">4 р. до н.е.–65 р. · радник Нерона</div>
+        <div class="person-text">Багатий, впливовий, наставник імператора. Писав листи, в яких практичні поради переплетені з життєвим досвідом. Загинув за наказом того ж Нерона.</div>
+        <div class="person-quote">«Ми страждаємо в уяві частіше, ніж у реальності.»</div>
+      </div>
+      <div class="person">
+        <div class="person-name">Марк Аврелій</div>
+        <div class="person-meta">121–180 р. · імператор Риму</div>
+        <div class="person-text">Найвпливовіша людина свого часу. Писав «Роздуми» для себе самого, не для публікації. Тому вони такі чесні — це щоденник, а не трактат.</div>
+        <div class="person-quote">«Ти маєш владу над своїм розумом — а не над зовнішніми подіями.»</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Dichotomy -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Дихотомія контролю</h2>
+    <p>Серце стоїцизму. Один простий розділ, який змінює все. Енергію вкладай у те, що залежить від тебе. Решту — приймай.</p>
+
+    <div class="dicho">
+      <div class="dicho-col yes">
+        <div class="dicho-head">Залежить від тебе</div>
+        <ul class="dicho-list">
+          <li>Твої думки і реакції</li>
+          <li>Твої цінності і вибір</li>
+          <li>Як ти ставишся до того, що сталося</li>
+          <li>Твої зусилля і дисципліна</li>
+          <li>З ким ти проводиш час</li>
+          <li>На що звертаєш увагу</li>
+          <li>Твої слова і вчинки</li>
+        </ul>
+      </div>
+      <div class="dicho-col no">
+        <div class="dicho-head">Не залежить від тебе</div>
+        <ul class="dicho-list">
+          <li>Минуле і майбутнє</li>
+          <li>Думки і дії інших людей</li>
+          <li>Репутація і чужа оцінка</li>
+          <li>Здоров'я і вік (частково)</li>
+          <li>Економіка, погода, війна</li>
+          <li>Чи отримаєш ти бажаний результат</li>
+          <li>Чи зрозуміють тебе</li>
+        </ul>
+      </div>
+    </div>
+
+    <p style="margin-top:24px">Більшість тривоги — від того, що ми сплутали колонки. Сидимо і переживаємо про те, що в правій. Замість того щоб працювати з тим, що в лівій. Усе.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Core ideas -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Шість ідей, які працюють</h2>
+    <p>Не повна теорія — а робочий мінімум, який можна застосувати завтра.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🪞</span>
+        <div class="card-title">Між подією і реакцією — ти</div>
+        <div class="card-text">Тебе не образило слово — тебе образила твоя інтерпретація. Між подразником і реакцією є проміжок. У цьому проміжку — твоя свобода.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌊</span>
+        <div class="card-title">Прийняття того, що є</div>
+        <div class="card-text">«Хочу, щоб події йшли, як я хочу» — рецепт страждання. «Хочу, щоб події йшли, як вони йдуть» — рецепт спокою. Прийняття — не пасивність, а звільнення сил для дії.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚖️</span>
+        <div class="card-title">Чотири чесноти</div>
+        <div class="card-text">Мудрість, справедливість, мужність, помірність. Усе інше — другорядне. Гроші, статус, влада — не зло і не добро, важливо як ти з ними чиниш.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌍</span>
+        <div class="card-title">Жити природно</div>
+        <div class="card-text">Людина — соціальна, розумна, смертна істота. Жити природно = служити іншим, користуватися розумом, прийняти кінечність. Усе, що проти цього — джерело мук.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⏳</span>
+        <div class="card-title">Memento mori</div>
+        <div class="card-text">Пам'ятай про смерть. Не як меланхолія, а як паливо. Сьогодні може бути останнім — тоді чи варто витрачати його на дрібну сварку, образу, прокрастинацію?</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔥</span>
+        <div class="card-title">Перешкода — це шлях</div>
+        <div class="card-text">«Перешкода до дії стає дією. Те, що стояло на шляху, стає шляхом» (Марк Аврелій). Кожна проблема — матеріал для зростання. Або сировина, або вирок — обираєш ти.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Practices -->
+  <div class="section" style="animation-delay:1.15s">
+    <h2 class="section-title">Практики, які можна почати сьогодні</h2>
+    <p>Стоїцизм — не теорія. Це щоденне тренування. Ці практики римляни виконували 2 000 років тому і вони досі працюють.</p>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="card-title">Premeditatio malorum — премедитація поганого</div>
+          <div class="card-text">Зранку 2 хвилини: уяви, що сьогодні щось піде не так. Хтось нагрубіянить, поїзд запізниться, презентація провалиться. Не щоб себе налякати — а щоб бути готовою. Коли таке справді трапиться, тебе це не звалить. «А, я це бачила.»</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="card-title">Вечірня рефлексія</div>
+          <div class="card-text">Ввечері 5 хв запитуй: що я зробила добре? де я провалилась? як зроблю інакше завтра? Не самокатування — навчання на власному дні. Сенека робив це щодня.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="card-title">Погляд згори</div>
+          <div class="card-text">Коли тебе захоплює дрібна проблема, уяви себе зверху: квартира → район → місто → країна → континент → планета. Подивись на себе з космосу — твоя проблема ще така велика?</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="card-title">Добровільний дискомфорт</div>
+          <div class="card-text">Раз на тиждень: холодний душ, день без кави, пропустити обід, спати на підлозі ніч. Не страждати заради страждання — а тренувати: «я витримаю більше, ніж думала». І ціни звичайне життя більше.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="card-title">Memento mori</div>
+          <div class="card-text">Раз на день нагадуй собі, що ти смертна. Не похмуро — а звільняюче. Скільки ще ранків? Чи цей я хочу витратити на образу? Носи камінь у кишені, постав нагадування. Що завгодно, що повертає в реальність часу.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <div class="card-title">Журнал стоїка</div>
+          <div class="card-text">Кожного ранку — одна цитата і коротка медитація на день. Кожного вечора — три питання. Це не «писати багато» — це повертати себе до філософії в моменті, а не як до книжки на полиці.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">7</div>
+        <div class="step-body">
+          <div class="card-title">Зупинка перед реакцією</div>
+          <div class="card-text">Коли тебе щось зачепило — не реагуй одразу. 10 секунд паузи. Спитай: чи це залежить від мене? Чи я справді ображена — чи я вирішила образитись? Часто реакція слабшає сама.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">8</div>
+        <div class="step-body">
+          <div class="card-title">Вдячність замість бажань</div>
+          <div class="card-text">Замість «що мені ще треба» — «що б я втратила завтра, якби втратила?» Уяви на хвилину, що вранці не побачила цих людей, цього вікна, цієї руки. Усе, що ти маєш — несподіваний подарунок.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Myths -->
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Чим стоїцизм НЕ є</h2>
+    <p>Найчастіші непорозуміння. Те, що люди уявляють під словом «стоїк», часто не має нічого спільного з самою філософією.</p>
+
+    <div class="myth-card">
+      <div class="myth-row"><span class="myth-tag bad">міф</span><span class="myth-text">Стоїк не має емоцій. Холодний, як камінь.</span></div>
+      <div class="myth-row"><span class="myth-tag good">правда</span><span class="myth-text">Стоїк відчуває все — гнів, страх, любов, смуток. Просто не дає емоції керувати рішенням. Емоція = сигнал, не наказ.</span></div>
+    </div>
+    <div class="myth-card">
+      <div class="myth-row"><span class="myth-tag bad">міф</span><span class="myth-text">Стоїцизм — це пасивність. «Прийми все, що сталося».</span></div>
+      <div class="myth-row"><span class="myth-tag good">правда</span><span class="myth-text">Стоїки були серед найактивніших людей — імператори, генерали, реформатори. Прийняти ≠ змиритися. Це звільнити сили від боротьби з реальністю — щоб направити їх на дію.</span></div>
+    </div>
+    <div class="myth-card">
+      <div class="myth-row"><span class="myth-tag bad">міф</span><span class="myth-text">Стоїцизм — це самотність і відстороненість.</span></div>
+      <div class="myth-row"><span class="myth-tag good">правда</span><span class="myth-text">Одна з чотирьох чеснот — справедливість, тобто служіння іншим. Марк Аврелій: «Те, що не корисне рою, не корисне і бджолі». Стоїк живе для людей, не від них.</span></div>
+    </div>
+    <div class="myth-card">
+      <div class="myth-row"><span class="myth-tag bad">міф</span><span class="myth-text">Стоїки проти задоволення.</span></div>
+      <div class="myth-row"><span class="myth-tag good">правда</span><span class="myth-text">Не проти задоволення — проти залежності від нього. Радіти келиху вина — добре. Не могти жити без нього — погано. Користуйся, але не ставай заручником.</span></div>
+    </div>
+    <div class="myth-card">
+      <div class="myth-row"><span class="myth-tag bad">міф</span><span class="myth-text">Це для чоловіків — суворих, мовчазних.</span></div>
+      <div class="myth-row"><span class="myth-tag good">правда</span><span class="myth-text">Жодного гендерного шаблону. Це філософія для будь-кого, хто хоче більше контролю над своїм розумом і менше залежати від світу.</span></div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Daily applications -->
+  <div class="section" style="animation-delay:1.25s">
+    <h2 class="section-title">Як це виглядає в житті</h2>
+    <p>Стоїцизм — не книжкова теорія. Він має сенс тільки тоді, коли б'є по конкретних ситуаціях твого тижня.</p>
+
+    <ul class="tips">
+      <li>Хтось нагрубіянив у магазині — ця людина має свої проблеми. Її слово — не про тебе. Не вдягай чужий настрій.</li>
+      <li>Затор, поїзд запізнився, рейс скасували — годі шукати винного. Питай: «що я можу робити в цьому часі?». Подкаст, книжка, дзвінок — час твій, не ситуації.</li>
+      <li>Тебе не взяли на роботу — це не твій провал. Це їхній вибір. Ти контролюєш зусилля, не результат. Зробила що могла = добре працювала.</li>
+      <li>Партнер злиться — це його емоція, не наказ для тебе. Ти можеш бути поруч і не приймати його стан як свій. «Я бачу твою злість. Я не зобов'язана злитися у відповідь».</li>
+      <li>Лента в соцмережах накручує — ти не зобов'язана тримати її. Стоїк відписується. Контролюй, що заходить у мозок.</li>
+      <li>Хтось критикує — спитай: чи правда? Якщо так — вдячність за урок. Якщо ні — не твоя справа, що думають про тебе. Або то, або то.</li>
+      <li>Втома, прокрастинація — згадай, чого хотіла зранку. Ти живеш сьогодні, не «коли відпочину». Зроби малий крок зараз.</li>
+      <li>Тривога про майбутнє — premeditatio: уяви найгірший сценарій. Зазвичай і він терпимий. А ймовірний — ще краще.</li>
+      <li>Заздрість — нагадай: ти не знаєш цілої картини. Те, що в інстаграмі — це 1%. І стоїк не порівнює з іншими, лише з собою вчорашньою.</li>
+      <li>Втрата — від речей до людей. «Я не втратила, я повернула» (Епіктет). Усе, що було, — не належало тобі насправді. Це було позичено.</li>
+    </ul>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Why it works now -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Чому це працює саме сьогодні</h2>
+    <p>Епоха, в якій ми живемо, — нескінченний потік новин, очікувань і подразників. Стоїцизм був створений саме для такого світу — нестабільного, тривожного, переповненого.</p>
+
+    <ul class="rules-list">
+      <li>Антидот соцмережам: контроль ≠ лайки, цінність ≠ кількість підписників</li>
+      <li>Захист від інформаційного шуму: «чи це залежить від мене?» — фільтр для 90% новин</li>
+      <li>Робоча альтернатива тій духовності, де треба «вірити». Стоїцизм — світський</li>
+      <li>Основа для КПТ-терапії: «думки → почуття → дії» — це Епіктет, а не Бек</li>
+      <li>Інструмент проти тривоги: розділення «що я можу» і «що ні» зменшує її різко</li>
+      <li>Спосіб не вигоріти: робити максимум зусиль, не прив'язуючись до результату</li>
+      <li>Філософія без бога, без езотерики, без ритуалів — лише розум і практика</li>
+      <li>Працює для атеїстки, віруючої, агностички — не суперечить нічому</li>
+    </ul>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Where to start -->
+  <div class="section" style="animation-delay:1.35s">
+    <h2 class="section-title">З чого почати читати</h2>
+    <p>Стоїцизм — рідкий випадок філософії, де першоджерела читаються легко, як сучасні книги. Бо це не трактати, а особисті записи.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">📜</span>
+        <div class="card-title">«Роздуми» — Марк Аврелій</div>
+        <div class="card-text">Найкращий початок. Імператор писав це для себе самого — нагадування, як жити. Маленькі параграфи, можна читати по сторінці на день.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">✉️</span>
+        <div class="card-title">«Листи до Луцилія» — Сенека</div>
+        <div class="card-text">124 листи на конкретні життєві теми: гнів, дружба, час, смерть, гроші. Ніби сучасний блог про мудрість.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📖</span>
+        <div class="card-title">«Бесіди» і «Енхіридіон» — Епіктет</div>
+        <div class="card-text">«Енхіридіон» — це чек-ліст стоїка на 30 сторінок. Можна прочитати за вечір, а перечитувати — все життя.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌅</span>
+        <div class="card-title">«Перешкода — це шлях» — Раян Голідей</div>
+        <div class="card-text">Сучасне переказування з прикладами історичних постатей. Простий вхід для тих, кому античні тексти лякають.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="quote">
+    Не намагайся, щоб події відбувались, як ти хочеш. Хоч би події відбувались, як вони відбуваються — і ти будеш у мирі.
+    <span class="quote-cite">Епіктет</span>
+  </div>
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/2200);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.4),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+
+const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.style.animationPlayState='running'}})},{threshold:.1});
+document.querySelectorAll('.section').forEach(el=>{el.style.animationPlayState='paused';observer.observe(el)});
+</script>
+</body>
+</html>

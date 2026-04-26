@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Нікола Тесла</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,140,220,.22) 0%,rgba(60,100,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(140,200,255,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:12px;opacity:0;animation:riseIn 1s .7s ease forwards}
+.page-years{text-align:center;font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:18px;color:rgba(138,176,255,.7);margin-bottom:64px;opacity:0;animation:riseIn 1s .8s ease forwards;letter-spacing:.1em}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+
+.timeline{position:relative;padding-left:24px;margin-top:20px}
+.timeline::before{content:'';position:absolute;left:6px;top:8px;bottom:8px;width:1px;background:linear-gradient(to bottom,rgba(138,176,255,.3),rgba(212,175,110,.2),rgba(138,176,255,.1))}
+.tline{position:relative;margin-bottom:28px;padding-left:20px}
+.tline::before{content:'';position:absolute;left:-22px;top:6px;width:11px;height:11px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px rgba(138,176,255,.6)}
+.tyear{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:15px;color:rgba(138,176,255,.85);letter-spacing:.08em;margin-bottom:6px}
+.tevent{font-size:13px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.82)}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(220,230,255,.92)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.72)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.82);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(138,176,255,.85)}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(200,216,255,.14)}
+.col.tesla{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.20)}
+.col.edison{background:rgba(212,175,110,.06);border-color:rgba(212,175,110,.20)}
+.col-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.45);margin-bottom:14px}
+.col.tesla .col-label{color:rgba(138,176,255,.7)}
+.col.edison .col-label{color:rgba(212,175,110,.7)}
+.col-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:15px;line-height:1.6;color:rgba(220,230,255,.88);margin-bottom:8px}
+.col-detail{font-size:12px;font-weight:200;line-height:1.7;color:rgba(200,216,255,.7)}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.quote-block{padding:30px 28px;border-left:2px solid rgba(138,176,255,.4);margin:24px 0;background:rgba(138,176,255,.05);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(220,230,255,.92);margin-bottom:8px}
+.quote-block .qa{font-size:10px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;color:rgba(138,176,255,.6)}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(138,176,255,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="portraits.html">← Постаті</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Нікола Тесла</h1>
+  <p class="page-subtitle">Геній, якого не розуміли</p>
+  <div class="page-years">1856 — 1943</div>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Сьогодення належить їм. Майбутнє, заради якого я працював, — моє"</div>
+      <div class="hero-author">Нікола Тесла</div>
+    </div>
+    <p>Високий худий чоловік у чорному костюмі тримає в руках лампочку. Лампочка горить — без жодного дроту. Тесла стоїть посеред поля з блискавок, які він сам викликав. Це 1899 рік. Світ ще не готовий до того, що цей серб з Австро-Угорщини бачить. Через 44 роки він помре в нью-йоркському готелі, самотній, безгрошовий, в оточенні голубів — і світ забуде його на півстоліття.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Хронологія -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Життя в датах</h2>
+
+    <div class="timeline">
+      <div class="tline">
+        <div class="tyear">1856 · Народження під час грози</div>
+        <div class="tevent">Народжується опівночі під час сильної бурі в селі Смільян, Хорватія (тоді Австро-Угорщина). Батько — православний священник серб. Бабка-повитуха каже: "Він буде дитиною темряви". Мати відповідає: "Ні, дитиною світла".</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1875–82 · Граз і Прага</div>
+        <div class="tevent">Вступає до Технічного університету в Граці. Перший рік — найкращий студент курсу. Потім зривається — азартні ігри, нервовий зрив. У Празькому університеті відвідує лекції з фізики, але не закінчує. Вирішує переїхати в Будапешт.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1884 · Прибуває в Нью-Йорк</div>
+        <div class="tevent">Має 4 центи в кишені, лист рекомендації до Едісона і свої креслення в голові. Едісон пропонує йому роботу: переробити старі генератори постійного струму. Обіцяє $50 000. Тесла переробляє за рік. Едісон сміється: "Ти не розумієш американського гумору".</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1887 · Власна лабораторія</div>
+        <div class="tevent">Знаходить інвесторів. Створює систему змінного струму — багатофазну. Відкриває обертове магнітне поле — основу сучасних електродвигунів. Це і є його справжній прорив. Без нього не існувало б сучасного світу.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1893 · Чикаго загорається</div>
+        <div class="tevent">Всесвітня виставка в Чикаго. Тесла і Westinghouse освітлюють весь виставковий комплекс змінним струмом — 200 000 ламп. Усі бачать: змінний струм перемагає. Це кінець "війни струмів". Едісон програв.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1895 · Ніагара заговорила</div>
+        <div class="tevent">Перша гідроелектростанція на Ніагарі. Працює за патентами Тесли. Передає електрику в Буффало за 32 км. Світ переходить на змінний струм. Сучасні мережі — нащадки тієї системи.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1899 · Колорадо-Спрінгс</div>
+        <div class="tevent">Ставить лабораторію в горах Колорадо. Створює рукотворні блискавки довжиною до 40 метрів. Грім чути за 25 км. Запалює лампочки на відстані без проводів. Бачить, що пориви блискавок мають закономірний ритм — і вирішує, що отримує сигнали з космосу.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1901–05 · Башта Ворденкліф</div>
+        <div class="tevent">Будує гігантську вежу на Лонг-Айленді — щоб передавати електрику й інформацію через всю Землю без проводів. Marconi запускає радіо швидше — інвестори переходять до нього. Тесла залишається без грошей. Башту знесуть у 1917-му на брухт.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1917 · Медаль Едісона</div>
+        <div class="tevent">Іронія долі: суспільство пропонує Теслі медаль Едісона — людини, з якою він воював усе життя. Тесла приймає. Без грошей вибору не залишилось.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1943 · Смерть у готелі</div>
+        <div class="tevent">Помирає на 87-му році в номері готелю Нью-Йоркер у Манхеттені. Сам, без сім'ї, без грошей. У кишені 17 центів. ФБР конфіскує його папери — нібито вони містять військові секрети. Більшість записів зникає.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Винаходи -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Що він винайшов</h2>
+    <p>Якщо у тебе зараз працює холодильник, заряджається телефон через бездротовий зарядник або вмикається світло від клацання вимикача — все це почалося з його ідей.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">⚡</span>
+        <div class="card-title">Змінний струм (AC)</div>
+        <div class="card-text">Система, яка передає електрику на сотні кілометрів без втрат. На ній працюють усі електростанції світу. Без неї сучасних міст не існувало б — постійний струм Едісона дозволяв передавати лише на 1.5 км.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌀</span>
+        <div class="card-title">Електродвигун</div>
+        <div class="card-text">Асинхронний двигун змінного струму. Серце пилососа, пральної машини, ліфта, метро, потяга. 700 патентів. Усе, що крутиться в твоєму домі — крутиться завдяки відкриттю Тесли.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📻</span>
+        <div class="card-title">Радіо</div>
+        <div class="card-text">Marconi отримав Нобеля. Але у 1943-му Верховний суд США визнав: патент на радіо належить Теслі — ще з 1900 року. Він зробив відкриття першим, але не догнав з оформленням документів.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌐</span>
+        <div class="card-title">Бездротова передача</div>
+        <div class="card-text">Бачив світ, у якому енергія йде через атмосферу як сигнал. Ми сьогодні маємо Wi-Fi, бездротові зарядки, NFC — усе це його ідеї, реалізовані через століття. Він просто прийшов на 100 років раніше.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎛️</span>
+        <div class="card-title">Дистанційне керування</div>
+        <div class="card-text">У 1898 році показав публіці човник, що рухається радіосигналом. Глядачі думали — фокус. Це був перший у світі дрон. Сучасні безпілотники, роботи, навіть твій телевізор — від цього патенту.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💡</span>
+        <div class="card-title">Флуоресцентна лампа</div>
+        <div class="card-text">Освітлював свою лабораторію газовими трубками без розжарювання. Десятиліттями випереджав світ. Сучасні енергоощадні лампи — нащадки цих досліджень.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Війна струмів -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Війна струмів: Тесла vs Едісон</h2>
+    <p>Найвідоміша наукова битва ХІХ століття. Двоє людей, два підходи, дві філософії життя.</p>
+
+    <div class="compare">
+      <div class="col tesla">
+        <div class="col-label">Тесла</div>
+        <div class="col-text">"Я бачу принципи"</div>
+        <div class="col-detail">Уявляв пристрій до останнього гвинта в голові, перш ніж торкнутись його руками. Працював інтуїцією і математикою. Мріяв про безкоштовну енергію для всіх. Був поганим бізнесменом — продавав патенти, не торгувався, віддавав свою частку прибутку.</div>
+      </div>
+      <div class="col edison">
+        <div class="col-label">Едісон</div>
+        <div class="col-text">"Я роблю тестами"</div>
+        <div class="col-detail">"Геній — це 1% натхнення і 99% поту". Перебирав тисячі варіантів, поки не знаходив працюючий. Видатний підприємець: 1093 патенти, лабораторія-фабрика, медіа-стратегія. Електрифікував Америку. Жорсткий бізнесмен, який вмів захищати свої інтереси.</div>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Едісон публічно вбивав слонів змінним струмом, щоб довести: "AC — небезпечний". Тесла відповідав тим, що пропускав мільйони вольт через своє тіло на сцені, щоб показати: за правильної частоти струм безпечний. Фізика виявилась на боці Тесли. Але <em>історія часто дістається не тим, хто має рацію, а тим, хто вміє розповісти</em>.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Дивацтва -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Чому його вважали дивним</h2>
+    <p>Тесла не вписувався в жодну категорію свого часу. Те, що тоді здавалось божевіллям, сьогодні називають аутистичним спектром або ОКР.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">3️⃣</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Одержимість числом 3</div>
+          <div class="card-text">Заходив у будівлю — обходив її тричі. Серветок на столі мав бути 18 (3 × 6). Жив у номерах готелів, кратних трьом. Йому здавалось, що 3 — структура всесвіту. Сьогодні психологи назвали б це обсесивно-компульсивним розладом.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🕊️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Любов до голубів</div>
+          <div class="card-text">У старості майже всі гроші витрачав на голубів у Центральному парку. Однієї білої голубки обожнював особливо: "Я любив її, як чоловік любить жінку. І вона мене любила". Коли вона померла на його руках — він сказав: "У ту мить я зрозумів, що моя робота на Землі завершена".</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🧠</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Ейдетична пам'ять</div>
+          <div class="card-text">Запам'ятовував цілі книги напам'ять. Складав двигуни в голові і "запускав" їх перед тим, як побудувати — і часто помічав поломки за тижні до фактичного тесту. Це не міф — це описано в його щоденниках і свідченнях колег.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🚫</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Не торкався людей</div>
+          <div class="card-text">Боявся бруду і мікробів. Не носив прикрас, бо вони "вібрували неправильно". Ніколи не одружився — хоча в нього закохувались жінки. "Любов до жінки забрала б енергію у моїх відкриттів", — пояснював.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Його слова -->
+  <div class="section" style="animation-delay:1.85s">
+    <h2 class="section-title">Його голос</h2>
+
+    <div class="quote-block">
+      <p>"Якщо хочеш зрозуміти всесвіт — думай у термінах енергії, частоти і вібрації"</p>
+    </div>
+    <div class="quote-block">
+      <p>"Гроші не мають для мене такої цінності, як для інших. Усе, що я заробив, я вклав в експерименти, які зробили життя кращим"</p>
+    </div>
+    <div class="quote-block">
+      <p>"Я не журюся за втраченим — лише за тим, що ще не зробив"</p>
+    </div>
+    <div class="quote-block">
+      <p>"Винахід — це найважливіший продукт творчого розуму. Кінцева мета — повне підкорення сил природи на службу людству"</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Final -->
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Висновок</h2>
+    <div class="final-quote">
+      <div class="final-text">Тесла прийшов <strong>на сто років раніше</strong>. Сучасники не зрозуміли — і він помер у самотності. Але кожен Wi-Fi, кожна електростанція, кожен двигун — мовчазний пам'ятник його розуму. Урок Тесли: не всі генії отримують винагороду за життя. Деякі сіють — а збирають уже інші. Це не справедливо. Але історія потім розставляє все на свої місця.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>

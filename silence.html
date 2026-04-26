@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Мовчання</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.12) 0%,rgba(40,80,200,.06) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.07) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.55)}
+
+.steps-grid{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.step-card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:24px;align-items:flex-start}
+.step-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.step-card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.step-card:hover::before{opacity:1}
+.step-num{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:48px;color:rgba(138,176,255,.25);line-height:1;flex-shrink:0;width:40px;text-align:center}
+.step-body{flex:1}
+
+.tips{list-style:none;margin-top:16px}
+.tips li{font-size:13px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.6);padding:12px 0 12px 28px;border-bottom:1px solid rgba(200,216,255,.04);position:relative}
+.tips li::before{content:'';position:absolute;left:8px;top:20px;width:4px;height:4px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 6px #8ab0ff}
+
+.compare{margin-top:24px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+.cmp-col{background:rgba(200,216,255,.04);border:1px solid rgba(200,216,255,.1);border-radius:16px;padding:24px}
+.cmp-col.bad{background:rgba(255,130,130,.04);border-color:rgba(255,130,130,.12)}
+.cmp-col.good{background:rgba(130,200,140,.04);border-color:rgba(130,200,140,.14)}
+.cmp-head{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;margin-bottom:14px}
+.cmp-col.bad .cmp-head{color:rgba(255,170,150,.9)}
+.cmp-col.good .cmp-head{color:rgba(160,220,170,.9)}
+.cmp-list{list-style:none}
+.cmp-list li{font-size:12px;font-weight:200;line-height:1.7;color:rgba(200,216,255,.6);padding:8px 0 8px 22px;position:relative}
+.cmp-list li::before{position:absolute;left:0;top:8px;font-size:12px}
+.cmp-col.bad .cmp-list li::before{content:'×';color:rgba(255,170,150,.7)}
+.cmp-col.good .cmp-list li::before{content:'✓';color:rgba(160,220,170,.7)}
+
+.quote{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.4vw,22px);line-height:1.6;color:rgba(220,230,255,.85);text-align:center;padding:32px 24px;border-top:1px solid rgba(200,216,255,.1);border-bottom:1px solid rgba(200,216,255,.1);margin:32px 0}
+.quote::before{content:'"';font-size:36px;color:rgba(138,176,255,.4);margin-right:6px;vertical-align:-6px}
+.quote::after{content:'"';font-size:36px;color:rgba(138,176,255,.4);margin-left:6px;vertical-align:-6px}
+.quote-cite{display:block;font-family:'Montserrat',sans-serif;font-style:normal;font-size:9px;font-weight:300;letter-spacing:.4em;text-transform:uppercase;color:rgba(212,175,110,.7);margin-top:14px}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Мовчання</h1>
+  <p class="page-subtitle">Коли не говорити — це теж комунікація</p>
+
+  <div class="section" style="animation-delay:.9s">
+    <p>Ми звикли думати, що комунікація — це слова. Але мовчання — теж повідомлення, причому часто гучніше за фразу. Воно несе сенс, який приймач сам розшифровує. І від того, як саме ти мовчиш, залежить — це любов чи зброя, мудрість чи слабкість.</p>
+    <p>Існує дюжина видів мовчання, і кожне говорить інше. Тиша згоди, тиша пошани, тиша гніву, тиша тиску, тиша співчуття, тиша страху. Той, хто розрізняє їх у собі і в інших — комунікує точніше за того, хто говорить весь час.</p>
+  </div>
+
+  <div class="quote">
+    Слово — срібло, мовчання — золото.
+    <span class="quote-cite">давнє прислів'я</span>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Види мовчання</h2>
+    <p>Тиша між людьми ніколи не буває просто тишею. Вона завжди про щось. Питання — про що.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🫂</span>
+        <div class="card-title">Тиша близькості</div>
+        <div class="card-text">Двоє людей сидять разом, нічого не кажуть — і це комфортно. Ти не зобов'язана наповнювати простір словами. Це найвищий рівень довіри.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">👂</span>
+        <div class="card-title">Тиша слухання</div>
+        <div class="card-text">Замість того, щоб одразу давати поради, ти просто слухаєш. Часто людині не потрібна твоя думка — потрібно бути почутою.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💭</span>
+        <div class="card-title">Тиша роздумів</div>
+        <div class="card-text">Перед відповіддю — пауза. Не «не знаю, що сказати», а «хочу подумати». Ця тиша — ознака зрілості, а не невпевненості.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌅</span>
+        <div class="card-title">Тиша поваги</div>
+        <div class="card-text">Хвилина мовчання, тиша на похоронах, мовчазна підтримка в кризі. Слова тут — зайве. Присутність важливіша.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚔️</span>
+        <div class="card-title">Тиша гніву</div>
+        <div class="card-text">Бойкот, ігнорування, «я з тобою не розмовляю». Це покарання — і часто болючіше за крик. Цим ламають дітей і партнерів.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🪨</span>
+        <div class="card-title">Тиша страху</div>
+        <div class="card-text">Не сказати, бо боюсь наслідків. Промовчати про харасмент, не написати скаргу, не назвати правду. Захищає в моменті, але вбиває довго.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🤐</span>
+        <div class="card-title">Тиша спротиву</div>
+        <div class="card-text">«Не буду говорити, і все». Замикаєшся, бо інший спосіб не спрацював. Це сигнал: щось дуже не так.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔮</span>
+        <div class="card-title">Тиша мудрості</div>
+        <div class="card-text">Той, хто знає більше за всіх, — часто говорить найменше. Бо розуміє, що слово не на часі. Або що зрозуміють і без нього.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Коли не говорити — це сила</h2>
+    <p>Бувають моменти, коли мовчання дає більше, ніж будь-які слова. Не з боягузтва, а з мудрості.</p>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="card-title">Коли інший плаче</div>
+          <div class="card-text">Не «не плач», не «все буде добре», не «я знаю, як ти почуваєшся». Просто бути поруч і мовчати. Тиша + рука на плечі — більше за всі поради.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="card-title">У сварці на емоціях</div>
+          <div class="card-text">Слова в гніві ріжуть. Краще «дай мені 10 хвилин» і вийти з кімнати, ніж сказати щось, що не повернеш. Пауза рятує стосунки.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="card-title">Коли тебе провокують</div>
+          <div class="card-text">У соцмережах, в розмові, в коментарях. Хейт хоче відповіді — мовчання дратує його найбільше. Не кожен бій варто приймати.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="card-title">Коли інший виговорюється</div>
+          <div class="card-text">Не перебивай, не давай порад, не порівнюй зі своїм досвідом. Просто слухай. 80% розмов закінчуються самі, якщо людину не перервати.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="card-title">Перед важливим рішенням</div>
+          <div class="card-text">Тиша на день, тиждень, місяць. Без обговорень, без коментарів. Найкращі рішення приходять, коли в голові тиша, а не шум чужих думок.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <div class="card-title">Коли немає що сказати</div>
+          <div class="card-text">Тиша — краща за фальш. «Не знаю, як зреагувати» чесніше за вимушені слова. І звільняє іншого від обов'язку реагувати на твій реакцію.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Коли мовчання — це шкода</h2>
+    <p>Інша сторона. Тиша, яку треба порушити — навіть якщо страшно, навіть якщо «не моя справа».</p>
+
+    <div class="compare">
+      <div class="cmp-col bad">
+        <div class="cmp-head">Тиша, що руйнує</div>
+        <ul class="cmp-list">
+          <li>Мовчати, коли близький страждає</li>
+          <li>Не сказати «люблю», бо «він і так знає»</li>
+          <li>Не назвати агресію — стерпіти</li>
+          <li>Промовчати на хейт у бік іншого</li>
+          <li>Не визнати помилку</li>
+          <li>Тримати образу всередині роками</li>
+          <li>Не сказати «дякую»</li>
+          <li>Замовчувати свої потреби, чекаючи, що здогадаються</li>
+        </ul>
+      </div>
+      <div class="cmp-col good">
+        <div class="cmp-head">Тиша, що зцілює</div>
+        <ul class="cmp-list">
+          <li>Слухати без перебивань</li>
+          <li>Бути поруч у горі без «правильних слів»</li>
+          <li>Думати, перш ніж відповідати</li>
+          <li>Не реагувати на провокації</li>
+          <li>Поважати простір іншого</li>
+          <li>Витримати паузу в розмові</li>
+          <li>Дати собі тишу, щоб почути себе</li>
+          <li>Мовчати, коли слова зайві</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1.15s">
+    <h2 class="section-title">Тиша як зброя</h2>
+    <p>Окремо — про мовчазне покарання. Воно виглядає «м'яким», але часто це найжорсткіша форма агресії.</p>
+
+    <ul class="tips">
+      <li>Stonewalling — повна стіна мовчання у відповідь на спробу спілкуватись. Один з найсильніших прогнозів розлучень за дослідженнями Готтмана.</li>
+      <li>«Покарання тишею» дитини — для її мозку це = «мене не люблять». Залишається травмою на десятиліття.</li>
+      <li>Робоча тиша — коли керівник не відповідає, не дає зворотного зв'язку, ігнорує. Це управління через тривогу.</li>
+      <li>Громадське замовчування — коли цілому колективу «не зручно» говорити про проблему. Так живе булінг, домашнє насильство, корупція.</li>
+      <li>Якщо ти впізнаєш цю модель у себе — це не «характер», це звичка. Її можна замінити на «мені треба час, повернусь через годину».</li>
+      <li>Якщо це роблять до тебе — назви це. «Ти зараз ігноруєш мене. Що відбувається?». Стіну часто легше зруйнувати, ніж здається.</li>
+    </ul>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Тиша для себе</h2>
+    <p>Окрема тема — мовчання, яке ти даруєш собі. У світі, де ти 16 годин на добу під подкастами, повідомленнями і чужими думками, тиша — це розкіш.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🌳</span>
+        <div class="card-title">10 хвилин нічого</div>
+        <div class="card-text">Без музики, без подкасту, без телефона. Просто сидіти й дивитись у вікно. Звучить нудно — але саме тут народжуються нормальні думки.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🚶</span>
+        <div class="card-title">Прогулянка без навушників</div>
+        <div class="card-text">Звуки міста, дерев, кроків. Це реальність, в якій живе твоє тіло. Воно скучило за нею — навіть якщо ти не помічала.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📵</span>
+        <div class="card-title">Ранок без екрану</div>
+        <div class="card-text">Перші 30-60 хв після пробудження — без телефона. Мозок вже почне працювати на тебе, а не на алгоритми.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌌</span>
+        <div class="card-title">Тихий день</div>
+        <div class="card-text">Раз на тиждень — півдня без розмов, без соцмереж, без новин. Не «втеча», а перезавантаження. Після такого думки повертаються чисті.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="quote">
+    Не все, про що думаєш, треба казати. Не все, що чуєш, варто слухати. Не все, що бачиш, треба коментувати.
+  </div>
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/2200);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.4),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+
+const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.style.animationPlayState='running'}})},{threshold:.1});
+document.querySelectorAll('.section').forEach(el=>{el.style.animationPlayState='paused';observer.observe(el)});
+</script>
+</body>
+</html>

@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Конспектування</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-num{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:44px;color:rgba(138,176,255,.25);line-height:1;flex-shrink:0;width:36px;text-align:center}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(220,230,255,.92)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.72)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.82);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+
+.formula{text-align:center;padding:44px 20px;margin:20px 0;position:relative}
+.formula-box{display:inline-flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:center}
+.formula-part{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(20px,3.5vw,28px);color:rgba(200,216,255,.8)}
+.formula-sign{font-family:'Montserrat',sans-serif;font-weight:100;font-size:clamp(24px,4vw,36px);color:rgba(138,176,255,.4)}
+.formula-result{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:clamp(22px,3.8vw,32px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.method{background:rgba(200,216,255,.05);border:1px solid rgba(200,216,255,.14);border-radius:20px;padding:32px 28px;margin-bottom:18px;transition:all .4s}
+.method:hover{background:rgba(200,216,255,.09);border-color:rgba(200,216,255,.22)}
+.method-head{display:flex;align-items:baseline;gap:14px;margin-bottom:14px;flex-wrap:wrap}
+.method-num{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;color:rgba(212,175,110,.7)}
+.method-name{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:22px;color:rgba(220,230,255,.95);letter-spacing:.04em}
+.method-tag{font-size:9px;font-weight:300;letter-spacing:.4em;text-transform:uppercase;color:rgba(138,176,255,.7);padding:4px 12px;border:1px solid rgba(138,176,255,.3);border-radius:100px}
+.method-text{font-size:13px;font-weight:200;line-height:1.85;color:rgba(200,216,255,.78);margin-bottom:10px}
+.method-when{font-size:11px;font-weight:300;font-style:italic;color:rgba(212,175,110,.7);letter-spacing:.04em}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Конспектування</h1>
+  <p class="page-subtitle">Як записувати, щоб не забувати</p>
+
+  <!-- Hero quote -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Ми не запамʼятовуємо те, що чуємо. Ми запамʼятовуємо те, що думаємо"</div>
+      <div class="hero-author">Деніел Віллінгем</div>
+    </div>
+    <p>Конспект — це не стенограма. Це переклад чужої думки на твою мову. Якщо ти просто переписала — мозок не зробив роботу. Якщо переформулювала своїми словами — інформація стала твоєю. Хороший конспект коротший за оригінал, але повертає тобі більше.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Чому забуваєш -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Чому ти забуваєш</h2>
+    <p>Германн Еббінгауз показав: за 24 години ми забуваємо до 70% нової інформації. Не тому, що памʼять погана — так працює мозок. Конспект — це антидот.</p>
+
+    <div class="formula">
+      <div class="formula-box">
+        <span class="formula-part">Почула</span>
+        <span class="formula-sign">→</span>
+        <span class="formula-part">Записала</span>
+        <span class="formula-sign">→</span>
+        <span class="formula-part">Переробила</span>
+        <span class="formula-sign">=</span>
+        <span class="formula-result">Запамʼятала</span>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <p>Без переробки — ти лише носій інформації. З переробкою — ти власник. <em>Записувати дослівно — це самообман</em>: відчуття, що "запамʼятовую", без реального запамʼятовування. Активна обробка — ось де мозок включається.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Помилки -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Помилки, які зʼїдають час</h2>
+    <p>Ти витрачаєш години на конспект — і нічого не памʼятаєш. Ось чому.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">📝</span>
+        <div class="card-title">Записуєш дослівно</div>
+        <div class="card-text">Рука рухається, мозок мовчить. Ти переписала лекцію — і нічого з неї не зрозуміла. Дослівний запис — це робота секретаря, а не учня. Ти потім не повертаєшся до цих сторінок, бо вони мертві.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌊</span>
+        <div class="card-title">Без структури</div>
+        <div class="card-text">Все одним абзацом, без виділень, без ієрархії. Через тиждень відкриваєш — і блукаєш у своєму ж тексті. Думка має форму. Без форми вона розчиняється.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📚</span>
+        <div class="card-title">Все в один файл</div>
+        <div class="card-text">Один великий зошит на все життя. Знайти потім нічого неможливо. Конспект, який ти не можеш швидко знайти, — це конспект, якого немає.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🚫</span>
+        <div class="card-title">Не повертаєшся</div>
+        <div class="card-text">Записала — і забула про записи. Без повторення мозок вирішує: "це їй не потрібно" — і стирає. Конспект без перегляду — як квиток у нікуди.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Методи -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">5 методів, що працюють</h2>
+    <p>Не існує одного "правильного" способу. Є різні задачі — і різні інструменти. Обери свій.</p>
+
+    <div class="method">
+      <div class="method-head">
+        <span class="method-num">01</span>
+        <span class="method-name">Метод Корнелла</span>
+        <span class="method-tag">Лекції</span>
+      </div>
+      <div class="method-text">Розділи аркуш на три зони: ліворуч (вузька) — ключові слова й питання, праворуч (широка) — основний запис, знизу — підсумок у 2-3 реченнях. Спочатку пишеш праворуч під час лекції. Потім ліворуч додаєш питання, на які цей запис відповідає. Внизу — стискаєш суть.</div>
+      <div class="method-when">Коли треба: лекції, відео, подкасти</div>
+    </div>
+
+    <div class="method">
+      <div class="method-head">
+        <span class="method-num">02</span>
+        <span class="method-name">Mind Map</span>
+        <span class="method-tag">Звʼязки</span>
+      </div>
+      <div class="method-text">У центрі — головна ідея. Від неї розгалуження до підтем, від них — до деталей. Працює, коли матеріал має багато звʼязків і не лінійну структуру. Мозок думає асоціаціями — і карта показує ці асоціації візуально. Малюй від руки: рука вмикає память.</div>
+      <div class="method-when">Коли треба: мозковий штурм, складні теми, повторення</div>
+    </div>
+
+    <div class="method">
+      <div class="method-head">
+        <span class="method-num">03</span>
+        <span class="method-name">Zettelkasten</span>
+        <span class="method-tag">Знання надовго</span>
+      </div>
+      <div class="method-text">Кожна ідея — на окремій картці (або файлі). Одна картка = одна думка, своїми словами. Картки звʼязуються між собою посиланнями — як вікіпедія. З часом утворюється "сад знань", який росте сам. Метод соціолога Лумана: за 30 років він написав 70 книг, бо думки в нього вже були звʼязані.</div>
+      <div class="method-when">Коли треба: тривале навчання, дослідження, творчість</div>
+    </div>
+
+    <div class="method">
+      <div class="method-head">
+        <span class="method-num">04</span>
+        <span class="method-name">Метод Фейнмана</span>
+        <span class="method-tag">Розуміння</span>
+      </div>
+      <div class="method-text">Поясни тему так, ніби розповідаєш дитині. Записуй простими словами, без термінології. Якщо десь застрягла — це місце, яке ти насправді не розумієш. Повертайся до джерела. Цикл: вивчити → пояснити → знайти діру → закрити діру. Перевіряє істинне розуміння, а не ілюзію.</div>
+      <div class="method-when">Коли треба: іспити, складні концепції, перевірка себе</div>
+    </div>
+
+    <div class="method">
+      <div class="method-head">
+        <span class="method-num">05</span>
+        <span class="method-name">Bullet Journal</span>
+        <span class="method-tag">Швидкість</span>
+      </div>
+      <div class="method-text">Короткі марковані пункти, символи замість слів: • факт, ○ питання, ★ важливо, → дія. Жодних довгих речень. Використовуй для швидких нотаток на ходу — у транспорті, на зустрічах, під час читання. Краще одна точна фраза, ніж абзац води.</div>
+      <div class="method-when">Коли треба: зустрічі, ідеї, читання книг</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Принципи -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Принципи, що тримають усе разом</h2>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-num">1</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Своїми словами — завжди</div>
+          <div class="card-text">Якщо переписала фразу автора — мозок її не обробив. Перефразуй, поки не зможеш сказати власним голосом. Це той самий момент, коли інформація переходить у знання.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-num">2</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Менше — більше</div>
+          <div class="card-text">Конспект на 10 сторінок — це не конспект, це другий оригінал. Щоразу питай: "що тут найважливіше?" Стискай. Хороший конспект коротший за матеріал у 3-5 разів.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-num">3</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Питання важливіші за відповіді</div>
+          <div class="card-text">Записала тезу — постав до неї питання на полях. "Чому це так?", "А що, якщо ні?", "Де ще це працює?". Питання роблять конспект живим. До нього хочеться повертатись, бо він залишається відкритим.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-num">4</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Структура з першого рядка</div>
+          <div class="card-text">Заголовки, відступи, маркери, виділення. Чим легше око скаче по конспекту — тим швидше памʼять знаходить потрібне. Біла пляма на сторінці — друг, а не ворог.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-num">5</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Звʼязки, а не списки</div>
+          <div class="card-text">Не "10 фактів про X". А "X повʼязаний з Y, бо...". Памʼять тримає те, що вписане в мережу. Окремі факти випадають. Зчеплені — лишаються.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-num">6</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Дата і контекст</div>
+          <div class="card-text">Кожен запис — з датою і назвою джерела. Через місяць ти не памʼятатимеш, з якої лекції/книги. А тобі знадобиться повернутись. Без контексту нотатка втрачає половину сенсу.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Повторення -->
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Інтервальне повторення</h2>
+    <p>Запис без повторення — мертвий. Памʼять закріплюється тоді, коли ти повертаєшся до інформації саме тоді, коли ось-ось забудеш. Це називається "інтервальне повторення".</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">⏰</span>
+        <div class="card-title">Через 1 день</div>
+        <div class="card-text">Перший перегляд — наступного дня після запису. Прочитай, спробуй пригадати без зазирання, додай питання. 5 хвилин — і памʼять закріплює слід.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📅</span>
+        <div class="card-title">Через 7 днів</div>
+        <div class="card-text">Тиждень — це межа, де "свіже" стає "старим". Поверни конспект, перекажи комусь або собі вголос. Те, що памʼятаєш, — твоє. Те, що забула, — позначай і повторюй частіше.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌙</span>
+        <div class="card-title">Через 30 днів</div>
+        <div class="card-text">Місяць — глибоке закріплення. Тепер інформація переходить з короткострокової памʼяті в довгострокову. Якщо ти памʼятаєш — більше не доведеться зубрити.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔁</span>
+        <div class="card-title">Через 3 місяці</div>
+        <div class="card-text">Останній перегляд для повного закріплення. Після цього інформація живе сама. Витратиш загалом 4 короткі сесії замість десятка годин зубріння.</div>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Існують додатки (Anki, RemNote), які автоматично нагадують саме тоді, коли треба. Але паперовий зошит з датами повторення працює не гірше. <em>Головне — не сам інструмент, а звичка повертатись</em>.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Папір чи цифра -->
+  <div class="section" style="animation-delay:1.85s">
+    <h2 class="section-title">Папір чи екран?</h2>
+    <p>Дослідження Маєра і Оппенгеймера (Princeton, 2014) показало: студенти, які писали від руки, краще розуміли матеріал, ніж ті, що друкували. Бо рука повільніша — і змушує фільтрувати.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">✍️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Папір — для розуміння</div>
+          <div class="card-text">Лекції, складні концепції, мозковий штурм. Рука повільна — мозок мусить вибирати найважливіше. Це активна обробка. Плюс: візуальна памʼять місця на сторінці. Памʼятаєш не лише слова — а й де вони були.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">💻</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Цифра — для системи</div>
+          <div class="card-text">Велика база знань, пошук, посилання. Notion, Obsidian, Apple Notes — щоб мати все під рукою через 5 років. Ідеально комбінувати: рукою на лекції, потім переносиш найважливіше в цифру.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🎙️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Голос — для ідей</div>
+          <div class="card-text">У дорозі, в душі, на прогулянці думка прийшла — диктофон. Не змушуй себе писати, коли ситуація не дозволяє. Втрачена ідея гірша за неохайний запис. Потім розшифруй у конспект.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Практичні поради -->
+  <div class="section" style="animation-delay:1.88s">
+    <h2 class="section-title">Маленькі звички</h2>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">📌</div>
+        <div class="phrase-text">Перш ніж писати — слухай. Перші 30 секунд без ручки. Зрозумій структуру, тоді записуй</div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🎨</div>
+        <div class="phrase-text">Виділяй кольорами лише 2-3 категорії. Більше — каша. Менше — нудно</div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">📐</div>
+        <div class="phrase-text">Залишай поля. Завжди. На полях — твої думки, питання, асоціації</div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🔖</div>
+        <div class="phrase-text">У кінці кожного запису — підсумок з 3 речень. Це і є справжній конспект</div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🌱</div>
+        <div class="phrase-text">Конспект — живий. Дописуй, виправляй, звʼязуй з іншими. Він росте з тобою</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Final -->
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Висновок</h2>
+    <div class="final-quote">
+      <div class="final-text">Не записуй усе. Записуй те, <strong>що ти зрозуміла</strong>. Конспект — це не копія матеріалу, це слід твоєї думки. І коли через рік ти повернешся до цих сторінок — ти зустрінешся не з лектором, а з собою колишньою. Це і є знання.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>

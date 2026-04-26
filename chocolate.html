@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Шоколад</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(140,80,50,.22) 0%,rgba(90,50,30,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.72)}
+
+.timeline{position:relative;margin-top:30px;padding-left:30px}
+.timeline::before{content:'';position:absolute;left:5px;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,transparent,rgba(212,175,110,.3),rgba(138,176,255,.3),transparent)}
+.tl-item{position:relative;padding:0 0 36px 30px}
+.tl-item::before{content:'';position:absolute;left:-30px;top:6px;width:11px;height:11px;border-radius:50%;background:#080b1a;border:2px solid rgba(212,175,110,.5);box-shadow:0 0 10px rgba(212,175,110,.3)}
+.tl-item:last-child{padding-bottom:0}
+.tl-year{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;color:rgba(212,175,110,.9);margin-bottom:6px}
+.tl-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:17px;color:rgba(220,230,255,.95);margin-bottom:8px}
+.tl-text{font-size:13px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.7)}
+
+.steps-grid{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.step-card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:24px;align-items:flex-start}
+.step-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.step-card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.step-card:hover::before{opacity:1}
+.step-num{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:48px;color:rgba(138,176,255,.25);line-height:1;flex-shrink:0;width:40px;text-align:center}
+.step-body{flex:1}
+
+.tips{list-style:none;margin-top:16px}
+.tips li{font-size:13px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.6);padding:12px 0 12px 28px;border-bottom:1px solid rgba(200,216,255,.04);position:relative}
+.tips li::before{content:'';position:absolute;left:8px;top:20px;width:4px;height:4px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 6px #8ab0ff}
+
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-top:24px}
+.stat{background:linear-gradient(135deg,rgba(212,175,110,.08),rgba(138,176,255,.05));border:1px solid rgba(212,175,110,.18);border-radius:14px;padding:24px 20px;text-align:center;transition:all .3s}
+.stat:hover{background:linear-gradient(135deg,rgba(212,175,110,.12),rgba(138,176,255,.08));border-color:rgba(212,175,110,.3)}
+.stat-num{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:36px;color:transparent;background:linear-gradient(135deg,#d4af6e,#fff);-webkit-background-clip:text;background-clip:text;margin-bottom:6px}
+.stat-text{font-size:11px;font-weight:200;line-height:1.6;color:rgba(200,216,255,.65)}
+
+.warn-card{background:rgba(255,130,130,.04);border:1px solid rgba(255,130,130,.1);border-radius:16px;padding:28px 24px;margin-bottom:16px;transition:all .4s}
+.warn-card:hover{background:rgba(255,130,130,.07);border-color:rgba(255,130,130,.18)}
+.warn-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(255,160,160,.8);margin-bottom:10px}
+.warn-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.6)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.82);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Шоколад</h1>
+  <p class="page-subtitle">Від валюти ацтеків до плитки в магазині</p>
+
+  <!-- Hero quote -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Боги дали нам какао, щоб людина не забувала смак раю"</div>
+      <div class="hero-author">Ацтекська легенда</div>
+    </div>
+    <p>Уяви: 500 років тому за 100 какао-бобів можна було купити раба, за 4 — кролика, за 1 — стиглу авокадо. Ацтеки розраховувалися какао як грошима — і вирощували його під суворим контролем держави. Сьогодні плитка шоколаду коштує дешевше за пляшку води. За цей шлях відповідальні війни, рабство, наукові винаходи і — зрештою — швейцарський геній, який зробив тверду плитку.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Цифри -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Шоколад в цифрах</h2>
+
+    <div class="stats-grid">
+      <div class="stat">
+        <div class="stat-num">$130B</div>
+        <div class="stat-text">розмір світового ринку шоколаду щорічно</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">9kg</div>
+        <div class="stat-text">шоколаду з'їдає швейцарець за рік</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">70%</div>
+        <div class="stat-text">світового какао — з Західної Африки</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">5М</div>
+        <div class="stat-text">фермерів вирощують какао</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">400</div>
+        <div class="stat-text">бобів потрібно на одну плитку</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">1.6M</div>
+        <div class="stat-text">дітей працюють на какао-плантаціях</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Історія -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Шлях у три тисячі років</h2>
+    <p>Какао-дерево росте лише в тропіках. Все, що сталося з шоколадом — це історія того, як одна рослина з Центральної Америки стала чимось, без чого не уявляє себе більшість людства.</p>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-year">~1500 до н.е.</div>
+        <div class="tl-title">Ольмеки — перші</div>
+        <div class="tl-text">Цивілізація ольмеків у Мексиці першою почала ферментувати какао-боби. Вони пили какао як гіркий, темний напій з прянощами і чилі. Це була не їжа — це був ритуал.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">~600 рік</div>
+        <div class="tl-title">Майя — священний напій</div>
+        <div class="tl-text">Майя називали какао "їжею богів" (теобрама — латинська назва дерева так і перекладається). Напій вживали жерці й знать. Какао фігурувало в ритуалах смерті, шлюбу, посвячення.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">~1400</div>
+        <div class="tl-title">Ацтеки — валюта</div>
+        <div class="tl-text">При Монтесумі какао-боби були офіційними грошима імперії. Імператор пив до 50 чашок какао на день — холодного, з ваніллю і чилі. Какао тримали у скарбниці. Підробляли так само, як зараз — заливали воском пусту шкаралупу.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1502 рік</div>
+        <div class="tl-title">Колумб не зрозумів</div>
+        <div class="tl-text">Христофор Колумб у своїй четвертій подорожі захопив каное з какао-бобами. Йому показували — це гроші. Він не оцінив. Привіз у Іспанію кілька, але вони згинули. Шанс на 20 років уперед — втрачений.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1519 рік</div>
+        <div class="tl-title">Ернан Кортес — справжнє відкриття</div>
+        <div class="tl-text">Кортес, завоювавши ацтеків, побачив у скарбниці Монтесуми мільйони какао-бобів. Зрозумів цінність. Привіз до Іспанії — і додав цукор. Так гіркий ритуальний напій став солодким шоколадом. Іспанія тримала рецепт у таємниці майже 100 років.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">XVII століття</div>
+        <div class="tl-title">Європейська лихоманка</div>
+        <div class="tl-text">Через шлюб іспанської принцеси з французьким королем шоколад потрапив у Францію, потім в Англію, Італію, Нідерланди. У Лондоні відкрилися "шоколадні доми" — статусніші за кав'ярні. Чашка шоколаду коштувала як денна зарплата.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1828 рік</div>
+        <div class="tl-title">Голландський прорив</div>
+        <div class="tl-text">Голландець Конрад ван Хоутен винайшов прес, який відділяв какао-масло від какао-порошку. Це революція: тепер можна було робити сухий какао-порошок (для розчинення) і какао-масло (для твердих продуктів). Без цього винаходу плитки шоколаду не існувало б.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1847 рік</div>
+        <div class="tl-title">Перша плитка</div>
+        <div class="tl-text">Англієць Джозеф Фрай змішав какао-порошок, цукор і додав какао-масло — отримав густу масу, яку можна було залити у форму. Так народилась перша тверда плитка шоколаду в історії. Світ змінився.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1875 рік</div>
+        <div class="tl-title">Швейцарці — молочний шоколад</div>
+        <div class="tl-text">Швейцарець Даніель Петер 8 років експериментував, як додати молоко в шоколад так, щоб воно не псувалося. Допоміг сусід — Анрі Нестле, який винайшов сухе молоко. Так з'явився молочний шоколад. Швейцарія досі — світовий лідер з його якості.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">1879 рік</div>
+        <div class="tl-title">Конш — гладкий смак</div>
+        <div class="tl-text">Інший швейцарець, Рудольф Лінд, винайшов "конш" — машину, що перемелює шоколад годинами до атласної гладкості. Це ключ до того відчуття, як шоколад "тане в роті". Без конша шоколад залишався б грудкуватим.</div>
+      </div>
+      <div class="tl-item">
+        <div class="tl-year">XX століття</div>
+        <div class="tl-title">Масова доступність</div>
+        <div class="tl-text">Hershey, Cadbury, Mars, Nestlé — корпорації зробили шоколад дешевим. Це стало їжею для солдатів у обох світових війнах. Американські військові пайки містили шоколад — і ця асоціація з військом досі формує культуру (Hershey's постачає шоколад армії США).</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Хімія -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Чому ми так його любимо</h2>
+    <p>Шоколад — це не просто смачно. Це хімія, яка точно потрапляє в центри задоволення мозку. Не випадково ацтеки називали його напоєм богів.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">💗</span>
+        <div class="card-title">Анандамід</div>
+        <div class="card-text">У какао є речовина анандамід — його ще називають "молекулою щастя". Вона активує ті самі рецептори в мозку, що й канабіс. Це не плітка, а підтверджений факт. Тільки доза дуже мала — не очікуй ейфорії від плитки.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌹</span>
+        <div class="card-title">Фенілетиламін</div>
+        <div class="card-text">Сполука, яку мозок виробляє, коли ти закоханий. У шоколаді її багато. Тому шоколад — це не випадковий подарунок до Дня закоханих. Це біохімічно обґрунтована заміна того, що ти не отримуєш від людини.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚡</span>
+        <div class="card-title">Теобромін</div>
+        <div class="card-text">Цей стимулятор у шоколаді працює як м'якший двоюрідний брат кофеїну. Бадьорить, але без різкого піку. Тому шоколад дає тривале відчуття енергії, а не різкий стрибок.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌟</span>
+        <div class="card-title">Серотонін</div>
+        <div class="card-text">Какао стимулює виробництво серотоніну — гормону хорошого настрою. Це частково пояснює, чому ми тягнемося до шоколаду в моменти стресу. Це не "слабкість" — це хімія мозку, яка шукає полегшення.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Види шоколаду -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Як читати плитку</h2>
+    <p>Не весь шоколад однаково корисний — і не весь однаково смачний. Різниця ховається у складі.</p>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="card-title">Темний (70%+)</div>
+          <div class="card-text">Цифра відсотків — це частка какао у складі. 70% означає 70% какао-маси і какао-масла, решта — цукор. Чим вище — тим менше цукру і тим більше антиоксидантів. 80-90% — це вже терапевтичний шоколад. Гіркий, але корисний.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="card-title">Молочний (30-40%)</div>
+          <div class="card-text">Какао — менше, цукру і молока — більше. Смачно, але це по суті солодощі з ароматом какао, не повноцінний шоколад. Більшість плиток у супермаркеті — це він. Корисного в ньому небагато, окрім задоволення.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="card-title">Білий (0% какао-маси)</div>
+          <div class="card-text">У білому шоколаді немає какао-маси — лише какао-масло, цукор і молоко. Технічно це не шоколад, а кондитерський виріб. Корисних речовин какао тут немає взагалі. Це чистий цукор з жиром.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="card-title">Рубіновий (Ruby)</div>
+          <div class="card-text">Винайдений у 2017 році швейцарською компанією Barry Callebaut. Натуральний рожевий колір — без барвників. Робиться зі спеціального сорту какао-бобів. Смак ягідний, з кислинкою. Перший новий тип шоколаду за 80 років.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="card-title">Сирий шоколад (Raw)</div>
+          <div class="card-text">Какао-боби не обсмажуються, а тільки ферментуються і сушаться при низькій температурі. Зберігаються всі флавоноїди. Найкорисніший варіант. Смак — складніший, з фруктовими нотками. Дорожчий за звичайний.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що приховує плитка -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Що приховує дешева плитка</h2>
+    <p>Шоколад — солодкий продукт із гіркою історією. Сучасна індустрія какао — це одна з найбрудніших галузей у світовій торгівлі.</p>
+
+    <div class="warn-card">
+      <div class="warn-title">Дитяча праця</div>
+      <div class="warn-text">У Кот-д'Івуарі та Гані (звідки 60% світового какао) на плантаціях працює 1.6 мільйона дітей. Їм 5-15 років. Вони рубають мачете, носять важкі мішки, тягають хімію. Багато з них ніколи не пробували шоколад — не знають, що це робиться з того, що вони збирають.</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title">Жебрацтво фермерів</div>
+      <div class="warn-text">Фермер у Західній Африці заробляє менше $1 на день — це нижче межі бідності за нормами ООН. Більшу частину прибутку поглинають посередники, корпорації, ритейлери. Якщо тобі плитка обходиться у €1 — фермеру з неї дістається кілька центів.</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title">Знищення лісів</div>
+      <div class="warn-text">Какао-плантації — головна причина вирубки тропічних лісів у Кот-д'Івуарі. За останні 60 років країна втратила 90% лісового покриву. Шимпанзе, слони, ліси — все це продовжує зникати, щоб корпорації мали достатньо какао.</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title">Маркування "какао"</div>
+      <div class="warn-text">У більшості масових плиток замість справжнього какао-масла — пальмова олія або інші замінники. Закон у багатьох країнах дозволяє це називати "шоколадом". Шукай у складі: справжнє какао-масло має бути першим або другим компонентом.</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Як обирати -->
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">Як обрати справжній</h2>
+    <p>Якщо вже їсти шоколад — то такий, від якого є хоч якась користь і у виробництві якого менше зла.</p>
+
+    <ul class="tips">
+      <li>Дивись на склад: какао-маса, какао-масло, цукор — і все. Без рослинних жирів, лецитину Е476, "ароматизатора, ідентичного натуральному". Чим коротший склад — тим краще.</li>
+      <li>Обирай від 70% какао. Менше — це по суті десерт. Більше — і ти отримуєш справжню користь: антиоксиданти, флавоноїди, магній. Щоденна квадратик такого шоколаду навіть знижує тиск.</li>
+      <li>Шукай маркування Fair Trade, Rainforest Alliance або Direct Trade. Вони не ідеальні, але краще, ніж нічого. Ці бренди слідкують, щоб фермер отримав справедливу ціну, а діти — школу замість плантації.</li>
+      <li>Bean-to-bar бренди — найчесніша опція. Це малі виробники, які купують зерно безпосередньо у фермерів, без посередників. Дорожчий, але якість і етика — інший рівень. Шукай локальних шоколатьє.</li>
+      <li>Темний шоколад зберігається роками — не псується. Якщо плитка стара і покрилась білим нальотом — це не цвіль, це какао-масло вийшло на поверхню. Безпечно, але смак страждає.</li>
+      <li>Білий наліт — лише на справжньому шоколаді з какао-маслом. Якщо плитка ніколи не "сивіє" — там пальмова олія. Дешева підробка проявляє себе своєю стабільністю.</li>
+      <li>Найкраще їсти 20-30 грам темного шоколаду на день — це і задоволення, і реальна користь для серця і мозку. Більше — це вже зайвий цукор і калорії.</li>
+      <li>Не їж шоколад натщесерце. Цукор провокує різкий стрибок інсуліну. Краще після їжі — як невеликий десерт.</li>
+    </ul>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Філософія -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Що ми насправді їмо</h2>
+
+    <div class="highlight">
+      <p>За пальцем тонкої плитки шоколаду стоїть приблизно <em>тиждень роботи фермера</em>, тисячі років культури майя і ацтеків, винаходи голландських і швейцарських інженерів, війни за колонії, рабство, маркетинг XX століття і твоя біохімія, яка бере від нього серотонін. Шоколад — це не цукерка. Це конденсована історія цивілізації в одному квадратику.</p>
+    </div>
+
+    <p style="margin-top:24px">Ацтеки знали, що їли. Для них кожна чашка какао була ритуалом — священною річчю, яку п'єш повільно, з повагою. Сьогодні ми ламаємо плитку перед телевізором і не помічаємо смаку. Може, є щось, що варто повернути собі від тих стародавніх — повагу до того, що ми їмо. Бо коли ти знаєш, як саме до тебе потрапила ця плитка — звідки, через чиї руки, які боротьби — ти не зможеш так легко з нею поводитись. І саме тоді, можливо, шоколад знову стане тим, чим був раніше — не швидкою цукеркою, а маленьким дивом.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Final -->
+  <div class="section" style="animation-delay:1.8s">
+    <div class="final-quote">
+      <div class="final-text">Колись ним розраховувалися як золотом. Сьогодні він лежить у касі біля жуйок. Але всередині той самий <strong>теобромін, той самий анандамід, та сама тисячолітня магія</strong>. Зміна — лише в тому, чи готові ми її помічати. Наступна плитка темного шоколаду — спробуй з'їсти повільно. Як ацтеки.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>

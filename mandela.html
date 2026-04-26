@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Нельсон Мандела</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.18) 0%,rgba(180,120,60,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(140,100,60,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#d4af6e 0%,#fff 30%,#c8d8ff 50%,#8ab0ff 70%,#d4af6e 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:12px;opacity:0;animation:riseIn 1s .7s ease forwards}
+.page-years{text-align:center;font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:18px;color:rgba(212,175,110,.7);margin-bottom:64px;opacity:0;animation:riseIn 1s .8s ease forwards;letter-spacing:.1em}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#d4af6e;box-shadow:0 0 12px #d4af6e}
+
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#d4af6e,#fff,#8ab0ff);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+
+.timeline{position:relative;padding-left:24px;margin-top:20px}
+.timeline::before{content:'';position:absolute;left:6px;top:8px;bottom:8px;width:1px;background:linear-gradient(to bottom,rgba(212,175,110,.3),rgba(138,176,255,.2),rgba(212,175,110,.1))}
+.tline{position:relative;margin-bottom:28px;padding-left:20px}
+.tline::before{content:'';position:absolute;left:-22px;top:6px;width:11px;height:11px;border-radius:50%;background:#d4af6e;box-shadow:0 0 12px rgba(212,175,110,.6)}
+.tyear{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:15px;color:rgba(212,175,110,.85);letter-spacing:.08em;margin-bottom:6px}
+.tevent{font-size:13px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.82)}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(220,230,255,.92)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.72)}
+
+.highlight{background:linear-gradient(135deg,rgba(212,175,110,.10),rgba(138,176,255,.07));border:1px solid rgba(212,175,110,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.82);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-top:20px}
+.stat{text-align:center;padding:28px 16px;background:rgba(212,175,110,.05);border:1px solid rgba(212,175,110,.18);border-radius:18px}
+.stat-num{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(32px,5vw,46px);color:transparent;background:linear-gradient(135deg,#d4af6e,#fff,#8ab0ff);-webkit-background-clip:text;background-clip:text;line-height:1;margin-bottom:10px}
+.stat-label{font-size:10px;font-weight:300;letter-spacing:.2em;text-transform:uppercase;color:rgba(200,216,255,.7);line-height:1.5}
+
+.quote-block{padding:30px 28px;border-left:2px solid rgba(212,175,110,.4);margin:24px 0;background:rgba(212,175,110,.05);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(220,230,255,.92);margin-bottom:8px}
+.quote-block .qa{font-size:10px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;color:rgba(212,175,110,.6)}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="portraits.html">← Постаті</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Нельсон Мандела</h1>
+  <p class="page-subtitle">27 років у в'язниці і не зламався</p>
+  <div class="page-years">1918 — 2013</div>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Здавалось, що я витрачаю час. Але насправді — час витрачали на мене"</div>
+      <div class="hero-author">Нельсон Мандела про в'язницю</div>
+    </div>
+    <p>Чорношкірий чоловік виходить за ворота в'язниці. Йому 71 рік. Останні 27 з них він провів у камерах розміром 2×2 метри. Журналісти чекають побачити зломленого старого. Натомість бачать усміхненого чоловіка, який каже: "Я нікого не звинувачую". За 4 роки він стане першим темношкірим президентом ПАР. За 6 — отримає Нобелівську премію миру разом з тим, хто його ув'язнив.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Цифри -->
+  <div class="section" style="animation-delay:1.0s">
+    <h2 class="section-title">Цифри одного життя</h2>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num">27</div>
+        <div class="stat-label">років у в'язниці</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">95</div>
+        <div class="stat-label">років життя</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">5</div>
+        <div class="stat-label">років президентства</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">250+</div>
+        <div class="stat-label">міжнародних нагород</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Хронологія -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Життя в датах</h2>
+
+    <div class="timeline">
+      <div class="tline">
+        <div class="tyear">1918 · Народження в селі</div>
+        <div class="tevent">Народжується в селі Мвезо, регіон Транскей, ПАР. Народне ім'я — Ролілахла, що мовою кхоса означає "той, що тягне за собою гілку" (буквально — "розбишака"). Ім'я "Нельсон" дала вчителька в школі.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1944 · Африканський національний конгрес</div>
+        <div class="tevent">Закінчує юридичні студії, відкриває першу адвокатську контору для темношкірих у Йоганнесбурзі. Вступає в АНК — рух за права чорних. Спочатку прихильник ненасильницького опору, як Ганді в Індії.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1948 · Апартеїд стає законом</div>
+        <div class="tevent">Біла Національна партія приходить до влади і вводить апартеїд — систему расової сегрегації. Чорним заборонено жити в "білих" районах, користуватись тими ж туалетами, лавами, пляжами, школами. Шлюби між расами — злочин.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1960 · Шарпевільський розстріл</div>
+        <div class="tevent">Поліція розстрілює мирну демонстрацію — 69 загиблих. АНК заборонено. Мандела доходить висновку: ненасильство не працює проти влади, що стріляє в беззбройних. Стає лідером "Списа нації" — збройного крила АНК.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1962 · Арешт</div>
+        <div class="tevent">Заарештовано за нелегальний виїзд з країни і організацію страйків. Засуджено на 5 років. Через рік — ще одне звинувачення: саботаж. На суді 1964 року виголошує тригодинну промову, яка ввійшла в історію: "Я готовий померти за ідеал вільного суспільства".</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1964–82 · Робен Айленд</div>
+        <div class="tevent">18 років на острові-в'язниці поблизу Кейптауна. Камера 2×2 метри. Літо — 40°C спеки, зима — холод і вогкість. Денна норма — дробити вапняк. Лист — раз на 6 місяців, відвідини — раз на рік.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1968 · Помирає мати</div>
+        <div class="tevent">Не дозволяють поїхати на похорон матері. Через рік помирає старший син в автокатастрофі — на похорон теж не пускають. Мандела пише: "Я не міг плакати в камері. Я плакав у душі, коли йшла вода".</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1985 · Перші переговори</div>
+        <div class="tevent">Уряд пропонує звільнити його — за умови, що він зречеться боротьби. Мандела відмовляється: "Тільки вільні люди можуть вести переговори. В'язні не можуть укладати договори". Починаються таємні переговори, які триватимуть 5 років.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1990 · Свобода</div>
+        <div class="tevent">11 лютого о 16:14 виходить з в'язниці. Світ дивиться в прямому ефірі. Тримає за руку дружину Вінні. Не плаче. Усміхається. "Я не вільний, поки інші не вільні", — каже в першій промові.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1993 · Нобель миру</div>
+        <div class="tevent">Отримує премію миру — разом з Фредеріком де Клерком, президентом ПАР, який його ж і ув'язнював. Вони сідають за один стіл. Це й є диво — не тиша зброї, а готовність простити.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1994 · Перші вільні вибори</div>
+        <div class="tevent">Перші в історії ПАР вибори, в яких голосують усі раси. АНК перемагає. Мандела стає першим темношкірим президентом. На інавгурації — і вчорашні охоронці в'язниці. Він запрошує одного з них до президентської ложі.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1999 · Залишає владу</div>
+        <div class="tevent">Після одного терміну сам йде з посади президента. У Африці лідери зазвичай тримаються за владу до смерті. Мандела показує інакший шлях: демократія важливіша за особу. Цей жест змінює уявлення про африканську політику назавжди.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">2013 · Смерть у 95</div>
+        <div class="tevent">Помирає у власному будинку в Йоганнесбурзі. Похорон проходить у його рідному селі Куну. На жалобу приїжджають 91 голова держави. Барак Обама виголошує: "Він був велетнем серед нас".</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- В'язниця як школа -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Як 27 років не зламали його</h2>
+    <p>Більшість людей у його становищі озлобилися б, зламались або зненавиділи б увесь світ. Мандела зробив зворотне: перетворив в'язницю на університет.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">📚</span>
+        <div class="card-title">Освіта в камері</div>
+        <div class="card-text">Здобув юридичний диплом заочно — через London University. Читав усе, що можна було отримати. Вивчив африкаанс — мову своїх тюремників. Казав: "Якщо говориш до людини мовою, яку вона розуміє, ти доходиш до її голови. Якщо говориш її рідною — доходиш до серця".</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🏃</span>
+        <div class="card-title">Дисципліна тіла</div>
+        <div class="card-text">Кожен день на світанку — 100 віджимань, 200 присідань, 50 підтягувань, біг на місці протягом години. Розпорядок не змінювався 27 років. "Тіло — це останнє, над чим у мене лишилась влада".</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌱</span>
+        <div class="card-title">Сад на даху</div>
+        <div class="card-text">Виростив сад на даху одного з тюремних блоків. Спочатку охоронці забороняли. Потім почали приносити насіння. Один з охоронців сказав: "Ми думали, що ми його сторожі. А він став нашим вчителем".</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🤝</span>
+        <div class="card-title">Шукав спільну мову</div>
+        <div class="card-text">Знайомився з охоронцями. Запам'ятовував імена їхніх дітей. Питав про сім'ю. Не як стратегію — щиро. Через 20 років деякі з його тюремників голосували за нього на виборах. Це і є справжня перемога — не над ворогом, а над ворожнечею.</div>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>На питання "як вам вдалось не озлобитись?" Мандела відповідав: <em>"Образа і ненависть — це отрута, яку ти випиваєш сам, сподіваючись, що помре ворог"</em>. Він зрозумів цю істину не з книжок, а з 27 років за ґратами. І саме тому йому повірив білий генерал, який його охороняв, — і потім посилав війська захищати темношкірих громадян.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що він зробив -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Що змінилось завдяки йому</h2>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🕊️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Скасував апартеїд без кровопролиття</div>
+          <div class="card-text">Усі очікували, що при переході до демократії в ПАР буде громадянська війна. Чорних — 80%, білих — 10%, але всі гроші, армія і поліція — у білих. Мандела зумів вивести країну з апартеїду без масової різні. Це вважали неможливим. Він зробив.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">⚖️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Комісія істини і примирення</div>
+          <div class="card-text">Замість судів і помсти — спеціальна комісія: жертви розповідали про те, що з ними робили. Кати говорили правду публічно. За щиру правду — амністія. Жорстокий, але дієвий механізм. Тисячі сімей дізнались, що сталось з їхніми зниклими — і змогли поховати рідних.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🏉</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Об'єднав країну через спорт</div>
+          <div class="card-text">У 1995 році ПАР приймає Кубок світу з регбі — спорту, який чорні ненавиділи, бо це був "білий" спорт апартеїду. Мандела одягає форму збірної, виходить на поле, обіймається з білим капітаном. Уся країна — біла і чорна — святкує перемогу разом. Цей момент описано у фільмі "Інвіктус".</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🌍</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Дав модель примирення</div>
+          <div class="card-text">Після нього країни, які виходять з диктатур або воєн, дивляться на досвід ПАР. Як говорити з катами? Як жити поруч з тими, хто тобі робив зло? Мандела показав: можна не пробачати — але можна не воювати. Це різниця між мудрістю і слабкістю.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Його слова -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Його голос</h2>
+
+    <div class="quote-block">
+      <p>"Освіта — найпотужніша зброя, якою можна змінити світ"</p>
+    </div>
+    <div class="quote-block">
+      <p>"Я не святий — якщо тільки не вважати святим грішника, який не припиняє намагатись"</p>
+    </div>
+    <div class="quote-block">
+      <p>"Сміливість — це не відсутність страху. Це здатність діяти попри страх"</p>
+    </div>
+    <div class="quote-block">
+      <p>"Виходячи з в'язниці, я знав: якщо не залишу позаду гнів і ненависть, то залишусь у в'язниці назавжди"</p>
+      <div class="qa">— з автобіографії "Довгий шлях до свободи"</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Final -->
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Висновок</h2>
+    <div class="final-quote">
+      <div class="final-text">Мандела не був святим. Він воював, помилявся, відсиджував — і прощав. Його урок не "будь добрим до ворогів". Його урок: <strong>ненависть — це більше не про ворога. Це про тебе</strong>. І єдиний, хто може звільнити тебе від неї, — це ти сам. 27 років він тренував цю свободу за ґратами — щоб потім подарувати її цілій країні.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>

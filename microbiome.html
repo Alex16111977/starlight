@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Мікробіом</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,180,140,.18) 0%,rgba(40,140,160,.1) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.1) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.72)}
+
+.steps-grid{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.step-card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:24px;align-items:flex-start}
+.step-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.step-card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.step-card:hover::before{opacity:1}
+.step-num{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:48px;color:rgba(138,176,255,.25);line-height:1;flex-shrink:0;width:40px;text-align:center}
+.step-body{flex:1}
+
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-top:24px}
+.stat{background:linear-gradient(135deg,rgba(212,175,110,.08),rgba(138,176,255,.05));border:1px solid rgba(212,175,110,.18);border-radius:14px;padding:24px 20px;text-align:center;transition:all .3s}
+.stat:hover{background:linear-gradient(135deg,rgba(212,175,110,.12),rgba(138,176,255,.08));border-color:rgba(212,175,110,.3)}
+.stat-num{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:36px;color:transparent;background:linear-gradient(135deg,#d4af6e,#fff);-webkit-background-clip:text;background-clip:text;margin-bottom:6px}
+.stat-text{font-size:11px;font-weight:200;line-height:1.6;color:rgba(200,216,255,.65)}
+
+.tips{list-style:none;margin-top:16px}
+.tips li{font-size:13px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.6);padding:12px 0 12px 28px;border-bottom:1px solid rgba(200,216,255,.04);position:relative}
+.tips li::before{content:'';position:absolute;left:8px;top:20px;width:4px;height:4px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 6px #8ab0ff}
+
+.food-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-top:20px}
+.food-item{background:rgba(200,216,255,.02);border:1px solid rgba(200,216,255,.05);border-radius:12px;padding:18px 20px;transition:all .3s}
+.food-item:hover{background:rgba(200,216,255,.05);border-color:rgba(200,216,255,.12)}
+.food-label{font-size:9px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;color:rgba(138,176,255,.5);margin-bottom:8px}
+.food-val{font-size:12px;font-weight:200;line-height:1.7;color:rgba(200,216,255,.72)}
+
+.warn-card{background:rgba(255,130,130,.04);border:1px solid rgba(255,130,130,.1);border-radius:16px;padding:28px 24px;margin-bottom:16px;transition:all .4s}
+.warn-card:hover{background:rgba(255,130,130,.07);border-color:rgba(255,130,130,.18)}
+.warn-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(255,160,160,.8);margin-bottom:10px}
+.warn-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.6)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.82);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Мікробіом</h1>
+  <p class="page-subtitle">Трильйони бактерій, які керують твоїм настроєм</p>
+
+  <!-- Hero quote -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Ти — це 10% людина і 90% бактерії"</div>
+      <div class="hero-author">Сучасна мікробіологія</div>
+    </div>
+    <p>У твоєму тілі живе приблизно 39 трильйонів бактерій — це більше, ніж зірок у видимому Всесвіті. У них в сумі вага 1.5-2 кг — як цілий орган. Найбільше їх у кишечнику — там вони не просто "сидять", а керують твоїм апетитом, імунітетом, настроєм і навіть тим, як ти приймаєш рішення. Сучасні вчені кажуть: ти ніколи не був "одним". Ти — це екосистема, яка ходить, дихає і думає. Ласкаво просимо в світ свого мікробіому.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Цифри -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Хто живе всередині тебе</h2>
+
+    <div class="stats-grid">
+      <div class="stat">
+        <div class="stat-num">39T</div>
+        <div class="stat-text">мікроорганізмів живуть у твоєму тілі</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">2kg</div>
+        <div class="stat-text">сумарна вага твого мікробіому</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">1000</div>
+        <div class="stat-text">різних видів бактерій у кишечнику</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">99%</div>
+        <div class="stat-text">мікробних генів — не людських</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">90%</div>
+        <div class="stat-text">серотоніну виробляється в кишечнику</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">70%</div>
+        <div class="stat-text">імунних клітин живе в кишківнику</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що робить -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Що вони роблять</h2>
+    <p>Бактерії — це не пасивні мешканці. Вони активно працюють для тебе і впливають практично на все, що відбувається в тілі.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🍴</span>
+        <div class="card-title">Травлення</div>
+        <div class="card-text">Бактерії перетравлюють те, що твій шлунок не може — клітковину, складні вуглеводи. З цього виробляють короткі жирні кислоти (бутират, пропіонат), які годують твої клітини кишечника. Без бактерій ти б помер з голоду навіть з повним шлунком.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧠</span>
+        <div class="card-title">Настрій і мозок</div>
+        <div class="card-text">Кишечник називають "другим мозком" не для красного слівця. 90% серотоніну (гормону щастя) виробляється тут, не в голові. Через блукаючий нерв бактерії спілкуються з мозком 24/7. Депресія, тривога, ясність думки — все це частково керується мікробіомом.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🛡️</span>
+        <div class="card-title">Імунітет</div>
+        <div class="card-text">70% клітин імунної системи живе в стінках кишечника. Бактерії "тренують" їх — вчать відрізняти "своїх" від "чужих". Якщо бактерій мало чи вони не ті — імунітет починає атакувати власне тіло. Аутоімунні хвороби часто починаються тут.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚖️</span>
+        <div class="card-title">Вага тіла</div>
+        <div class="card-text">У худих і повних людей різний склад мікробіому. Дослідження на мишах: пересадили бактерії від повної людини худій миші — вона набрала вагу. Бактерії впливають на те, скільки калорій ти витягуєш з їжі, і навіть на те, чого тобі хочеться.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💊</span>
+        <div class="card-title">Вітаміни</div>
+        <div class="card-text">Бактерії виробляють для тебе вітаміни — К, B12, фолієву кислоту, біотин. Це не просто "корисно", а критично: без вітаміну К не згортається кров, без B12 руйнуються нерви. Бактерії — твоя домашня вітамінна аптека.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">😴</span>
+        <div class="card-title">Сон</div>
+        <div class="card-text">Бактерії беруть участь у виробленні мелатоніну (гормон сну) і регулюванні циркадного ритму. Хороший мікробіом = глибший сон. Розлад мікробіому = безсоння і нічні пробудження. І те, що ти їси на вечерю, годує цих бактерій.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Звідки беруться -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Звідки вони беруться</h2>
+    <p>Ти народжуєшся стерильним — як новий аркуш паперу. Перша бактеріальна "колонізація" відбувається в перші години життя, і саме вона визначає основу твого мікробіому на роки вперед.</p>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="card-title">Народження</div>
+          <div class="card-text">Якщо народився природно — отримав мікробіом матері проходячи через родові шляхи. Якщо кесарів — отримуєш бактерії з шкіри лікаря і повітря лікарні. Це не дрібниця: діти кесарів частіше мають алергії, астму і ожиріння. Перші години — фундамент на життя.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="card-title">Грудне молоко</div>
+          <div class="card-text">У молоці матері є спеціальні цукри, які дитина не може перетравити. Вони не для дитини — вони для бактерій. Молоко вирощує "правильний" мікробіом дитини. Штучне годування дає інший мікробіом — біднішим за різноманітністю.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="card-title">Перші роки</div>
+          <div class="card-text">До 3 років формується "ядро" мікробіому, яке потім тримається ціле життя. Що ти їв, з ким контактував, чи був у вас собака, чи багато антибіотиків приймав — все це формувало бактеріальний відбиток, унікальний як паспорт.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="card-title">Доросле життя</div>
+          <div class="card-text">Мікробіом дорослого досить стабільний, але змінюється від їжі, стресу, ліків, хвороб. Великий курс антибіотиків може "стерти" половину видів — і потім роками відновлюватись. Кожна твоя дія залишає відбиток.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що його руйнує -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Що його руйнує</h2>
+    <p>Сучасний спосіб життя — найбільший ворог мікробіому в історії людства. Ось основні удари по бактеріальному складі.</p>
+
+    <div class="warn-card">
+      <div class="warn-title">Антибіотики</div>
+      <div class="warn-text">Один курс антибіотиків знищує до 30% бактерій у кишечнику — і не вибирає, "своїх" чи "чужих". Деякі види так і не повертаються. Тому антибіотики — лише за реальною необхідністю, не "для профілактики" і не "на всяк випадок".</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title">Ультра-перероблена їжа</div>
+      <div class="warn-text">Чіпси, ковбаси, фастфуд, газовані напої. Емульгатори, консерванти, штучні підсолоджувачі — все це створене так, щоб бактерії не могли його переробити. Вони голодують. Корисні види вмирають, патогенні — розмножуються.</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title">Цукор у великих кількостях</div>
+      <div class="warn-text">Цукор годує "поганих" бактерій (особливо Candida) і шкідливі дріжджі. Вони ростуть, витісняючи корисні види. Чим більше солодкого ти їси — тим сильніше тебе тягне на солодке. Це не "слабкість волі" — це бактерії змушують тебе годувати їх.</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title">Хронічний стрес</div>
+      <div class="warn-text">Кортизол — гормон стресу — змінює середовище в кишечнику і вбиває корисні види. Ось чому при стресі болить живіт: це не образно, це реальна реакція мікробіому. Стрес = бідніший мікробіом = більше тривоги. Замкнене коло.</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title">Брак клітковини</div>
+      <div class="warn-text">Бактерії живляться клітковиною — тим, що ти не перетравлюєш. Західна дієта дає 15 грамів клітковини на день, потрібно 30-40. Без їжі бактерії починають "їсти" слиз кишечника — стінка стає тонкою, виникає "дірявий кишечник".</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title">Стерильність</div>
+      <div class="warn-text">Сучасні діти ростуть в "чистих" будинках, з антисептиками всюди, без контакту з землею і тваринами. Імунна система не має на чому "тренуватись" — і починає атакувати безпечні речі. Звідси епідемія алергій. Бруд — потрібен.</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Як годувати -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Як їх годувати</h2>
+    <p>Найкраще, що ти можеш зробити для свого тіла — це дбати про їх біоценоз. Бактерії люблять різноманіття. Чим більше різних рослин ти їси — тим багатший мікробіом.</p>
+
+    <div class="food-grid">
+      <div class="food-item">
+        <div class="food-label">Клітковина</div>
+        <div class="food-val">Овочі, фрукти, цільнозернові, бобові. 30-40 грам на день. Це їжа для бактерій.</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Ферментовані</div>
+        <div class="food-val">Квашена капуста, кефір, йогурт, кімчі, місо, комбуча. Живі бактерії — пряма колонізація.</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Пребіотики</div>
+        <div class="food-val">Часник, цибуля, цикорій, спаржа, зелений банан, овес. Спеціальна "паливо" для добрих бактерій.</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Поліфеноли</div>
+        <div class="food-val">Темний шоколад, червоне вино, ягоди, зелений чай, оливкова олія. Підгодовують біорізноманіття.</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Резистентний крохмаль</div>
+        <div class="food-val">Зелений банан, охолоджена картопля чи рис, бобові. Бактерії з нього виробляють бутират — паливо клітин.</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">30 рослин на тиждень</div>
+        <div class="food-val">Дослідження: люди, які їдять 30+ різних рослин на тиждень, мають найбагатший мікробіом. Рахуй: горіхи, спеції — теж рослини.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Прості правила -->
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">Як відновити мікробіом</h2>
+    <p>Хороша новина: мікробіом дуже відгукується на зміни. За 3-4 дні після зміни дієти склад бактерій вже інший. За кілька місяців — кардинальна різниця.</p>
+
+    <ul class="tips">
+      <li>Додавай ферментовані продукти щодня. Хоч би одну ложку квашеної капусти. Хоч би склянку кефіру. Живі бактерії потрапляють у кишечник напряму.</li>
+      <li>Їж овочі різних кольорів. Кожен колір — це свій набір поліфенолів. Червоний помідор, зелений шпинат, фіолетова капуста, оранжева морква — годуй різні бактерії різним.</li>
+      <li>Не пий газовані напої з підсолоджувачами. Аспартам і сахарин знищують корисні бактерії і провокують непереносимість глюкози. Те, що "без цукру" — гірше за справжній цукор.</li>
+      <li>Спи 7-8 годин. Брак сну руйнує мікробіом за 2 ночі. Глибокий сон — час, коли бактерії "перебудовуються" і відновлюють баланс.</li>
+      <li>Рухайся. Фізична активність (навіть просто ходьба) збільшує різноманіття бактерій. Спортсмени мають мікробіом значно багатший за сидячих людей.</li>
+      <li>Контактуй з природою. Земля, рослини, тварини — все це джерело "хороших" мікробів. Прогулянка в лісі — це не тільки повітря, це бактеріальний обмін через шкіру і дихання.</li>
+      <li>Не зловживай антибактеріальним милом і антисептиком. Звичайне мило з водою — достатньо в більшості випадків. Антисептик — для медиків, не для дому.</li>
+      <li>Менше стресу. Медитація, прогулянки, дихальні практики — все це впливає на мікробіом не менше, ніж їжа. Спокійна нервова система = здоровий кишечник.</li>
+      <li>Якщо мусиш приймати антибіотик — після курсу їж ферментовані продукти і клітковину інтенсивно. Допомагай бактеріям повернутись.</li>
+    </ul>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Філософія -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Що це змінює в розумінні себе</h2>
+
+    <div class="highlight">
+      <p>Сучасна наука перевертає уявлення про "я". Ти — не просто людина з 30 трильйонами клітин. Ти — <em>екосистема</em>: 10 трильйонів людських клітин і 39 трильйонів бактеріальних. Коли ти "відчуваєш" голод, тривогу, бажання солодкого — частина цих сигналів іде не від твого мозку, а від бактерій, які хочуть, щоб ти їх погодував. Ти ніколи не був "сам у собі". Ти завжди був громадою.</p>
+    </div>
+
+    <p style="margin-top:24px">Це звучить як наукова фантастика, але це підтверджені дані. Дослідження останніх 15 років показали: депресія, тривожність, аутизм, навіть Паркінсон — частково починаються в кишечнику. Мікробіом називають "забутим органом", який медицина XX століття просто не помічала. Тепер з'являється нова галузь — психобіотика: ліки на основі бактерій. У Канаді вже випускають перший пробіотик, схвалений як антидепресант. Це лише початок. У наступні 20 років уявлення про здоров'я зміниться так само, як змінилось уявлення про мікроби в часи Пастера.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Final -->
+  <div class="section" style="animation-delay:1.8s">
+    <div class="final-quote">
+      <div class="final-text">Ти годуєш не тільки себе. Ти годуєш <strong>цілий світ всередині</strong>. І від того, що ти кладеш у тарілку — залежить, які бактерії житимуть, і яким буде твій настрій завтра. Це найочевидніша і одночасно найдивніша наука нашого часу: ми справді є тим, що ми їмо. Бо саме з цього вирощуються істоти, які роблять нас — нами.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>

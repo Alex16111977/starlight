@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Хронічна втома</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,80,160,.18) 0%,rgba(40,60,140,.1) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(140,80,160,.1) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.72)}
+
+.steps-grid{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.step-card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:24px;align-items:flex-start}
+.step-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.step-card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.step-card:hover::before{opacity:1}
+.step-num{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:48px;color:rgba(138,176,255,.25);line-height:1;flex-shrink:0;width:40px;text-align:center}
+.step-body{flex:1}
+
+.tips{list-style:none;margin-top:16px}
+.tips li{font-size:13px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.6);padding:12px 0 12px 28px;border-bottom:1px solid rgba(200,216,255,.04);position:relative}
+.tips li::before{content:'';position:absolute;left:8px;top:20px;width:4px;height:4px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 6px #8ab0ff}
+
+.warn-card{background:rgba(255,130,130,.04);border:1px solid rgba(255,130,130,.1);border-radius:16px;padding:28px 24px;margin-bottom:16px;transition:all .4s}
+.warn-card:hover{background:rgba(255,130,130,.07);border-color:rgba(255,130,130,.18)}
+.warn-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(255,160,160,.8);margin-bottom:10px}
+.warn-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.6)}
+
+.checklist{display:grid;grid-template-columns:1fr;gap:10px;margin-top:24px}
+.check-item{background:rgba(200,216,255,.04);border:1px solid rgba(200,216,255,.1);border-radius:12px;padding:18px 20px;display:flex;gap:14px;align-items:flex-start;transition:all .3s}
+.check-item:hover{background:rgba(200,216,255,.07);border-color:rgba(200,216,255,.16)}
+.check-mark{flex-shrink:0;width:18px;height:18px;border-radius:50%;border:1px solid rgba(212,175,110,.5);margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:10px;color:rgba(212,175,110,.7)}
+.check-text{font-size:13px;font-weight:200;line-height:1.7;color:rgba(200,216,255,.75)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.82);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Хронічна втома</h1>
+  <p class="page-subtitle">Коли втомлений навіть після сну</p>
+
+  <!-- Hero quote -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Я сплю 8 годин — і прокидаюсь розбитим"</div>
+      <div class="hero-author">Найпоширеніша скарга XXI століття</div>
+    </div>
+    <p>Втома, яка не проходить після відпочинку. Втома, з якою ти прокидаєшся і з якою лягаєш спати. Втома, що перетворює прості справи на гори, а каву — на щоденне виживання. Це не лінь. Це не "характер". Це — сигнал, що щось у тілі чи житті працює неправильно. І найголовніше: у переважній більшості випадків це можна виправити. Якщо знати, з чого починати.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що таке -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Звичайна втома vs хронічна</h2>
+    <p>Втомлюватись — нормально. Якщо ти важко працював, бігав марафон, не спав ніч — мусиш бути втомленим. Це здорова втома. Вона зникає після відпочинку, сну, вихідних.</p>
+
+    <p>Хронічна — інша. Вона тримається тижнями, місяцями. Вона не йде після відпочинку. Ти спиш 9 годин — і все одно ледь встаєш. Ти береш відпустку — і повертаєшся такий же розбитий. Це сигнал, що проблема глибше за просту втому.</p>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Класичне визначення: <em>"стан виснаження, який триває довше 6 місяців і не зникає після відпочинку"</em>. Але не чекай півроку. Якщо втома дивно тримається 2-3 тижні — це вже привід розібратись. Не нормалізуй. Тіло так не повинно почуватись.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Причини медичні -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Медичні причини, які треба виключити</h2>
+    <p>Перш ніж шукати "психологічні" причини — переконайся, що в тілі все ок. Ось топ-список того, що варто перевірити в лікаря.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🩸</span>
+        <div class="card-title">Анемія</div>
+        <div class="card-text">Низький гемоглобін або низький феритин (запас заліза). Найчастіша причина "просто втоми" у жінок репродуктивного віку. Кров погано переносить кисень — клітини задихаються. Аналіз крові — і видно одразу.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🦋</span>
+        <div class="card-title">Щитоподібна залоза</div>
+        <div class="card-text">Гіпотиреоз (низька функція) — класична картина: втома, набір ваги, мерзлякуватість, сухе волосся, депресія. Хвороба підступна, бо розвивається роками. Аналізи: ТТГ, Т4, антитіла.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">☀️</span>
+        <div class="card-title">Дефіцит вітаміну D</div>
+        <div class="card-text">У 80% людей у північних країнах — низький рівень вітаміну D. Симптоми: втома, біль у м'язах, депресія, часті інфекції. Особливо взимку. Аналіз — 25(OH)D. Норма — від 30 нг/мл, оптимум 50-70.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧬</span>
+        <div class="card-title">Дефіцит B12</div>
+        <div class="card-text">Особливо у вегетаріанців і вегетаріанок, але не тільки. B12 потрібен для нервів і енергії. Дефіцит = втома, "ватні ноги", погіршення пам'яті, поколювання в кінцівках. Аналіз і ін'єкції — швидко повертають енергію.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">😴</span>
+        <div class="card-title">Апное сну</div>
+        <div class="card-text">Ти "спиш 8 годин", але не справжнім сном. У сні зупиняється дихання сотні разів за ніч — мозок не входить у глибокі фази. Прокидаєшся розбитим. Часто у людей з зайвою вагою. Діагностика — нічна полісомнографія.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🍯</span>
+        <div class="card-title">Цукровий діабет</div>
+        <div class="card-text">Як 2-го типу, так і переддіабетичний стан. Клітини погано приймають глюкозу — енергії бракує. Класичні ознаки: втома, спрага, часте сечовипускання, голод одразу після їжі. Аналіз: глюкоза натще і HbA1c.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💊</span>
+        <div class="card-title">Побічні ефекти ліків</div>
+        <div class="card-text">Антигістаміни, антидепресанти, бета-блокатори, протизаплідні, статини — будь-які ліки можуть давати втому. Якщо втома почалася після початку нового препарату — обговори з лікарем заміну.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🦠</span>
+        <div class="card-title">Постковідний синдром</div>
+        <div class="card-text">У 10-30% людей після COVID залишається стійка втома, яка триває місяцями. Це "long COVID". Не вигадка — реальний синдром. Допомагають поступові навантаження, повільне відновлення, час.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Психологічні -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Якщо аналізи в нормі</h2>
+    <p>Уявімо: ти зробив усі аналізи. Лікар каже: "У вас все добре". Але втома залишається. Це означає, що джерело — не біохімічне. Тіло б'є тривогу про щось інше. Ось основні причини:</p>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="card-title">Хронічний стрес</div>
+          <div class="card-text">Тіло, що роками живе в режимі "небезпека", виснажує наднирники і знижує рівень кортизолу. Це називають "втома наднирників". Ти весь час в напрузі, а тіло вже не має сил її витримувати. Симптом: прокидаєшся уже втомленим.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="card-title">Депресія в маскі</div>
+          <div class="card-text">Депресія не завжди про сум. Часто це просто тотальна втома, апатія, відсутність радості. У чоловіків особливо — депресія часто маскується під "просто втому". Якщо нічого не радує і робити нічого не хочеться — це може бути депресія.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="card-title">Емоційне вигорання</div>
+          <div class="card-text">Спочатку ти просто багато працюєш. Потім — нудишся роботою. Потім — нічого не хочеш. Потім — навіть улюблені речі не радують. Це класичний шлях вигорання. Воно має 3 виміри: виснаження, цинізм, відчуття безпорадності.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="card-title">Сон, який не відновлює</div>
+          <div class="card-text">Не кількість, а якість. Якщо ти засинаєш з телефоном, прокидаєшся вночі від тривоги, спиш у задушливій кімнаті — навіть 9 годин не дадуть відновлення. Глибокі фази сну, коли тіло "ремонтується", потребують спокою.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="card-title">Брак сенсу</div>
+          <div class="card-text">Втома без причини часто з'являється у житті без напрямку. Якщо ти робиш те, що не любиш, і не бачиш, навіщо — тіло реагує. Воно економить ресурси, бо не розуміє, на що їх витрачати. Це не лінь — це біологія сенсу.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <div class="card-title">Цифрова перенавантаженість</div>
+          <div class="card-text">Мозок, що 14 годин на день обробляє інформацію з екрану, не має часу на відновлення. Соцмережі, новини, повідомлення — все це не "відпочинок". Це інша робота. Тому "відпочиваєш" з телефоном, а втома не зменшується.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Чек-лист -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Чек-лист: з чого почати</h2>
+    <p>Якщо втома стала постійною — пройди цей список послідовно. Не одразу все, по пунктам.</p>
+
+    <div class="checklist">
+      <div class="check-item">
+        <div class="check-mark">1</div>
+        <div class="check-text">Здай розширений аналіз крові: загальний, феритин, ТТГ, Т4, B12, фолієва кислота, вітамін D, глюкоза, HbA1c, печінкові проби. Це базове "сканування" тіла.</div>
+      </div>
+      <div class="check-item">
+        <div class="check-mark">2</div>
+        <div class="check-text">Ввімкни нічний моніторинг: трекер сну на годинник або смартфон. Якщо хропиш — попроси близьких зняти на відео. Апное може бути причиною.</div>
+      </div>
+      <div class="check-item">
+        <div class="check-mark">3</div>
+        <div class="check-text">Веди тиждень "журналу енергії": записуй, коли встав, коли поїв, що їв, скільки кави, який рівень енергії з 1 до 10 в різні часи дня. Шукай патерни.</div>
+      </div>
+      <div class="check-item">
+        <div class="check-mark">4</div>
+        <div class="check-text">Прибери на 2 тижні: цукор, алкоголь, ультра-перероблену їжу, кофеїн після 14:00. Спостерігай — як зміниться енергія.</div>
+      </div>
+      <div class="check-item">
+        <div class="check-mark">5</div>
+        <div class="check-text">Виділи стресори: що в твоєму житті виснажує? Робота? Стосунки? Конкретна людина? Постійні зобов'язання? Перерахуй їх. Не вирішуй — просто бачь.</div>
+      </div>
+      <div class="check-item">
+        <div class="check-mark">6</div>
+        <div class="check-text">Подумай про лікаря: лікаря загальної практики для аналізів, ендокринолога — якщо щитовидна, психотерапевта — якщо аналізи в нормі, але втома тримається.</div>
+      </div>
+      <div class="check-item">
+        <div class="check-mark">7</div>
+        <div class="check-text">Спитай себе чесно: чи я займаюся тим, що мені цікаво? Чи я в контакті з близькими? Чи я роблю щось окрім роботи? Часто втома — про відсутність наповнення.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що допомагає -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Що реально допомагає</h2>
+    <p>Не "чарівні таблетки", а перевірені практики. Дай їм 2-4 тижні — енергія повертається повільно, але стабільно.</p>
+
+    <ul class="tips">
+      <li>Світло вранці. Перші 10-30 хвилин після пробудження — на вулиці або біля вікна. Сонячне світло запускає виробництво кортизолу зранку (це добре!) і запускає циркадний ритм. Вночі — мелатонін прийде природно.</li>
+      <li>Рух, але правильний. Парадокс: при втомі допомагає не лежати, а рухатись. Лише 20 хвилин ходьби покращують енергію більше за чашку кави. Не виснажливі тренування — м'які, регулярні.</li>
+      <li>Білок зранку. Вівсянка з молоком — це вуглеводи, які дають швидкий пік і потім падіння. Білок (яйця, йогурт, сир, риба) дає рівну енергію на години. Проста зміна сніданку — і вже інша енергія до обіду.</li>
+      <li>Менше каві. Парадокс №2: коли ти втомлений, кави хочеться більше. Але вона маскує втому, не вирішує її. Поступово зменши до 1-2 чашок, лише до 14:00. Через 2 тижні енергія сама стає рівнішою.</li>
+      <li>Сон в темряві і прохолоді. 18-20°C, чорні штори, без екрану за годину до сну. Якісний сон — це не про години, це про умови. Мозок відновлюється тільки в темряві і тиші.</li>
+      <li>Один день без планів на тиждень. Не "продуктивний відпочинок" з 5 справами, а справжня пауза. Книжка, прогулянка, нічого. Тіло не може відновитись, якщо ти весь час щось робиш.</li>
+      <li>Скоротити інформаційний потік. Менше новин, менше соцмереж, менше підкастів у вуха. Дай мозку тишу — він обробить накопичене і відновиться.</li>
+      <li>Контакт з природою. Ліс, парк, вода. Дослідження: 20 хвилин у природі знижують кортизол і відновлюють увагу. Це не плітки — це доведена нейробіологія.</li>
+      <li>Стосунки. Самотність виснажує не менше, ніж робота. Один щирий зустріч на тиждень з людиною, яку любиш — реальний джерело енергії. Не з телефоном — наживо.</li>
+      <li>Менше "повинна". Пройдись по своєму тижню і знайди 3 речі, які ти робиш "бо так треба", але насправді — не хочеш. Прибери або делегуй. Кожна "повинність" — це витік енергії.</li>
+    </ul>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Чого не робити -->
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">Чого не варто робити</h2>
+    <p>Кілька популярних "лікувань", які або не працюють, або шкодять.</p>
+
+    <div class="warn-card">
+      <div class="warn-title">Самостійні "вітамінні комплекси"</div>
+      <div class="warn-text">Купити в аптеці "вітамін від втоми" наосліп — гра в казино. Без аналізу ти не знаєш, чого тобі бракує (а може, не бракує нічого). Деякі вітаміни можуть бути небезпечні в надлишку (А, D, залізо). Спочатку — аналіз, потім — добавки.</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title">Енергетики</div>
+      <div class="warn-text">Червоний бик, монстр і таблетки кофеїну — це не "енергія", це позика з майбутнього. Завтра тобі буде гірше. Часті енергетики виснажують наднирники і провокують тривожність. Кави достатньо.</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title">"Просто треба бігати марафон"</div>
+      <div class="warn-text">При хронічній втомі важкі тренування навпаки можуть погіршити стан. Особливо якщо є приховане запалення чи проблеми з наднирниками. Починай з ходьби. Біг — пізніше, коли енергія стабілізується.</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title">Голодування "для очищення"</div>
+      <div class="warn-text">Жорсткі дієти і голодування при хронічній втомі тільки погіршують стан. Тіло сприймає це як ще один стрес. Замість позбавлення — додавай: овочі, білок, корисні жири.</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title">"Все тіло за місяць"</div>
+      <div class="warn-text">Хронічна втома формувалась місяцями і роками — за тиждень вона не зникне. Коли ти чуєш про "10 днів — і все", це маркетинг. Реальне відновлення — 2-4 місяці послідовної роботи.</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Філософія -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Що тіло насправді каже</h2>
+
+    <div class="highlight">
+      <p>Хронічна втома — це не зрада тіла. Це його <em>остання спроба врятувати тебе</em>. Коли ти роками ігноруєш сигнали — невеликі болі, поганий сон, дратівливість — тіло переходить до жорсткішого мова: воно просто вимикає енергію. Не дає тобі більше робити те, що тебе руйнує. Втома — це гальмо, яке тіло включає, бо ти не зміг гальмувати сам.</p>
+    </div>
+
+    <p style="margin-top:24px">Тому хронічна втома часто йде не тільки після зміни вітамінів і сну. Вона йде після зміни життя. Звільнення з нелюбленої роботи. Завершення токсичних стосунків. Дозволу собі робити менше. Втома часто запитує: "Куди ти йдеш? І навіщо?". Якщо немає відповіді — її не виправити навіть найкращим вітаміном D. Слухай тіло. Воно мудріше за мозок, який звик "терпіти і йти далі".</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Final -->
+  <div class="section" style="animation-delay:1.8s">
+    <div class="final-quote">
+      <div class="final-text">Втома — не вирок і не "характер". Це <strong>повідомлення, яке можна прочитати</strong>. Іноді воно про залізо в крові. Іноді — про роботу, яка тебе вбиває. Іноді — про самотність, з якою ти живеш роками. Не нормалізуй виснаження. Тіло створене не для того, щоб тягнути все на собі. Воно створене, щоб жити. І енергія — твоя від народження.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>

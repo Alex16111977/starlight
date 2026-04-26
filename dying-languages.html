@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Мови, які зникають</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.12) 0%,rgba(40,80,200,.06) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.07) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.55)}
+
+.tips{list-style:none;margin-top:16px}
+.tips li{font-size:13px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.6);padding:12px 0 12px 28px;border-bottom:1px solid rgba(200,216,255,.04);position:relative}
+.tips li::before{content:'';position:absolute;left:8px;top:20px;width:4px;height:4px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 6px #8ab0ff}
+
+/* Stat box */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-top:24px}
+.stat{background:rgba(200,216,255,.04);border:1px solid rgba(200,216,255,.12);border-radius:16px;padding:24px;text-align:center;transition:all .4s}
+.stat:hover{background:rgba(200,216,255,.08);border-color:rgba(200,216,255,.22);transform:translateY(-3px)}
+.stat-num{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:42px;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1;margin-bottom:10px}
+.stat-text{font-size:11px;font-weight:200;letter-spacing:.05em;color:rgba(200,216,255,.7);line-height:1.6}
+
+/* Language story */
+.lang-story{background:rgba(200,216,255,.04);border:1px solid rgba(200,216,255,.12);border-radius:16px;padding:28px 24px;margin-bottom:14px;transition:all .4s}
+.lang-story:hover{background:rgba(200,216,255,.08);border-color:rgba(200,216,255,.22)}
+.lang-meta{font-size:9px;font-weight:400;letter-spacing:.4em;text-transform:uppercase;color:rgba(212,175,110,.7);margin-bottom:8px}
+.lang-name{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:22px;color:rgba(230,238,255,.95);margin-bottom:12px}
+.lang-text{font-size:13px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.65)}
+.lang-text strong{color:rgba(220,230,255,.92);font-weight:400}
+
+.quote{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.4vw,22px);line-height:1.6;color:rgba(220,230,255,.85);text-align:center;padding:32px 24px;border-top:1px solid rgba(200,216,255,.1);border-bottom:1px solid rgba(200,216,255,.1);margin:32px 0}
+.quote::before{content:'"';font-size:36px;color:rgba(138,176,255,.4);margin-right:6px;vertical-align:-6px}
+.quote::after{content:'"';font-size:36px;color:rgba(138,176,255,.4);margin-left:6px;vertical-align:-6px}
+.quote-cite{display:block;font-family:'Montserrat',sans-serif;font-style:normal;font-size:9px;font-weight:300;letter-spacing:.4em;text-transform:uppercase;color:rgba(212,175,110,.7);margin-top:14px}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Мови, які зникають</h1>
+  <p class="page-subtitle">І що ми втрачаємо разом з ними</p>
+
+  <div class="section" style="animation-delay:.9s">
+    <p>Кожні два тижні у світі вмирає одна мова. Не «зникає з підручника» — а буквально: гине останній носій. На його похоронах замовкає мова, якою говорили тисячоліттями. І більше ніхто на планеті її не знає.</p>
+    <p>За оцінкою UNESCO, з 7 000 мов у світі половина зникне до кінця цього століття. Це не статистика — це найбільша культурна катастрофа в історії людства, яка відбувається тихо, без новин і без війн.</p>
+  </div>
+
+  <div class="quote">
+    Кожна мова — це окремий храм, в якому збережено душу її носіїв.
+    <span class="quote-cite">Олівер Венделл Голмс</span>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Масштаб</h2>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num">7 000</div>
+        <div class="stat-text">мов сьогодні в світі</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">½</div>
+        <div class="stat-text">зникнуть до 2100 року</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">14 днів</div>
+        <div class="stat-text">між смертями мов</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">96%</div>
+        <div class="stat-text">мов мають менше ніж 4% носіїв</div>
+      </div>
+    </div>
+
+    <p style="margin-top:24px">23 мови планети мають по понад 50 мільйонів носіїв і покривають половину людства. Решта 6 977 мов діляться на іншу половину — і б'ються за виживання.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Чому мови вмирають</h2>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🏙️</span>
+        <div class="card-title">Урбанізація</div>
+        <div class="card-text">Молодь виїжджає в міста, де говорять «великими» мовами. Бабусі залишаються в селах. Через два покоління мова зникає.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📚</span>
+        <div class="card-title">Школа і державна мова</div>
+        <div class="card-text">Освіта — однією мовою. Діти соромляться рідної, бо вона «сільська», «несучасна». Так росли цілі покоління, які не передали свою мову своїм дітям.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📺</span>
+        <div class="card-title">Глобалізація</div>
+        <div class="card-text">Інтернет, серіали, бренди — у більшості англійською. Малі мови не мають куди розвиватись: ні підручників, ні ютубу, ні слова для «селфі».</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚔️</span>
+        <div class="card-title">Колоніалізм</div>
+        <div class="card-text">У Канаді, Австралії, СРСР і десятках інших місць дітей силою забирали з родин і забороняли говорити рідною. Цілі мови втрачено за одне покоління.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💼</span>
+        <div class="card-title">Економіка</div>
+        <div class="card-text">Робота, кар'єра, статус — у більших мовах. Малою мовою не можна заробити, не можна вступити, не можна емігрувати. Пращури ж мали іншу логіку.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🤝</span>
+        <div class="card-title">Змішані шлюби</div>
+        <div class="card-text">Коли пара з різних мов — діти зазвичай ростуть мовою більшості. Це природно і ніби нікого не ображає. Але мала мова втрачає одного за одним.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Конкретні історії</h2>
+
+    <div class="lang-story">
+      <div class="lang-meta">USA · 2010</div>
+      <div class="lang-name">Eyak (Аляска)</div>
+      <div class="lang-text">У 2008 померла <strong>Марі Сміт Джонс — остання носійка мови Eyak</strong>. До цього вона роками працювала з лінгвістами, складала словник, записувала аудіо. Останні роки спілкувалася рідною мовою лише сама з собою. На її похороні ця мова стала мертвою.</div>
+    </div>
+
+    <div class="lang-story">
+      <div class="lang-meta">Mexico · триває</div>
+      <div class="lang-name">Аяпанеко</div>
+      <div class="lang-text">Лишилися лише <strong>двоє носіїв — двоє літніх чоловіків з одного села. І вони роками не розмовляли один з одним</strong>: посварилися. У 2014 завдяки лінгвістам вони знов почали говорити. Сьогодні вчать молодих — і мова повертається.</div>
+    </div>
+
+    <div class="lang-story">
+      <div class="lang-meta">Нова Зеландія · 1970-2020</div>
+      <div class="lang-name">Маорі</div>
+      <div class="lang-text">У 1970-х маорі майже зникала — діти забороняли говорити нею в школах. Але громада <strong>відновила мову через "мовні гнізда"</strong> (kōhanga reo) — садки, де говорять лише маорі. Сьогодні маорі — офіційна мова країни. Жива історія порятунку.</div>
+    </div>
+
+    <div class="lang-story">
+      <div class="lang-meta">Ізраїль · XX століття</div>
+      <div class="lang-name">Іврит</div>
+      <div class="lang-text">2 000 років іврит був <strong>мертвою мовою — лише для богослужінь</strong>. У XIX–XX столітті група ентузіастів на чолі з Еліезером Бен-Єгудою буквально воскресила його як побутову мову. Сьогодні нею говорить 9 мільйонів. Доказ, що повернути мову можна.</div>
+    </div>
+
+    <div class="lang-story">
+      <div class="lang-meta">Уельс · триває</div>
+      <div class="lang-name">Валлійська</div>
+      <div class="lang-text">У 1960-х валлійська майже зникла. Сьогодні — <strong>обов'язкова в школах Уельсу</strong>, на ній знімають серіали, є канали, газети, інтернет. Кількість носіїв зростає вперше за 100 років. Зразок, як можна повернути мову.</div>
+    </div>
+
+    <div class="lang-story">
+      <div class="lang-meta">Україна · триває</div>
+      <div class="lang-name">Кримськотатарська</div>
+      <div class="lang-text">UNESCO відносить її до категорії <strong>«мови під серйозною загрозою»</strong>. Депортація 1944 року, асиміляція, нинішня окупація — все це б'є по носіях. Без активних зусиль вона може зникнути за два-три покоління.</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1.15s">
+    <h2 class="section-title">Що ми втрачаємо</h2>
+    <p>Мова — не просто звуки і слова. Це база даних знань, які накопичувались тисячоліттями. Помирає мова — помирає бібліотека, яку ніхто не оцифрував.</p>
+
+    <ul class="tips">
+      <li>Унікальні концепти — слова без перекладу, які описують емоції, природу, соціальні зв'язки. Кожна мова бачить свій кут реальності.</li>
+      <li>Знання про природу — назви рослин, дій, погоди. Аборигени Австралії знали тисячі рослин і їх застосування. Без мови — знання теж зникає.</li>
+      <li>Усна історія — пісні, легенди, родові генеалогії, які ніколи не були записані. Помирає носій — помирає історія цілого роду.</li>
+      <li>Граматичні структури, які вчать мозок думати інакше — вертикальний час, відсутність майбутнього, складні системи родинних зв'язків.</li>
+      <li>Музика, ритуали, поезія, які мають сенс лише цією мовою. Перекласти — означає втратити суть.</li>
+      <li>Ідентичність народу. Без мови — народ розчиняється. Це не про націоналізм — це про право бути собою.</li>
+      <li>Когнітивне різноманіття людства. Як біорізноманіття для природи — мовне для культури. Чим менше мов — тим бідніше людство.</li>
+    </ul>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Що зникає назавжди</h2>
+    <p>Кілька прикладів мовних особливостей, які вже втрачені або під загрозою. Кожна — як вид тварини, унікальний на планеті.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🎼</span>
+        <div class="card-title">Свистові мови</div>
+        <div class="card-text">У Сільбо Гомеро (Канарські острови) люди передавали повідомлення свистом на 5 км через гірські ущелини. Майже зникла.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🥁</span>
+        <div class="card-title">Барабанні мови</div>
+        <div class="card-text">Деякі мови Центральної Африки кодували слова у ритмах барабанів. Так передавали вісті через ліси на десятки кілометрів. Зникає.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">👁️</span>
+        <div class="card-title">Жестові мови</div>
+        <div class="card-text">Кожна країна має свою. Їх 300+, і багато під загрозою — нечуючих стає менше через імпланти, а мови втрачають носіїв.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔤</span>
+        <div class="card-title">Унікальні звуки</div>
+        <div class="card-text">У !Xun (Намібія) — клацаючі приголосні, яких немає більше ніде. У Pirahã — лише 3 голосні і 8 приголосних. Кожна — мовний унікум.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1.25s">
+    <h2 class="section-title">Чи можна врятувати</h2>
+    <p>Так. Іврит, маорі, валлійська, гавайська, баскська — всі ці мови були під загрозою і повернулись. Спільне у всіх історій порятунку — кілька рішучих кроків.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🏫</span>
+        <div class="card-title">Освіта мовою</div>
+        <div class="card-text">Дитсадки і школи, де говорять рідною. Якщо дитина чує мову лише вдома — вона стає «мовою бабусі». Тільки школа дає шанс.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📺</span>
+        <div class="card-title">Медіа і культура</div>
+        <div class="card-text">Серіали, мультики, музика, ютуб, тіктоки. Молоді не цікаво вчити мову, якою «нічого не дивляться».</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📱</span>
+        <div class="card-title">Технології</div>
+        <div class="card-text">Wikipedia, Google Translate, клавіатури в телефонах, LLM. Якщо мови нема в технологіях — вона невидима для нового покоління.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🏛️</span>
+        <div class="card-title">Державний статус</div>
+        <div class="card-text">Закони, документи, освіта державною мовою. Без цього — мова виштовхується в «домашню».</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💗</span>
+        <div class="card-title">Гордість, не сором</div>
+        <div class="card-text">Поки мова асоціюється з «селом», «бідністю», «провінцією» — вона помирає. Як тільки стає «крутою» — росте.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📖</span>
+        <div class="card-title">Документація</div>
+        <div class="card-text">Якщо вже пізно — записи. Аудіо, відео, словники, граматики. Хоча б щоб майбутні покоління могли її повернути.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Українська в цьому контексті</h2>
+    <p>Українська — не зникає. Але має досвід багатовікового тиску і помилково вважалася «мертвою» в 1850-х (за переписами Російської імперії). Те, що ми сьогодні нею говоримо — результат свідомого вибору поколінь.</p>
+
+    <ul class="tips">
+      <li>Емський указ 1876 року — повна заборона друку українською в Російській імперії. Мову зберегли в селах, вдома, в піснях.</li>
+      <li>Радянська русифікація — російська як мова кар'єри, освіти, статусу. Українська — як «сільська». Багато міст до 1991 говорили російською.</li>
+      <li>З 1991 — повільне повернення. З 2014 — прискорення. З 2022 — масовий перехід російськомовних на українську свідомий і помітний.</li>
+      <li>Технологічно — українська вже добре представлена: Wikipedia, переклади, локалізації, LLM працюють. Це сильна позиція.</li>
+      <li>Чого не вистачає — української в науці, технологіях, бізнесі на світовому рівні. Це наступний фронт.</li>
+      <li>Кожна розмова українською в Києві, Одесі, Харкові — це маленька цеглина у захист мови. Через сто років хтось напише, що ми її врятували.</li>
+    </ul>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1.35s">
+    <h2 class="section-title">Що можна зробити особисто</h2>
+
+    <ul class="tips">
+      <li>Говори рідною. Особливо там, де всі переходять на «зручнішу». Кожен діалог — це підтримка.</li>
+      <li>Передай дітям. Найдієвіший спосіб зберегти мову — не агітація, а живий побут вдома рідною.</li>
+      <li>Споживай контент. Книжки, фільми, музика, подкасти рідною. Це не лише для тебе — це сигнал ринку, що мова жива і затребувана.</li>
+      <li>Підтримуй мови меншин у твоєму регіоні — кримськотатарську, ромську, гагаузьку, караїмську. Вони теж — частина України.</li>
+      <li>Якщо ти полилінгва — не давай малій мові вмерти. Розмовляй, читай, шукай носіїв. Ти — її носій.</li>
+      <li>Підтримуй проєкти документації мов — Wikitongues, Endangered Languages Project, локальні архіви.</li>
+      <li>Поясни дітям, чому це важливо. Для них «мова» — щось саме собою зрозуміле. Покажи історію — щоб поважали.</li>
+    </ul>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="quote">
+    Коли вмирає мова, помирає не звук. Помирає спосіб бачити світ.
+  </div>
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/2200);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.4),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+
+const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.style.animationPlayState='running'}})},{threshold:.1});
+document.querySelectorAll('.section').forEach(el=>{el.style.animationPlayState='paused';observer.observe(el)});
+</script>
+</body>
+</html>

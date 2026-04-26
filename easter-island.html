@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Острів Пасхи</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(220,230,255,.92)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.72)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.82);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(200,216,255,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.35);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(26px,4vw,36px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="mysteries.html">Назад</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Острів Пасхи</h1>
+  <p class="page-subtitle">887 кам'яних велетнів і зникла цивілізація</p>
+
+  <!-- Hero quote -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Самотній шматок землі, що дивиться очима в океан"</div>
+      <div class="hero-author">Тур Хеєрдаль</div>
+    </div>
+    <p>На карті Тихого океану є крапка, до якої не доплисти випадково. Найближча населена земля — за 2075 кілометрів. До Чилі — 3700. Це найвідаленіше місце в світі, де живуть люди. І саме тут стоять 887 кам'яних голів, висічених з вулканічної породи, кожна вагою до 80 тонн. Хто їх зробив? Як перевіз? І куди ці люди потім зникли — стерши себе майже до нуля? Острів Пасхи — це не "загадка прибульців". Це повчальна історія про те, як цивілізація може зникнути сама.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Хто і коли -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Хто і коли</h2>
+    <p>Острів називається Рапа-Нуї рідною мовою. Європейська назва "Острів Пасхи" — від голландця Якоба Роггевена, який висадився там у пасхальну неділю 1722 року. Він і став першим, хто розповів світу про статуї.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🛶</span>
+        <div class="card-title">Полінезійці на каное</div>
+        <div class="card-text">Тут немає жодної таємниці походження. ДНК-аналіз і лінгвістика чітко показують: рапануйці — полінезійці, родичі гавайців і маорі. Прибули приблизно 1200 року нашої ери на каное з Маркізьких островів — за 3000 км. Зорієнтувалися по зірках, океанських течіях і польоту птахів. Геніальні штурмани без приладів.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🗿</span>
+        <div class="card-title">887 моаї</div>
+        <div class="card-text">Стільки точно знайдено статуй. Вирізали з туфу — м'якої вулканічної породи. Найвищі — 10 метрів, найважчі — 86 тонн. Найбільший незавершений моаї лежить досі в каменоломні: 21 метр, 270 тонн. Ніхто не зміг би його перенести. Чомусь почали — і зупинились.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⏳</span>
+        <div class="card-title">500 років роботи</div>
+        <div class="card-text">З 1100 по 1600 рік рапануйці безперервно висікали моаї. Це не "кілька геніїв" — а кілька поколінь. На цей час припадало майже все життя суспільства: статуї, ритуали, конкуренція між кланами, хто більший і красивіший. У вершині населення — близько 15 000 людей.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">👀</span>
+        <div class="card-title">Очі дивились усередину</div>
+        <div class="card-text">Усі моаї стоять спинами до океану — обличчями до своїх селищ. Це не охоронці і не попередження прибульцям. Це предки, які охороняли своїх. Очі робили окремо — з білого корала з обсидіановими зіницями, ставили лише після завершення статуї як акт "оживлення". Майже всі очі знищили пізніше.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Як перевозили -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Як перевозили</h2>
+    <p>Найчастіше задане питання: як 80-тонний моноліт пройшов десятки кілометрів по нерівній місцевості? Без коліс, без коней, без металу. Відповідь, як з'ясувалось, ховалася в самій їхній мові.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🚶</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">"Статуї йшли"</div>
+          <div class="card-text">Усний переказ рапануйців казав, що моаї "ходили самі". Антропологи століттями вважали це міфом. У 2012 році експеримент Нешонал Джеографік: канатами розгойдували 5-тонну копію — і вона пішла, перевалюючись із кута на кут, як холодильник, що його несуть двоє людей. 18 осіб, кілька днів — і моаї дістався до місця. Міф виявився інструкцією.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🛣️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Древні дороги</div>
+          <div class="card-text">На острові знайдено сітку утрамбованих доріг від кар'єру Рано-Рараку до узбережжя — приблизно 16 км. Уздовж доріг лежать "стомлені" моаї — ті, хто впав у дорозі і не дійшов. Так само як у нас валялась би незавершена будівля. Картина живої логістики, не магії.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🌳</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Ліси, яких більше немає</div>
+          <div class="card-text">Колись острів був густо вкритий гігантськими пальмами Якобі — найбільшими у світі. Палеоботаніка через пилок у пробах ґрунту довела: ліс зник близько 1650 року. Ймовірно, частину дерев використовували як котки під моаї. Решту — на каное, дрова і будинки. Ліс зник за 200 років.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">📜</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Ронгоронго — нерозшифроване письмо</div>
+          <div class="card-text">Єдиний у Полінезії приклад писемності. Ієрогліфи на дерев'яних дощечках — хвилясті стрічки крихітних знаків. До нашого часу збереглося 26 предметів. Жодного автентичного перекладу — рапануйські знавці померли ще у 1860-х, не передавши секрет. Можливо, це генеалогії, ритуали або календарі. Ніхто точно не знає.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Колапс -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Колапс</h2>
+    <p>Найголовніша і найболючіша частина історії. Коли європейці прибули в 1722, на острові залишалось 2-3 тисячі людей — і вони ледь виживали. До 1877 — лише 111 людей. Що сталося?</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🪓</span>
+        <div class="card-title">Екоцид: ліс</div>
+        <div class="card-text">Класична версія, популяризована Джаредом Даймондом у книзі "Колапс" (2005). Рапануйці зрубали ліс заради статуй і палива. Без дерев — нема каное, нема птахів (без яких немає запилення), починається ерозія, родючість землі падає. Цивілізація з'їдає свій же фундамент.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🐀</span>
+        <div class="card-title">Версія: щури</div>
+        <div class="card-text">Сучасні археологи (зокрема Хант і Лайпо, 2011) запропонували інакше: ліс знищили не люди, а полінезійські щури, що приплили з ними. Щури з'їдали насіння пальм, тому ліс не відновлювався. Це не виправдовує людей — але показує, що екоцид був повільнішим і складнішим.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚔️</span>
+        <div class="card-title">Війни кланів</div>
+        <div class="card-text">Близько 1680 рапануйці почали повалювати чужі моаї — це називалось "ха'йті". Усі статуї, які зараз ми бачимо стоячими, — реставровані після ХХ ст. На момент прибуття європейців майже всі моаї лежали обличчями вниз. Громадянська війна знищила саме сакральне, що в них було.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⛓️</span>
+        <div class="card-title">Геноцид рабовласників</div>
+        <div class="card-text">У 1862 перуанські работорговці забрали 1500 рапануйців на гуано-копальні Чилі. Половина загинула за рік. Решта повернулась — і привезла віспу. Епідемія знищила майже всіх. Острів практично спорожнів. Європа не "знайшла мертву цивілізацію" — вона її добила.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що ми знаємо -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Що ми знаємо точно</h2>
+    <p>За 300 років активних досліджень на Острові Пасхи майже всі загадки отримали розумні гіпотези. Те, що залишається, — це не "інопланетна допомога". Це деталі, які важко відтворити через втрачені знання.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">✅</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Не прибульці</div>
+          <div class="card-text">Тур Хеєрдаль (норвезький дослідник) у 1955 переплив океан на бальсовому плоту "Кон-Тікі" — щоб довести, що до Полінезії можна дістатись своїми силами. Зміг. Усі гіпотези про "інопланетне походження" моаї базувались на тому, що "примітивні люди не могли б". Виявилось — могли. І зробили.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🌋</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Кам'яний матеріал</div>
+          <div class="card-text">Усі моаї виготовлені з туфу — м'якого вулканічного каменю з кратера Рано-Рараку. Туф легко обробляти кам'яними знаряддями, але потім він твердне на повітрі. Тому моаї виглядають дуже міцними. Природа підказала технологію: матеріал, який легко вирізати і важко зруйнувати.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">📐</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Точно орієнтовані</div>
+          <div class="card-text">Моаї стоять не випадково. Багато з них орієнтовані по сонцестоянню, по сторонах світу, по руху Венери. Це означає, що рапануйці робили точну астрономію — без книг і телескопів. Просто століттями спостерігали небо і записували пам'яттю поколінь.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">❓</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Що залишається загадкою</div>
+          <div class="card-text">Чому раптом почали валити власні статуї. Що саме говорить ронгоронго. Хто був першим: одна група людей чи кілька хвиль. Чому статуї еволюціонували від реалістичних до стилізованих. Це не "інопланетне" — це звичайні білі плями історії, які заповнюються повільно.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Урок -->
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Урок</h2>
+    <p>Острів Пасхи — це найкраща метафора нашої цивілізації. Ізольована планета. Обмежені ресурси. Конкуренція кланів за престиж. І крихкий ліс, який можна вирубати швидше, ніж він відновиться. Що нам каже ця історія?</p>
+
+    <div class="highlight">
+      <p>Той, хто рубав останнє дерево на острові, — мабуть, точно знав, що воно останнє. Бо острів маленький, видно все. І все одно зрубав. Чому? Бо перед обличчям короткострокової вигоди (паливо, статуя, бій із сусідами) довгострокова катастрофа здається абстрактною. "Ще одне — і все буде добре". Сьогодні ми зрубаємо в Амазонці — і мовчимо так само. Сьогодні ми рибалимо до останньої риби — і мовчимо так само. <em>Острів Пасхи — це не загадка. Це попередження. Тільки ми тепер живемо на більшому острові, і берегів його не видно</em>.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Ключове питання -->
+  <div class="section" style="animation-delay:1.85s">
+    <h2 class="section-title">Ключове питання</h2>
+    <p>Найжахливіше в історії Рапа-Нуї — не те, що цивілізація зникла. А те, що це робили самі собі, бачачи це.</p>
+
+    <div class="question-card">
+      <div class="question-label">Запитай себе</div>
+      <div class="question-main">"Що я "рубаю" в собі, знаючи, що рубаю?"</div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Не лише про планету. Про власне тіло — коли працюємо без сну, бо "проєкт важливий". Про стосунки — коли мовчимо те, що важливе, бо "не зараз". Про мрії — коли відкладаємо їх "на потім", бо немає часу. Кожен з нас має свій острів. Свої останні пальми. <em>Чи зрубаємо їх — це поки відкрите питання</em>.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Final -->
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Висновок</h2>
+    <div class="final-quote">
+      <div class="final-text">Острів Пасхи вчить нас не "як прибульці прилетіли", а <strong>як ми самі здатні зруйнувати власний світ</strong>, не помічаючи. 887 кам'яних велетнів стоять там і дивляться на нас крізь століття, без слів. Кожен з них колись був надією, гордістю, перемогою клану. Зараз — просто пам'ять. Можливо, найкращий урок самотнього острова в океані: цивілізація — це не каміння, яке ти лишаєш по собі. Це здатність вчасно зупинитись.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>

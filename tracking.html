@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Як за нами стежать в інтернеті</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.72)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.82);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+
+.toc{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-bottom:48px;opacity:0;animation:riseIn 1s .9s ease forwards}
+.toc a{font-size:11px;font-weight:300;letter-spacing:.2em;text-transform:uppercase;color:rgba(200,216,255,.65);text-decoration:none;padding:10px 18px;border:1px solid rgba(200,216,255,.18);border-radius:100px;transition:all .3s;background:rgba(200,216,255,.04)}
+.toc a:hover{color:#fff;border-color:rgba(200,216,255,.4);background:rgba(200,216,255,.10);transform:translateY(-2px)}
+
+.list{margin-top:8px}
+.list-item{display:flex;gap:14px;padding:18px 0;border-bottom:1px solid rgba(200,216,255,.08)}
+.list-item:last-child{border-bottom:none}
+.list-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:22px;color:rgba(212,175,110,.8);min-width:32px;line-height:1.4}
+.list-body{flex:1}
+.list-head{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:17px;color:rgba(220,230,255,.95);margin-bottom:6px;letter-spacing:.03em}
+.list-text{font-size:13px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.72)}
+
+.alert{background:linear-gradient(135deg,rgba(255,120,120,.06),rgba(255,180,80,.04));border:1px solid rgba(255,140,120,.18);border-radius:20px;padding:32px 28px;margin-top:20px;position:relative;overflow:hidden}
+.alert::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(255,140,120,.5),transparent)}
+.alert p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(255,220,210,.85);margin:0}
+.alert em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(255,180,140,.95)}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Як за нами стежать</h1>
+  <p class="page-subtitle">Цифровий слід, який ти лишаєш щодня</p>
+
+  <nav class="toc">
+    <a href="#how">👁️ Як саме</a>
+    <a href="#who">🏢 Хто збирає</a>
+    <a href="#why">🎯 Навіщо</a>
+    <a href="#know">🧬 Що знають</a>
+    <a href="#protect">🛡️ Як захиститись</a>
+    <a href="#paranoia">⚖️ Без параної</a>
+  </nav>
+
+  <div class="section" style="animation-delay:1.1s">
+    <div class="hero-quote">
+      <div class="hero-text">"Якщо продукт безкоштовний — продукт це ти"</div>
+      <div class="hero-author">Інтернет-приказка</div>
+    </div>
+    <p>Ти відкриваєш телефон 96 разів на день. Кожен раз — це сигнали в десятки серверів по світу. Хто ти, де ти, що тобі цікаво, з ким спілкуєшся, на чому затримала погляд. Ця інформація вартує мільярди — і саме на ній побудовані найбагатші компанії в історії. Ця сторінка — не про параною. Це про те, щоб розуміти, у яку гру ти граєш кожного дня.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 👁️ Як саме -->
+  <div class="section" id="how" style="animation-delay:1.3s">
+    <h2 class="section-title">👁️ Як саме за нами стежать</h2>
+    <p>Стеження — не одна технологія, а десятки. Кожна збирає різні фрагменти. Разом вони складають портрет тебе точніший, ніж ти сама про себе знаєш.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🍪</span>
+        <div class="card-title">Cookies</div>
+        <div class="card-text">Маленькі файли, які сайти кладуть у твій браузер. Свої — щоб ти не входила знову при кожному кліку. Чужі (third-party) — щоб тебе впізнавали на тисячах інших сайтів. Подивилась на чоботи в одному магазині — бачиш їх у Instagram наступний тиждень.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎯</span>
+        <div class="card-title">Pixels (трекери)</div>
+        <div class="card-text">Невидиме зображення розміром 1×1 піксель на сторінці, яке надсилає Facebook/Google звіт: "цей користувач відвідав цей сайт". Майже на кожному великому сайті стоїть Meta Pixel і Google Analytics. Більшість сторінок інтернету тебе одразу здає кільком корпораціям.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🆔</span>
+        <div class="card-title">Browser fingerprinting</div>
+        <div class="card-text">Навіть без cookies тебе впізнають за унікальною комбінацією: модель пристрою, версія браузера, шрифти, плагіни, роздільна здатність. Імовірність, що твій "відбиток" повторюється — менше 1 на мільйон. Інкогніто-режим від цього не рятує.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📍</span>
+        <div class="card-title">Геолокація</div>
+        <div class="card-text">GPS, Wi-Fi, вежі мобільного зв'язку — телефон постійно знає, де ти. Понад 80% популярних додатків надсилають геолокацію третім сторонам, навіть коли ти не дозволяла. Дані продаються data brokers — компаніям, що торгують переміщеннями мільйонів людей.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎤</span>
+        <div class="card-title">Мікрофон і камера</div>
+        <div class="card-text">Міф про "телефон підслуховує розмови" — переважно міф. Не треба, бо знають про тебе більше з історії пошуку, лайків і переписок. Але завжди перевіряй, які додатки мають доступ до мікрофона і камери — більшості він не потрібний.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📨</span>
+        <div class="card-title">Email і месенджери</div>
+        <div class="card-text">У листах рекламних розсилок — pixel-трекер, що показує, чи ти відкрила, коли і де. WhatsApp, Telegram, Messenger — у кожного інша політика. Тільки Signal і Threema не знають вмісту твоїх повідомлень.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 🏢 Хто збирає -->
+  <div class="section" id="who" style="animation-delay:1.5s">
+    <h2 class="section-title">🏢 Хто збирає</h2>
+    <p>Не якісь анонімні "хакери". Це найбільші, найприбутковіші, найвідоміші компанії планети. Їхній бізнес — ти.</p>
+
+    <div class="list">
+      <div class="list-item">
+        <div class="list-num">G</div>
+        <div class="list-body">
+          <div class="list-head">Google</div>
+          <div class="list-text">Знає, що ти гуглила за всі роки. Знає, де ти була щодня (Google Maps). Читає твої листи (Gmail). Має твої фото (Photos). Знає, що ти дивишся (YouTube, Chrome). Розпізнає твої голос і обличчя. Реклама дає 80% доходу Alphabet — все це продається рекламодавцям.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">M</div>
+        <div class="list-body">
+          <div class="list-head">Meta (Facebook, Instagram, WhatsApp)</div>
+          <div class="list-text">Має соціальний граф — хто з ким у контакті, хто кому пише, хто на чиї фото лайкає. Pixel Meta стоїть на мільйонах сайтів — навіть якщо в тебе немає Facebook, вони мають твій профіль ("shadow profile") за поведінкою. Реклама дає 98% доходу.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">A</div>
+        <div class="list-body">
+          <div class="list-head">Amazon</div>
+          <div class="list-text">Знає твою купівельну поведінку: що, коли, для кого. Alexa слухає кімнату 24/7 (для активації голосової команди — але аудіо потрапляє на сервери). Прайм підписки утримують тебе в екосистемі, де ти не помічаєш скільки даєш.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">T</div>
+        <div class="list-body">
+          <div class="list-head">TikTok</div>
+          <div class="list-text">Найточніший алгоритм у світі — за 30 хвилин знає, що тебе чіпляє. Збирає кількість натискань, тривалість затримки на кожному відео, рух пальця. Власність ByteDance (Китай) — приводи окремих суперечок: США та Європа підозрюють, що дані доступні держструктурам Китаю.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">D</div>
+        <div class="list-body">
+          <div class="list-head">Data brokers</div>
+          <div class="list-text">Найменш відомий, найстрашніший шар. Компанії як Acxiom, Oracle Data Cloud, LiveRamp — про них ти ніколи не чула, але вони знають про тебе сотні параметрів. Купують дані з усіх можливих джерел і продають усім бажаючим — рекламодавцям, банкам, страховикам, навіть політикам.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">🏛️</div>
+        <div class="list-body">
+          <div class="list-head">Держава</div>
+          <div class="list-text">Будь-яка. Через "законні запити" поліція і спецслужби можуть отримати від платформ майже все. У демократіях — з рішенням суду. В авторитарних — без. Після Сноудена відомо, що NSA США має програму PRISM з прямим доступом до серверів Google, Microsoft, Apple.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 🎯 Навіщо -->
+  <div class="section" id="why" style="animation-delay:1.7s">
+    <h2 class="section-title">🎯 Навіщо це їм</h2>
+    <p>Спрощено: щоб продати тобі більше і точніше. Глибше: щоб передбачити і змоделювати твою поведінку. Це ринок, який важить трильйони доларів.</p>
+
+    <div class="list">
+      <div class="list-item">
+        <div class="list-num">01</div>
+        <div class="list-body">
+          <div class="list-head">Реклама, що б'є точно</div>
+          <div class="list-text">Знаючи вік, стать, доходи, інтереси, цикл життя (вагітність, шлюб, переїзд) — реклама показує тобі саме те, від чого ти не зможеш відмовитись у найвразливіший момент. Це у 100 разів ефективніше за телевізор. І саме тому коштує дорого.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">02</div>
+        <div class="list-body">
+          <div class="list-head">Алгоритми утримання</div>
+          <div class="list-text">Чим довше ти на платформі, тим більше реклами побачиш. Тому алгоритми спеціально підбирають емоційно сильний контент: гнів, страх, заздрість тримають тебе краще за радість. Це не випадково — це бізнес-модель.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">03</div>
+        <div class="list-body">
+          <div class="list-head">Ціноутворення dynamic</div>
+          <div class="list-text">Той самий квиток на літак може коштувати тобі і твоїй сусідці різні суми. Сайти аналізують пристрій, історію, локацію — і показують ту ціну, яку ти, ймовірно, заплатиш. Користувачі MacBook бачать дорожчі готелі, ніж користувачі Windows. Інкогніто рятує частково.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">04</div>
+        <div class="list-body">
+          <div class="list-head">Кредит, страховка, наймання</div>
+          <div class="list-text">Банки використовують поведінку в соцмережах для оцінки кредитоспроможності. Страховики — для розрахунку премій (твій трекер фітнесу може здати тебе). HR-боти просіюють твої публікації за роки, перш ніж тебе покличуть на співбесіду. Цифровий слід впливає на реальне життя.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">05</div>
+        <div class="list-body">
+          <div class="list-head">Політичні маніпуляції</div>
+          <div class="list-text">Cambridge Analytica у 2016 використовували дані з Facebook для мікротаргетингу під час Brexit і виборів Трампа. Кожному виборцю показували повідомлення під його психотип. Це вже факт, не теорія. Виборчі кампанії XXI ст. ведуться через рекламні аукціони.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 🧬 Що знають -->
+  <div class="section" id="know" style="animation-delay:1.9s">
+    <h2 class="section-title">🧬 Що про тебе знають</h2>
+    <p>Спробуй чесно вгадати — а потім зайди в Google і Facebook налаштування і подивися. Майже завжди це шок.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">📅</span>
+        <div class="card-title">Твоя географія</div>
+        <div class="card-text">Усі місця, де ти була за останні 10 років, з точністю до хвилини. Маршрути на роботу, де провела ніч, у якому готелі, на якому концерті, у якій лікарні. Google Timeline — зайди й подивися. Можна вимкнути, але історично вона зберігається.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💔</span>
+        <div class="card-title">Стан стосунків</div>
+        <div class="card-text">Алгоритми розуміють, що ви розійшлись, раніше за твоїх друзів. Шукала "як пережити розлуку"? Лайкнула пост про самотність? Перестала писати конкретній людині? Реклама почне показувати тобі знайомства, психотерапію і алкоголь.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">👶</span>
+        <div class="card-title">Вагітність</div>
+        <div class="card-text">Класична історія: батько-американець розлютився, що Target шле дочці-підлітку рекламу для вагітних. Виявилось, дочка дійсно була вагітна — Target вирахував це за купівлею вітамінів і лосьйону без запаху раніше, ніж дізналась сім'я.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧠</span>
+        <div class="card-title">Психічний стан</div>
+        <div class="card-text">Зміни ритму сну (фітнес-трекер), уповільнення друку, скорочення листування, нічна активність — індикатори депресії, які платформи бачать. Facebook у 2017 фактично визнав, що використовує дані, щоб таргетувати рекламу на підлітків у вразливі моменти.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💊</span>
+        <div class="card-title">Здоров'я</div>
+        <div class="card-text">Що ти гуглила про симптоми. Які додатки циклу використовуєш. Які аптеки відвідала. Дані продаються страховикам — у США це призвело до того, що страхові підвищують ціни тим, у кого "ризикована" поведінка в інтернеті.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎭</span>
+        <div class="card-title">Психотип</div>
+        <div class="card-text">За 70 лайками алгоритм знає тебе краще за колегу. За 150 — за друга. За 300 — за партнера. За всіма даними — краще за тебе саму. Це доведено дослідженнями Кембриджу. Big Five (відкритість, сумлінність, екстраверсія, доброзичливість, нейротизм) рахується автоматично.</div>
+      </div>
+    </div>
+
+    <div class="alert" style="margin-top:24px">
+      <p>Хочеш переконатись? Зайди: <em>myactivity.google.com</em> (вся історія Google), <em>facebook.com/dyi</em> (запит на завантаження всіх своїх даних — приходить файл на гігабайти). Готуйся до неприємного відкриття: вони знають про тебе більше, ніж ти про себе.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 🛡️ Як захиститись -->
+  <div class="section" id="protect" style="animation-delay:2.1s">
+    <h2 class="section-title">🛡️ Як захиститись</h2>
+    <p>Повністю — ніяк, якщо хочеш користуватись інтернетом. Але різниця між "усе зливаю всім" і "розумно мінімізую" — у десятки разів. Базовий мінімум, який варто зробити кожному.</p>
+
+    <div class="list">
+      <div class="list-item">
+        <div class="list-num">01</div>
+        <div class="list-body">
+          <div class="list-head">Браузер</div>
+          <div class="list-text">Перейди з Chrome на Firefox або Brave. Chrome — це Google, що логічно стежить за всім. Firefox — open source, орієнтований на приватність. Brave блокує рекламу і трекери за замовчуванням. Розширення uBlock Origin — must have, блокує більшість трекерів.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">02</div>
+        <div class="list-body">
+          <div class="list-head">Пошуковик</div>
+          <div class="list-text">DuckDuckGo, Brave Search, Kagi — не зберігають історію пошуку, не персоналізують результати. Перші тижні незвично, що тобі не показують "що ти хочеш почути". Але це звільняюче. Google використовуй тільки коли DDG не дав чого треба.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">03</div>
+        <div class="list-body">
+          <div class="list-head">Месенджер</div>
+          <div class="list-text">Signal — золотий стандарт. End-to-end шифрування, open source, не збирає метадані. Telegram кращий за WhatsApp, але "секретні чати" треба вмикати окремо — звичайні зберігаються на серверах. WhatsApp — належить Meta, передає метадані. Не пиши в нього того, що не хочеш бачити в Facebook.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">04</div>
+        <div class="list-body">
+          <div class="list-head">Email</div>
+          <div class="list-text">ProtonMail, Tutanota — шифрована пошта замість Gmail. Якщо лишаєшся з Gmail — вимкни персоналізацію реклами в налаштуваннях. Для реєстрацій на сумнівних сайтах — використовуй email-aliases (SimpleLogin, addy.io) або одноразові скриньки.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">05</div>
+        <div class="list-body">
+          <div class="list-head">VPN</div>
+          <div class="list-text">Шифрує трафік від твого провайдера і ховає реальний IP. Платні (Mullvad, ProtonVPN, NordVPN) — варті грошей. Безкоштовні часто продають твої дані самі. ВАЖЛИВО: VPN не робить тебе невидимою для Google і Facebook — якщо ти залогінена, вони все одно знають, що це ти.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">06</div>
+        <div class="list-body">
+          <div class="list-head">Налаштування телефону</div>
+          <div class="list-text">Перевір, які додатки мають доступ до мікрофона, камери, контактів, геолокації. Більшості це не потрібно. iOS — "Налаштування → Конфіденційність". Android — "Налаштування → Дозволи". Видали додатки, якими не користуєшся місяцями. Кожен — це канал витоку.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">07</div>
+        <div class="list-body">
+          <div class="list-head">Менеджер паролів і 2FA</div>
+          <div class="list-text">Один пароль на всі сайти — гарантована катастрофа в момент чергового злому. Bitwarden (безкоштовний), 1Password — генерують і зберігають унікальні. 2FA (двофакторна автентифікація) обов'язкова для пошти, банку, соцмереж. Краще — через додаток (Authy, Google Authenticator), не SMS.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">08</div>
+        <div class="list-body">
+          <div class="list-head">Менш постити</div>
+          <div class="list-text">Найкраще "зашифроване повідомлення" — те, яке ти не написала. Кожен пост, фото, чек-ін — це назавжди в архівах. Перш ніж викласти — питай: чи ок мені, що це знатимуть про мене всі рекрутери, банки і поліція через 20 років?</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- ⚖️ Без параної -->
+  <div class="section" id="paranoia" style="animation-delay:2.3s">
+    <h2 class="section-title">⚖️ Між параноєю і байдужістю</h2>
+    <p>Дві крайності однаково шкідливі. Перша — "я нічого не приховую, нехай знають". Друга — "вони стежать через лампочку в моїй квартирі, обмотую все фольгою". Здорова позиція — посередині.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">😴</span>
+        <div class="card-title">Чому "нічого не приховую" — наївно</div>
+        <div class="card-text">"Мені нема чого ховати" — це означає "я не уявляю, як ця інформація може бути використана проти мене". Через 10 років твої лайки, гео і пошуки можуть переглянути той, чию схвалення тобі потрібне. Конфіденційність — не секретність, це межі. Як двері у ванну.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌐</span>
+        <div class="card-title">Чому повна параноя — теж пастка</div>
+        <div class="card-text">Жити без смартфона і соцмереж сьогодні — означає випасти з більшості соціальних, робочих і фінансових процесів. Це теж не "захист", а самоізоляція. Ціль — не зникнути, а свідомо вибирати, що, кому, навіщо ти даєш.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎚️</span>
+        <div class="card-title">Принцип мінімізації</div>
+        <div class="card-text">Питай у кожній формі: чи їм дійсно треба моє ім'я / номер / адреса? Більшості — ні. Купівля квитка не потребує номера паспорта (тільки якщо це міжнародний рейс). Реєстрація в магазині — не потребує дати народження. Що менше даєш, то менше витече.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧘</span>
+        <div class="card-title">Гігієна, не фортеця</div>
+        <div class="card-text">Цифрова приватність — як умивання обличчя і миття посуду. Робиться щодня, простими діями, без героїзму. Раз на квартал — почистити підписки, видалити старі акаунти, перевірити дозволи. Це 30 хвилин, але різниця колосальна.</div>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Найважливіше усвідомлення: <em>ти можеш не бути ідеально захищеною — щоб не бути найлегшою мішенню</em>. Стеження працює на масштабі. Якщо ти трохи складніша за середнього — алгоритм проходить далі, шукає простішу здобич. Цього достатньо.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:2.5s">
+    <h2 class="section-title">Замість висновку</h2>
+    <div class="final-quote">
+      <div class="final-text">Інтернет — це найбільший в історії експеримент із спостереження за людством. Ти безоплатно надаєш дані, з яких будуються найбагатші компанії у світі. Це не змова — це бізнес-модель, яку ми всі прийняли. <strong>Але прийняти — не означає не контролювати</strong>. Кожна людина, яка робить захист дефолтом, робить інтернет трохи здоровішим для всіх.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>

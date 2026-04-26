@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Чому слова ранять</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.12) 0%,rgba(40,80,200,.06) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.07) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.55)}
+
+.steps-grid{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.step-card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:24px;align-items:flex-start}
+.step-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.step-card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.step-card:hover::before{opacity:1}
+.step-num{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:48px;color:rgba(138,176,255,.25);line-height:1;flex-shrink:0;width:40px;text-align:center}
+.step-body{flex:1}
+
+.tips{list-style:none;margin-top:16px}
+.tips li{font-size:13px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.6);padding:12px 0 12px 28px;border-bottom:1px solid rgba(200,216,255,.04);position:relative}
+.tips li::before{content:'';position:absolute;left:8px;top:20px;width:4px;height:4px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 6px #8ab0ff}
+
+.warn-card{background:rgba(255,130,130,.04);border:1px solid rgba(255,130,130,.1);border-radius:16px;padding:24px;margin-bottom:14px;transition:all .4s}
+.warn-card:hover{background:rgba(255,130,130,.07);border-color:rgba(255,130,130,.18)}
+.warn-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;color:rgba(255,170,150,.9);margin-bottom:8px}
+.warn-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.55)}
+
+.swap-table{width:100%;margin-top:20px;border-collapse:separate;border-spacing:0}
+.swap-table th{font-size:9px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;color:rgba(200,216,255,.35);padding:12px 16px;text-align:left;border-bottom:1px solid rgba(200,216,255,.1)}
+.swap-table td{font-size:13px;font-weight:200;color:rgba(200,216,255,.6);padding:14px 16px;border-bottom:1px solid rgba(200,216,255,.04);vertical-align:top}
+.swap-table tr:hover td{background:rgba(200,216,255,.02)}
+.bad{color:rgba(255,170,150,.8);font-style:italic}
+.good{color:rgba(160,220,170,.85)}
+.arrow{color:rgba(200,216,255,.3);text-align:center;font-size:14px;font-weight:300}
+
+.quote{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.4vw,22px);line-height:1.6;color:rgba(220,230,255,.85);text-align:center;padding:32px 24px;border-top:1px solid rgba(200,216,255,.1);border-bottom:1px solid rgba(200,216,255,.1);margin:32px 0}
+.quote::before{content:'"';font-size:36px;color:rgba(138,176,255,.4);margin-right:6px;vertical-align:-6px}
+.quote::after{content:'"';font-size:36px;color:rgba(138,176,255,.4);margin-left:6px;vertical-align:-6px}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Чому слова ранять</h1>
+  <p class="page-subtitle">Наука про вербальну агресію</p>
+
+  <div class="section" style="animation-delay:.9s">
+    <p>«Кістки можуть зламатись, слова — ні» — це красива дитяча приказка, яка просто неправдива. Сучасна нейронаука показує: коли тебе ображають словом, мозок реагує тими самими ділянками, що й на фізичний біль. Дослідження з Нідерландів (2014): сканер показав активацію передньої поясної кори і соматосенсорної кори — точно як від удару.</p>
+    <p>Слова не «просто слова». Це інструмент, який може зцілити або зруйнувати. У одних випадках вони залишають слід на десятиліття. У інших — будують самооцінку дитини, відносини, цілі покоління.</p>
+  </div>
+
+  <div class="quote">
+    Будь обережна зі словами. Колись сказані, їх можна простити, але не забути.
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Що відбувається в мозку</h2>
+    <p>Вербальна агресія — це не «образа на словах». Це фізіологічна атака, на яку тіло реагує як на загрозу.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">⚡</span>
+        <div class="card-title">Біль як від удару</div>
+        <div class="card-text">МРТ показує: соціальна біль і фізичний біль активують ті самі ділянки. Парацетамол у експериментах знижував обидва. Серйозно.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧠</span>
+        <div class="card-title">Кортизол</div>
+        <div class="card-text">Жорстка критика піднімає рівень стресового гормону на години. Хронічна вербальна агресія = постійно підвищений кортизол = виснаження, тривога, проблеми зі сном.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🛡️</span>
+        <div class="card-title">Замикання</div>
+        <div class="card-text">При повторюваній агресії мозок переходить у режим «вижити». Падає креативність, концентрація, здатність любити. Ти стискаєшся буквально.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📼</span>
+        <div class="card-title">Запис на роки</div>
+        <div class="card-text">Образливі слова, особливо в дитинстві, записуються в довготривалу пам'ять міцніше за нейтральні. Дорослі досі чують голос матері/вчителя/однокласника.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Форми вербальної агресії</h2>
+    <p>Не лише крик. Часто найрозруйнівніше виглядає тихо.</p>
+
+    <div class="warn-card">
+      <div class="warn-title">Відкрита образа</div>
+      <div class="warn-text">«Ти тупа», «нічого не вмієш», «нікому ти не потрібна». Найвидиміша форма — і паради​ксально, не найшкідливіша. Бо її легше розпізнати і опиратись.</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title">Сарказм і насмішки</div>
+      <div class="warn-text">«Ну ти, звісно, геній». Сказано з усмішкою — але удар той самий. На спротив одразу: «Я ж жартую, чого образилась?». Подвійний удар.</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title">Знецінення</div>
+      <div class="warn-text">«Та що ти знаєш». «Це ж дрібниця». «Інші мають справжні проблеми». Не образа — скасування твоїх почуттів. Найбільш нищівна для самоповаги.</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title">Мовчазне покарання</div>
+      <div class="warn-text">Перестати говорити, ігнорувати, не відповідати. Без слів — але тілом мозок реєструє це як соціальне відторгнення. Те саме, що в племені = смерть.</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title">Газлайтинг</div>
+      <div class="warn-text">«Цього не було». «Тобі здалося». «Ти все придумала». Систематичне спотворення реальності — щоб ти сама перестала собі довіряти. Найтоксичніша форма.</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title">«Жарти», які ранять</div>
+      <div class="warn-text">«Я ж жартую, не сприймай серйозно». Жарт — там, де всім смішно. Якщо одному боляче — це не жарт, це образа в обгортці.</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title">Ярлики</div>
+      <div class="warn-text">«Ти істеричка». «Ти лінива». «Ти безвідповідальна». Зведення людини до однієї риси, ще й негативної. Особливо шкодить дітям — вони повірять.</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Особливо небезпечно для дітей</h2>
+    <p>Дитячий мозок ще тільки формує самообраз. Те, що дорослі скажуть йому в перші роки, він приймає як правду — про себе.</p>
+
+    <ul class="tips">
+      <li>До 7 років дитина не вміє відрізнити «мама зла на мене зараз» від «я погана». Будь-яка критика читається як вирок особистості.</li>
+      <li>Постійні «ти лінива», «нічого з тебе не вийде» — стають внутрішнім голосом дорослого. Через 30 років ти все одно чуєш ці слова, коли провалюєшся.</li>
+      <li>Порівняння з іншими дітьми («он Маша краще вчиться») формує дорослого, який порівнює себе все життя — і завжди програє.</li>
+      <li>Сарказм у бік дитини («о, наш геній знов забув зошит») сприймається буквально, без шару іронії. Дитина чує: «я тупа».</li>
+      <li>Мовчазне покарання («не буду з тобою говорити, поки не вибачишся») — для дитини = «мене розлюбили». Емоційний жах.</li>
+      <li>Слова, сказані в гніві, але не повторені пізніше з вибаченням — фіксуються як «правда, яку випадково сказали».</li>
+    </ul>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1.15s">
+    <h2 class="section-title">Як замінити</h2>
+    <p>Те саме повідомлення можна донести так, щоб не зруйнувати. Не «бути м'якою з усіма» — а вибирати точніший інструмент.</p>
+
+    <table class="swap-table">
+      <thead>
+        <tr><th>Замість</th><th></th><th>Краще</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="bad">«Ти знов усе зіпсувала»</td><td class="arrow">→</td><td class="good">«Цей крок не вийшов. Що ми можемо зробити інакше?»</td></tr>
+        <tr><td class="bad">«Чого ти така тупа?»</td><td class="arrow">→</td><td class="good">«Я не зрозуміла, давай я ще раз поясню»</td></tr>
+        <tr><td class="bad">«Ти мене дратуєш»</td><td class="arrow">→</td><td class="good">«Я зараз втомлена, мені потрібно 10 хвилин»</td></tr>
+        <tr><td class="bad">«Ти ніколи нічого не робиш»</td><td class="arrow">→</td><td class="good">«Я б хотіла, щоб ти забрала посуд після їжі»</td></tr>
+        <tr><td class="bad">«Це ж елементарно»</td><td class="arrow">→</td><td class="good">«Ось важливі моменти, які зазвичай проґавлюють»</td></tr>
+        <tr><td class="bad">«Не плач»</td><td class="arrow">→</td><td class="good">«Я бачу, що тобі сумно. Я тут»</td></tr>
+        <tr><td class="bad">«Ти неможлива»</td><td class="arrow">→</td><td class="good">«Це поведінка для мене не ок. Розкажи, що сталося»</td></tr>
+        <tr><td class="bad">«Це твоя проблема»</td><td class="arrow">→</td><td class="good">«Я хочу допомогти, але не знаю як. Що тобі треба?»</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Якщо це робиш ти</h2>
+    <p>Більшість агресорів не злі люди. Це втомлені, поранені, перевантажені. Усвідомлення — перший крок.</p>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="card-title">Помічай тригер</div>
+          <div class="card-text">Що саме штовхає тебе в зрив? Втома, голод, конкретна тема, конкретна людина. Знаючи тригер — можна підготуватись.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="card-title">Зроби паузу</div>
+          <div class="card-text">10 секунд перед відповіддю. Глибокий вдих. Часто за цей час ти знаходиш кращі слова — або вирішуєш не казати взагалі.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="card-title">Перевибач, коли зірвалась</div>
+          <div class="card-text">«Я сказала погано. Мені шкода. Я була втомлена, але це не виправдовує». Конкретно і без «але». Це не слабкість — це сила.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="card-title">Шукай корінь</div>
+          <div class="card-text">Зазвичай хто кричить — той страждає. Що болить тобі насправді? Робота? Втома? Старі рани? Без розв'язання кореня словесна агресія повертатиметься.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1.25s">
+    <h2 class="section-title">Якщо це роблять до тебе</h2>
+
+    <ul class="tips">
+      <li>Назви це: «Те, що ти зараз сказала, — образа. Я не буду продовжувати в такому тоні».</li>
+      <li>Не виправдовуйся. Не «я не така», а просто «ні». Виправдання приймає рамку обвинувача.</li>
+      <li>Запиши слова. Часто пам'ять стирає, мозок захищає. Записане видно: це не «я перебільшую».</li>
+      <li>Не думай, що з'ясуєш у моменті. У стані агресії аргумент не працює. Розмова — пізніше, в спокої.</li>
+      <li>Дистанція. Якщо людина регулярно ранить — менше контакту. Кров'ю не платять за «бо рідня».</li>
+      <li>Знайди свідків правди. Друзі, які скажуть «так, з тобою не все так, як він каже». Гасає внутрішній газлайт.</li>
+      <li>Терапія, якщо рани давні. Слова дитинства лікуються, але рідко самотужки.</li>
+    </ul>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="quote">
+    Слово, як стріла — пускаючи, не повернеш. Тому стріляй обережно.
+  </div>
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/2200);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.4),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+
+const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.style.animationPlayState='running'}})},{threshold:.1});
+document.querySelectorAll('.section').forEach(el=>{el.style.animationPlayState='paused';observer.observe(el)});
+</script>
+</body>
+</html>

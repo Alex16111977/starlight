@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Що говорити, а що ні</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(220,230,255,.92)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.72)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.82);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(200,216,255,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.35);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(26px,4vw,36px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Що говорити, а що ні</h1>
+  <p class="page-subtitle">Бути відкритою — мудро</p>
+
+  <!-- Hero quote -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Не всі заслуговують почути твою історію"</div>
+      <div class="hero-author">Брене Браун</div>
+    </div>
+    <p>Нас вчили: бути відкритою — це добре. Закритість — це холод. Але правда тонша. Справжня відкритість — це не "розповідаю всім усе", а вміння розрізняти, з ким можна бути собою повністю, з ким — частково, а з ким — взагалі ні. Це не закритість. Це мудрість.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Чому це важливо -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Чому це взагалі важливо</h2>
+    <p>Брене Браун, психологиня, яка десятиліттями досліджує вразливість, каже: "Vulnerability without boundaries is not vulnerability". Поділитись надто рано, не з тим — це не сміливість. Це травма, яка ще раз себе ранить. Розрізнення — частина зрілості.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🎭</span>
+        <div class="card-title">Не всі люди — однакові</div>
+        <div class="card-text">Є кілька рівнів близькості. Найближче коло — 2-3 людини, яким можна все. Друге коло — близькі друзі. Третє — приятелі, колеги. Четверте — знайомі. Розповідати четвертому колу те, що для першого — це наражати себе.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🪞</span>
+        <div class="card-title">Що ти кажеш формує тебе</div>
+        <div class="card-text">Слова не просто описують реальність — вони її створюють. Якщо ти всім розповідаєш про себе як про "невдаху, у якої нічого не виходить" — мозок засвоює цю історію, а оточення починає тебе так бачити. Слова про себе мають вагу.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🩹</span>
+        <div class="card-title">Розповіли — використали</div>
+        <div class="card-text">У сварці, у конкуренції, у плітках — те, що ти довірливо розповіла, може повернутись як зброя. Не тому, що люди погані. А тому, що в момент болю чи страху вони хапаються за те, що мають. Не давай їм цієї зброї заздалегідь.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🤐</span>
+        <div class="card-title">Мовчання — теж сила</div>
+        <div class="card-text">Не все треба озвучувати. Іноді тримати думку в собі — це не "холодність", а внутрішня цілісність. Деякі речі дозрівають у тиші. Озвучені занадто рано — вони втрачають силу або викликають реакцію, яку ти не хотіла.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що варто говорити -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Що варто говорити (і кому)</h2>
+    <p>Закритість не означає відмови від відвертості. Без поділеного болю, радості, мрій — стосунки залишаються поверхневими. Питання не "чи ділитись", а "чим, з ким і коли".</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">💗</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Свої почуття — близьким</div>
+          <div class="card-text">Якщо людина тобі близька і безпечна — назвати, що ти відчуваєш, це подарунок собі і їй. "Мені сумно", "я роздратована", "я налякана". Це не слабкість, а запрошення до близькості. Але — лише з тими, хто заслужив це довірою.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🌱</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Мрії — тим, хто підтримує</div>
+          <div class="card-text">Дослідження психолога Гарі Орвелла: люди, які діляться цілями з підтримуючими — досягають їх вдвічі частіше. З тими, хто критикує "це нереально, ти не зможеш" — кидають швидше. Підбирай слухача мрій уважно.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🌿</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Помилки — коли вже вийшла</div>
+          <div class="card-text">Розповідати про досвід можна, коли ти вже маєш до нього дистанцію. Поки ти всередині шторму — твоя історія ще "сирий чорновик" (Brown). Рани, які ще кровоточать, краще загоювати в безпеці, а не виставляти на огляд.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">⛓️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Свої межі — щоб знали</div>
+          <div class="card-text">"Я не люблю несподіваних візитів", "не звертайся до мене так", "це мене ранить". Без озвучених меж люди не знають, де ти. І мимоволі їх перетинають. Сказати — це не агресія. Це турбота про обох.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🤲</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Свої потреби — щоб бути поруч</div>
+          <div class="card-text">"Мені зараз треба, щоб ти просто послухала, а не радила", "обійми мене зараз", "напиши мені завтра". Близькі — не екстрасенси. Сказана потреба — це інструкція, як тебе кохати правильно.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що краще тримати при собі -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Що краще тримати при собі</h2>
+    <p>Не "ховати все все" — а тримати близько до серця те, що особливо вразливо до спотворень або зловживань. Особливо в новому колі або з людьми, чию реакцію ти ще не бачила в скрутних ситуаціях.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">💰</span>
+        <div class="card-title">Фінансові деталі</div>
+        <div class="card-text">Скільки заробляєш, скільки маєш, скільки витрачаєш. Це порождує заздрість, оцінку, прохання позичити. Загальне правило — про гроші відкрито з 2-3 найближчими, з фінансовим консультантом, з партнером. Не зі знайомими, не з ширшим колом.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💔</span>
+        <div class="card-title">Стосункові проблеми</div>
+        <div class="card-text">Розповіла подругам, що партнер тебе образив — потім помирилась. А вони памʼятають. Назавжди. І бачать твого партнера через цей фільтр. Стосункові проблеми обговорюй з 1-2 людьми, або з психологом, не з усіма підряд.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌟</span>
+        <div class="card-title">Плани до того, як зробила</div>
+        <div class="card-text">Дослідження Дерека Сіверса: розповідь про мету заздалегідь дає мозку ілюзію, що ти вже її досягла — і мотивація падає. Плюс — критика, заздрість, "збиваючі" коментарі від оточення. Плани краще проявляти результатами.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🩻</span>
+        <div class="card-title">Слабкості — не всім</div>
+        <div class="card-text">Розповідати про свої найвразливіші місця людям, чия реакція тобі невідома, — наражати себе. Спочатку перевір, як вона реагує на менш болючі речі. Безпечні люди тримають твою слабкість дбайливо. Інші — ні.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔒</span>
+        <div class="card-title">Чужі секрети</div>
+        <div class="card-text">Навіть якщо дуже хочеться, навіть якщо "ну вона не дізнається". Те, що тобі довірили, — не твоя інформація. Розкриваючи її, ти не "ділишся історією" — ти зраджуєш. І дзеркало "вона мене зрадить так само" завжди працює.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Як зрозуміти кому довіряти -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Як зрозуміти, кому можна довіряти</h2>
+    <p>Брене Браун пропонує модель "BRAVING" — 7 елементів довіри. Не треба памʼятати всі. Але є кілька простих маркерів, які працюють як перевірка.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🔐</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Чи тримає чужі секрети</div>
+          <div class="card-text">Якщо подруга розповідає тобі секрети спільних знайомих — вона так само розкаже твої. Це не зловмисність, це звичка. Те, що тобі здається "приємно поплітати" — насправді сигнал, що твоя інформація буде в наступній розмові.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">⚔️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Чи використовує проти тебе</div>
+          <div class="card-text">У сварці згадує, що ти колись розповіла? Це не людина, з якою можна бути вразливою. Безпечна людина не пише цією зброєю — навіть коли злиться. Бо для неї твоя довіра — священна, не амуніція.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🌊</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Як ти почуваєшся після</div>
+          <div class="card-text">Безпечна розмова залишає легкість, тепло, відчуття "я була собою і це було ок". Небезпечна — залишає тривогу, сором, бажання "забрати слова назад". Тіло знає, навіть коли розум сумнівається. Слухай тіло.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🌟</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Як реагує на твою вразливість</div>
+          <div class="card-text">Ти поділилась чимось небоїстим, але важливим — і вона: одразу почала "виправляти", оцінювати, давати поради? Знецінила ("та це нічого")? Чи — слухала, відобразила почуття, не поспішала з реакцією? Друге — людина, з якою можна йти глибше.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top:28px">
+      <p>Психолог Джон Готтмен на основі сотень досліджень дружби і шлюбів сформулював правило <em>"тестування малими"</em>: спочатку довіряй щось маленьке, дивись на реакцію — потім більше. Довіра будується не одразу. Це повільний процес із зворотнім звʼязком на кожному кроці.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Глибше -->
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Глибше</h2>
+    <p>Часто ми ділимось занадто, не тому що "не вміємо мовчати". А тому що хочемо звʼязку. Розповідати — це швидкий спосіб відчути близькість. Але справжня близькість будується повільно — через регулярність, через спостережений досвід, через невеликі тести довіри.</p>
+    <p>І ще — буває, ти розповідаєш забагато, бо у голові немає кому. Якщо твій внутрішній світ переповнений і нікому виливати — можеш почати ділитись із першим, хто слухає. Тоді відповідь — не "більше людей", а психотерапія, щоденник, або одна-дві перевірені людини, з якими можна бути собою повністю.</p>
+
+    <div class="highlight">
+      <p>Мудре розрізнення — не холодне. Воно про <em>повагу до себе і своєї історії</em>. Твоя історія варта того, щоб її чули люди, які вміють її тримати. Не ті, хто опиняється поруч першими. Не ті, хто питає першими. А ті, у чиєму контейнері твоє слово залишається таким же безпечним, як було вимовлене.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Ключове питання -->
+  <div class="section" style="animation-delay:1.85s">
+    <h2 class="section-title">Ключове питання</h2>
+    <p>Перед тим, як поділитись чимось важливим — зупинись на 5 секунд і запитай.</p>
+
+    <div class="question-card">
+      <div class="question-label">Запитай себе</div>
+      <div class="question-main">"Чи ця людина — мій безпечний контейнер?"</div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Якщо ти не впевнена — це вже відповідь. <em>Безпечні люди дають відчуття безпеки</em>, а не сумніви. І це нормально — мати різні рівні відкритості з різними людьми. Не всі заслуговують на той же доступ. І це не холодність — це повага до себе.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Final -->
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Висновок</h2>
+    <div class="final-quote">
+      <div class="final-text">Бути відкритою — це не казати все всім. Це <strong>знати, кому, що і коли</strong>. Твоя історія — священна. Не розкидай її перед тими, хто не вміє з нею поводитись. Тримай близько до серця те, що дороге. І ділись з тими, у кому впевнена. Це не закритість. Це любов до себе.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>

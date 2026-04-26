@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Особисті дані</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.12) 0%,rgba(40,80,200,.06) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.07) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.55)}
+
+.steps-grid{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.step-card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:24px;align-items:flex-start}
+.step-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.step-card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.step-card:hover::before{opacity:1}
+.step-num{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:48px;color:rgba(138,176,255,.25);line-height:1;flex-shrink:0;width:40px;text-align:center}
+.step-body{flex:1}
+
+.tips{list-style:none;margin-top:16px}
+.tips li{font-size:13px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.6);padding:12px 0 12px 28px;border-bottom:1px solid rgba(200,216,255,.04);position:relative}
+.tips li::before{content:'';position:absolute;left:8px;top:20px;width:4px;height:4px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 6px #8ab0ff}
+
+.food-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:20px}
+.food-item{background:rgba(200,216,255,.02);border:1px solid rgba(200,216,255,.05);border-radius:12px;padding:18px 20px;transition:all .3s}
+.food-item:hover{background:rgba(200,216,255,.05);border-color:rgba(200,216,255,.12)}
+.food-label{font-size:9px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;color:rgba(138,176,255,.5);margin-bottom:8px}
+.food-val{font-size:12px;font-weight:200;line-height:1.7;color:rgba(200,216,255,.72)}
+
+.rules-list{list-style:none;margin-top:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:12px}
+.rules-list li{font-size:12px;font-weight:200;line-height:1.7;color:rgba(200,216,255,.55);padding:14px 16px 14px 32px;background:rgba(200,216,255,.02);border:1px solid rgba(200,216,255,.05);border-radius:10px;position:relative}
+.rules-list li::before{content:'';position:absolute;left:14px;top:20px;width:4px;height:4px;border-radius:50%;background:rgba(212,175,110,.6);box-shadow:0 0 6px rgba(212,175,110,.3)}
+
+.warn-card{background:rgba(255,130,130,.04);border:1px solid rgba(255,130,130,.1);border-radius:16px;padding:24px;margin-bottom:14px;transition:all .4s}
+.warn-card:hover{background:rgba(255,130,130,.07);border-color:rgba(255,130,130,.18)}
+.warn-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;color:rgba(255,170,150,.9);margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.warn-title-icon{font-size:18px}
+.warn-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.55)}
+
+.quote{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.4vw,22px);line-height:1.6;color:rgba(220,230,255,.85);text-align:center;padding:32px 24px;border-top:1px solid rgba(200,216,255,.1);border-bottom:1px solid rgba(200,216,255,.1);margin:32px 0}
+.quote::before{content:'"';font-size:36px;color:rgba(138,176,255,.4);margin-right:6px;vertical-align:-6px}
+.quote::after{content:'"';font-size:36px;color:rgba(138,176,255,.4);margin-left:6px;vertical-align:-6px}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Особисті дані</h1>
+  <p class="page-subtitle">Що це таке і чому це варто берегти</p>
+
+  <!-- Intro -->
+  <div class="section" style="animation-delay:.9s">
+    <p>Особисті дані — це все, за чим тебе можна впізнати, знайти, зв'язати з тобою якусь дію. Ім'я, телефон, адреса, дата народження, ІПН, фото, голос, відбиток пальця, навіть стиль набору тексту. У цифрову епоху дані — це валюта. І, як з грошима: чим більше ти роздаєш, тим менше у тебе залишається контролю.</p>
+    <p>Це не про параною. Це про базову гігієну — як замок на дверях. Не тому що сусіди погані, а тому що дім — твій.</p>
+  </div>
+
+  <div class="quote">
+    Якщо сервіс безкоштовний — товаром є ти.
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- What is data -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Що таке особисті дані</h2>
+    <p>Дані бувають різні — і чим більш «глибокі», тим обережніше з ними треба бути.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">📇</span>
+        <div class="card-title">Базові</div>
+        <div class="card-text">ПІБ, дата народження, телефон, email, адреса. Цього достатньо, щоб тебе ідентифікувати в більшості систем.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🆔</span>
+        <div class="card-title">Документні</div>
+        <div class="card-text">Серія паспорта, ІПН, номер карти, дані водійського посвідчення. Прямий шлях до твоїх грошей і кредитів.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📍</span>
+        <div class="card-title">Поведінкові</div>
+        <div class="card-text">Геолокація, історія браузера, що купуєш, з ким спілкуєшся, скільки спиш. Профіль глибший, ніж знає твоя мама.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧬</span>
+        <div class="card-title">Біометричні</div>
+        <div class="card-text">Відбиток, обличчя, голос, ДНК, сканер сітківки. Ці дані не можна змінити — як пароль. Якщо вкрали — назавжди.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💗</span>
+        <div class="card-title">Чутливі</div>
+        <div class="card-text">Здоров'я, релігія, орієнтація, політичні погляди, фінансовий стан. Можуть бути використані для дискримінації або шантажу.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔗</span>
+        <div class="card-title">Цифрові сліди</div>
+        <div class="card-text">IP, cookies, ID пристрою, MAC-адреса. Ти не «анонімна» в інтернеті — ти просто не знаєш, як тебе видно.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Who collects -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Хто збирає твої дані</h2>
+    <p>Майже всі. Питання лише — наскільки глибоко і навіщо.</p>
+
+    <div class="food-grid">
+      <div class="food-item">
+        <div class="food-label">Соцмережі</div>
+        <div class="food-val">Усе, що ти лайкаєш, дивишся, набираєш і навіть стираєш не дописавши. Скільки секунд дивилася відео, на чому затримала погляд.</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Месенджери</div>
+        <div class="food-val">Хто з ким, коли, як часто. У більшості — ще й вміст переписок. Telegram «секретні чати» — лише мала частка.</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Магазини</div>
+        <div class="food-val">Усі покупки, час візиту, методи оплати, повернення. Бонусні картки = повна історія твого життя за чеками.</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Банки і платіжки</div>
+        <div class="food-val">Куди ходиш, що купуєш, з ким перекидаєш гроші, скільки заробляєш. Найдетальніший зріз життя.</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Мобільні оператори</div>
+        <div class="food-val">Локація 24/7, дзвінки, SMS, інтернет-трафік. Можуть точно сказати, де ти була кожну годину.</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Додатки</div>
+        <div class="food-val">Доступ до контактів, фото, мікрофону, камери — і не лише коли «треба». Часто збирають і коли просто відкрита у фоні.</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Сайти</div>
+        <div class="food-val">Cookies, fingerprinting пристрою. Перейшла на сайт раз — впізнають тебе на сотнях інших.</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Розумні пристрої</div>
+        <div class="food-val">Колонки, годинники, телевізори, пилососи. Слухають, рахують кроки, малюють план квартири.</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Брокери даних</div>
+        <div class="food-val">Окремі компанії, які скуповують і об'єднують дані з усіх джерел. Продають профілі рекламодавцям, страховим, роботодавцям.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Why protect -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Чому це важливо</h2>
+    <p>Не «мені нічого приховувати» — а «я не знаю, проти кого ці дані обернуться завтра». Вкрадені дані живуть у мережі вічно.</p>
+
+    <div class="warn-card">
+      <div class="warn-title"><span class="warn-title-icon">💸</span>Фінансові втрати</div>
+      <div class="warn-text">Шахраї знімають гроші з карти, оформлюють кредит на твоє ім'я, продають твою ідентичність. Повернути — складно і довго, а кредитна історія псується миттєво.</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title"><span class="warn-title-icon">🎭</span>Крадіжка особистості</div>
+      <div class="warn-text">Хтось видає себе за тебе. Реєструє акаунти, бере позики, шантажує знайомих, скоює злочини. Доводити, що це не ти — твоя проблема.</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title"><span class="warn-title-icon">🎣</span>Точкова маніпуляція</div>
+      <div class="warn-text">Чим більше про тебе знають, тим краще б'ють. Реклама, дезінформація, фішинг саме під твою поточну тривогу і слабке місце.</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title"><span class="warn-title-icon">📞</span>Стеження і переслідування</div>
+      <div class="warn-text">Колишній, токсичний родич, сталкер. Адреса, телефон, геолокація в публічних постах — все, що треба, щоб знайти тебе фізично.</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title"><span class="warn-title-icon">⚖️</span>Дискримінація</div>
+      <div class="warn-text">Страхові ставлять вищу ставку за діагнозом, банки відмовляють у кредиті за поведінкою в соцмережах, роботодавці відсіюють за віком чи переконаннями.</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title"><span class="warn-title-icon">🕳️</span>Витоки і шантаж</div>
+      <div class="warn-text">База клієнтів злили в мережу — і твоя адреса з телефоном уже у відкритому доступі. Фото з месенджера може стати інструментом тиску.</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title"><span class="warn-title-icon">🔮</span>Минуле, що повертається</div>
+      <div class="warn-text">Те, що ти писала в 18, побачить роботодавець, коли тобі 30. Інтернет нічого не забуває — а контекст з часом губиться.</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Real scenarios -->
+  <div class="section" style="animation-delay:1.15s">
+    <h2 class="section-title">Як це виглядає в житті</h2>
+    <p>Реальні сценарії, з якими стикаються щодня. Не «можливо колись», а «вже з кимось було».</p>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="card-title">Дзвінок «з банку»</div>
+          <div class="card-text">«Доброго дня, Олено Петрівно, ваша карта 4149... зараз під атакою. Назвіть код з SMS». Шахраї знають твоє ім'я і номер карти, бо база злита. SMS вони ввели на сторінці входу — і тепер потрібен код від тебе, щоб увійти в твій банк.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="card-title">Кредит на чуже ім'я</div>
+          <div class="card-text">Фото паспорта, що колись скинула в чат орендодавцю, потрапило в злив. Через рік ти отримуєш повідомлення: на тебе оформлено мікропозику 25 000 грн. Доводити, що це не ти — півроку нервів.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="card-title">Геолокація в Stories</div>
+          <div class="card-text">Виставила фото з тегом «вдома», з другого фото видно номер під'їзду, а пост про відпустку — повідомив, що тебе нема. Класичний рецепт для крадіжки квартири.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="card-title">Відмова у роботі</div>
+          <div class="card-text">HR погуглив тебе перед інтерв'ю. Знайшов пост 5-річної давнини з «жорсткою» думкою або фото з вечірки. Не сказав чому — просто «обрали іншого кандидата».</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="card-title">Сталкер з минулого</div>
+          <div class="card-text">Колишній знайшов твоє нове місто за тегом ресторану в інстаграмі. Час публікації + назва закладу + зйомка з вікна = адреса.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <div class="card-title">Підмінений номер</div>
+          <div class="card-text">SIM-swap: шахраї перевипустили твою сімку (мали достатньо даних, щоб переконати оператора). За 5 хвилин — увійшли в банк, пошту і месенджери, де SMS-логін.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 10 rules -->
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">10 базових правил</h2>
+    <p>Не перетворюватись на параноїка з фольгованою шапкою — а зробити життя складнішим для шахраїв і простішим для себе.</p>
+
+    <ul class="rules-list">
+      <li>Унікальні паролі для кожного сервісу — менеджер паролів (1Password, Bitwarden) це автоматизує</li>
+      <li>Двофакторна автентифікація скрізь, де можна — особливо пошта, банк, месенджери</li>
+      <li>Не публікуй фото документів навіть «на хвилинку» в чатах</li>
+      <li>Не називай SMS-коди по телефону НІКОМУ — банки їх ніколи не питають</li>
+      <li>Геолокацію в постах — лише після того, як ти вже виїхала з місця</li>
+      <li>Не входь у свої акаунти з чужих пристроїв і відкритих Wi-Fi</li>
+      <li>Регулярно чисти доступи додатків до контактів, фото, мікрофону</li>
+      <li>Перевіряй адресу сайту перед введенням пароля — на букву поряд або підмінену домен</li>
+      <li>Не довіряй email і SMS зі стресовими повідомленнями («заблоковано», «термінова дія»)</li>
+      <li>Старі акаунти, якими не користуєшся — видаляй, не залишай у спокої</li>
+    </ul>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Strong password -->
+  <div class="section" style="animation-delay:1.25s">
+    <h2 class="section-title">Паролі — серце безпеки</h2>
+    <p>90% зломів — це не «хакери», а просто хтось ввів твій пароль, який витік з іншого сайту. Якщо пароль один — впадуть усі акаунти разом.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🔑</span>
+        <div class="card-title">Унікальний</div>
+        <div class="card-text">Свій пароль на кожному сайті. Витік на одному — інші в безпеці. Без менеджера паролів запам'ятати неможливо. Тому користуйся ним.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📏</span>
+        <div class="card-title">Довгий</div>
+        <div class="card-text">12+ символів. Краще фраза з 4 випадкових слів («сонце-кіт-мармелад-пилосос»), ніж «Q1@xY!». І легше згадати.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🛡️</span>
+        <div class="card-title">+ 2FA</div>
+        <div class="card-text">Другий фактор — додаток-аутентифікатор (Google Authenticator, Authy). Краще за SMS, бо SMS можна перехопити.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📧</span>
+        <div class="card-title">Окрема пошта</div>
+        <div class="card-text">Одна пошта для важливого (банк, документи), інша — для розсилок і реєстрацій на сайтах. Якщо «другорядну» зламають — головна ціла.</div>
+      </div>
+    </div>
+
+    <p style="margin-top:24px">Перевір, чи твій email або пароль вже не злили: <strong>haveibeenpwned.com</strong> — безкоштовно показує, у яких витоках ти фігуруєш.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Phishing -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Фішинг — як розпізнати</h2>
+    <p>Найпоширеніша атака. Тобі надсилають повідомлення «від банку / Нової пошти / Дії», з посиланням на сайт-двійник. Ти вводиш дані — вони йдуть шахраям.</p>
+
+    <ul class="tips">
+      <li>Поспіх і паніка — «терміново», «зараз», «ваш акаунт буде заблоковано». Це для того, щоб ти не думала, а діяла.</li>
+      <li>Помилки у тексті — реальні компанії перевіряють орфографію. Дивні переклади і пропущені букви — поганий знак.</li>
+      <li>Дивна адреса — google.com vs g00gle.com vs google-secure.net. Дивись уважно перед тим, як ввести пароль.</li>
+      <li>Прохання даних, які компанія вже знає — банк не питає твого PIN-коду чи пароля. Він і так їх знає.</li>
+      <li>Несподіване «ви виграли» — ніхто не дарує iPhone випадковим людям. За цим завжди є гачок.</li>
+      <li>Вкладення в листі — особливо .zip, .exe, документи Word з макросами від незнайомих відправників.</li>
+      <li>Замість натискання — зайди вручну на сайт. Якщо банк справді чогось хоче, ти побачиш це у своєму кабінеті.</li>
+    </ul>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- What to share -->
+  <div class="section" style="animation-delay:1.35s">
+    <h2 class="section-title">Що НЕ публікувати</h2>
+    <p>Часто ми самі віддаємо більше, ніж потрібно. Прості правила, які зменшать ризик.</p>
+
+    <div class="warn-card">
+      <div class="warn-title"><span class="warn-title-icon">📍</span>Точну адресу і геолокацію в реальному часі</div>
+      <div class="warn-text">Особливо коли ти вдома і коли ти НЕ вдома. Геотеги — після події, не під час.</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title"><span class="warn-title-icon">🆔</span>Документи навіть «у приватному чаті»</div>
+      <div class="warn-text">Чати зливаються, телефони губляться, скріншоти роблять. Якщо мусиш переслати — заклади поверх пояснення «для чого і кому» і потім обов'язково видали.</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title"><span class="warn-title-icon">💳</span>Фото карти з обох сторін</div>
+      <div class="warn-text">Номер + CVV + ім'я = достатньо для онлайн-покупок. Закривай CVV навіть на «безпечних» фото.</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title"><span class="warn-title-icon">🛫</span>Плани відпустки до того, як вернешся</div>
+      <div class="warn-text">«Лечу на тиждень у Барселону!» = «моя квартира тиждень порожня». Виставляй фото після повернення.</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title"><span class="warn-title-icon">🎂</span>Повну дату народження</div>
+      <div class="warn-text">Це один з ключів для відновлення паролів. День і місяць — добре, рік — обережно.</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title"><span class="warn-title-icon">👶</span>Дітей із прив'язкою до місць</div>
+      <div class="warn-text">Школа + ім'я + фото в формі = опасно. Якщо ділишся — без локацій і деталей розкладу.</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title"><span class="warn-title-icon">🔐</span>Відповіді на «секретні питання»</div>
+      <div class="warn-text">Дівоче прізвище мами, перша школа, кличка собаки — все це банки використовують для відновлення доступу. Не пости такі факти публічно.</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Cleanup -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Цифрове прибирання</h2>
+    <p>Якщо ти вже багато роздала — не страшно. Можна зменшити слід прямо зараз.</p>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="card-title">Аудит акаунтів</div>
+          <div class="card-text">Зайди в Google → «Акаунти, у яких використовується вхід через Google». Видали все, чим уже не користуєшся.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="card-title">Перегляд дозволів додатків</div>
+          <div class="card-text">Налаштування телефону → Конфіденційність. Які додатки мають доступ до мікрофону, камери, контактів, локації? Виключи зайве.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="card-title">Ревізія паролів</div>
+          <div class="card-text">Перевір через haveibeenpwned.com. Скрізь, де злив був — поміняй пароль і увімкни 2FA.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="card-title">Налаштування соцмереж</div>
+          <div class="card-text">Закритий профіль або огляд: хто бачить твої пости, хто може тебе знайти за номером, які дані видно публічно.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="card-title">Старі пости і фото</div>
+          <div class="card-text">Прокрути стрічку на 3-5 років назад. Видали те, що зараз не хотіла б показувати роботодавцю чи незнайомцю.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <div class="card-title">Cookies і реклама</div>
+          <div class="card-text">У браузері — блокуй сторонні cookies, постав uBlock Origin. Менше трекерів = менше профілю про тебе.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- If leaked -->
+  <div class="section" style="animation-delay:1.45s">
+    <h2 class="section-title">Якщо дані вже вкрали</h2>
+    <p>Не панікуй. Швидкі дії в перші години — це 80% результату.</p>
+
+    <ul class="tips">
+      <li>Карта — одразу заблокувати в банк-додатку. Перевипустити нову.</li>
+      <li>Пароль — змінити на скомпрометованому акаунті, а також на всіх, де був той самий пароль.</li>
+      <li>2FA — увімкнути, якщо ще не було. Перевірити пристрої, з яких заходили в акаунт.</li>
+      <li>Документ — заявити про втрату/крадіжку. Інакше можуть оформити кредит на твоє ім'я.</li>
+      <li>Кредитна історія — перевірити в Бюро кредитних історій. Якщо хтось спробував — побачиш.</li>
+      <li>Поліція — заява обов'язкова, навіть якщо «нічого не знайдуть». Без неї ти не зможеш потім довести, що це не ти оформляла кредит.</li>
+      <li>Близькі — попередь, що від твого імені можуть писати або дзвонити з проханням грошей. Так ти захищаєш не тільки себе.</li>
+    </ul>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="quote">
+    Ти не зобов'язана віддавати дані лише тому, що їх просять. У більшості випадків — можна не давати або дати менше.
+  </div>
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/2200);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.4),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+
+const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.style.animationPlayState='running'}})},{threshold:.1});
+document.querySelectorAll('.section').forEach(el=>{el.style.animationPlayState='paused';observer.observe(el)});
+</script>
+</body>
+</html>

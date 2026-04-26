@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Маніпуляція</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(220,230,255,.92)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.72)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.82);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(200,216,255,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.35);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(26px,4vw,36px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Маніпуляція</h1>
+  <p class="page-subtitle">Розпізнати в моменті — половина перемоги</p>
+
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Найкращий захист від маніпуляції — не сила, а ясність. Бачиш техніку — вона перестає працювати"</div>
+      <div class="hero-author">Робін Стерн</div>
+    </div>
+    <p>Маніпуляція — це не про "поганих людей у фільмах". Це повсякденна тактика, яку всі ми зустрічаємо щодня: у стосунках, на роботі, в новинах, у рекламі. Більшість прийомів повторюються. Якщо ти знаєш їх імена — у тебе перестає закладати у грудях, і починається свобода вибору. Ця сторінка — про назви тактик, сигнали тіла і конкретні фрази для відповіді.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 🎭 Що таке маніпуляція -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">🎭 Що таке маніпуляція</h2>
+    <p>Маніпуляція — це коли тебе ведуть туди, куди ти сама не пішла би, і часто потім дякують. Її головна риса — прихована мета. Перш ніж вчитись захищатись, варто розрізнити, що точно — маніпуляція, а що ні.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">⚖️</span>
+        <div class="card-title">Маніпуляція vs переконання</div>
+        <div class="card-text">Переконання прозоре: "Я хочу X, ось мої аргументи, вирішуй сама". Маніпуляція прихована: "Я хочу X, але зроблю так, щоб ти думала, що це твій вибір — або щоб не змогла відмовитись без почуття провини". Різниця — у вільності твого "так".</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧠</span>
+        <div class="card-title">Чому це працює</div>
+        <div class="card-text">Маніпулятор апелює не до логіки, а до емоцій: страху, провини, сорому, любові, бажання бути доброю. Емоційна реакція в мозку швидша за раціональну на 0.3 секунди. Поки ти "встигаєш подумати" — рішення вже прийнято тілом. Ось чому ефективна маніпуляція виглядає як "сама захотіла".</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">👥</span>
+        <div class="card-title">Хто маніпулює</div>
+        <div class="card-text">Не лише "токсичні" люди з підручників. Колеги. Близькі. Батьки. Партнери. Часто — несвідомо: вони так навчились просити, бо в них іншого способу не було. Це не виправдовує маніпуляцію — але корисно памʼятати, що це не завжди "зло", часом просто несформовані навички комунікації.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📍</span>
+        <div class="card-title">Де це зустрічається</div>
+        <div class="card-text">Особисті стосунки (партнер, родина), робота (керівник, колеги), реклама ("залишилось 2 штуки"), новини (страх для кліків), політика (на емоціях легше керувати), соцмережі (алгоритми за залежність). Маніпуляція — фон сучасного життя. Питання не "як уникнути всього", а "як не стати її маріонеткою у важливих моментах".</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 🪤 Тактики -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">🪤 Найпоширеніші тактики</h2>
+    <p>У маніпуляції — кілька повторюваних патернів. У них є назви. Знаючи назву — ти бачиш техніку, а не заплутуєшся в емоціях. Це найдієвіший антидот.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🌀</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Газлайтинг</div>
+          <div class="card-text">Систематичне заперечення твоєї реальності. "Такого не було". "Ти все вигадала". "Ти перебільшуєш". З часом ти починаєш сумніватись у власній памʼяті, відчуттях, нормальності. Маркер: записуєш події, щоб "переконатись, що не зʼїхала з глузду". Це не нормальна реакція в стосунках. Це ознака.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🔄</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">DARVO — перевертання ролей</div>
+          <div class="card-text">Deny (заперечити), Attack (атакувати), Reverse Victim and Offender (переставити жертву і кривдника). Ти кажеш: "Ти мене образив". Він: "Не було такого" (Deny) → "Ти знову істерика" (Attack) → "Це я через тебе постійно мушу виправдовуватись" (Reverse). За 30 секунд винна ти.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">😔</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Тригер вини</div>
+          <div class="card-text">"Після всього, що я для тебе зробив/зробила...". "Я не сплю ночами через тебе". "Тобі взагалі байдуже на маму". Тебе вкручують у борг, який ти не брала. Мета: змусити погодитись із чимось, на що ти би самостійно не пішла. Маркер: рішення приймаєш не "хочу", а "інакше буду винна".</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🔺</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Триангуляція</div>
+          <div class="card-text">У розмову вводиться третя людина, яка "теж так думає". "Усі друзі помічають, що ти змінилась". "Мама теж сказала, що ти неправа". Часто третьої думки ніхто не висловлював — це створення коаліції на ходу. Мета: ізолювати тебе, поставити в позицію "ти проти всіх".</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🧊</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Сайленс-трітмент</div>
+          <div class="card-text">Покарання тишею. Дні, тижні без розмови після конфлікту. Мета — змусити тебе виправдовуватись, благати, "повертати" людину. Це не "пауза, щоб охолонути" — це інструмент влади. Дорослий партнер каже: "Мені треба час, поговоримо завтра". Маніпулятор просто зникає.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">💣</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Лав-бомбінг</div>
+          <div class="card-text">На початку — лавина уваги, подарунків, обіцянок майбутнього. "Ти моя половинка". "Ніколи такого не відчував". Як наркотик. Потім — холод і критика. Сильний контраст робить тебе залежною від "повернення" того початку. Це не "велика любов" — це тактика прив'язування.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🍞</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Бредкрамбінг — крихти уваги</div>
+          <div class="card-text">Тиждень мовчить, потім надсилає "сумую". Ти оживаєш — і знову тиша на тиждень. Підкидає мінімум для того, щоб ти не пішла остаточно. Тебе тримають "на гачку" без жодних реальних інвестицій у стосунки. Це не нерішучість — це свідомий мінімум.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🎯</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Емоційний шантаж</div>
+          <div class="card-text">"Якщо ти підеш — я не знаю, що з собою зроблю". "Зробиш так — мама захворіє". Покладання відповідальності за чужі емоції/дії на тебе. Стейнберг назвав це "FOG" — Fear, Obligation, Guilt (страх, обов'язок, вина). Ці три гачки тримають мільйони людей у стосунках, з яких варто було піти десять років тому.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 🚨 Як розпізнати в моменті -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">🚨 Як розпізнати в моменті</h2>
+    <p>Тіло помічає маніпуляцію раніше за голову. Якщо натренуватись слухати — ці сигнали стають твоєю системою попередження. Ось ознаки, які варто помічати.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🫁</span>
+        <div class="card-title">Тіло говорить першим</div>
+        <div class="card-text">Стиснуло в грудях. Шлунок занило. Подих зробився коротким. Хочеться втекти або застигнути. Це не "ти драматизуєш" — це "лімбічна система зчитала загрозу". Тіло часто бачить раніше за свідомість. Якщо тіло реагує — це сигнал зробити крок назад, навіть якщо ще не зрозуміла словами чому.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🛡️</span>
+        <div class="card-title">Хочеш виправдовуватись</div>
+        <div class="card-text">Раптом пояснюєш, чому ти не погана людина. Перераховуєш, що зробила добре. Доводиш, що в тебе були "поважні причини". Це майже завжди знак: тебе атакують непрямо. У здоровій розмові немає потреби виправдовуватись на пустому місці.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔁</span>
+        <div class="card-title">Закінчується тим, що ти винна</div>
+        <div class="card-text">Розмова почалась з твоєї скарги. Через 10 хвилин ви обговорюєте, що з тобою не так. Ти пропускаєш, що оригінальна тема — твоя проблема — взагалі не була розглянута. Це класика DARVO. Маркер: "Зачекай, ми взагалі почали з чого?".</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌫️</span>
+        <div class="card-title">Памʼятаєш по-іншому</div>
+        <div class="card-text">Тобі здавалось — було X. Він(вона) каже: "Не було такого, ти все плутаєш". Через місяць ти вже не пам'ятаєш, як було насправді. Це газлайтинг у дії. Захист: ведення нотаток, обговорення з друзями (вони памʼятатимуть твою версію).</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎭</span>
+        <div class="card-title">Хочеш довести, що добра</div>
+        <div class="card-text">Раптом важливо переконати людину, що ти "хороша". Робиш послуги, які робити не хотіла. Ввічлива з тим, хто на тебе тисне. Це маніпуляція через атаку на самооцінку. Здорова психіка не потребує постійного підтвердження від когось, що ти не "погана".</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🪞</span>
+        <div class="card-title">Ти стаєш іншою</div>
+        <div class="card-text">З цією людиною ти меншаєш — тихіша, обережніша, більше боїшся. Інші друзі помічають: "Ти змінилась". Це не "характер різний". Це тиск маніпуляції на твою ідентичність. Здорові стосунки роблять тебе більше собою. Маніпулятивні — менше.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 🛡️ Як захищатись у моменті -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">🛡️ Як захищатись у моменті</h2>
+    <p>Захист — не контратака. Маніпулятор виграє в емоційній битві: він її готував, ти ні. Твоя сила — у спокої, паузах і чітких реакціях. Ось конкретні скрипти, які працюють.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">⏸️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Пауза замість реакції</div>
+          <div class="card-text">"Дай мені час подумати. Поговоримо завтра". Маніпуляції потрібен темп — миттєва реакція, поки тебе тримають у полоні емоції. Пауза розриває цей темп. Більшість тактик не виживають 24 годин і чашки кави з другом. Якщо людина не дає тобі паузи — це сама по собі ознака.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🏷️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Назвати техніку</div>
+          <div class="card-text">"Ти зараз робиш зі мною винною за свої емоції — це називається емоційний шантаж". "Те, що ти заперечуєш факти, які я тільки що сказала, — це газлайтинг". Названня вголос забирає у техніки силу. Іноді людина зніяковіє і відступить. Іноді — ні. Але це твоя ясність — і вона залишається.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🪨</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Сірий камінь</div>
+          <div class="card-text">Не давай палива. Короткі, нейтральні відповіді: "Зрозуміла". "Ок". "Може й так". Без емоцій, без виправдань, без подробиць про твоє життя. Маніпулятор живиться твоєю реакцією. Нема реакції — нема палива. Корисно з тими, з ким контакт неможливо припинити (родич, начальник).</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🔁</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">"Так, можливо" — без зміни</div>
+          <div class="card-text">Маніпулятор хоче битви на логіці. Ти можеш не вступати. "Так, можливо ти й маєш рацію. Але я все одно не буду цього робити". Не сперечайся, не доводь. Просто залишайся при своєму. Це називають "broken record" — повторення позиції без аргументів. Дратує — але працює.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">📓</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Записуй факти</div>
+          <div class="card-text">При систематичному газлайтингу — ведення нотаток у телефоні з датами і цитатами рятує. Через місяць перечитаєш — побачиш патерн. Цим же можна захиститись юридично, якщо дійде до суду (особливо в стосунках, на роботі). Памʼять зрадить. Записаний текст — ні.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🚪</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Право вийти</div>
+          <div class="card-text">"Я не буду продовжувати цю розмову, поки ти не перестанеш кричати". І виходиш. Це не "тікаєш" — це встановлюєш межу: я готова говорити, але не в такому форматі. Якщо людина продовжує — повторюєш межу. Якщо систематично порушує — це інформація про неї, не про твою "негнучкість".</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 💪 Довгострокові стратегії -->
+  <div class="section" style="animation-delay:1.85s">
+    <h2 class="section-title">💪 Довгострокові стратегії</h2>
+    <p>Окремі техніки відбивають окремі атаки. Але реальна імунність — це тривала робота над собою і середовищем. Маніпуляція легше працює на людях у вакуумі. Заповни вакуум — і вона перестає чіплятись.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🌳</span>
+        <div class="card-title">Опора в собі</div>
+        <div class="card-text">Чим краще ти знаєш себе — свої цінності, межі, бажання — тим важче тебе збити з курсу. Маніпуляція працює на сумніві в собі. Відсутність сумніву — найміцніший захист. Це не зарозумілість — це просте знання, яким життям ти хочеш жити, і яким — точно не хочеш.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">👥</span>
+        <div class="card-title">Підтримка ззовні</div>
+        <div class="card-text">Маніпулятор перший крок — ізолювати тебе ("твої друзі тебе не розуміють"). Підтримуй коло близьких людей, перевіряй з ними реальність. Якщо ти сама собі не довіряєш — спитай у трьох друзів: "Це нормально?". Часто вони бачать те, що ти втратила здатність бачити.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🚧</span>
+        <div class="card-title">Робота з кордонами</div>
+        <div class="card-text">Більшість маніпуляцій ловлять людей, які не вміють казати "ні". Тренування: казати "ні" в маленьких речах, де це безпечно. Через місяці — у великих. Це навичка, не риса характеру. Кордон без готовності його захистити — просто прохання, яке ігнорують.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🛋️</span>
+        <div class="card-title">Терапія</div>
+        <div class="card-text">Якщо ти роками в маніпулятивних стосунках — перші місяці після виходу важко. Тебе тягне назад (звичка), мучить вина, сумніви. Терапевт допомагає не повернутись до того, від чого пішла. І зрозуміти, чому саме ти потрапила в ці стосунки — щоб не повторилось у наступних.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📤</span>
+        <div class="card-title">Стратегія виходу</div>
+        <div class="card-text">У серйозних випадках (партнер-маніпулятор, токсичні батьки, бос-нарцис) — план виходу. Що ти зберешь? Куди підеш? Хто тебе підтримає? Які фінансові ресурси треба заздалегідь? Хороший план — той, що готовий до моменту, коли вже точно треба, а не починається тоді.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧘</span>
+        <div class="card-title">Самоповага як гігієна</div>
+        <div class="card-text">Кожен день робити речі, що показують тобі: "Я важлива". Не геройства, маленькі. Поснідати красиво. Сказати "ні" ввечері, коли втомилась. Не виправдовуватись за нормальні бажання. Маніпуляція рухається в зоні низької самоповаги. Висока — як антитіла.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Ключове питання -->
+  <div class="section" style="animation-delay:2s">
+    <h2 class="section-title">Ключове питання</h2>
+    <p>Найшвидший спосіб перевірити, чи маєш справу з маніпуляцією — одне просте питання, поставлене собі чесно.</p>
+
+    <div class="question-card">
+      <div class="question-label">Запитай себе</div>
+      <div class="question-main">"Чи я зробила б це, якби не було провини, страху чи обовʼязку?"</div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Якщо <em>"так" — це твій вибір</em>. Якщо ні — це не твій вибір, це маніпуляція. Здорове "так" звучить як "я хочу". Маніпулятивне — як "я мушу, бо інакше...". Різниця всередині помітна, якщо чесно слухати. І саме чесність із собою — найперший крок до свободи від чужих гачків.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:2.15s">
+    <h2 class="section-title">Замість висновку</h2>
+    <div class="final-quote">
+      <div class="final-text">Маніпуляція тримається на <strong>невидимості</strong>. Вона працює, поки ти не знаєш, як її назвати. У мить, коли ти бачиш техніку — вона втрачає половину сили. Ти не зобовʼязана грати в чужі ігри. Не зобовʼязана відповідати на провокації. Не зобовʼязана виправдовуватись. Найреволюційніше речення: "Я думаю, ти зараз мною маніпулюєш". А далі — твій вибір, що з цим робити.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>

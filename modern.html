@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Сучасні постаті</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:6px}
+.card-years{font-size:10px;font-weight:300;letter-spacing:.2em;color:rgba(212,175,110,.7);margin-bottom:10px;text-transform:uppercase}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.72)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.82);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+
+.toc{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-bottom:48px;opacity:0;animation:riseIn 1s .9s ease forwards}
+.toc a{font-size:11px;font-weight:300;letter-spacing:.2em;text-transform:uppercase;color:rgba(200,216,255,.65);text-decoration:none;padding:10px 18px;border:1px solid rgba(200,216,255,.18);border-radius:100px;transition:all .3s;background:rgba(200,216,255,.04)}
+.toc a:hover{color:#fff;border-color:rgba(200,216,255,.4);background:rgba(200,216,255,.10);transform:translateY(-2px)}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Сучасні постаті</h1>
+  <p class="page-subtitle">Ті, хто формує наш час</p>
+
+  <nav class="toc">
+    <a href="#tech">🤖 Технології</a>
+    <a href="#thinkers">🧠 Мислителі</a>
+    <a href="#writers">✍️ Письменники</a>
+    <a href="#culture">🎤 Культура</a>
+    <a href="#sport">⚽ Спорт</a>
+    <a href="#ukraine">🇺🇦 Українці</a>
+  </nav>
+
+  <div class="section" style="animation-delay:1.1s">
+    <div class="hero-quote">
+      <div class="hero-text">"Майбутнє вже тут — просто розподілене нерівномірно"</div>
+      <div class="hero-author">Вільям Гібсон</div>
+    </div>
+    <p>Ми звикли вважати "великими" тих, хто давно помер. Але прямо зараз навколо нас живуть люди, які так само переробляють реальність — просто ми ще не встигли побачити масштаб. AI, біотех, нова музика, нова фізика, війни і ті, хто їм опирається. Ця сторінка — про тих, хто формує наш час, поки ти читаєш цей текст.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 🤖 Технології і AI -->
+  <div class="section" id="tech" style="animation-delay:1.3s">
+    <h2 class="section-title">🤖 Технології і AI</h2>
+    <p>Найбільша революція людства за останні 50 років відбувається зараз. Ці люди — ті, хто її творить. Через 30 років школярі вчитимуть їх так само, як ми вчили Едісона і Тесла.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">💬</span>
+        <div class="card-title">Сем Альтман</div>
+        <div class="card-years">1985–</div>
+        <div class="card-text">CEO OpenAI, людина за ChatGPT. У 19 кинув Стенфорд, у 28 очолив Y Combinator. Запустив у листопаді 2022 інструмент, який за 2 місяці отримав 100 мільйонів користувачів — швидше за TikTok, Instagram, що завгодно. Звільнений радою OpenAI у 2023 — повернутий через 5 днів після бунту співробітників. Вирішує, як AI зміниться людство.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧠</span>
+        <div class="card-title">Деміс Гассабіс</div>
+        <div class="card-years">1976–</div>
+        <div class="card-text">Британець, чемпіон світу з шахів у 13 років. Засновник DeepMind — AI-лабораторії Google. Створив AlphaGo — програму, яка перемогла найкращого гравця світу в Го (вважалось неможливим). AlphaFold розшифрував структуру 200 мільйонів білків — за 1 рік зробив те, для чого науці потрібно було б 1000. Нобелівська премія з хімії 2024. Пише історію медицини XXI ст.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎮</span>
+        <div class="card-title">Дженсен Хуанг</div>
+        <div class="card-years">1963–</div>
+        <div class="card-text">Тайванець, який у 30 заснував NVIDIA — компанію, що робила графічні чипи для відеоігор. Виявилось, що ці ж чипи ідеальні для AI. У 2024 NVIDIA стала найдорожчою компанією світу. Ходить у чорній шкіряній куртці, татуювання з логотипом компанії на руці. Без його чипів немає ні ChatGPT, ні Tesla, ні сучасного AI взагалі.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📘</span>
+        <div class="card-title">Марк Цукерберг</div>
+        <div class="card-years">1984–</div>
+        <div class="card-text">У 19 років зі студентського гуртожитку Гарварду запустив Facebook. Сьогодні Meta — це Facebook, Instagram, WhatsApp: 4 мільярди користувачів, половина людства. Постать суперечлива — від звинувачень у втручанні в вибори до скандалу Cambridge Analytica. У 2024 несподівано перетворився з "лиходія Кремнієвої долини" на популярного інженера-філантропа.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔍</span>
+        <div class="card-title">Ларрі Пейдж і Сергій Брін</div>
+        <div class="card-years">1973–, 1973–</div>
+        <div class="card-text">Двоє студентів Стенфорду, один з яких — киянин, що в 6 років переїхав з СРСР у США. У 1998 у гаражі написали алгоритм пошуку — і назвали Google. Сьогодні: 90% усіх запитів планети, YouTube, Android, Chrome, Maps, AI-моделі Gemini. Майже всі ходи людства в інтернеті проходять через їхні сервери.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧬</span>
+        <div class="card-title">Дженніфер Дудна</div>
+        <div class="card-years">1964–</div>
+        <div class="card-text">Американська біохімікиня, яка з французькою колегою Шарпантьє відкрила CRISPR — інструмент, що дозволяє редагувати ДНК так само, як текст у Word. Нобелівська премія з хімії 2020. Завдяки їй уже лікують серповидну анемію, перевіряють лікування раку, спадкових хвороб. Можливо, її покоління стане першим, що подолає старіння.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 🧠 Мислителі і науковці -->
+  <div class="section" id="thinkers" style="animation-delay:1.5s">
+    <h2 class="section-title">🧠 Мислителі і науковці</h2>
+    <p>Не "філософи в башті", а ті, хто пояснює нам наш же мозок, наше суспільство і нашу планету — мовою, яку розуміють мільйони. Їхні книги і лекції формують спосіб мислення цілого покоління.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">📚</span>
+        <div class="card-title">Юваль Ной Харарі</div>
+        <div class="card-years">1976–</div>
+        <div class="card-text">Ізраїльський історик, який написав "Sapiens" — книгу, що пояснює всю історію людства як історію вигаданих історій (грошей, націй, релігій). 45 мільйонів проданих копій у понад 60 мовах. Гей, веган, медитує по 2 години щодня. У 2024 видав "Nexus" — про AI як новий вид інформаційної революції. Один з небагатьох, кого слухають і Обама, і Маск.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧠</span>
+        <div class="card-title">Деніел Канеман</div>
+        <div class="card-years">1934–2024</div>
+        <div class="card-text">Психолог, єдиний, хто отримав Нобеля з економіки, не будучи економістом. Довів: ми зовсім не раціональні. У нас є "Система 1" (швидка, інтуїтивна) і "Система 2" (повільна, логічна) — і Система 1 командує частіше. "Думай повільно... вирішуй швидко" — біблія про те, чому ми приймаємо погані рішення. Помер у 90, працюючи до останнього дня.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌍</span>
+        <div class="card-title">Девід Аттенборо</div>
+        <div class="card-years">1926–</div>
+        <div class="card-text">Британець, який 70 років знайомить людство з природою через документальні фільми BBC ("Planet Earth", "Blue Planet", "Frozen Planet"). У 90+ років продовжує знімати, борючись за збереження природи. Більше людей побачили світ через його очі, ніж через будь-які інші. Голос природи в епоху, коли вона зникає.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎤</span>
+        <div class="card-title">Браян Грін</div>
+        <div class="card-years">1963–</div>
+        <div class="card-text">Американський фізик-теоретик, який пояснює квантову механіку, теорію струн і чорні дірки так, що ти розумієш — і не відчуваєш себе дурним. "Елегантний Всесвіт", "Тканина космосу". Засновник World Science Festival. Робить те, без чого наука лишилась би в башті: говорить з нами зрозумілою мовою про Всесвіт, у якому ми живемо.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌱</span>
+        <div class="card-title">Стівен Пінкер</div>
+        <div class="card-years">1954–</div>
+        <div class="card-text">Канадсько-американський психолінгвіст з Гарварду. Доводить статистикою: світ стає кращим. Менше війн, більше освіти, нижча дитяча смертність — всупереч відчуттю від новин. "Просвітництво сьогодні", "Кращі ангели нашої природи". Один з небагатьох публічних інтелектуалів, який приносить добрі новини на основі даних, а не оптимізму.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚖️</span>
+        <div class="card-title">Майкл Сендел</div>
+        <div class="card-years">1953–</div>
+        <div class="card-text">Гарвардський філософ. Його курс "Justice" — найпопулярніший в історії Гарварду, безкоштовно дивився понад 30 мільйонів людей в YouTube. Питає прості, але незручні: чи можна продавати нирки? чи мав рацію закон, що карає Едварда Сноудена? "Що не можна купити за гроші" — про межі ринкового мислення в усіх сферах життя.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- ✍️ Сучасні письменники -->
+  <div class="section" id="writers" style="animation-delay:1.7s">
+    <h2 class="section-title">✍️ Сучасні письменники</h2>
+    <p>Література не вмерла з виходом інтернету — навпаки, ці автори говорять до нас з тими, що до них не існували: алгоритми, ізоляція, гендерні питання, постпандемійна тривога. Їх переклали мільйонними тиражами в десятки мов.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🐈</span>
+        <div class="card-title">Харукі Муракамі</div>
+        <div class="card-years">1949–</div>
+        <div class="card-text">Японець, який 7 років тримав джаз-бар у Токіо — і тільки потім почав писати. "Норвезький ліс", "Кафка на пляжі", "1Q84". Книги перекладено на 50 мов. Його герої завжди трохи самотні, слухають класичну музику і переживають дивні речі. Бігає марафони, кожен ранок встає о 4-й і пише до полудня. 40 років підряд.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🩸</span>
+        <div class="card-title">Маргарет Етвуд</div>
+        <div class="card-years">1939–</div>
+        <div class="card-text">Канадка, яка у 1985 написала "Розповідь служниці" — антиутопію про релігійну диктатуру, де жінок використовують для народжування дітей. У 2017 за нею зняли серіал — і книга стала символом сучасної боротьби за репродуктивні права. У 80+ продовжує писати. Дотепна, прониклива, безкомпромісна. Букерівська премія двічі.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💔</span>
+        <div class="card-title">Саллі Руні</div>
+        <div class="card-years">1991–</div>
+        <div class="card-text">Ірландка, яка у 27 опублікувала "Нормальні люди" — і миттєво стала голосом міленіалів. Сухим, точним стилем пише про стосунки, тривогу, класові різниці, секс і політику. Себе називає марксисткою. Не дає інтерв'ю, не сидить у соцмережах. Її книги і серіали (BBC) — як портрет ХХІ століття у дзеркало.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌌</span>
+        <div class="card-title">Лю Цисінь</div>
+        <div class="card-years">1963–</div>
+        <div class="card-text">Китайський інженер, який у вільний час написав трилогію "Завдання трьох тіл" — найвідомішу sci-fi в світі за останнє десятиліття. Перший китайський автор з премією "Г'юго". Президент Обама і Цукерберг — його фанати. Netflix зняв серіал у 2024. Пише про космос, контакт із цивілізаціями і моральні дилеми, як ніхто з західних авторів.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🩰</span>
+        <div class="card-title">Ольга Токарчук</div>
+        <div class="card-years">1962–</div>
+        <div class="card-text">Польська письменниця, психологиня. Нобелівська премія з літератури 2018. "Книги Якова" — 1000-сторінковий роман про забутого месію XVIII століття. Активно говорить про націоналізм, ксенофобію, права жінок — за що її ненавидить польська права влада. Один з найважливіших голосів Центральної Європи.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📔</span>
+        <div class="card-title">Світлана Алексієвич</div>
+        <div class="card-years">1948–</div>
+        <div class="card-text">Білоруська журналістка, яка винайшла власний жанр — поліфонічний документальний роман. "У війни не жіноче обличчя", "Чорнобильська молитва", "Час секонд-генд". 30 років записувала сотні живих голосів. Нобелівська премія 2015 — перша білоруска. Зараз у вигнанні, у списку "екстремістів" Лукашенка.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 🎤 Культура і музика -->
+  <div class="section" id="culture" style="animation-delay:1.9s">
+    <h2 class="section-title">🎤 Культура і музика</h2>
+    <p>У ХХІ столітті культура більше не має кордонів — корейський бой-бенд завойовує Бразилію, репер з Детройта співає українською, японський мультфільм отримує Оскар. Ці люди — частина того, як ми всі стали одним слухачем.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">👑</span>
+        <div class="card-title">Бейонсе</div>
+        <div class="card-years">1981–</div>
+        <div class="card-text">Найвідоміша співачка ХХІ ст., 32 Греммі — більше за будь-кого в історії. Перетворила альбом на культурний event ("Lemonade", "Renaissance"). Перший чорношкірий артист на головній сцені Coachella. Її виступ Beychella 2018 — у програмах Гарварда як приклад культурної архітектури. Бізнес-імперія в мільярди доларів.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎵</span>
+        <div class="card-title">Тейлор Свіфт</div>
+        <div class="card-years">1989–</div>
+        <div class="card-text">Перша жінка-мільярдерка від музики самотужки. Перевидала свої альбоми, щоб повернути контроль над авторськими правами — після цього індустрія змінила правила. Турне Eras Tour 2023-24 — найдорожче в історії, понад 2 мільярди доларів. У 14 переїхала з родиною в Нашвілл, щоб писати музику. Не зупинилась.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎤</span>
+        <div class="card-title">Емінем</div>
+        <div class="card-years">1972–</div>
+        <div class="card-text">Білий хлопець з трейлерного парку в Детройті, якого мама виховувала на Welfare-чеках. Першим зламав расовий бар'єр у репі — і став одним з найбільших артистів історії. 220+ мільйонів проданих альбомів. Вижив після передозування у 2007, тверезий 16+ років. Документує свою травму, депресію і шлях у віршах — як ніхто з його покоління.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💜</span>
+        <div class="card-title">BTS</div>
+        <div class="card-years">2013–</div>
+        <div class="card-text">Корейський бой-бенд, який зробив K-pop глобальним. Перший корейський артист на №1 у Billboard, виступ перед ООН, фанатна армія ARMY в десятки мільйонів. Принесли Кореї $5 мільярдів доходу — більше, ніж деякі галузі економіки. Один із них — RM — самотужки вивчив англійську по серіалу "Друзі". Показали, що культурний центр світу більше не лише на Заході.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎬</span>
+        <div class="card-title">Хаяо Міядзакі</div>
+        <div class="card-years">1941–</div>
+        <div class="card-text">Японський режисер, засновник Studio Ghibli. "Віднесені привидами", "Принцеса Мононоке", "Мій сусід Тоторо". Малює кожен кадр вручну. Два Оскари — у 2003 і 2024 (за фільм "Хлопчик і чапля", знятий у 82 роки). Створив анімацію, яку дивляться як медитацію. Його ім'я — синонім того, що дитячий мультфільм може бути найдорослішим мистецтвом.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🥷</span>
+        <div class="card-title">Бенксі</div>
+        <div class="card-years">1974–?</div>
+        <div class="card-text">Британський стріт-арт художник, чия особистість досі офіційно невідома. Його роботи знаходять зранку на стінах міст по всьому світу — політичні, дотепні, провокативні. Картина "Дівчина з кулькою" сама себе подрібнила в момент продажу на аукціоні Sotheby's за 1 млн £. Перетворив анонімність на найвпізнаваніший бренд у мистецтві.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- ⚽ Спорт -->
+  <div class="section" id="sport" style="animation-delay:2.1s">
+    <h2 class="section-title">⚽ Спорт</h2>
+    <p>Останні 20 років у спорті — це найвищий рівень, до якого людство колись доходило. Швидше, точніше, довше, ніж усі покоління до них. Ці імена будуть в книгах через 100 років — як Пеле і Магомет Алі сьогодні.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">⚽</span>
+        <div class="card-title">Ліонель Мессі</div>
+        <div class="card-years">1987–</div>
+        <div class="card-text">Аргентинець, якому в 13 років оплатили переїзд з Барселони — бо мав гормональний дефіцит. Виріс — і став найкращим футболістом усіх часів. 8 разів "Золотий м'яч" — більше за будь-кого. У 2022 нарешті виграв Чемпіонат світу з Аргентиною — те, заради чого боровся 20 років. Найскромніший великий — і саме за це його люблять як рідного.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🐐</span>
+        <div class="card-title">Кріштіану Роналду</div>
+        <div class="card-years">1985–</div>
+        <div class="card-text">Португалець, який зростав у бідній сім'ї на острові Мадейра. Працював, як ніхто, — і став машиною з гарматними ударами. 5 разів "Золотий м'яч", найрезультативніший футболіст в історії, єдиний, хто забивав на 5 чемпіонатах світу. Понад 600 мільйонів підписників в Instagram — найбільше в світі. Брат-конкурент Мессі — і вічна дискусія "хто кращий".</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎾</span>
+        <div class="card-title">Серена Вільямс</div>
+        <div class="card-years">1981–</div>
+        <div class="card-text">Чорношкіра дівчинка з Комптона, яку батько навчав тенісу на запущених кортах. Виграла 23 турніри Великого шолома — більше за будь-кого в Open Era. Грала, будучи вагітною. Повернулась після пологів. У 40 завершила кар'єру, ставши символом не лише тенісу, а й боротьби з расизмом і сексизмом у спорті.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🏃</span>
+        <div class="card-title">Юсейн Болт</div>
+        <div class="card-years">1986–</div>
+        <div class="card-text">Найшвидша людина в історії планети. Світовий рекорд 100 м — 9.58 с (2009). 8 олімпійських золотих медалей. Біг із посмішкою, не напружуючись — і саме це робило його неможливо швидким. Ямайський хлопець, який зробив бідну країну центром легкої атлетики світу. Завершив у 30, не зазнавши жодної значної травми. Унікум.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🏀</span>
+        <div class="card-title">ЛеБрон Джеймс</div>
+        <div class="card-years">1984–</div>
+        <div class="card-text">Виріс у бідному районі Огайо, мама-одиначка. У школі вже був феноменом — ESPN показував його шкільні матчі. 21 рік у NBA, 4 чемпіонські титули, найрезультативніший гравець в історії ліги. У 39+ продовжує грати на топ-рівні. Активіст, мільярдер, заснував школу для бідних дітей у рідному Акроні. Грає тепер з власним сином.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🥊</span>
+        <div class="card-title">Олександр Усик</div>
+        <div class="card-years">1987–</div>
+        <div class="card-text">Українець із Сімферополя, який у 35 років переміг усіх головних суперників у двох вагових категоріях. Абсолютний чемпіон світу серед крузерів і важковаговиків. Воював у тероборону у 2022, повернувся в ринг — і двічі переміг непереможного Тайсона Ф'юрі. Феноменальний боксер і людина, яка для світу стала обличчям української стійкості.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 🇺🇦 Сучасні українці -->
+  <div class="section" id="ukraine" style="animation-delay:2.3s">
+    <h2 class="section-title">🇺🇦 Сучасні українці</h2>
+    <p>Покоління, яке проживає одну з найдраматичніших епох в історії країни. Ті, хто творив Україну до 2022, і ті, чиї імена стали світовими після. Спадщина в реальному часі.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🎭</span>
+        <div class="card-title">Володимир Зеленський</div>
+        <div class="card-years">1978–</div>
+        <div class="card-text">Юрист за освітою, актор-комік за професією, президент за вибором народу. У 2019 з гумором переміг Порошенка. У 2022, коли всі чекали його втечі, відповів "мені потрібні патрони, а не таксі" — і зробив Україну символом опору ХХІ ст. Його зелена футболка стала найвпізнаваніший образом світового лідера. Найвпливовіший українець з часів Хмельницького.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚔️</span>
+        <div class="card-title">Валерій Залужний</div>
+        <div class="card-years">1973–</div>
+        <div class="card-text">Головнокомандувач ЗСУ під час найскладнішого року війни (2022-2024). Реформував армію, перетворив її з пострадянської структури на одну з найбоєздатніших у світі. Його стратегічне мислення зупинило російський наступ на Київ. У 2024 призначений послом у Великобританії. Народний герой і одна з найвпізнаваніших військових постатей ХХІ ст.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎤</span>
+        <div class="card-title">Святослав Вакарчук</div>
+        <div class="card-years">1975–</div>
+        <div class="card-text">Кандидат фізико-математичних наук, лідер "Океану Ельзи" — найважливішої української рок-групи. 30+ років формує музичний саундтрек до Української революції. У 2014 і 2022 — на фронті, з концертами для військових. У 2019 заснував партію "Голос". Симвпол того, що митець може бути совістю нації, не сидячи в башті.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📖</span>
+        <div class="card-title">Сергій Жадан</div>
+        <div class="card-years">1974–</div>
+        <div class="card-text">Поет, романіст, музикант, перекладач — і голос Слобожанщини. "Ворошиловград", "Месопотамія". Із 2014 — постійно на сході країни, з військовими, волонтерить, виступає під обстрілами. Його поезія тримає ритм, у якому жилла-битися ХХІ-вічна Україна. У 2024 пішов у "Хартію" — добровольчий полк ЗСУ. Найважливіший український письменник свого покоління.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎵</span>
+        <div class="card-title">Джамала</div>
+        <div class="card-years">1983–</div>
+        <div class="card-text">Кримська татарка, яка у 2016 виграла Євробачення з піснею "1944" — про депортацію її народу Сталіним. Тоді світ вперше масово почув про кримських татар. Після 2022 — голос України на найбільших сценах планети, від Brit Awards до Кеннеді-центру. Поєднує оперний вокал, етнічні мотиви і сучасний звук. Один з найоригінальніших голосів Європи.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🏛️</span>
+        <div class="card-title">Ліна Костенко</div>
+        <div class="card-years">1930–</div>
+        <div class="card-text">Найвидатніша жива українська поетеса. У радянські часи 16 років забороняли друкувати — мовчала, але не зламалась. "Маруся Чурай", "Берестечко", "Записки українського самашедшого". У 90+ років продовжує писати, виступати з різкими громадянськими позиціями. Совість покоління шістдесятників і одна з найважливіших жінок в історії української культури.</div>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Те, що відбувається з Україною з 2022 року, — найбільший культурний момент у її історії з часів незалежності. Світ нарешті чує наші імена правильно. <em>Ми всі стаємо свідками того, як творяться біографії для майбутніх підручників</em>.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:2.5s">
+    <h2 class="section-title">Замість висновку</h2>
+    <div class="final-quote">
+      <div class="final-text">Велика спокуса — думати, що "великі люди жили колись". Але прямо зараз, поки ти читаєш цей текст, хтось з них пише код, музику чи диригує військовою операцією. Через 50 років школярі вчитимуть їхні імена напам'ять. <strong>Ми живемо всередині майбутньої історії</strong> — і це найкраща причина дивитись на свій час уважно.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>

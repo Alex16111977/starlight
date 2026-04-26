@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Великі режисери</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+.directors{display:grid;grid-template-columns:1fr;gap:14px;margin-top:20px}
+.dir{display:flex;gap:20px;align-items:flex-start;background:rgba(200,216,255,.05);border:1px solid rgba(200,216,255,.12);border-radius:14px;padding:22px 24px;transition:all .4s}
+.dir:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.24)}
+.dir-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-weight:300;font-size:30px;color:transparent;background:linear-gradient(135deg,#8ab0ff,#d4af6e);-webkit-background-clip:text;background-clip:text;min-width:40px;text-align:center;flex-shrink:0;line-height:1.3}
+.dir-body{flex:1}
+.dir-name{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:20px;color:rgba(220,230,255,.95);margin-bottom:2px}
+.dir-meta{font-size:10px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;color:rgba(200,216,255,.5);margin-bottom:10px}
+.dir-text{font-size:13px;font-weight:200;line-height:1.75;color:rgba(200,216,255,.78);margin-bottom:6px}
+.dir-watch{font-size:11px;font-weight:300;color:rgba(212,175,110,.7)}
+.dir-watch em{font-style:italic;font-family:'Cormorant Garamond',serif;font-size:13px}
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.82);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(200,216,255,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.35);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(26px,4vw,36px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+@media(max-width:520px){.dir{flex-direction:column;gap:8px}.dir-num{text-align:left}}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="cinema.html">← Кіно</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Великі режисери</h1>
+  <p class="page-subtitle">12 імен, з яких починається</p>
+
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Режисер — це той, хто бачить фільм ще до того, як його зняли"</div>
+      <div class="hero-author">Альфред Гічкок</div>
+    </div>
+    <p>"Авторське кіно" звучить страшно, ніби треба мати освіту. Насправді режисер — як письменник: у кожного свій голос. Якщо знаєш голос — кожен фільм відкривається інакше. Ось 12 імен, із яких починається будь-яка серйозна розмова про кіно. По одному фільму від кожного — і ти вже інша глядачка.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Дванадцять голосів</h2>
+    <p>Це не "кращі режисери всіх часів" — це 12 різних світів. Кожен має свою тему, свою мову, свій спосіб дивитись на людину. Якщо хоч один з них торкає — ти знайшла свого автора.</p>
+
+    <div class="directors">
+      <div class="dir">
+        <div class="dir-num">1</div>
+        <div class="dir-body">
+          <div class="dir-name">Андрій Тарковський</div>
+          <div class="dir-meta">СРСР · 1932-1986</div>
+          <div class="dir-text">Кіно як молитва і час. Дуже довгі кадри, тиша, вода, дзеркала. Не "сюжет" — а стан душі. Якщо подобається — вже навряд відірвешся.</div>
+          <div class="dir-watch">Почати з: <em>"Дзеркало" (1975), "Сталкер" (1979)</em></div>
+        </div>
+      </div>
+      <div class="dir">
+        <div class="dir-num">2</div>
+        <div class="dir-body">
+          <div class="dir-name">Інгмар Бергман</div>
+          <div class="dir-meta">Швеція · 1918-2007</div>
+          <div class="dir-text">Найглибший дослідник самотності, віри, смерті. Жорсткі обличчя крупним планом. Розмови, які болять. Кіно як терапія, тільки тяжча.</div>
+          <div class="dir-watch">Почати з: <em>"Сьома печатка" (1957), "Дикі суниці" (1957)</em></div>
+        </div>
+      </div>
+      <div class="dir">
+        <div class="dir-num">3</div>
+        <div class="dir-body">
+          <div class="dir-name">Стенлі Кубрик</div>
+          <div class="dir-meta">США · 1928-1999</div>
+          <div class="dir-text">Перфекціоніст-математик. Симетрія, повільне наближення, моторошна точність. Кожен його фільм — інший жанр, але впізнається з першого кадру.</div>
+          <div class="dir-watch">Почати з: <em>"2001: Космічна одіссея" (1968), "Сяйво" (1980)</em></div>
+        </div>
+      </div>
+      <div class="dir">
+        <div class="dir-num">4</div>
+        <div class="dir-body">
+          <div class="dir-name">Девід Лінч</div>
+          <div class="dir-meta">США · 1946-2025</div>
+          <div class="dir-text">Сни наяву. Темне підсвідоме американської провінції. Деякі фільми пояснити неможливо — їх можна тільки відчути. Або не відчути.</div>
+          <div class="dir-watch">Почати з: <em>"Малголланд Драйв" (2001), "Слон" (1980)</em></div>
+        </div>
+      </div>
+      <div class="dir">
+        <div class="dir-num">5</div>
+        <div class="dir-body">
+          <div class="dir-name">Хаяо Міядзакі</div>
+          <div class="dir-meta">Японія · 1941</div>
+          <div class="dir-text">Аніме як висока поезія. Тиха гумаристична душа, любов до природи, антивоєнність. "Мультики" Міядзакі — серйозне мистецтво для дорослих, замасковане під дитячі.</div>
+          <div class="dir-watch">Почати з: <em>"Принцеса Мононоке" (1997), "Віднесені привидами" (2001)</em></div>
+        </div>
+      </div>
+      <div class="dir">
+        <div class="dir-num">6</div>
+        <div class="dir-body">
+          <div class="dir-name">Вонг Кар-Вай</div>
+          <div class="dir-meta">Гонконг · 1958</div>
+          <div class="dir-text">Найкрасивіше кіно про самотність і нерозділене кохання. Сповільнена камера, неонові кольори, музика, що тримає місяцями. Емоція в чистому вигляді.</div>
+          <div class="dir-watch">Почати з: <em>"Любовний настрій" (2000), "Чункінг експрес" (1994)</em></div>
+        </div>
+      </div>
+      <div class="dir">
+        <div class="dir-num">7</div>
+        <div class="dir-body">
+          <div class="dir-name">Педро Альмодовар</div>
+          <div class="dir-meta">Іспанія · 1949</div>
+          <div class="dir-text">Кричущі кольори, сильні жінки, мелодрами без іронії. Іспанська палка щирість. Любити чи не любити — рівно ділить глядачів навпіл.</div>
+          <div class="dir-watch">Почати з: <em>"Все про мою матір" (1999), "Поговори з нею" (2002)</em></div>
+        </div>
+      </div>
+      <div class="dir">
+        <div class="dir-num">8</div>
+        <div class="dir-body">
+          <div class="dir-name">Чжан Імоу</div>
+          <div class="dir-meta">Китай · 1950</div>
+          <div class="dir-text">Найбільш візуальний режисер у світі. Кадри, які можна повісити на стіну. Червоне, жовте, золоте. Епос і ніжність одночасно.</div>
+          <div class="dir-watch">Почати з: <em>"Підняти червоний ліхтар" (1991), "Герой" (2002)</em></div>
+        </div>
+      </div>
+      <div class="dir">
+        <div class="dir-num">9</div>
+        <div class="dir-body">
+          <div class="dir-name">Пол Томас Андерсон</div>
+          <div class="dir-meta">США · 1970</div>
+          <div class="dir-text">Сучасний майстер. Великі багатогеройні фрески, складні характери, повільні наростання. Один із найкращих живих режисерів — і це не перебільшення.</div>
+          <div class="dir-watch">Почати з: <em>"Нафта" (2007), "Магнолія" (1999)</em></div>
+        </div>
+      </div>
+      <div class="dir">
+        <div class="dir-num">10</div>
+        <div class="dir-body">
+          <div class="dir-name">Аньєс Варда</div>
+          <div class="dir-meta">Франція · 1928-2019</div>
+          <div class="dir-text">Бабуся Нової хвилі. Тепле, ніжне, людиноцентричне кіно. Документальне і художнє в одному. Якщо втомилась від похмурих геніїв — Варда повертає віру в кіно.</div>
+          <div class="dir-watch">Почати з: <em>"Клео від 5 до 7" (1962), "Лиця, села" (2017)</em></div>
+        </div>
+      </div>
+      <div class="dir">
+        <div class="dir-num">11</div>
+        <div class="dir-body">
+          <div class="dir-name">Кшиштоф Кесльовський</div>
+          <div class="dir-meta">Польща · 1941-1996</div>
+          <div class="dir-text">Тонке польське кіно про моральні дилеми. Один із найбільш "європейських" режисерів — у хорошому сенсі. Колір, музика, тиша.</div>
+          <div class="dir-watch">Почати з: <em>"Три кольори: Синій" (1993), "Подвійне життя Вероніки" (1991)</em></div>
+        </div>
+      </div>
+      <div class="dir">
+        <div class="dir-num">12</div>
+        <div class="dir-body">
+          <div class="dir-name">Сергій Лозниця</div>
+          <div class="dir-meta">Україна · 1964</div>
+          <div class="dir-text">Один із найважливіших сучасних документалістів. Жорстко, чесно, без коментарів — ставить камеру і дивиться. Справжній погляд на історію та сучасність.</div>
+          <div class="dir-watch">Почати з: <em>"Майдан" (2014), "Бабин Яр. Контекст" (2021)</em></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Як знайти "свого" режисера</h2>
+    <p>Не намагайся охопити всіх. Проста стратегія: подивись по одному фільму від кожного. Не сподобалось — викидай зі списку. Сподобалось — дивись усі його роботи. Один режисер, проникнутий глибоко — дає більше, ніж 50 випадкових фільмів.</p>
+
+    <div class="highlight">
+      <p>Коли вже знайшла "свого" — твоя черга всередині нього. У хорошого автора кожен фільм — продовження попереднього. Ти бачиш, як він міняється з роками, що його хвилює, як ростуть його теми. <em>Це як читати листування з людиною через все життя.</em></p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Ключове питання</h2>
+    <p>Більшість людей дивиться "те, що в тренді". А режисер — це коли вибираєш не за рейтингом і не за актором, а за іменем за камерою.</p>
+
+    <div class="question-card">
+      <div class="question-label">Запитай себе</div>
+      <div class="question-main">"Чи я хоч раз обирала фільм за режисером?"</div>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2s">
+    <h2 class="section-title">Висновок</h2>
+    <div class="final-quote">
+      <div class="final-text">Режисер — це <strong>розмова крізь десятиліття</strong>. Один автор, до якого ти повертаєшся щоразу, дає глибше переживання, ніж тисяча випадкових прем'єр.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>

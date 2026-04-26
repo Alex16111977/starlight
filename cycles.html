@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Цикли поведінки</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(220,230,255,.92)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.72)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.82);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(200,216,255,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.35);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(26px,4vw,36px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Цикли поведінки</h1>
+  <p class="page-subtitle">Чому одні й ті ж сценарії повертаються</p>
+
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Поки несвідоме не стане свідомим, воно керуватиме твоїм життям, а ти називатимеш це долею"</div>
+      <div class="hero-author">Карл Юнг</div>
+    </div>
+    <p>Ти йдеш зі стосунків — і за рік опиняєшся у схожих. Знову обираєш роботу, де тебе виснажують. Знову кажеш "так", коли хотіла "ні". Знову обіцяєш собі змінитись із понеділка — і повторюєш у середу. Це не "доля" і не "характер". Це поведінкові цикли — і у них є логіка, яку можна розгадати.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 🔄 Що таке цикли -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">🔄 Що таке поведінкові цикли</h2>
+    <p>Цикл — це не "погана звичка". Це самопідтримна петля, у якій тригер → реакція → результат → тригер. Кожен прохід її закріплює. Мозок любить петлі — навіть болючі — бо вони передбачувані.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">⚙️</span>
+        <div class="card-title">Звідки береться петля</div>
+        <div class="card-text">Мозок постійно економить енергію. Якщо ситуація схожа на минулу — він не "думає" наново, а вмикає попередню програму. Це працює добре в технічних задачах. У стосунках і емоціях — катастрофічно: ми реагуємо на нову людину старим сценарієм, отримуємо старий результат, і петля закріплюється.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌪️</span>
+        <div class="card-title">Знайома біль безпечніша</div>
+        <div class="card-text">Парадокс мозку: знайомий дискомфорт він обирає над незнайомим спокоєм. Бо знайомий "відомий" — а отже передбачуваний. Невідомість сприймається як небезпека, навіть якщо в перспективі вона краща. Ось чому "вирватись" із циклу психологічно важче, ніж знову в нього зайти.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🪞</span>
+        <div class="card-title">Самопідтвердження</div>
+        <div class="card-text">"Я завжди опиняюсь у поганих стосунках" — і ти підсвідомо обираєш людей, які підтверджують це твердження. "Мене не цінують" — і ти вибираєш середовища, де це справдиться. Ти не "приваблюєш погане". Ти зчитуєш як "своє" те, що відповідає твоєму внутрішньому шаблону. Шаблон → вибір → підтвердження.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔁</span>
+        <div class="card-title">Цикл проти зміни</div>
+        <div class="card-text">Кожен прохід петлі вимагає менше енергії. Кожна спроба вийти — більше. Тому 80% людей повертаються до звичних сценаріїв. Це не слабкість — це просто фізика звичок. Знаючи це, можна не сваритись із собою, а свідомо інвестувати у складнішу, але правильнішу нову петлю.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 🎯 Найпоширеніші цикли -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">🎯 Найпоширеніші цикли</h2>
+    <p>Більшість циклів — варіації кількох універсальних сценаріїв. Перевір, які з цих ти впізнаєш у своєму житті. Впізнавання — перший крок до виходу.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">💔</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Цикл "те саме у стосунках"</div>
+          <div class="card-text">Виходиш з токсичних стосунків — за рік опиняєшся в схожих. Інша людина, інше імʼя, той самий сценарій. Емоційно недоступний. Контролюючий. "Мама замаскована під партнера". Це не "не пощастило тричі". Це твій шаблон стосунків, з яким ти зустрічаєш кожну нову людину. Шаблон родом із дитинства — і повторюється, поки не побачений.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">💼</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Цикл вигорання на роботі</div>
+          <div class="card-text">Знаходиш ідеальну роботу. За пів року вигораєш. Йдеш. Знаходиш нову — повторюється. Не "роботи погані". Це твій патерн: береш забагато, не вмієш казати ні, ставиш свої потреби в кінець. Зміна роботи без зміни патерну — лише пауза перед наступним вигоранням.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">💰</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Цикл "заробляю-витрачаю"</div>
+          <div class="card-text">Зарплата приходить — за тиждень її нема. Кредитка переповнена. Накопичити нічого не виходить, навіть коли заробляєш більше. Це не "недостатньо грошей". Це психологічна неготовність до фінансової стабільності. Гроші викликають тривогу — і ти підсвідомо їх позбуваєшся, щоб повернутись до звичного "малозабезпеченого" стану.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🍽️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Цикл "дієта-зрив"</div>
+          <div class="card-text">Понеділок — нова дієта. До п'ятниці — зрив. Сором, провина, обіцянка з нового понеділка. І знову. Це не слабкість волі — це фізіологія: обмеження → дефіцит → бунт тіла. Плюс психологія: жорсткі правила завжди ламаються. Цикл живиться сам собою через сором, який заїдається їжею.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">😩</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Цикл прокрастинації</div>
+          <div class="card-text">Не починаєш справу → тривога росте → втікаєш у соцмережі → провина → ще більша тривога → ще більша втеча. До дедлайну — паніка, нічна робота, поганий результат, обіцянка "наступного разу інакше". Цикл повторюється у кожному завданні. Не лінь — це уникнення дискомфорту, який лише наростає від уникнення.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🎭</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Цикл "догодити всім"</div>
+          <div class="card-text">Завжди допомагаєш, погоджуєшся, тримаєш чужі почуття. Накопичується втома → вибух (часто через дрібницю) → провина за вибух → ще активніше "загладжуєш" → ще швидше втомлюєшся. У середині — нездатність сказати "ні" і страх бути непотрібною. Цикл, де ти служиш усім, крім себе.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 🧠 Звідки беруться -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">🧠 Звідки беруться цикли</h2>
+    <p>Жоден цикл не виник учора. У нього довге коріння — і воно майже завжди веде в дитинство, ранні стосунки, перші уроки про те, як влаштований світ.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">👶</span>
+        <div class="card-title">Дитячі шаблони</div>
+        <div class="card-text">До 7 років мозок засвоює: як любити, як просити, чого боятись, що значить "хороша дівчинка". Ці шаблони лягають у фундамент. Доросла ти зустрічаєш людину — і автоматично вмикається сценарій, написаний у 5 років з мамою чи татом. Чим менше ти його усвідомлюєш — тим сильніше він керує.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔗</span>
+        <div class="card-title">Стиль привʼязаності</div>
+        <div class="card-text">Як батьки реагували на твої потреби — формує "стиль привʼязаності". Безпечний (стабільна реакція), тривожний (нестабільна), уникальний (відсторонена), хаотичний (то любов, то жорстокість). Цей стиль програється у всіх стосунках — поки не побачиш його і не змінювеш свідомо.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🩹</span>
+        <div class="card-title">Травма як режисер</div>
+        <div class="card-text">Травма (велика чи накопичувальна) часто стає тим, що "режисує" повторювані сценарії. Психіка несвідомо створює ситуації, у яких можна "виправити" минуле — але без свідомості це лише повторення болю. Бессель ван дер Колк: "Тіло пам'ятає те, чого розум не може назвати".</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎭</span>
+        <div class="card-title">Друга вигода</div>
+        <div class="card-text">У кожному циклі — навіть у "поганому" — ховається невидима вигода. Прокрастинація захищає від страху провалу. Токсичні стосунки дають драму, у якій ти "хороша". Обмеження в їжі — ілюзію контролю. Цикл не відпустить, поки ти не побачиш, чим він тобі служить — і не знайдеш кращий спосіб закрити цю потребу.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 🚪 Як вийти -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">🚪 Як вийти з циклу</h2>
+    <p>Розуміння, що ти в циклі, ще не виводить із нього — але це фундамент. Реальний вихід — це конкретні кроки, які повторюються, поки нова петля не стане сильнішою за стару.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🔍</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Назвати петлю вголос</div>
+          <div class="card-text">Запиши свій сценарій. "Я зустрічаю емоційно недоступних чоловіків — намагаюсь заслужити любов — виснажуюсь — він йде — починаю заново". У письмовому вигляді цикл виглядає очевидним. У голові — він непомітний. Назвати — означає вийти з нього у позицію спостерігача.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">⚡</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Знайти точку розриву</div>
+          <div class="card-text">У кожному циклі є момент, коли ти ще можеш зупинитись. Тригер → перші відчуття → реакція. Знайди цю середину — між тригером і реакцією. Між "він написав" і "я перестала їсти" є 30 секунд. У них — твоя свобода. Тренування — помічати ці 30 секунд, потім розширювати їх до хвилини, потім години.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🔄</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Замість петлі — дія</div>
+          <div class="card-text">Свідомо роби протилежне тому, що "хочеться" в момент. Хочеться написати екс — пиши друзі. Хочеться кинути проєкт — попрацюй ще 25 хвилин. Хочеться мовчати в конфлікті — скажи. Спочатку незручно. Через місяці — мозок будує нову петлю. Це називають "пара-доксальна інтенція".</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">📅</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">66 днів</div>
+          <div class="card-text">Дослідження Університетського коледжу Лондона: середній час, щоб нова поведінка стала автоматичною — 66 днів. Не 21, як у популярних книгах. 66. Перші тижні — найважче. Через 2 місяці — перестаєш докладати зусиль. Це означає: треба тримати курс довше, ніж комфортно. Здатися на 30-й день — частина старої петлі.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🌗</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Прогрес — спіраль, не пряма</div>
+          <div class="card-text">Реальний вихід із циклу не виглядає як "вийшла і живе щасливо". Виглядає як: спіраль. Ти повертаєшся до старого, але на іншому рівні. Помічаєш швидше, виходиш швидше, не картаєш себе так. Це не "невдача" — це нормальна траєкторія. Відпустити очікування "більше ніколи" — частина зцілення.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🛋️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Терапія для глибоких циклів</div>
+          <div class="card-text">Деякі цикли (з дитячими коренями, з травмою) самостійно не розчиняються — як би ти не "розуміла" їх. Терапевт допомагає не лише побачити шаблон, а й переписати його на тілесному, емоційному рівні. CBT, схема-терапія, IFS, EMDR — різні підходи для різних типів циклів. Інвестиція, яка повертається роками.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Ключове питання -->
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Ключове питання</h2>
+    <p>Замість запитання "чому це знову зі мною" — спробуй інше. Воно повертає фокус із "за що мені це" до "що я несу всередині".</p>
+
+    <div class="question-card">
+      <div class="question-label">Запитай себе</div>
+      <div class="question-main">"Чому моє "я" знову обрало це?"</div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Не "чому це сталось", а — <em>яка частина мене несвідомо обрала саме це</em>. Цей варіант роботи. Цього партнера. Цей конфлікт. Бо несвідома частина завжди має причину. Поки вона невидима — керує. Щойно її видно — у тебе зʼявляється вибір. А в циклу — слабшає влада.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:2.05s">
+    <h2 class="section-title">Замість висновку</h2>
+    <div class="final-quote">
+      <div class="final-text">Цикли — не вирок. Це <strong>стара мапа, яку ти несеш у нову територію</strong>. Поки мапа закрита — ти ходиш по тих самих стежках. Як тільки розгортаєш її — стежки видно. А поряд із ними — інші, якими ще ніколи не йшла. Зростання — це не перестати знати стару мапу. Це навчитись обирати, з якою картою сьогодні рухатись.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>

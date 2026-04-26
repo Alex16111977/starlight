@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Зміни клімату</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(220,230,255,.92)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.72)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.82);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(200,216,255,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.35);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(26px,4vw,36px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Зміни клімату</h1>
+  <p class="page-subtitle">Що реально відбувається</p>
+
+  <!-- Hero quote -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Усе інше, що тебе цікавить, не відбудеться, якщо ти не зможеш дихати повітрям і пити воду"</div>
+      <div class="hero-author">Карл Саґан</div>
+    </div>
+    <p>Зміни клімату — це не "майбутнє" і не "лякалка з телевізора". Це теперішнє, виміряне приладами на 6 континентах. Не апокаліпсис. Не вигадка. Просто факти, які варто знати — щоб не панікувати, а розуміти. Ця сторінка — спокійний огляд того, що говорить наука.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що реально відбувається -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Що реально відбувається</h2>
+    <p>Спочатку — холодні цифри. Без перебільшень, без знецінення. Це те, що зафіксували наукові спостереження за останні десятиліття. Дані IPCC (Міжурядова група експертів зі зміни клімату) і NASA — найавторитетніші джерела на планеті.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🌡️</span>
+        <div class="card-title">+1.2°C з 1850</div>
+        <div class="card-text">Глобальна середня температура зросла на 1.2-1.3°C з доіндустріальної ери. Здається мало? Це різниця між льодовиковим періодом і сучасним кліматом — близько 5°C. Ми вже подолали 25% цього шляху за 170 років.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📊</span>
+        <div class="card-title">9 з 10 найтепліших</div>
+        <div class="card-text">9 з 10 найгарячіших років в історії спостережень — за останні 10 років. 2023 і 2024 — найтепліші в історії. Це не статистична випадковість, це тренд.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌊</span>
+        <div class="card-title">Океани</div>
+        <div class="card-text">Рівень моря виріс на 21-24 см з 1880 і прискорюється. Океани підкислились на 30% з індустріальної революції — поглинаючи CO2, вода стає кислотою. Корали гинуть.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧊</span>
+        <div class="card-title">Льодовики</div>
+        <div class="card-text">Арктика втрачає 12% морського льоду на десятиріччя. Гренландія — 270 млрд тонн льоду на рік. Альпійські льодовики втратили 60% з 1850. Це не моделі — це супутникові виміри.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Чому це не природний цикл -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Чому це не "природний цикл"</h2>
+    <p>Чути часто: "клімат завжди змінювався". Це правда. Але способи і темпи теперішніх змін — інші, і наука це довела. Ось як ми це знаємо.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">⏳</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Темпи інші</div>
+          <div class="card-text">Природні цикли (Міланкович) тривають десятки тисяч років. Те, що відбувається зараз — століття. Ми проходимо за 100 років зміни, на які природа витрачала тисячоліття. Темп — це і є аномалія.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">📈</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">CO2 — найвищий за 800 000 років</div>
+          <div class="card-text">Концентрація CO2 в атмосфері — 425 ppm (2024). Льодові ядра з Антарктики показують: за 800 000 років не було більше 300 ppm. Ми вийшли за межу, у якій формувалось людство.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🔬</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Ізотопний підпис</div>
+          <div class="card-text">Викопний CO2 (з нафти, вугілля) має іншу ізотопну сигнатуру, ніж природний. Аналіз показує: атмосферний CO2 несе підпис викопного палива. Це як підпис автора на гранку.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">📋</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">99%+ наукова згода</div>
+          <div class="card-text">IPCC AR6 (2021): "Однозначно — людська діяльність зігріла атмосферу, океани і землю". Це не "думка кількох учених", а консенсус 234 авторів з 66 країн на основі 14 000 досліджень.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Як це нас торкається -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Як це торкається нас</h2>
+    <p>Це не "проблема білих ведмедів". Це проблема людей. Ось як зміни клімату вже впливають на життя в Україні і у світі.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">⛈️</span>
+        <div class="card-title">Екстремальна погода</div>
+        <div class="card-text">Хвилі тепла, повені, посухи частішають і стають інтенсивнішими. Європейське літо 2003 — 70 000 додаткових смертей від тепла. Подібні події тепер кожні 3-5 років.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌾</span>
+        <div class="card-title">Продовольча безпека</div>
+        <div class="card-text">Врожаї нестабільні. У тропіках — спадання. В Україні — зміна зон вирощування, зміщення сезонів, водна криза в Південному регіоні. Ціни на продукти — побічний ефект.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🏥</span>
+        <div class="card-title">Здоровʼя</div>
+        <div class="card-text">Хвороби, передані комарами (малярія, дена), розширюють географію на північ. Алергії — довші сезони. Смертність від теплових ударів зростає, особливо у літніх людей.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌍</span>
+        <div class="card-title">Кліматична міграція</div>
+        <div class="card-text">До 2050 року, за оцінками Світового банку, до 216 мільйонів людей переселяться через клімат. Це створює нові виклики для всіх країн — включно з Україною.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що вже робиться -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Що вже робиться (хороші новини)</h2>
+    <p>Це частина історії, яку рідко чути. А вона важлива — бо без неї легко скотитись у відчай. Зміни вже відбуваються, і деякі — швидші, ніж очікували.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">📜</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Паризька угода</div>
+          <div class="card-text">196 країн підписали угоду 2015 року, мета — утримати потепління в межах 1.5-2°C. Не ідеально виконується, але це безпрецедентний рівень міжнародної координації. Перший спільний план людства.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">☀️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Сонячна стала найдешевшою</div>
+          <div class="card-text">10 років тому — найдорожча електрика. Сьогодні — найдешевша у багатьох регіонах світу. Ціна впала на 90% за десятиріччя. Це називають "найшвидшим переходом енергетики в історії".</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🚗</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Електромобілі</div>
+          <div class="card-text">У 2024 році 1 з 5 нових авто у світі — електричний (у 2014 — 1 з 100). Норвегія — 90%+. Китай і ЄС швидко наздоганяють. Це означає різке падіння викидів від транспорту найближчими роками.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🌱</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Прориви, що ще не на радарах</div>
+          <div class="card-text">Зелений водень для важкої промисловості. Регенеративне сільське господарство, що відновлює ґрунти. Прямий захват CO2 з повітря (Climeworks та інші). Це не магія — це інженерія, що набирає обертів.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що можеш ти -->
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Що можеш ти</h2>
+    <p>Найчесніше, що можна сказати: твій особистий вибір — лише частина рішення. Системні зміни (енергетика, промисловість, транспорт) важать в десятки разів більше. Але це не привід нічого не робити. Ось ефективні дії, відсортовані за реальним впливом:</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🥩</span>
+        <div class="card-title">Менше м'яса (особливо яловичини)</div>
+        <div class="card-text">Найбільший особистий вплив. Корови виробляють метан — у 80 разів сильніший парниковий газ за CO2. Скоротити споживання вдвічі — як прибрати авто з дороги на півроку.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">✈️</span>
+        <div class="card-title">Менше літати</div>
+        <div class="card-text">Один трансатлантичний рейс = 1.6 тонн CO2 (місячна норма середнього європейця). Це не "не літайте взагалі", а — обирайте свідомо, поєднуйте, шукайте альтернативи в межах континенту.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🗳️</span>
+        <div class="card-title">Голосуй</div>
+        <div class="card-text">Найважливіша дія, про яку рідко говорять. Зелена політика — закони, регуляції, інвестиції — змінює систему. Один голос за політика з кліматичною програмою важить більше за рік без авто.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💬</span>
+        <div class="card-title">Говори про це</div>
+        <div class="card-text">Дослідження Yale: розмова з близькими — найефективніший спосіб поширення правильної інформації. Не лекції, а звичайні розмови. Не поширюй неперевірене. Питай джерела.</div>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top:28px">
+      <p>Найважливіше з усього — <em>не панікуй і не здавайся</em>. Кліматична тривога реальна, але вона не допомагає. Допомагають дії — навіть маленькі. Зосередься на тому, що ти можеш робити, не на тому, що мав би. І памʼятай: ти не одна.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Ключове питання -->
+  <div class="section" style="animation-delay:1.85s">
+    <h2 class="section-title">Ключове питання</h2>
+    <p>Замість тривоги — зустрінь себе питанням, яке змінює фокус.</p>
+
+    <div class="question-card">
+      <div class="question-label">Запитай себе</div>
+      <div class="question-main">"Що я хочу залишити після себе?"</div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Не "як врятувати планету" — це непосильно одній. А <em>яким буде мій маленький слід</em>. Який вибір я зроблю в наступному магазині, у наступних виборах, у наступній розмові. Усі великі зміни складаються з мільйонів маленьких. І ти — одна з тих мільйонів.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Final -->
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Висновок</h2>
+    <div class="final-quote">
+      <div class="final-text">Це не апокаліпсис. Це не безнадія. Це <strong>серйозний виклик, на який людство відповідає</strong> — повільніше, ніж треба, але відповідає. Знати правду — частина рішення. Дозволяти собі не панікувати — теж. Ми не перші, хто стоїть перед великим випробуванням. І ми точно не останні.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>

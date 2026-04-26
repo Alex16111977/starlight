@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Малала</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(200,140,180,.20) 0%,rgba(140,80,140,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.18) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#e8a0c8 0%,#d4af6e 30%,#fff 50%,#8ab0ff 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:12px;opacity:0;animation:riseIn 1s .7s ease forwards}
+.page-years{text-align:center;font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:18px;color:rgba(232,160,200,.7);margin-bottom:64px;opacity:0;animation:riseIn 1s .8s ease forwards;letter-spacing:.1em}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#e8a0c8;box-shadow:0 0 12px #e8a0c8}
+
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(232,160,200,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#e8a0c8,#d4af6e,#fff,#8ab0ff);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+
+.timeline{position:relative;padding-left:24px;margin-top:20px}
+.timeline::before{content:'';position:absolute;left:6px;top:8px;bottom:8px;width:1px;background:linear-gradient(to bottom,rgba(232,160,200,.3),rgba(212,175,110,.2),rgba(138,176,255,.1))}
+.tline{position:relative;margin-bottom:28px;padding-left:20px}
+.tline::before{content:'';position:absolute;left:-22px;top:6px;width:11px;height:11px;border-radius:50%;background:#e8a0c8;box-shadow:0 0 12px rgba(232,160,200,.6)}
+.tyear{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:15px;color:rgba(232,160,200,.85);letter-spacing:.08em;margin-bottom:6px}
+.tevent{font-size:13px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.82)}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(232,160,200,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(220,230,255,.92)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(232,160,200,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.72)}
+
+.highlight{background:linear-gradient(135deg,rgba(232,160,200,.10),rgba(212,175,110,.07));border:1px solid rgba(232,160,200,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(232,160,200,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.82);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(232,160,200,.85)}
+
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-top:20px}
+.stat{text-align:center;padding:28px 16px;background:rgba(232,160,200,.05);border:1px solid rgba(232,160,200,.18);border-radius:18px}
+.stat-num{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(32px,5vw,46px);color:transparent;background:linear-gradient(135deg,#e8a0c8,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1;margin-bottom:10px}
+.stat-label{font-size:10px;font-weight:300;letter-spacing:.2em;text-transform:uppercase;color:rgba(200,216,255,.7);line-height:1.5}
+
+.quote-block{padding:30px 28px;border-left:2px solid rgba(232,160,200,.4);margin:24px 0;background:rgba(232,160,200,.05);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(220,230,255,.92);margin-bottom:8px}
+.quote-block .qa{font-size:10px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;color:rgba(232,160,200,.6)}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(232,160,200,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(232,160,200,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="portraits.html">← Постаті</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Малала</h1>
+  <p class="page-subtitle">Дівчинка, яка змінила світ</p>
+  <div class="page-years">1997 — досі</div>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Одна дитина, один вчитель, одна книга і одна ручка можуть змінити світ"</div>
+      <div class="hero-author">Малала Юсуфзай, ООН, 16 років</div>
+    </div>
+    <p>9 жовтня 2012 року. Звичайний шкільний автобус у долині Сват, Пакистан. У нього заходить чоловік з автоматом і питає: "Хто з вас Малала?" 15-річна дівчинка піднімає голову. Стріляє. Куля проходить крізь голову, шию і виходить у плече. Усі думають, що вона мертва. Через 9 місяців вона виступає в ООН. Через 2 роки стає наймолодшою лауреаткою Нобеля в історії. Її ім'я — символ того, як одна дитина може зрушити світ.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Цифри -->
+  <div class="section" style="animation-delay:1.0s">
+    <h2 class="section-title">Цифри одного життя</h2>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num">11</div>
+        <div class="stat-label">років коли почала писати</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">15</div>
+        <div class="stat-label">років коли в неї стріляли</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">17</div>
+        <div class="stat-label">років коли отримала Нобеля</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">130М</div>
+        <div class="stat-label">дівчат без школи у світі</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Хронологія -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Життя в датах</h2>
+
+    <div class="timeline">
+      <div class="tline">
+        <div class="tyear">1997 · Народження в долині Сват</div>
+        <div class="tevent">Народжується в Мінгорі, долина Сват, Пакистан. Мовою пушту "Малала" означає "охоплена горем" — на честь героїні афганської легенди, яка надихала воїнів. Батько Зіауддін — вчитель і власник школи, в тому числі для дівчат.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">2007 · Талібан приходить у Сват</div>
+        <div class="tevent">"Талібан" захоплює долину. Знищують телевізори, забороняють музику, страчують публічно. Найбільше ненавидять освіту дівчат: підривають школи, погрожують вчителям. У 2008 один з лідерів проголошує: "Усі жіночі школи повинні бути закриті до 15 січня".</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">2009 · Щоденник для BBC</div>
+        <div class="tevent">11-річна Малала починає вести анонімний блог для BBC Urdu під псевдонімом "Гул Макай" ("Волошка"). Описує життя під талібами, страх іти в школу, заборонене навчання. "Сьогодні я бачила, як палять школу. Я плакала всю ніч". Текст читає ввесь світ.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">2011 · Перша нагорода</div>
+        <div class="tevent">Отримує національну премію Пакистану за громадянську мужність. Її ім'я тепер відоме. Талібан помічає. У соцмережах з'являються погрози.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">9 жовтня 2012 · Постріл</div>
+        <div class="tevent">У шкільний автобус заходить талібан. "Хто Малала?" Стріляє з близької відстані. Куля проходить крізь ліву частину обличчя, спину голови, шию і застрягає в плечі. Її подружок ранять. Малалу везуть до лікарні в Пешавар, потім — в Бірмінгем, Велика Британія. Хірурги віддають їй шанс на життя.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">2013 · Виступ в ООН</div>
+        <div class="tevent">12 липня, у свій 16-й день народження, виступає в Нью-Йорку перед молодіжною асамблеєю ООН. Світ дивиться. Без зали — лише дівчинка з тремтячим голосом і шрамом на скроні: "Вони думали, що кулі замкнуть нам рот. Замість цього з'явились тисячі голосів".</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">2013 · Книга "Я Малала"</div>
+        <div class="tevent">Виходить автобіографія, написана з журналісткою Крістіною Лем. Перекладається на 40+ мов, продається мільйонними тиражами. Талібан забороняє книгу в Пакистані. У відповідь — попит виростає ще більше.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">2014 · Нобелівська премія миру</div>
+        <div class="tevent">Стає наймолодшою лауреаткою Нобеля в історії — у 17 років. Розділяє премію з індусом Кайлашем Сатьярті за боротьбу проти дитячої праці. На церемонії: "Ця нагорода — не лише мені. Вона всім дітям, чий голос треба чути, але хто не може говорити".</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">2017 · Оксфорд</div>
+        <div class="tevent">Вступає в Оксфордський університет — філософія, політика, економіка. Та сама спеціальність, яку вивчали Беназір Бхутто і Іван Колосуй. Каже: "Я нарешті можу бути просто студенткою".</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">2020 · Випуск</div>
+        <div class="tevent">Закінчує Оксфорд. У соцмережах пише: "Не знаю, що буде далі — але точно багато сну і Netflix". Світ зворушений: вона нарешті дозволяє собі бути просто молодою жінкою.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">2021 · Шлюб</div>
+        <div class="tevent">Виходить заміж за пакистанця Ассера Малика. Робить це публічно — як заявлення, що жінка-активістка може мати і кар'єру, і сім'ю. У культурі, де шлюб часто означає кінець свободи, це — ще один тихий протест.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">Сьогодні</div>
+        <div class="tevent">Очолює Malala Fund — глобальний фонд, що бореться за освіту дівчат. Працює в 8 країнах. Виступає в ООН, перед урядами, в школах. Має 2.5 млн підписників. Її улюблена фраза: "Я не голос беззвучних. Я голос тих, кого ніхто не хотів слухати".</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Чому це важливо -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Чому її історія важлива</h2>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">📚</span>
+        <div class="card-title">Освіта — це зброя</div>
+        <div class="card-text">130 мільйонів дівчат у світі сьогодні не ходять до школи. Не через бідність батьків чи відстань — через закони, релігію, страх. Малала зробила цю проблему видимою. Тепер про неї говорять у ООН, ОЕСР, Світовому банку.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎤</span>
+        <div class="card-title">Дитячий голос важливий</div>
+        <div class="card-text">До неї світ слухав політиків, активістів, дорослих. Малала довела: коли говорить дитина — її чути сильніше. Після неї з'явились Грета Тунберг, Аутумн Пелтьє, Емма Гонзалес. Покоління, яке не чекає, поки виросте.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💪</span>
+        <div class="card-title">Куля не зупиняє ідею</div>
+        <div class="card-text">Талібан хотів убити її, щоб закрити рот. Натомість зробив її голос мільйоннократно гучнішим. Це урок усім, хто думає, що насильство замикає опір. Воно навпаки — каталізує.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌍</span>
+        <div class="card-title">Глобальна солідарність</div>
+        <div class="card-text">Її лікували в Британії, навчали в Америці, друкували в Швеції, нагороджували в Норвегії. Малала стала прикладом того, як світ може об'єднатись навколо однієї дитини. Знак того, що людство ще здатне на спільне.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Не одна -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Не сама</h2>
+    <p>За кожним великим іменем — люди, які вирили дорогу. Малала — не виняток.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">👨‍🏫</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Зіауддін, її батько</div>
+          <div class="card-text">Сам учитель, заснував школу для дівчат, коли інші чоловіки вважали освіту жінок зайвою. Виховав Малалу не як "доньку", а як рівну. На питання "як вам вдалось?" — відповідає: "Не питайте, що я зробив. Питайте, чого я НЕ робив. Я не зламав їй крила".</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">👭</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Шазія і Кайнат</div>
+          <div class="card-text">Дві її подружки, які були поруч у автобусі і також постраждали від куль. Про них згадують рідко. Малала завжди наголошує: "Я не одна. Зі мною завжди дві мої подруги, які пережили те саме".</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🩺</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Лікарі Бірмінгема</div>
+          <div class="card-text">Команда нейрохірургів лікарні Queen Elizabeth у Бірмінгемі врятувала їй життя. 6 годин операції, реконструкція черепа з титанової пластини. Слух у лівому вусі частково втрачений, ліва частина обличчя досі трохи знерухомлена.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Її слова -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Її голос</h2>
+
+    <div class="quote-block">
+      <p>"Я не хочу помсти Талібану. Я хочу, щоб освіта дісталась до дітей їхніх синів і доньок"</p>
+      <div class="qa">— у виступі в ООН, 2013</div>
+    </div>
+    <div class="quote-block">
+      <p>"Якщо ви хочете побачити силу — погляньте на дівчину з книгою в руці"</p>
+    </div>
+    <div class="quote-block">
+      <p>"Я говорю не як 'жертва, що вижила'. Я говорю як та, хто бачив проблему — і не змогла мовчати"</p>
+    </div>
+    <div class="quote-block">
+      <p>"Деякі сказали, що я надто молода. Але якщо я надто молода, щоб говорити, — то як інші діти у світі взагалі мають голос?"</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Final -->
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Висновок</h2>
+    <div class="final-quote">
+      <div class="final-text">Малала не вибирала бути символом. Вона хотіла просто йти в школу. Куля зробила з неї голос — і вона вирішила цей голос не змарнувати. Її урок не "будь героїнею". Її урок: <strong>одна дитина, яка не мовчить, може зрушити те, що дорослі вважали неможливим</strong>. І коли тобі здається, що твій голос замалий — згадай 11-річну дівчинку з долини Сват, яка вела блог під чужим ім'ям. І те, що з цього вийшло.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>

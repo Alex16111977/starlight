@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Біографії, які варто знати</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:6px}
+.card-years{font-size:10px;font-weight:300;letter-spacing:.2em;color:rgba(212,175,110,.7);margin-bottom:10px;text-transform:uppercase}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.72)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.82);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+
+.toc{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-bottom:48px;opacity:0;animation:riseIn 1s .9s ease forwards}
+.toc a{font-size:11px;font-weight:300;letter-spacing:.2em;text-transform:uppercase;color:rgba(200,216,255,.65);text-decoration:none;padding:10px 18px;border:1px solid rgba(200,216,255,.18);border-radius:100px;transition:all .3s;background:rgba(200,216,255,.04)}
+.toc a:hover{color:#fff;border-color:rgba(200,216,255,.4);background:rgba(200,216,255,.10);transform:translateY(-2px)}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Біографії</h1>
+  <p class="page-subtitle">Життя, які варто знати</p>
+
+  <nav class="toc">
+    <a href="#writers">📚 Письменники</a>
+    <a href="#philosophers">🏛️ Філософи</a>
+    <a href="#entrepreneurs">💼 Підприємці</a>
+    <a href="#women">👑 Жінки</a>
+    <a href="#composers">🎼 Композитори</a>
+  </nav>
+
+  <div class="section" style="animation-delay:1.1s">
+    <div class="hero-quote">
+      <div class="hero-text">"Розкажи мені — і я забуду. Покажи мені — і я запам'ятаю. Дай мені прожити з тобою — і я зрозумію"</div>
+      <div class="hero-author">Конфуцій</div>
+    </div>
+    <p>Біографії — це найдешевший спосіб прожити кілька життів за одне. Ти вчишся не на абстрактних правилах, а на чужих помилках і чужих відкриттях. Цей розділ — про тих, хто думав інакше, писав, будував і не мовчав. Не "великі імена для ерудиції", а живі люди — зі страхами, провалами, депресіями і моментами, коли їм здавалось, що нічого не вийде.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 📚 Письменники -->
+  <div class="section" id="writers" style="animation-delay:1.3s">
+    <h2 class="section-title">📚 Письменники</h2>
+    <p>Люди, які вміли назвати те, для чого ще не було слів. Хто читає їх — починає краще розуміти власні переживання. Бо виявляється, що твоя самотня боротьба — вже була кимось прожита, описана й пережита.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">⛪</span>
+        <div class="card-title">Федір Достоєвський</div>
+        <div class="card-years">1821–1881</div>
+        <div class="card-text">Засуджений до розстрілу за читання забороненої літератури — помилуваний за хвилину до пострілу. Чотири роки каторги в Сибіру. З цього досвіду — "Злочин і кара", "Брати Карамазови", "Ідіот". Перший письменник, який зазирнув у підсвідоме людини задовго до Фройда. Якщо хочеш зрозуміти, що ти не один зі своїми темними думками — почни з нього.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🪲</span>
+        <div class="card-title">Франц Кафка</div>
+        <div class="card-years">1883–1924</div>
+        <div class="card-text">Чех, який писав німецькою і просив друга спалити всі рукописи після смерті. Друг не послухав — і так світ отримав "Процес", "Замок", "Перетворення". Все життя ненавидів свою роботу клерком, страждав від батька-тирана, помер від туберкульозу у 40. Описав ХХ століття раніше, ніж воно сталось: бюрократію, відчуження, абсурд.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌫️</span>
+        <div class="card-title">Альбер Камю</div>
+        <div class="card-years">1913–1960</div>
+        <div class="card-text">Французький алжирець, син неписьменної мами-прибиральниці. Воював у Опорі проти нацистів, отримав Нобеля у 44. "Сторонній", "Чума", "Міф про Сізіфа". Поставив головне питання філософії: якщо життя не має сенсу — навіщо жити? І відповів: жити саме тому. Помер у автокатастрофі — у кишені знайшли невикористаний квиток на потяг.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">👁️</span>
+        <div class="card-title">Джордж Орвелл</div>
+        <div class="card-years">1903–1950</div>
+        <div class="card-text">Англієць, який воював у іспанській громадянській війні, мало не загинув від кулі в шию. Написав "1984" і "Колгосп тварин" — книги, що передбачили тоталітаризм, маніпуляцію мовою і пропаганду. "Великий брат", "новояз", "думкозлочин" — слова, які він винайшов, ми досі використовуємо щоденно. Помер від туберкульозу через рік після виходу "1984".</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🦋</span>
+        <div class="card-title">Габріель Гарсіа Маркес</div>
+        <div class="card-years">1927–2014</div>
+        <div class="card-text">Колумбієць, який винайшов магічний реалізм — стиль, де чудеса трапляються на кухні, а небо може йти жовтими квітами. "Сто років самотності" продано понад 50 мільйонів примірників. Нобелівська премія. Дав Латинській Америці голос, який почув весь світ. Писав про любов як хворобу, від якої не лікують.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎭</span>
+        <div class="card-title">Вільям Шекспір</div>
+        <div class="card-years">1564–1616</div>
+        <div class="card-text">Англійський актор і драматург, про якого ми майже нічого не знаємо. Написав 37 п'єс, 154 сонети, винайшов близько 1700 слів англійської мови. "Гамлет", "Ромео і Джульєтта", "Король Лір" — досі ставлять у кожному великому театрі світу. Описав усі почуття, на які здатна людина, — за 400 років до того, як з'явилась психологія.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📖</span>
+        <div class="card-title">Леся Українка</div>
+        <div class="card-years">1871–1913</div>
+        <div class="card-text">Жінка з туберкульозом кісток, яка все життя писала, лежачи в ліжку, і дала українській літературі європейський масштаб. "Лісова пісня", "Кассандра", "Камінний господар". Знала 10 мов, перекладала з англійської і санскриту. Дочка письменниці Олени Пчілки — у сім'ї, де говорили лише українською, коли це було небезпечно.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌊</span>
+        <div class="card-title">Ернест Хемінгуей</div>
+        <div class="card-years">1899–1961</div>
+        <div class="card-text">Американець, який воював у двох світових війнах, ловив акул, полював на левів, пив, як нікому не вдавалось. Винайшов лаконічний стиль — "айсберг": видно одну восьму, інше під водою. "Старий і море", "По кому подзвін", "Прощавай, зброє". Нобель. Застрелився, не витримавши хвороб і депресії. Жив за принципом "людину можна знищити, але не перемогти".</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 🏛️ Філософи -->
+  <div class="section" id="philosophers" style="animation-delay:1.5s">
+    <h2 class="section-title">🏛️ Філософи</h2>
+    <p>Вони не залишили винаходів, не керували країнами, не воювали в арміях. Просто думали — і записували. Але саме їхні думки стали фундаментом усього: від законів, які тебе захищають, до способу, яким ти приймаєш рішення зранку.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">⚱️</span>
+        <div class="card-title">Платон</div>
+        <div class="card-years">427–347 до н.е.</div>
+        <div class="card-text">Учень Сократа, вчитель Аристотеля — три покоління, які створили західну філософію. Заснував Академію — першу в історії "вищу школу". "Держава", "Бенкет", "Федр". Винайшов ідею ідеального — те, що речі, які ми бачимо, лише тіні справжніх форм. Уся європейська думка виросла з цієї ідеї.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🦅</span>
+        <div class="card-title">Аристотель</div>
+        <div class="card-years">384–322 до н.е.</div>
+        <div class="card-text">Учень Платона, вчитель Александра Македонського. Систематизував усе, що знала тогочасна наука: логіку, біологію, етику, політику, риторику. Винайшов поняття "золотої середини": чеснота лежить між двома крайнощами. Його праці на тисячу років стали підручниками для арабського і європейського світу.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚡</span>
+        <div class="card-title">Фрідріх Ніцше</div>
+        <div class="card-years">1844–1900</div>
+        <div class="card-text">Німецький філософ, який сказав "Бог помер" і відкрив, що людина має створювати сенс самостійно. "Так казав Заратустра", "По той бік добра і зла". Жив у бідності, страждав від мігреней, у 44 збожеволів і провів останні 11 років як рослина. Його думки розкрали і праві, і ліві — хоч він був чужий усім.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🚪</span>
+        <div class="card-title">Жан-Поль Сартр</div>
+        <div class="card-years">1905–1980</div>
+        <div class="card-text">Французький філософ-екзистенціаліст. "Існування передує сутності" — людина не народжується кимось, вона стає ким обирає бути. Свобода — не дарунок, а вирок: ти приречений обирати. Відмовився від Нобелівської премії — щоб ніхто не казав, чим він є. 50 років жив із Симоною де Бовуар у відкритому союзі.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🛡️</span>
+        <div class="card-title">Марк Аврелій</div>
+        <div class="card-years">121–180</div>
+        <div class="card-text">Римський імператор, який вів щоденник для самого себе — і ніколи не планував його публікувати. Так з'явились "Роздуми" — головна книга стоїцизму. Писав вночі, у похідному наметі, після битв. Нагадував собі: контролюй те, що в твоїх руках, прийми те, що ні. Найвпливовіший правитель Європи — і одночасно найскромніший філософ.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🪨</span>
+        <div class="card-title">Епіктет</div>
+        <div class="card-years">50–135</div>
+        <div class="card-text">Народжений рабом у Римі, кульгавий — пан зламав йому ногу. Звільнений, став одним із головних філософів-стоїків. Не написав жодного рядка — все знаємо через учнів. Головна ідея: страждання приходить не від подій, а від наших суджень про них. "Не речі бентежать людей, а думки про них". Через 2000 років це лежить в основі КПТ-терапії.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌬️</span>
+        <div class="card-title">Лао Цзи</div>
+        <div class="card-years">VI–V ст. до н.е.</div>
+        <div class="card-text">Напівлегендарний китайський мудрець. Пишуть, що написав "Дао Де Цзін" — 81 короткий текст про Шлях — перед тим, як назавжди залишити цивілізацію. Заснував даосизм. Головна ідея: дій недіянням, поступайся силі — і вона зникне. М'якість сильніша за твердість, вода точить камінь. Вплинув на цілу східну культуру і на сучасний менеджмент.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔍</span>
+        <div class="card-title">Сімона де Бовуар</div>
+        <div class="card-years">1908–1986</div>
+        <div class="card-text">Французька філософиня, фундаторка сучасного фемінізму. "Жінкою не народжуються, нею стають" — найзнаменитіша фраза ХХ століття про гендер. "Друга стать" (1949) — розгорнута на 800 сторінок думка про те, що жінка завжди визначалась як "не чоловік". Жила в інтелектуальному союзі з Сартром — і змінила те, як цілий світ думає про жінок.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 💼 Підприємці -->
+  <div class="section" id="entrepreneurs" style="animation-delay:1.7s">
+    <h2 class="section-title">💼 Підприємці і винахідники</h2>
+    <p>Не "люди, які стали багатими". Люди, які побачили, чого ще немає, — і зробили це. Іноді з гаража. Іноді ціною здоров'я, сім'ї, репутації. Любити їх не обов'язково. Але зрозуміти, як вони мислили, — корисно.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🍎</span>
+        <div class="card-title">Стів Джобс</div>
+        <div class="card-years">1955–2011</div>
+        <div class="card-text">Усиновлений сирієць-вірменин, який кинув коледж, бо було задорого. Заснував Apple у гаражі. Звільнений зі своєї ж компанії у 30. Повернувся через 12 років — і вивів Apple з банкрутства до найдорожчої компанії світу. iPhone, iPad, iMac, Pixar. Помер від раку у 56. "Stay hungry, stay foolish" — його заповіт випускникам Стенфорду.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🚀</span>
+        <div class="card-title">Ілон Маск</div>
+        <div class="card-years">1971–</div>
+        <div class="card-text">Південноафриканець, який заснував або керував PayPal, Tesla, SpaceX, Neuralink, X. Перша приватна компанія, що посадила ракету на платформу в океані. Перший електромобіль, який стало масово купувати. Постать суперечлива — від обожнювання до скандалів. Але без нього космічна гонка ХХІ століття виглядала б зовсім інакше.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📦</span>
+        <div class="card-title">Джефф Безос</div>
+        <div class="card-years">1964–</div>
+        <div class="card-text">Залишив високооплачувану роботу на Уолл-стріт, щоб у 1994 році продавати книги через інтернет із гаража. Сьогодні Amazon — від хмарних серверів до продуктів і кіно. Один із найбагатших людей планети. Принцип: "ваша маржа — це моя можливість". Засновник Blue Origin — приватної космічної програми, яка змагається з Маском.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🚗</span>
+        <div class="card-title">Генрі Форд</div>
+        <div class="card-years">1863–1947</div>
+        <div class="card-text">Не винайшов автомобіль — винайшов спосіб зробити його доступним. Конвеєрна збірка, восьмигодинний робочий день, підвищена зарплата робітникам, щоб вони могли купити те, що виробляють. Ford Model T — машина, яка змусила американців переселитись у передмістя і змінила ХХ століття. Особистість суперечлива — антисеміт, з захопленнями, які краще не цитувати.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💡</span>
+        <div class="card-title">Томас Едісон</div>
+        <div class="card-years">1847–1931</div>
+        <div class="card-text">Понад 1000 патентів. Лампа розжарювання, фонограф, кінокамера. Не геній-одинак — геніальний організатор, який створив першу промислову лабораторію. "Геніальність — це 1% натхнення і 99% поту". Жорстко перемагав конкурентів, у тому числі Теслу — і саме за це його не люблять. Але без його методу не було б сучасних R&D-лабораторій.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🏗️</span>
+        <div class="card-title">Ілайша Отіс</div>
+        <div class="card-years">1811–1861</div>
+        <div class="card-text">Винайшов не ліфт — а гальмівний механізм, який не дає ліфту впасти, якщо обірветься трос. Без цього винаходу не було б хмарочосів. На виставці у Нью-Йорку він особисто стояв на платформі, поки помічник перерізав трос. Платформа не впала. Так почалась вертикальна цивілізація — місто, яке росте догори.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🪟</span>
+        <div class="card-title">Білл Ґейтс</div>
+        <div class="card-years">1955–</div>
+        <div class="card-text">Кинув Гарвард, щоб з другом Полом Алленом заснувати Microsoft. У 31 — наймолодший мільярдер в історії. Windows — операційна система, на якій ХХ століття вийшло в інтернет. У 2000-х відійшов від компанії і присвятив життя філантропії: викорінення малярії, поліомієліту, вакцинація в Африці. Один з небагатьох, хто перетворив гроші на реальне здоров'я мільйонів людей.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🇺🇦</span>
+        <div class="card-title">Ян Кум</div>
+        <div class="card-years">1976–</div>
+        <div class="card-text">Київський хлопець, який у 16 років переїхав з мамою в Каліфорнію — на соціальну допомогу. Працював прибиральником, вчив програмування за бібліотечними книгами. У 2009 створив WhatsApp, який через 5 років продав Facebook за 19 мільярдів доларів. Підписав контракт біля будинку, де колись стояв у черзі за безкоштовною їжею.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 👑 Жінки, що змінили світ -->
+  <div class="section" id="women" style="animation-delay:1.9s">
+    <h2 class="section-title">👑 Жінки, що змінили світ</h2>
+    <p>Робили те, що "жінкам не можна". Часто без визнання. Часто посмертно. Багато з них не побачили, як їхня робота змінила реальність — але без них світ виглядав би зовсім інакше.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">📓</span>
+        <div class="card-title">Анна Франк</div>
+        <div class="card-years">1929–1945</div>
+        <div class="card-text">Єврейська дівчинка, яка два роки ховалась з родиною на горищі в Амстердамі від нацистів. Загинула в концтаборі за два місяці до звільнення, у 15. Лишився щоденник — її батько був єдиним, хто пережив Голокост, і опублікував його. Понад 30 мільйонів проданих копій. Голос мільйонів убитих дітей, який не дав світу забути.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🕯️</span>
+        <div class="card-title">Мати Тереза</div>
+        <div class="card-years">1910–1997</div>
+        <div class="card-text">Албанка, яка віддала життя слугуванню найбіднішим в Калькутті. Заснувала Орден милосердя — сьогодні працює у 130 країнах. Нобелівська премія миру 1979. Її особистий щоденник пізніше показав: вона десятиліттями страждала від втрати віри, відчуваючи "темну ніч душі" — і все одно продовжувала. Це робить її ще людянішою.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🚀</span>
+        <div class="card-title">Кетрін Джонсон</div>
+        <div class="card-years">1918–2020</div>
+        <div class="card-text">Чорношкіра математикиня в NASA, яка вручну розраховувала траєкторії польотів — у 1960-х, коли комп'ютерам ще не довіряли. Перед першим польотом Джона Гленна навколо Землі він сказав: "Запустіть дівчину" — щоб вона перевірила числа машини. Без її обчислень не було б "Аполлона-11". Працювала в NASA 33 роки. Фільм "Приховані фігури" — про неї.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🐾</span>
+        <div class="card-title">Джейн Гудолл</div>
+        <div class="card-years">1934–</div>
+        <div class="card-text">Британка без вищої освіти, яка у 26 поїхала в джунглі Танзанії вивчати шимпанзе — як ніхто до неї. Виявила, що вони використовують знаряддя праці — це перевернуло уявлення про межу між людиною і твариною. 60 років захищає природу і виховує нове покоління екологів. У 90 досі їздить лекціями понад 300 днів на рік.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📡</span>
+        <div class="card-title">Геді Ламарр</div>
+        <div class="card-years">1914–2000</div>
+        <div class="card-text">Австрійська голлівудська актриса, яку називали "найкрасивішою жінкою кіно". Та паралельно вона винайшла технологію псевдовипадкової зміни частот — основу сучасних Wi-Fi, Bluetooth, GPS. Її патент 1942 року військові США поклали "в шухляду" — як забавку від актриси. Світ зрозумів, ким вона була, лише в 1990-х. Спадщина без неї досі віртуальною.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">👗</span>
+        <div class="card-title">Коко Шанель</div>
+        <div class="card-years">1883–1971</div>
+        <div class="card-text">Сирота, яка в монастирському притулку навчилась шити. Звільнила жінок ХХ століття від корсетів, пишних суконь і капелюхів-веж. Маленька чорна сукня, твідовий костюм, парфум №5. Перетворила траурне чорне на головний колір елегантності. Постать суперечлива — була в стосунках з нацистським офіцером під час війни. Але мода, в якій ти вдягаєшся, — її.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎤</span>
+        <div class="card-title">Опра Вінфрі</div>
+        <div class="card-years">1954–</div>
+        <div class="card-text">Народжена бідною чорношкірою дівчинкою на Півдні США, у 9 років зґвалтована, у 14 — мати мертвонародженого. Стала найвпливовішою телеведучою Америки і першою чорношкірою жінкою-мільярдеркою. Її шоу йшло 25 років. Перетворила публічну розмову про травму, психотерапію і самопізнання — на щось нормальне для мільйонів американців.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚖️</span>
+        <div class="card-title">Рут Бейдер Ґінзбург</div>
+        <div class="card-years">1933–2020</div>
+        <div class="card-text">Друга жінка в Верховному суді США. Усе життя боролась за рівні права жінок і меншин — і робила це через закон. Випускалась з юрфаку, доглядаючи за хворим чоловіком і немовлям. Дочекалась, коли її доньки виростуть, щоб бачити країну, де жінка може взяти кредит без чоловіка. RBG — для покоління дівчат стала іконою тихої наполегливості.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 🎼 Композитори і музиканти -->
+  <div class="section" id="composers" style="animation-delay:2.1s">
+    <h2 class="section-title">🎼 Композитори і музиканти</h2>
+    <p>Звук — це найдавніший спосіб говорити з тим, для чого немає слів. Ці люди винайшли мову, якою людство досі плаче, радіє і молиться. Послухай їх — і зрозумієш стільки ж, як прочитавши томи.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">⛪</span>
+        <div class="card-title">Йоганн Себастьян Бах</div>
+        <div class="card-years">1685–1750</div>
+        <div class="card-text">Німецький церковний музикант, у якого було 20 дітей і органи в кожній церкві, де працював. Написав понад 1000 творів. Кантати, фуги, "Маса си-мінор". Був забутий на 80 років після смерті — поки Мендельсон не "відкрив" його заново. Сьогодні зрозуміло: це фундамент усієї західної музики, від класики до джазу і рок-н-ролу.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎻</span>
+        <div class="card-title">Вольфганг Амадей Моцарт</div>
+        <div class="card-years">1756–1791</div>
+        <div class="card-text">Зіграв перший концерт у 5 років, написав першу симфонію у 8. Написав понад 600 творів і помер у 35 від невідомої хвороби. "Чарівна флейта", "Реквієм", "Дон Жуан". Геніальний і легковажний — жив на широку ногу і вмер у бідності. Похований у спільній могилі для бідних. Його музика — найближче до того, що люди уявляють під словом "божественне".</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌪️</span>
+        <div class="card-title">Людвіг ван Бетховен</div>
+        <div class="card-years">1770–1827</div>
+        <div class="card-text">Почав втрачати слух у 26. До кінця життя був глухим — і все одно написав 9 симфоній, у тому числі "Оду до радості". Не чув жодної ноти своєї Дев'ятої симфонії, але диригував її прем'єрою. Перший композитор, який жив не на замовлення короля чи церкви, а як вільний митець. Винайшов те, що ми сьогодні називаємо "автор".</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎹</span>
+        <div class="card-title">Фридерик Шопен</div>
+        <div class="card-years">1810–1849</div>
+        <div class="card-text">Поляк у французькому вигнанні. Усе, що написав, — для фортепіано. Ноктюрни, етюди, мазурки, прелюдії. Перетворив фортепіано на інструмент, який вміє шепотіти. Помер від туберкульозу в 39. У серце поховане у Варшаві, тіло — у Парижі. Найніжніший голос ХІХ століття — і одночасно найпатріотичніший.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎷</span>
+        <div class="card-title">Луї Армстронг</div>
+        <div class="card-years">1901–1971</div>
+        <div class="card-text">Чорношкірий хлопчик з найбіднішого Нью-Орлеана, який у дитячому виправному домі вперше взяв в руки трубу. Винайшов джаз як ми його чуємо: солююча імпровізація, скет (спів безглуздими складами), свінг. "What a Wonderful World". Перший афроамериканський артист, якого приймала біла Америка — і саме він зробив так, щоб це стало можливим.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎸</span>
+        <div class="card-title">Джон Леннон</div>
+        <div class="card-years">1940–1980</div>
+        <div class="card-text">Засновник The Beatles — групи, яка за 10 років змінила музику, моду, культуру. Після розпаду — 10 років активізму, "Imagine", боротьба за мир, акції з Йоко Оно. Застрелений у Нью-Йорку фанатом, який попросив у нього автограф за кілька годин до того. Йому було 40. "Imagine" досі лишається найвпливовішим піснею про мир, яку коли-небудь писали.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🦋</span>
+        <div class="card-title">Фредді Мерк'юрі</div>
+        <div class="card-years">1946–1991</div>
+        <div class="card-text">Парс із Занзібару, який став голосом Queen. Чотири октави діапазону. "Bohemian Rhapsody", "We Are the Champions", "Don't Stop Me Now". Виступ Queen на Live Aid 1985 — досі вважають найкращим живим виступом в історії рок-музики. Помер від СНІДу у 45, оголосивши діагноз за день до смерті. Своєю смертю змусив світ говорити про хворобу інакше.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎤</span>
+        <div class="card-title">Вітні Г'юстон</div>
+        <div class="card-years">1963–2012</div>
+        <div class="card-text">Найкращий жіночий вокал ХХ століття — і одна з найтрагічніших історій музики. Сім Греммі, понад 200 мільйонів проданих альбомів. "I Will Always Love You" — найпродаваніший сингл жінки в історії. Зруйнована наркотиками і токсичними стосунками. Знайдена мертвою у ванній у 48. Залишила голос, до якого досі ніхто не наблизився.</div>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Музика — єдине мистецтво, яке діє на тебе раніше, ніж ти встигаєш зрозуміти, що сталось. Бах ставить тебе на коліна, Бетховен підіймає, Шопен втішає, Армстронг учить танцювати з горем. Послухай їх — не для "освіти", а тому що <em>в них уже все сказано про твоє життя</em>.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:2.3s">
+    <h2 class="section-title">Замість висновку</h2>
+    <div class="final-quote">
+      <div class="final-text">У жодного з них не було легкого життя. Бідність, війни, втрати, самотність, депресія, хвороби. Що їх відрізняло — <strong>вони продовжували</strong>. Не тому що вірили в успіх. А тому що не могли інакше. Біографії — це нагадування: великі речі робляться не у настрої натхнення. Вони робляться щодня, у будь-якому стані, доки тобі не вистачить часу.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>

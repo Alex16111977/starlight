@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Як працює реклама</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.12) 0%,rgba(40,80,200,.06) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.07) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.55)}
+
+.steps-grid{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.step-card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:24px;align-items:flex-start}
+.step-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.step-card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.step-card:hover::before{opacity:1}
+.step-num{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:48px;color:rgba(138,176,255,.25);line-height:1;flex-shrink:0;width:40px;text-align:center}
+.step-body{flex:1}
+
+.tips{list-style:none;margin-top:16px}
+.tips li{font-size:13px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.6);padding:12px 0 12px 28px;border-bottom:1px solid rgba(200,216,255,.04);position:relative}
+.tips li::before{content:'';position:absolute;left:8px;top:20px;width:4px;height:4px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 6px #8ab0ff}
+
+.food-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:20px}
+.food-item{background:rgba(200,216,255,.02);border:1px solid rgba(200,216,255,.05);border-radius:12px;padding:18px 20px;transition:all .3s}
+.food-item:hover{background:rgba(200,216,255,.05);border-color:rgba(200,216,255,.12)}
+.food-label{font-size:9px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;color:rgba(138,176,255,.5);margin-bottom:8px}
+.food-val{font-size:12px;font-weight:200;line-height:1.7;color:rgba(200,216,255,.72)}
+
+.rules-list{list-style:none;margin-top:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:12px}
+.rules-list li{font-size:12px;font-weight:200;line-height:1.7;color:rgba(200,216,255,.55);padding:14px 16px 14px 32px;background:rgba(200,216,255,.02);border:1px solid rgba(200,216,255,.05);border-radius:10px;position:relative}
+.rules-list li::before{content:'';position:absolute;left:14px;top:20px;width:4px;height:4px;border-radius:50%;background:rgba(212,175,110,.6);box-shadow:0 0 6px rgba(212,175,110,.3)}
+
+.warn-card{background:rgba(255,130,130,.04);border:1px solid rgba(255,130,130,.1);border-radius:16px;padding:24px;margin-bottom:14px;transition:all .4s}
+.warn-card:hover{background:rgba(255,130,130,.07);border-color:rgba(255,130,130,.18)}
+.warn-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;color:rgba(255,170,150,.9);margin-bottom:8px;display:flex;align-items:center;gap:10px}
+.warn-title-icon{font-size:18px}
+.warn-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.55)}
+
+.quote{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.4vw,22px);line-height:1.6;color:rgba(220,230,255,.85);text-align:center;padding:32px 24px;border-top:1px solid rgba(200,216,255,.1);border-bottom:1px solid rgba(200,216,255,.1);margin:32px 0}
+.quote::before{content:'"';font-size:36px;color:rgba(138,176,255,.4);margin-right:6px;vertical-align:-6px}
+.quote::after{content:'"';font-size:36px;color:rgba(138,176,255,.4);margin-left:6px;vertical-align:-6px}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Як працює реклама</h1>
+  <p class="page-subtitle">Чому ми купуємо те, що нам не потрібно</p>
+
+  <!-- Intro -->
+  <div class="section" style="animation-delay:.9s">
+    <p>Сучасна реклама вже давно не каже «купи цей товар». Вона каже: «стань цією людиною». Сьогодні рекламують не каву — а ранковий ритуал успішної жінки. Не машину — а свободу. Не крем — а молодість. Тебе продають тобі ж, у трохи кращій версії.</p>
+    <p>Це не змова — це індустрія, що поєднує психологію, дані і нейробіологію. Десятки тисяч людей працюють над тим, щоб ти натиснув «купити». На цій сторінці — як саме вони це роблять і як побачити їхні гачки крізь блискучу обгортку.</p>
+  </div>
+
+  <div class="quote">
+    Реклама не створює бажання. Вона знаходить твою тривогу і обіцяє її закрити покупкою.
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- How brain reacts -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Що відбувається в мозку</h2>
+    <p>Покупка — це не логічне рішення. Це емоція, яку потім розум виправдовує.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">⚡</span>
+        <div class="card-title">Дофамін</div>
+        <div class="card-text">Пік задоволення — не в момент володіння річчю, а в моменті очікування покупки. Тому шопінг тішить більше, ніж сама річ через тиждень.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧠</span>
+        <div class="card-title">Лімбічна система</div>
+        <div class="card-text">Емоційний мозок вирішує за 0,3 секунди. Префронтальна кора (логіка) приходить пізніше — і просто пише виправдання вже прийнятому рішенню.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🪞</span>
+        <div class="card-title">Дзеркальні нейрони</div>
+        <div class="card-text">Коли ти бачиш щасливу людину з продуктом, мозок автоматично «приміряє» цей стан. Тому в рекламі завжди усміхаються.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎯</span>
+        <div class="card-title">Принцип «свого»</div>
+        <div class="card-text">Як тільки ти подумки приміряв річ («а було б круто мати»), мозок уже частково вважає її твоєю. Не купити = втратити. А втрати ми переживаємо в 2 рази сильніше, ніж радіємо здобуткам.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 8 hooks -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">8 психологічних гачків</h2>
+    <p>Класичні прийоми, які працюють тому, що б'ють по вбудованих механізмах мозку. Ти впізнаєш їх скрізь, як тільки навчишся бачити.</p>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="card-title">Дефіцит</div>
+          <div class="card-text">«Залишилось 3 штуки», «Тільки сьогодні», «Лімітована серія». Мозок боїться втратити можливість сильніше, ніж радіє вигоді. Штучний дефіцит вмикає паніку — і думати ніколи.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="card-title">Соціальний доказ</div>
+          <div class="card-text">«Цей товар обрали 10 000 людей». «4,9 з 5 на основі 8 421 відгуку». Якщо інші купили — значить, безпечно. Мозок економить енергію і копіює поведінку натовпу.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="card-title">Авторитет</div>
+          <div class="card-text">«Рекомендують стоматологи», «Експерт NASA каже». Білий халат, наукоподібний жаргон, цифри з нізвідки. Ми довіряємо авторитетам автоматично — навіть фальшивим.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="card-title">Прив'язка ціни</div>
+          <div class="card-text">Спочатку показують «звичайну ціну» 10 000, потім «зі знижкою» 4 999. Перша цифра «якорить» очікування, і друга здається подарунком. Хоч реальна вартість — 2 000.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="card-title">Належність</div>
+          <div class="card-text">«Ти ж не хочеш бути не такою, як усі». Apple продає не телефон — а належність до клану «креативних». Brand = плем'я. Купити = увійти.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <div class="card-title">Страх упустити (FOMO)</div>
+          <div class="card-text">«Усі вже спробували — а ти?». Поки ти зволікаєш, життя проходить повз. Страх відстати від групи — найдавніший. У племені відстати = померти.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">7</div>
+        <div class="step-body">
+          <div class="card-title">Взаємність</div>
+          <div class="card-text">Безкоштовний пробник, подарунок до замовлення, корисний контент. Мозок відчуває обов'язок «повернути». Тому YouTube-блогери дають користь — а потім продають курс.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">8</div>
+        <div class="step-body">
+          <div class="card-title">Історія</div>
+          <div class="card-text">Реклама-розповідь. Дівчина, що знайшла себе після покупки. Чоловік, що повернув жінку завдяки парфуму. Мозок запам'ятовує історії, а не факти. І ставить себе на місце героя.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Emotional triggers -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">На яких емоціях грають</h2>
+    <p>Реклама не продає продукт. Вона продає рішення емоції, яку сама ж і викликала.</p>
+
+    <div class="food-grid">
+      <div class="food-item">
+        <div class="food-label">Незахищеність</div>
+        <div class="food-val">«У тебе щось не так — а в нас є рішення». Косметика, фітнес, курси «успішного успіху».</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Заздрість</div>
+        <div class="food-val">Інстаграм-життя інших. Ідеальні відпустки, тіла, кухні. У тебе ж — ні.</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Страх</div>
+        <div class="food-val">«А якщо застрахувати запізно?». «А якщо мікроби?». Страхування, ліки, побутова хімія.</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Самотність</div>
+        <div class="food-val">Купи — і будеш частиною спільноти. Пиво з друзями, авто для родини, парфуми для романтики.</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Втома</div>
+        <div class="food-val">«Ти заслужив». Доставка їжі, готовий одяг, преміум-послуги. Лінь продається як «турбота про себе».</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Ностальгія</div>
+        <div class="food-val">Старі мелодії, естетика 90-х, «як у дитинстві». Спогади + продукт = тепле почуття.</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Провина</div>
+        <div class="food-val">«Хороші мами купують саме це». «Турбуйся про близьких — подаруй...». Покупка як спокута.</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Прагнення статусу</div>
+        <div class="food-val">Не бренд, а сигнал. Дорогі речі говорять без слів: «я дозволяю собі більше».</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Algorithms -->
+  <div class="section" style="animation-delay:1.15s">
+    <h2 class="section-title">Алгоритми знають тебе краще</h2>
+    <p>Те, що ти бачиш у соцмережах і пошуку — не випадково. Це індивідуальна вітрина, зібрана на основі тисяч сигналів про тебе.</p>
+
+    <ul class="rules-list">
+      <li>Що ти лайкаєш, скільки секунд дивишся відео, на чому зупиняєшся прокручуючи</li>
+      <li>Геолокація: де ти живеш, працюєш, куди ходиш — і скільки коштує там оренда</li>
+      <li>Час доби, коли ти найвразливіша (втомлена, тривожна, нудьгуєш — реклама б'є точніше)</li>
+      <li>Покупки в інших магазинах через cookies та трекери</li>
+      <li>Що шукали твої подруги (схожість профілів = схожі бажання)</li>
+      <li>Швидкість набору, рух мишки, час на сторінці товару</li>
+      <li>Розмір екрану, модель телефону = приблизний дохід</li>
+      <li>Емоційний стан з лексики постів та коментарів</li>
+    </ul>
+
+    <p style="margin-top:24px">Ти не «випадково» побачила саме це взуття. Ти потрапила в категорію «жінка 25-35, цікавиться йогою, нещодавно дивилася відпустки, ймовірно витрачає на одяг 2-5 тис. на місяць». І реклама знає, в який момент тебе зачепити найкраще.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Influencers -->
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Інфлюенсери — дружня реклама</h2>
+    <p>Звичайну рекламу мозок упізнає і ставить захист. Але блогерка-«подружка» — ні. Це найновіший і найефективніший формат: реклама, що не виглядає як реклама.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🤝</span>
+        <div class="card-title">Парасоціальний зв'язок</div>
+        <div class="card-text">Ти дивишся блогерку щодня — мозок реєструє це як дружбу. А подрузі довіряєш, бо вона «своя». Хоч вона тебе не знає.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎬</span>
+        <div class="card-title">Природність</div>
+        <div class="card-text">«Я просто розповідаю, що мені подобається». Без студійного світла, без сценарію — здається. Насправді часто є бриф і таблиця KPI.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💭</span>
+        <div class="card-title">Аспірація</div>
+        <div class="card-text">Ти підписана на людей, ким хочеш стати. Купити їхню рекомендацію = на крок ближче до їхнього життя. Так здається мозку.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💸</span>
+        <div class="card-title">Промокод</div>
+        <div class="card-text">«Тільки за моїм кодом — знижка 10%». Виглядає як подарунок від подруги. Насправді блогерка отримує % з продажу — і код для відстеження «ефективності».</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- UX dark patterns -->
+  <div class="section" style="animation-delay:1.25s">
+    <h2 class="section-title">Темні патерни в магазинах</h2>
+    <p>Інтерфейс магазину — теж зброя. Кожна кнопка, колір, послідовність екранів продумані, щоб ти витратила більше.</p>
+
+    <div class="warn-card">
+      <div class="warn-title"><span class="warn-title-icon">🎁</span>Попередньо обрана підписка</div>
+      <div class="warn-text">У кошику автоматично стоїть галочка «оформити підписку зі знижкою». Зняти можна — але треба помітити. Багато не помічає.</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title"><span class="warn-title-icon">⏳</span>Таймер «знижка зникне через 04:59»</div>
+      <div class="warn-text">Часто — психологічний прийом. Сторінку оновиш — таймер заново. Завдання: щоб ти не мала часу подумати.</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title"><span class="warn-title-icon">🛒</span>Безкоштовна доставка від N грн</div>
+      <div class="warn-text">Тобі треба було на 800 грн — а доставка безкоштовна від 1 200. І ти докидаєш зайвого, щоб «заощадити» на доставці.</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title"><span class="warn-title-icon">💳</span>Один клік до покупки</div>
+      <div class="warn-text">Apple Pay, Google Pay, збережена картка. Тертя зведене до нуля — щоб не встигнути передумати між «хочу» і «оплатити».</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title"><span class="warn-title-icon">👀</span>«Ще 12 людей дивляться цей товар»</div>
+      <div class="warn-text">Часто — згенерована цифра, не реальна. Завдання: створити відчуття конкуренції і поспіху.</div>
+    </div>
+    <div class="warn-card">
+      <div class="warn-title"><span class="warn-title-icon">📦</span>Складна відписка</div>
+      <div class="warn-text">Підписатися — один клік. Відмовитися — пройти 5 екранів, поговорити з ботом, відповісти на «чому ви йдете?». Це не випадково.</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Why we buy -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Чому ми купуємо зайве</h2>
+    <p>Реклама працює не на порожньому місці. У нас самих є тригери, на які вона тисне. Якщо побачити їх у себе — половина роботи зроблена.</p>
+
+    <ul class="tips">
+      <li>Шопінг як настрій — коли погано, мозок шукає швидкий дофамін. Купити = відчути контроль і радість на 5 хвилин.</li>
+      <li>Заїдання прокрастинації — замість того щоб робити складну справу, ми «продуктивно» вибираємо новий ноутбук, курс, планувальник.</li>
+      <li>Покупка майбутнього себе — кросівки для бігу, який ще не почала. Книга для читання, до якої не дійду. Купуємо ідентичність, не річ.</li>
+      <li>Самопідкуп — «я багато працюю, я заслужила». Винагорода за виснаження стає частиною циклу виснаження.</li>
+      <li>Ефект IKEA — після того як виставила в кошик і дивишся 10 хвилин, річ психологічно вже твоя. Не купити = втратити.</li>
+      <li>Вплив оточення — якщо подруги говорять про новий бренд, ти його купиш. Не від реклами — від страху випасти з розмови.</li>
+      <li>Втеча від рішення — коли треба зробити складний вибір (переїзд, розрив, кар'єра), мозок переключається на дрібний — який крем купити. Це безпечно і дає ілюзію руху.</li>
+      <li>Ілюзія заощадження — «зі знижкою 70%». Економлячи 700 грн, ти витрачаєш 1 500, які б не витратила взагалі.</li>
+    </ul>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Defense -->
+  <div class="section" style="animation-delay:1.35s">
+    <h2 class="section-title">Як купувати свідомо</h2>
+    <p>Не «не купувати ніколи» — це нереально і не потрібно. А робити покупки своїм рішенням, а не реакцією на тригер.</p>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="card-title">Правило 24 годин</div>
+          <div class="card-text">Усе, що дорожче за умовну межу (наприклад, 500 грн) і не критично — поклади у вішліст, повернись через добу. 70% бажань зникає само. Решта — реальна потреба.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="card-title">Питання «навіщо мені»</div>
+          <div class="card-text">Не «чи це круто», а «що зміниться в моєму житті?». Якщо відповіді конкретної немає — мабуть, реклама зробила свою справу.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="card-title">Вистежи емоцію</div>
+          <div class="card-text">Перш ніж натиснути «купити», запитай: я зараз втомлена / тривожна / самотня / нудьгую? Якщо так — це не покупка, це самолікування. Воно не допоможе.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="card-title">Перерахуй у годинах життя</div>
+          <div class="card-text">Не «1 200 грн», а «3 години моєї роботи». Не «нова сумка», а «півдня життя». Це різко змінює рамку.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="card-title">Список замість потоку</div>
+          <div class="card-text">Іди до магазину зі списком. Усе, що поза списком — не сьогодні. Це блокує імпульсивні покупки на 80%.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <div class="card-title">Прибери спокусу з очей</div>
+          <div class="card-text">Відпишись від магазинів у пошті, прибери картку з пам'яті браузера, видали додатки, які тебе спокушають. Менше тригерів = менше зривів.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">7</div>
+        <div class="step-body">
+          <div class="card-title">Питання через рік</div>
+          <div class="card-text">«Чи я пам'ятатиму цю покупку через рік?». Більшість — ні. Те, що мозок забуде, ймовірно і зараз не критично.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">8</div>
+        <div class="step-body">
+          <div class="card-title">Один in — один out</div>
+          <div class="card-text">Купив новий светр — старий віддай. Купив книжку — прочитай попередню. Це уповільнює потік і робить кожну покупку свідомою.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 4 questions -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">4 питання перед покупкою</h2>
+    <p>Спитай себе чесно. Якщо хоч на одне «ні» — почекай.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🎯</span>
+        <div class="card-title">Це вирішує реальну проблему?</div>
+        <div class="card-text">Чи я знала про цю «проблему» до того, як побачила рекламу?</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🪞</span>
+        <div class="card-title">Я хочу річ — чи образ?</div>
+        <div class="card-text">Я хочу цю куртку — чи бути людиною, яка її носить?</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💰</span>
+        <div class="card-title">Я можу це собі дозволити сьогодні?</div>
+        <div class="card-text">Не «в розстрочку на рік», а зараз, без напруги бюджету.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⏳</span>
+        <div class="card-title">Чи я хотіла б цього вчора?</div>
+        <div class="card-text">Якщо вчора це навіть не спадало на думку — це реклама, не потреба.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="quote">
+    Реклама обіцяє, що покупка зробить тебе кимось. Насправді ти і так уже хтось — просто без нової речі.
+  </div>
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/2200);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.4),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+
+const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.style.animationPlayState='running'}})},{threshold:.1});
+document.querySelectorAll('.section').forEach(el=>{el.style.animationPlayState='paused';observer.observe(el)});
+</script>
+</body>
+</html>

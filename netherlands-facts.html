@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Нідерланди</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(220,230,255,.92)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.72)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.82);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(200,216,255,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.35);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(26px,4vw,36px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Нідерланди</h1>
+  <p class="page-subtitle">Країна, що сама себе побудувала з моря</p>
+
+  <!-- Hero quote -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Бог створив світ, але Нідерланди створили самі голландці"</div>
+      <div class="hero-author">нідерландське прислівʼя</div>
+    </div>
+    <p>26% країни лежить нижче рівня моря. Колись усе це було болотом і затокою — голландці століттями осушали землю, відвойовували її в води метр за метром. Це країна-інженер, де природу буквально переробили на свою користь. І коли ти стоїш на ріллі під Амстердамом, варто памʼятати: 500 років тому тут плавали рибки.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Природа / Географія -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">🌊 Земля з моря</h2>
+    <p>Географія Нідерландів — це історія боротьби. Тут немає високих гір і дрімучих лісів. Натомість є мережа дамб, насосних станцій і польдерів — рукотворних земель, які щодня хтось мусить тримати сухими. Без насосів за тиждень половина країни знову стане водою.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">⬇️</span>
+        <div class="card-title">Нижче рівня моря</div>
+        <div class="card-text">26% території країни лежить нижче рівня моря. Найнижча точка — Зюйдплас-польдер, аж -7 метрів. Якщо вимкнути насоси, цілі провінції просто зникнуть. Тому насоси не вимикаються ніколи — буквально століттями.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌬️</span>
+        <div class="card-title">Тисяча вітряків</div>
+        <div class="card-text">Колись понад 1000 історичних вітряків качали воду з польдерів день і ніч. Сьогодні залишилось близько 1200 — як памʼятки. А поряд стоять модерні турбіни на полях і в морі: країна повертається до вітру, тільки в новому одязі.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🛡️</span>
+        <div class="card-title">7000 км дамб</div>
+        <div class="card-text">Дамби, шлюзи, штучні дюни — понад 7000 кілометрів захисних споруд. Дельтаплан після повені 1953-го — одна з найграндіозніших інженерних систем планети. Голландці кажуть: "ми не воюємо з морем, ми ведемо з ним переговори".</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌷</span>
+        <div class="card-title">Тюльпаноманія</div>
+        <div class="card-text">У XVII столітті одна цибулина рідкісного тюльпана коштувала як будинок у центрі Амстердама. Це був перший фінансовий міхур в історії — а коли він лопнув у 1637-му, мільйонери прокидались жебраками. Тюльпани й досі — символ і експорт #1.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Культура -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">🚲 Голландська вдача</h2>
+    <p>Голландці — народ простий, прямий і неромантичний у найкращому сенсі. Вони не люблять надмірності, цінують затишок і їздять на велосипеді навіть у весільних сукнях. Якщо потрапляєш до них у гості — будь готовою до правди.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🏠</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Гезеллігхейд</div>
+          <div class="card-text">"Gezelligheid" — типово голландське відчуття затишку, дружнього тепла, коли всі свої поряд, на столі свічка, а за вікном дощ. Слово неперекладне жодною мовою. Голландці кажуть: якщо тобі важко пояснити це поняття чужинцеві — отже, ти його ще не відчула.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🗣️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Прямота без обгорток</div>
+          <div class="card-text">Голландець скаже "ні", "це некрасиво", "ти помилилась" — без жодної дипломатії. Не тому що грубий, а тому що чесний. Для іноземця це шок: ти приготувала вечерю, а тобі кажуть "пересолено". У них це знак поваги — мовляв, я не буду тобі брехати.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🚴</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Велосипед — це все</div>
+          <div class="card-text">На 17 мільйонів населення припадає 23 мільйони велосипедів. На велосипеді їдуть на роботу, у школу, на побачення, з немовлям, з трьома дітьми, з ялинкою на Різдво. Прем’єр-міністр приїжджає на роботу на велосипеді. Це не хобі — це спосіб життя.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">☕</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Кафе і кофешоп — різні речі</div>
+          <div class="card-text">У "café" продають каву, тістечка і вино. У "coffeeshop" — марихуану. Туристи плутають постійно і потрапляють у незручні ситуації. Тож якщо хочеш просто капучино — шукай саме "café" або "koffiehuis", а не "coffeeshop".</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Дивовижні факти -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">🤯 Вау, не знала</h2>
+    <p>Деякі речі про Нідерланди звучать як вигадка, але це чиста правда. Це країна рекордів, де в один день можуть прийняти найпрогресивніший закон у світі — і заборонити малювати на власних вікнах.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">📏</span>
+        <div class="card-title">Найвищі люди світу</div>
+        <div class="card-text">Середній зріст голландського чоловіка — 184 см, жінки — 170 см. Це світовий рекорд. За 150 років нація виросла в середньому на 20 см — найбільший стрибок в історії людства. Вчені досі сперечаються, чому: гени, молочка чи рівність.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🚲</span>
+        <div class="card-title">Кожні 6 хвилин</div>
+        <div class="card-text">Велосипедів більше, ніж людей. У самому Амстердамі один велосипед крадуть кожні 6 хвилин. Тому голландці купують найдешевший — і ставлять на нього три замки. На дорогий ніхто не їздить: украдуть першого ж дня.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">👨‍👩‍👧</span>
+        <div class="card-title">Дотації за бабусю</div>
+        <div class="card-text">Уряд дотує сімʼї, де кілька поколінь живуть під одним дахом. Це політика проти самотності літніх людей. Якщо ти забираєш матір з будинку престарілих до себе — держава доплачує. Чому ми так не робимо?</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🪟</span>
+        <div class="card-title">Не малюй на вікнах</div>
+        <div class="card-text">У багатьох містах заборонено малювати чи клеїти щось на скляних вітринах будинку. Бо місто платить за чистку фасадів, і "креативні штори" псують єдиний вид. Голландці охайні до фанатизму — вікна тут миють щотижня.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🏢</span>
+        <div class="card-title">Поверх 13½</div>
+        <div class="card-text">У багатьох будинках Амстердама немає 13-го поверху — забобон. Натомість зустрічаються таблички "12А" або навіть жартівливе "13½". Голландці неромантичні, але навіть вони не хочуть жити на 13-му.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌈</span>
+        <div class="card-title">Перші в світі</div>
+        <div class="card-text">У 2001-му Нідерланди стали першою країною світу, яка легалізувала одностатеві шлюби. Першими ж легалізували евтаназію, перші у Європі — марихуану в межах кофешопів. Тут пробують те, що інші бояться.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Історія -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">⚓ Кілька шарів історії</h2>
+    <p>Маленька країна, яка чотири століття поспіль впливала на світову економіку, культуру і навіть мистецтво. Тут народились перша біржа, перші акції, перша банківська система — все те, на чому стоїть сучасний капіталізм.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🏴‍☠️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">VOC, 1602</div>
+          <div class="card-text">Голландська Ост-Індська компанія (VOC) — перша в історії акціонерна компанія, чиї акції торгувались на біржі. Це винахід Амстердама. Компанія володіла власним флотом, армією і колоніями, була "більшою за країну" і коштувала, в нинішніх грошах, понад 7 трильйонів доларів.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🎨</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Золотий вік XVII</div>
+          <div class="card-text">Маленькі Нідерланди стали центром Європи: Рембрандт, Вермеєр, Спіноза, перші мікроскопи, найбагатші купці, найкращі банки. У містах малювали стільки картин, що їх вішали навіть у пекарнях. Це була культурна революція в країні розміром із Чернігівщину.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">📔</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Анна Франк</div>
+          <div class="card-text">Дівчинка, яка два роки переховувалась з родиною у схованці на Принсенграхт під час нацистської окупації Амстердама. Її щоденник — один із найвідоміших текстів ХХ століття. Дім, де вона ховалась, став музеєм, який відвідують мільйон людей на рік.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">⚔️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Ватерлоо, 1815</div>
+          <div class="card-text">Битва при Ватерлоо, що поклала край Наполеону, відбулась на території тодішніх Нідерландів — нинішня Бельгія тоді була частиною королівства. Через 15 років бельгійці відокремились — але "ватерлоонський епізод" так і залишився голландським за місцем подій.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Сьогодні -->
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">🌟 Сьогодні</h2>
+    <p>Сучасні Нідерланди — це парадокс: одна з найменших країн Європи, яка постійно потрапляє у топ-10 за індексами щастя, освіти, інновацій і свободи. Голландці змогли взяти контроль не тільки над морем, а й над собою.</p>
+
+    <div class="highlight">
+      <p>Один із найщасливіших народів світу за всіма міжнародними рейтингами. Найкраща у світі система велосипедних доріжок — 35 000 км. Сільське господарство — №2 експортер у світі попри крихітну територію (поступаються лише США). Тестовий полігон для прогресивних законів: евтаназія, легалізація, права LGBTQ+, базовий дохід. Голландці — народ, який <em>взяв контроль навіть над морем — і над собою</em>. Якщо в історії і є приклад, що "обставини — не вирок", то це він.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Ключове питання -->
+  <div class="section" style="animation-delay:1.85s">
+    <h2 class="section-title">Ключове питання</h2>
+    <p>Голландці століттями робили одну й ту саму річ: дивились на безнадійне болото — і питали себе, що з нього можна зробити. Спробуй те саме.</p>
+
+    <div class="question-card">
+      <div class="question-label">Запитай себе</div>
+      <div class="question-main">"Що в моєму житті я можу 'осушити' і змінити, як голландці зробили з морем?"</div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Може, це не зовнішня обставина, а внутрішнє болото — звичка, яка тебе тягне вниз. Стосунки, які виснажують. Робота, де ти просто пливеш. Голландці не чекали ідеальних умов: <em>вони будували насоси і відвойовували землю по сантиметру</em>. Те, що сьогодні здається "неможливим", через 10 років може стати твоїм Амстердамом.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Final -->
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Висновок</h2>
+    <div class="final-quote">
+      <div class="final-text">Нідерланди — доказ, що навіть найважчі обставини (бути нижче моря!) — <strong>не вирок</strong>. Можна побудувати щось видатне там, де нічого не мало бути. Не з нуля — з мінусу. І саме тому до них варто придивитись: коли наступного разу скажеш "ну в мене ж нічого немає", згадай, що в них було ще менше — і вони побудували країну, якою захоплюється світ.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>
