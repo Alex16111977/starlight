@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Простір і мислення</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.12) 0%,rgba(40,80,200,.06) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.07) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.55)}
+
+.steps-grid{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.step-card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:24px;align-items:flex-start}
+.step-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.step-card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.step-card:hover::before{opacity:1}
+.step-num{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:48px;color:rgba(138,176,255,.25);line-height:1;flex-shrink:0;width:40px;text-align:center}
+.step-body{flex:1}
+
+.tips{list-style:none;margin-top:16px}
+.tips li{font-size:13px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.6);padding:12px 0 12px 28px;border-bottom:1px solid rgba(200,216,255,.04);position:relative}
+.tips li::before{content:'';position:absolute;left:8px;top:20px;width:4px;height:4px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 6px #8ab0ff}
+
+.rules-list{list-style:none;margin-top:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:12px}
+.rules-list li{font-size:12px;font-weight:200;line-height:1.7;color:rgba(200,216,255,.55);padding:14px 16px 14px 32px;background:rgba(200,216,255,.02);border:1px solid rgba(200,216,255,.05);border-radius:10px;position:relative}
+.rules-list li::before{content:'';position:absolute;left:14px;top:20px;width:4px;height:4px;border-radius:50%;background:rgba(212,175,110,.6);box-shadow:0 0 6px rgba(212,175,110,.3)}
+
+.compare{margin-top:24px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+.cmp-col{background:rgba(200,216,255,.04);border:1px solid rgba(200,216,255,.1);border-radius:16px;padding:24px}
+.cmp-col.bad{background:rgba(255,130,130,.04);border-color:rgba(255,130,130,.12)}
+.cmp-col.good{background:rgba(130,200,140,.04);border-color:rgba(130,200,140,.14)}
+.cmp-head{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;margin-bottom:14px}
+.cmp-col.bad .cmp-head{color:rgba(255,170,150,.9)}
+.cmp-col.good .cmp-head{color:rgba(160,220,170,.9)}
+.cmp-list{list-style:none}
+.cmp-list li{font-size:12px;font-weight:200;line-height:1.7;color:rgba(200,216,255,.6);padding:8px 0 8px 22px;position:relative}
+.cmp-list li::before{position:absolute;left:0;top:8px;font-size:12px}
+.cmp-col.bad .cmp-list li::before{content:'×';color:rgba(255,170,150,.7)}
+.cmp-col.good .cmp-list li::before{content:'✓';color:rgba(160,220,170,.7)}
+
+.quote{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.4vw,22px);line-height:1.6;color:rgba(220,230,255,.85);text-align:center;padding:32px 24px;border-top:1px solid rgba(200,216,255,.1);border-bottom:1px solid rgba(200,216,255,.1);margin:32px 0}
+.quote::before{content:'"';font-size:36px;color:rgba(138,176,255,.4);margin-right:6px;vertical-align:-6px}
+.quote::after{content:'"';font-size:36px;color:rgba(138,176,255,.4);margin-left:6px;vertical-align:-6px}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Простір і мислення</h1>
+  <p class="page-subtitle">Як організувати кімнату, щоб краще думалось</p>
+
+  <div class="section" style="animation-delay:.9s">
+    <p>Якість думок залежить від простору, в якому ти думаєш. Це не езотерика — це нейронаука. Безлад на столі підвищує кортизол. Низькі стелі звужують мислення. Природне світло підвищує продуктивність на 15%. Кожен предмет на видноті відбирає крихту твоєї уваги — і ти не помічаєш, поки не приберешся.</p>
+    <p>Простір — це не «декор». Це інструмент. Правильно налаштований, він робить за тебе половину роботи: автоматично налаштовує мозок на фокус, відпочинок або творчість. Налаштований невдало — постійно витрачає твою енергію на боротьбу із собою.</p>
+  </div>
+
+  <div class="quote">
+    Ми спочатку формуємо наші простори, а потім простори формують нас.
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Що бачить твій мозок</h2>
+    <p>Зір — найбільш енергоємний канал сприйняття. Кожен предмет у полі зору обробляється — навіть якщо ти на нього «не дивишся». І якщо предметів багато — мозок втомлюється швидше, ніж ти помічаєш.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">📚</span>
+        <div class="card-title">Кожна річ — задача</div>
+        <div class="card-text">Кожен предмет на столі несе невидимий пункт у списку справ: книга, яку треба прочитати, рахунок, який треба сплатити, светр, який треба прибрати. Підсвідомо мозок це фіксує — і втомлюється.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧠</span>
+        <div class="card-title">Безлад = кортизол</div>
+        <div class="card-text">Дослідження UCLA: жінки з «захаращеним» домом мали стабільно підвищений кортизол увечері. Чоловіки — менше, бо менше «помічали». Чим більше речей — тим більше стресу, навіть несвідомого.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎯</span>
+        <div class="card-title">Безлад = розфокус</div>
+        <div class="card-text">Експеримент Принстон: візуальний хаос конкурує за увагу з основною задачею. Чистий стіл = мозок зосереджений. Завалений = мозок розпорошений, навіть якщо ти не дивишся.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">😌</span>
+        <div class="card-title">Порядок = спокій</div>
+        <div class="card-text">У чистому просторі мозок отримує сигнал: «контроль є, можна розслабитись». Це не примха — це тисячі років еволюції в передбачуваному середовищі.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Принцип зон</h2>
+    <p>Один простір — для всього: спати, їсти, працювати, відпочивати — мозок плутається. Він не знає, де «треба» бути в якому стані. Тому навіть в одній кімнаті важливо мати окремі зони.</p>
+
+    <div class="step-card">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="card-title">Зона роботи</div>
+        <div class="card-text">Стіл або кут, де ти ТІЛЬКИ працюєш. Не їси, не дивишся серіали, не лежиш. Мозок асоціює цей куточок з фокусом — і налаштовується автоматично, як тільки ти сідаєш. Не відразу — за тиждень-два.</div>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="card-title">Зона відпочинку</div>
+        <div class="card-text">Диван, крісло, кутик з книжкою. Тут — ні робочого ноутбука, ні зошитів. Лише розслаблення. Мозок розуміє: «тут не треба думати». І дозволяє собі відпустити.</div>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="card-title">Зона сну</div>
+        <div class="card-text">Ліжко — лише для сну і близькості. Не дивитись телефон, не працювати, не їсти. Мозок з'єднує контекст і стан: лягла = засинаю. Якщо порушуєш — отримуєш безсоння.</div>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <div class="card-title">Зона переходу</div>
+        <div class="card-text">Місце, де ти залишаєш «робочу себе» — і входиш у домашню. Біля дверей: кошик для сумки, гачки для одягу. Заходиш, кладеш ключі, вішаєш куртку — і мозок розуміє: «робота скінчилась».</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Світло — найважливіший фактор</h2>
+    <p>Якщо ти можеш покращити лише одне в просторі — почни зі світла. Воно впливає на гормони, настрій, концентрацію більше за будь-який інший фізичний параметр.</p>
+
+    <ul class="rules-list">
+      <li>Природне світло вдень — стіл біля вікна або хоча б рефлексивна поверхня</li>
+      <li>Тепле жовте світло ввечері — щоб мозок готувався до сну</li>
+      <li>Кілька джерел світла, не одна стельова лампа</li>
+      <li>Smart-лампи з регульованою температурою — недорого, працюють магічно</li>
+      <li>На ніч — м'яке світло, не холодне біле; не телефон у обличчя</li>
+      <li>Зранку — яскраве світло одразу: запускає кортизол правильно</li>
+      <li>Якщо мало сонця — лампа денного світла 10 000 lux на 20 хв зранку</li>
+      <li>Свічки увечері — реальний вплив на настрій, не лише краса</li>
+    </ul>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1.15s">
+    <h2 class="section-title">Робочий стіл</h2>
+    <p>Місце, де народжуються або помирають твої ідеї. Не «просто стіл». Те, як він налаштований, визначає, скільки ти зробиш сьогодні.</p>
+
+    <div class="compare">
+      <div class="cmp-col bad">
+        <div class="cmp-head">Те, що краде увагу</div>
+        <ul class="cmp-list">
+          <li>Стопки паперів і книг</li>
+          <li>Чашки, тарілки, недоїдене</li>
+          <li>Купа кабелів на видноті</li>
+          <li>Телефон поряд з екраном</li>
+          <li>Ноутбук на низькому столі</li>
+          <li>Стільці без підтримки спини</li>
+          <li>Спина до дверей</li>
+          <li>Темно — тільки лампа екрана</li>
+        </ul>
+      </div>
+      <div class="cmp-col good">
+        <div class="cmp-head">Те, що допомагає думати</div>
+        <ul class="cmp-list">
+          <li>Чиста поверхня — лише сьогоднішнє</li>
+          <li>Склянка води поряд</li>
+          <li>Кабелі організовані під столом</li>
+          <li>Телефон в іншій кімнаті</li>
+          <li>Монітор на рівні очей</li>
+          <li>Зручне крісло з опорою попереку</li>
+          <li>Бічне вікно — світло зліва (для правшів)</li>
+          <li>Дві лампи: тепла + холодна</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Дрібниці, які впливають сильно</h2>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🌿</span>
+        <div class="card-title">Рослини</div>
+        <div class="card-text">Хоча б одна жива рослина в полі зору. Знижує тривогу, покращує концентрацію. Мозок асоціює зелень з безпекою — це з нашого пра-пра-пра минулого.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🪟</span>
+        <div class="card-title">Вікно і вид</div>
+        <div class="card-text">Якщо є вид на природу — стіл повертай до нього. Якщо ні — фотографія природи на стіні. Здається дрібниця, але працює.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎨</span>
+        <div class="card-title">Кольори</div>
+        <div class="card-text">Сині й зелені відтінки — концентрація. Жовті й оранжеві — креативність. Білі стіни — нейтрально, але порожньо. Червоний — стрес. Обирай під функцію кімнати.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌬️</span>
+        <div class="card-title">Повітря</div>
+        <div class="card-text">CO₂ вище 1000 ppm — зниження когнітивних здібностей на 15-50%. Провітрюй кімнату кожні 2 години. Якщо неможливо — рослини, очисник.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔇</span>
+        <div class="card-title">Звук</div>
+        <div class="card-text">Тиша краща за музику для глибокого фокусу. Якщо тихо не вийде — білий шум, природа (дощ, ліс), інструментальна без слів. Без подкастів і пісень з текстом.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌡️</span>
+        <div class="card-title">Температура</div>
+        <div class="card-text">19-22°C — оптимум для роботи. Тепліше — клонить у сон. Холодніше — тіло витрачає енергію на зігрівання. Сон — 17-19°C.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1.25s">
+    <h2 class="section-title">Правило «один-один»</h2>
+    <p>Найпростіша система, яка тримає простір під контролем без «генерального прибирання».</p>
+
+    <ul class="tips">
+      <li>Купила одну річ — одну подаруй або викинь. Шафи не ростуть.</li>
+      <li>Дістала річ — одразу повертай на місце. Не «потім», бо «потім» дорівнює «купа».</li>
+      <li>Бачиш безлад на 3 секунди — приберись. Поки маленький — це 30 секунд. Потім — година.</li>
+      <li>Кожна річ має своє місце. Якщо немає місця — річ зайва.</li>
+      <li>Раз на 3 місяці — ревізія. Що не використовувала за квартал — ймовірно, не потрібно.</li>
+      <li>Перш ніж купити — спитай: «куди це покладу?». Немає відповіді = немає покупки.</li>
+    </ul>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Простір для творчості vs для фокусу</h2>
+    <p>Дослідження показали: різні типи мислення потребують різних просторів. Знаючи це — можна свідомо перемикатись.</p>
+
+    <div class="compare">
+      <div class="cmp-col good">
+        <div class="cmp-head">Для фокусу</div>
+        <ul class="cmp-list">
+          <li>Низькі стелі, маленька кімната</li>
+          <li>Холодне, спрямоване світло</li>
+          <li>Мінімум стимулів навколо</li>
+          <li>Тиша або білий шум</li>
+          <li>Чистий стіл</li>
+          <li>Сині й зелені кольори</li>
+          <li>Прохолодніше</li>
+        </ul>
+      </div>
+      <div class="cmp-col good" style="background:rgba(212,175,110,.06);border-color:rgba(212,175,110,.18)">
+        <div class="cmp-head" style="color:rgba(220,200,160,.95)">Для творчості</div>
+        <ul class="cmp-list">
+          <li>Високі стелі, великий простір</li>
+          <li>Тепле, розсіяне світло</li>
+          <li>Колірні акценти, мистецтво</li>
+          <li>Тиха фонова музика</li>
+          <li>Стіл з різними «штучками»</li>
+          <li>Жовті, оранжеві, фіолетові</li>
+          <li>Трохи тепліше</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1.35s">
+    <h2 class="section-title">З чого почати сьогодні</h2>
+
+    <ul class="tips">
+      <li>15 хвилин: розчисти лише робочий стіл — повністю. Усе зайве — кудись. Помить поверхню. Постав одну рослину або фото.</li>
+      <li>30 хвилин: вибери одну зону, де ти проводиш найбільше часу. Зроби з неї «мікрорай» — тільки потрібне, нічого зайвого.</li>
+      <li>Поміняй одну лампу на тепле жовте світло. Уже ввечері кімната буде відчуватись інакше.</li>
+      <li>Прибери телефон з ліжка. Заряди в іншій кімнаті. Купи дешевий будильник.</li>
+      <li>Виділи одну поличку чи коробку для «незрозумілих» речей. Раз на місяць переглядай.</li>
+      <li>Коли заходиш додому — клади ключі і телефон в одне місце. Не шукай їх щоразу.</li>
+      <li>Раз на тиждень — 20 хвилин ревізії. Не «генеральне», а просто навести лад. На тижні — все під контролем.</li>
+    </ul>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="quote">
+    Зовнішній порядок — це фундамент внутрішнього спокою.
+  </div>
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/2200);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.4),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+
+const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.style.animationPlayState='running'}})},{threshold:.1});
+document.querySelectorAll('.section').forEach(el=>{el.style.animationPlayState='paused';observer.observe(el)});
+</script>
+</body>
+</html>

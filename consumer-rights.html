@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Права споживача</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(220,230,255,.92)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.72)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.82);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(200,216,255,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.35);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(26px,4vw,36px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="documents.html">Назад</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Права споживача</h1>
+  <p class="page-subtitle">Повернення, гарантія, обман</p>
+
+  <!-- Hero quote -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Магазин не робить тобі послугу, продаючи товар. Він заробляє на цьому"</div>
+      <div class="hero-author">Аксіома торгівлі</div>
+    </div>
+    <p>Більшість людей думає, що "повернути в магазин" — це майже неможливо, "тільки якщо нагрубити продавцю". Насправді закон "Про захист прав споживачів" дає тобі дуже широкі права. Просто магазини зацікавлені, щоб ти про них не знав. Ця сторінка — без юридичної мови, з конкретними цифрами і фразами, які треба сказати, щоб закон спрацював.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Базові правила -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Базові правила</h2>
+    <p>Закон "Про захист прав споживачів" — твій головний інструмент. Він діє в Україні з 1991 року і регулярно оновлюється. Ось ключові моменти, які треба знати на пам'ять.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">📅</span>
+        <div class="card-title">14 днів — повернення без причини</div>
+        <div class="card-text">Стаття 9: непродовольчий товар належної якості можна повернути або обміняти протягом 14 днів з дня купівлі. Не потрібно пояснювати "чому". Достатньо: "не підійшов розмір/колір/фасон". Умови: товар не використовувався, збережено товарний вигляд, чек або інше підтвердження покупки. Подарунок можна повернути теж — нормально, якщо приніс той, кому подарували.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🚫</span>
+        <div class="card-title">Що не повертається</div>
+        <div class="card-text">Постанова КМУ № 172: ліки, нижня білизна, панчохи, парфуми у пошкодженій упаковці, ювелірні вироби, друковані видання, тканини, рослини, тварини, технічно складні товари (телефони, ноутбуки) — якщо нема дефекту. Це закритий список. Решту — все можна повернути за 14 днів. Магазин, що каже "у нас не повертають" — порушує закон.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📦</span>
+        <div class="card-title">Без чека — теж можна</div>
+        <div class="card-text">Стаття 8: відсутність чека НЕ є підставою для відмови у поверненні. Підтвердженням купівлі може бути виписка з картки, фото з вебсайту, e-mail з підтвердженням замовлення, свідки. Магазин має право верифікувати — але не відмовляти беззастережно. Якщо відмовляють "бо нема чека" — пиши скаргу.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💸</span>
+        <div class="card-title">Гроші — не сертифікат</div>
+        <div class="card-text">Якщо повертаєш товар — отримай гроші у тій же формі, у якій платив (готівка/картка). Магазин може запропонувати "сертифікат" або "обмін на іншу річ" — це обов'язково тільки якщо ти добровільно погоджуєшся. Стаття 9: ти маєш право вибирати — гроші чи обмін. Не ведись на "у нас тільки кредит-нота".</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Гарантія -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Гарантія і недоліки</h2>
+    <p>Що робити, якщо товар зламався не з твоєї вини. Ось ситуація, коли закон стає на твій бік найсильніше — але мало хто цим користується.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">⚠️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Гарантійний термін — мінімум</div>
+          <div class="card-text">Стаття 7: на товар встановлюється гарантійний термін, протягом якого продавець відповідає за недоліки. Якщо терміну не вказано — за замовчуванням 2 роки. Багато магазинів пишуть "гарантія 1 рік" — це лише їхня фірмова гарантія. Юридично у тебе є право вимагати усунення недоліків 2 роки. Знай це.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🛠️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">4 варіанти при недоліку</div>
+          <div class="card-text">Стаття 8: якщо товар має недолік, ти маєш право вимагати: 1) безкоштовного ремонту; 2) заміни на такий самий або аналогічний; 3) пропорційного зменшення ціни; 4) повернення грошей. Вибираєш ТИ, не магазин. Якщо магазин каже "ми тільки ремонтуємо" — це порушення. Скажи: "вимагаю повернення грошей за статтею 8".</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">⏱️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">14 днів — на ремонт</div>
+          <div class="card-text">Стаття 8: магазин зобов'язаний усунути недоліки протягом 14 днів. На цей час він повинен дати тобі ТАКИЙ САМИЙ товар на користування (для технічно складних). Якщо ремонт затягується або не вдається — ти маєш повне право вимагати повернення грошей. Затягують? Пиши скаргу і йди до Держспоживчстандарту.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🧪</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Експертиза — за рахунок продавця</div>
+          <div class="card-text">Якщо магазин стверджує "це ти зламав, не ми": вони зобов'язані провести експертизу за свої гроші. Якщо експертиза показує заводський брак — повернення грошей. Якщо не на твою користь — ти оплачуєш експертизу. Зазвичай продавці бояться експертизи, бо їм невигідно платити: натомість пропонують компроміс. Це сильна позиція для тебе.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Інтернет-магазини -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Покупки в інтернеті</h2>
+    <p>З 2014 року Україна має окремі правила для онлайн-покупок. Вони набагато сильніші за традиційні. Часто люди не знають, що їх захист суворіший саме в інтернеті.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">📅</span>
+        <div class="card-title">14 днів — навіть без причини</div>
+        <div class="card-text">Стаття 13: товар, придбаний дистанційно (через сайт, телефон, мережу), можна повернути протягом 14 днів. БЕЗ ПОЯСНЕННЯ ПРИЧИН. Жодних "але я використав один раз". Достатньо повернути в товарному вигляді. Магазин зобов'язаний повернути всю суму, включно з доставкою. Це працює навіть для тих категорій, які заборонено повертати в звичайних магазинах.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🚚</span>
+        <div class="card-title">Доставка — на витрати магазину</div>
+        <div class="card-text">Якщо ти повертаєш товар через те, що магазин обманув (не той колір/розмір/модель прийшов) — доставка туди-сюди коштом магазину. Якщо повертаєш просто бо "не сподобалось" — ти оплачуєш доставку назад. Це теж важливо знати: магазин не може казати "повернути можна, але ти оплачуєш повернення", якщо причина — їхня помилка.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💳</span>
+        <div class="card-title">Чарджбек через банк</div>
+        <div class="card-text">Якщо ти оплатив карткою і магазин не повертає гроші — пиши заяву у банк на чарджбек. Це звернення банку до VISA/MasterCard з вимогою повернути списання. Працює якщо: товар не отримано, отримано не той товар, магазин не повертає гроші, інтернет-магазин не виконав зобов'язання. Заявка розглядається до 90 днів. Часто допомагає, коли магазин не реагує на скарги.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📜</span>
+        <div class="card-title">Правила сайту — не закон</div>
+        <div class="card-text">Магазини часто пишуть "ми не повертаємо знижені товари" або "повернення тільки за 7 днів". Це їхні правила, не закон. Закон вищий за внутрішні правила магазину. Якщо вони суперечать — діє закон. Не ведись на "у нас так". У них так — а в законі інакше. Ти маєш право вимагати того, що в законі.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що робити крок за кроком -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Як повернути товар крок за кроком</h2>
+    <p>Конкретний алгоритм. Працює в 90% випадків — без скандалу, без сліз, без юриста. Просто послідовність дій.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">1️⃣</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Перший крок — спокійна розмова</div>
+          <div class="card-text">Підійди до продавця або сервісного центру. Скажи спокійно: "Прошу повернути цей товар. Стаття 9 закону про захист прав споживачів". Багато магазинів вирішує одразу. Заздалегідь приготуй чек, картку, паспорт. Час на це — 10 хвилин. Якщо продавець вагається — попроси покликати менеджера, не сваріться з касиром, він не вирішує.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">2️⃣</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Не помогло — пиши заяву</div>
+          <div class="card-text">Напиши заяву на повернення в двох примірниках. У вільній формі: "Прошу повернути кошти за товар [назва], придбаний [дата] на суму X грн. Підстава: стаття 9 ЗУ про захист прав споживачів". На обох примірниках попроси розписатись приймальника. Один залиши собі. Це твій доказ. Магазин має 7 днів на відповідь.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">3️⃣</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Не реагують — Держпродспоживслужба</div>
+          <div class="card-text">Якщо за 7 днів не відповіли або відмовили без причини — скарга в Держпродспоживслужбу. Подається онлайн на dpss.gov.ua або у фізичному відділенні. Прикріпи: чек, заяву з відміткою магазину, фотодокази. Перевірка — 30 днів. Магазину можуть призначити штраф 5100 грн і зобов'язати повернути гроші. Це найдієвіший рівень тиску.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">4️⃣</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Останній рівень — суд</div>
+          <div class="card-text">Якщо сума істотна (понад 5-10 тис. грн), пиши позов до місцевого суду. У справах про захист прав споживачів держмито не сплачується (стаття 5 ЗУ "Про судовий збір"). Можеш вимагати: повернення суми, штрафу 1% від ціни товару за кожен день затримки (ст. 22), компенсації моральної шкоди. У 80% таких справ суди стають на бік споживача.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Магічні фрази -->
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Магічні фрази для розмови з магазином</h2>
+    <p>Цілі статті закону можна замінити кількома відпрацьованими фразами. Магазини бояться їх, бо знають — якщо клієнт знає закон, тікати марно.</p>
+
+    <div class="highlight">
+      <p>"Стаття 9 закону про захист прав споживачів" — повернення непродовольчого товару за 14 днів. "Стаття 8" — недоліки, вибір з чотирьох варіантів, у тому числі повернення грошей. "Стаття 13" — дистанційна торгівля, 14 днів навіть без причини. "Книга скарг і пропозицій" — кожен магазин зобов'язаний її мати і видавати по першому проханню. "Зверніться до Держспоживслужби" — вже від цієї фрази більшість магазинів швидко знаходить компроміс. <em>Не треба сваритися. Достатньо говорити спокійним голосом і знати ці п'ять речей</em>. Більшість конфліктних ситуацій вирішується ще до того, як ти доходиш до офіційної скарги.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Ключове питання -->
+  <div class="section" style="animation-delay:1.85s">
+    <h2 class="section-title">Ключове питання</h2>
+    <p>Багато людей мовчки погоджуються на обман у магазині — бо "не хочеться зайвих проблем". А обман — і є зайва проблема, тільки відкладена.</p>
+
+    <div class="question-card">
+      <div class="question-label">Запитай себе</div>
+      <div class="question-main">"Скільки грошей я залишив у магазинах через те, що не знав своїх прав?"</div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>За 10 років статистично середня українська сім'я втрачає 30-50 тис. грн через дрібні обмани, які не оскаржували: невдалі покупки, що не повернули; зламана техніка, яку прийняли в ремонт назавжди; послуги, що "так і не зробили". Це не катастрофа. Це повільне витікання. <em>Знання своїх прав — це не "характер бойового бабая". Це повага до власних грошей</em>. І до власного часу: п'ять хвилин розмови за статтею 8 — це не сварка. Це нормальне ділове спілкування зі стороною, яка тебе не дотягує до домовленого.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Final -->
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Висновок</h2>
+    <div class="final-quote">
+      <div class="final-text">У відносинах продавець-покупець <strong>покупець має сильніший захист, ніж продавець</strong>. Закон писали саме так навмисно — бо магазин у виграшній позиції за замовчуванням. Тільки про це знає 5% людей. Стань тими 5%, і ти перестанеш мовчки приймати "так склалось". П'ять статей закону. Десять простих фраз. Це все, що потрібно — щоб у магазинах з тобою поводилися чесно.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>

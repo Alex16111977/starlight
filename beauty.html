@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Краса зсередини</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(200,120,180,.22) 0%,rgba(180,100,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(220,160,180,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(220,230,255,.9);margin-bottom:16px}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:14px;font-weight:300;line-height:1.75;color:rgba(220,230,255,.92)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(220,230,255,.92);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+
+.toc{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-bottom:48px;opacity:0;animation:riseIn 1s .9s ease forwards}
+.toc a{font-size:11px;font-weight:300;letter-spacing:.2em;text-transform:uppercase;color:rgba(200,216,255,.65);text-decoration:none;padding:10px 18px;border:1px solid rgba(200,216,255,.18);border-radius:100px;transition:all .3s;background:rgba(200,216,255,.04)}
+.toc a:hover{color:#fff;border-color:rgba(200,216,255,.4);background:rgba(200,216,255,.10);transform:translateY(-2px)}
+
+.list{margin-top:8px}
+.list-item{display:flex;gap:14px;padding:18px 0;border-bottom:1px solid rgba(200,216,255,.08)}
+.list-item:last-child{border-bottom:none}
+.list-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:22px;color:rgba(212,175,110,.8);min-width:32px;line-height:1.4}
+.list-body{flex:1}
+.list-head{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:17px;color:rgba(220,230,255,.95);margin-bottom:6px;letter-spacing:.03em}
+.list-text{font-size:13px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.72)}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.25);border-radius:100px;color:rgba(200,216,255,.75);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(220,230,255,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:rgba(245,225,180,1)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Краса зсередини</h1>
+  <p class="page-subtitle">Тіло, дотик, ритуали, дзеркало, сон</p>
+
+  <nav class="toc">
+    <a href="#touch">💆 Дотик</a>
+    <a href="#rituals">🌸 Ритуали</a>
+    <a href="#mirror">🪞 Дзеркало</a>
+    <a href="#sleep">💤 Сон</a>
+    <a href="#natural">🌿 Догляд</a>
+  </nav>
+
+  <div class="section" style="animation-delay:1.1s">
+    <div class="hero-quote">
+      <div class="hero-text">"Краса — не те, що бачать інші. Це стан, у якому ти живеш у власному тілі"</div>
+      <div class="hero-author">Starlight</div>
+    </div>
+    <p>Індустрія краси переконує: краса — у баночках. Ще одна сироватка, ще один курс, ще одна процедура. Але справжня краса з'являється, коли тіло відчуває себе вдома. Це не про гени, не про вік і не про бюджет — це про те, як ти доглядаєш за собою щодня. Ця сторінка — про п'ять речей, які впливають більше за всі сироватки разом.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 💆 Дотик -->
+  <div class="section" id="touch" style="animation-delay:1.3s">
+    <h2 class="section-title">💆 Масаж і тіло — чому дотик такий важливий</h2>
+    <p>Шкіра — найбільший орган людини. 2 м², 5 мільйонів рецепторів, прямий канал зв'язку з мозком. Доросла людина в містах часто роками не отримує дотику без сексу — і це впливає на здоров'я не менше за погане харчування. Це називають "skin hunger" — шкірний голод.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🧠</span>
+        <div class="card-title">Що відбувається у мозку</div>
+        <div class="card-text">При дотику виділяється окситоцин — "гормон прив'язаності". Знижується кортизол (стрес). Підвищується серотонін і дофамін. Усе це за лічені хвилини масажу. Дослідження показують: 15 хвилин дотику = такий самий ефект, як 30 хвилин спорту чи короткий курс антидепресантів.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💪</span>
+        <div class="card-title">Що дає тілу</div>
+        <div class="card-text">Покращує лімфоток (виводить токсини), знімає м'язові затиски, поліпшує сон, зменшує запалення. Регулярний масаж — навіть самомасаж 10 хвилин на день — знижує тиск і ризик серцевих захворювань. Це не люкс, це профілактика.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🤲</span>
+        <div class="card-title">Самомасаж — теж рахується</div>
+        <div class="card-text">Не обов'язково йти до майстра. Масаж голови з олією перед миттям волосся (ayurvedic abhyanga). Гуа-ша або роллер для обличчя 5 хв вранці. Контрастний душ з активним розтиранням. Самомасаж стоп з тенісним м'ячиком ввечері. Усе це працює.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">👫</span>
+        <div class="card-title">Дотик у стосунках</div>
+        <div class="card-text">Пари, які щодня обнімаються по 20 секунд (а не побіжно), мають вищий рівень окситоцину і нижчий — кортизолу. Це найдешевша терапія стосунків. Сімейний психолог Сью Джонсон: "20 секунд об'ятій на день рятують більше шлюбів, ніж години розмов".</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🐈</span>
+        <div class="card-title">Тварини</div>
+        <div class="card-text">Якщо немає партнера або сім'ї поруч — дотик до тварини теж знижує кортизол і підвищує окситоцин. Гладиш кота 10 хв = той самий хімічний ефект, що від дитячого об'єднання. Не "замінник", а реальна терапія, особливо для людей, що живуть самі.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚠️</span>
+        <div class="card-title">Шкірний голод</div>
+        <div class="card-text">Люди, що довго без дотику, мають вищу тривогу, депресію, гірший імунітет. Особливо помітно в пандемію — ізольовані відчували це фізично. Якщо дотику бракує — навмисно шукай: масажист раз на місяць, обійми з друзями, контактні види спорту (танці, бойові мистецтва).</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 🌸 Ритуали краси -->
+  <div class="section" id="rituals" style="animation-delay:1.5s">
+    <h2 class="section-title">🌸 Ритуали краси як медитація</h2>
+    <p>Різниця між "процедурою" і "ритуалом" — у присутності. Процедура — швидко, на автоматі, поки скролиш. Ритуал — повільно, усвідомлено, з вкладеною увагою. Шкіра отримує те саме. Психіка — зовсім інше.</p>
+
+    <div class="list">
+      <div class="list-item">
+        <div class="list-num">01</div>
+        <div class="list-body">
+          <div class="list-head">Чому це працює</div>
+          <div class="list-text">Ритуал перемикає мозок з режиму "роби" в режим "будь". 10 хвилин уважного нанесення крему — це повноцінна mindfulness-практика. Те ж саме, що медитація, тільки приємніше — бо включає тактильність, запах, температуру. Мозок не може казати "не встигаю" — у тебе є привід уповільнитись.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">02</div>
+        <div class="list-body">
+          <div class="list-head">Ранковий ритуал</div>
+          <div class="list-text">Не "ще 30 справ перед роботою", а 15 хвилин для себе. Контрастне умивання (холод бадьорить шкіру і мозок). Тонік пальцями (не ватним диском — він кидає продукт). Сироватка, легкий масаж обличчя гуа-ша, крем, SPF. Кожен крок — 30-60 секунд усвідомленого дотику до себе. Це налаштовує день.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">03</div>
+        <div class="list-body">
+          <div class="list-head">Вечірній ритуал</div>
+          <div class="list-text">Вечір — час відновлення. Подвійне очищення (олія + пінка) — змиває макіяж, SPF, бруд міста. Тонік. Активна сироватка (ретинол, кислоти, ніацинамід — залежно від цілей). Крем. Раз-двічі на тиждень — маска, поки лежиш у ванні з книгою. Це не марнотратство часу — це кордон між "робочим днем" і "своїм часом".</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">04</div>
+        <div class="list-body">
+          <div class="list-head">Запах як якір</div>
+          <div class="list-text">Один і той самий аромат у ритуалі — стає "якорем" для нервової системи. Через місяць цей запах буде автоматично заспокоювати тебе. Лаванда — для вечора, цитруси — для ранку. Парфуми, сполучені тільки з приємними моментами, працюють як терапія: один запах — і ти у безпечному стані.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">05</div>
+        <div class="list-body">
+          <div class="list-head">Без телефону</div>
+          <div class="list-text">Найважливіше правило ритуалу: телефон не в полі зору. Якщо ти доглядаєш шкіру і паралельно скролиш TikTok — це не ритуал, це просто розсіяна процедура. Психіка не отримує заспокоєння. Шкіра отримує продукт без додаткового бонусу. Ціль — присутність у моменті, а не "встигла + 1 справа".</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Японці і кореянки роблять догляд по 10-15 кроків не тому, що шкірі це конче треба. А тому, що це <em>духовна практика</em> — медитація через догляд за тілом. Звідси філософія "skin meditation". Ефект — і на шкіру, і на психіку. Перевір на собі: тиждень догляду на автоматі vs тиждень з присутністю. Різниця колосальна.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 🪞 Дзеркало -->
+  <div class="section" id="mirror" style="animation-delay:1.7s">
+    <h2 class="section-title">🪞 Як дзеркало впливає на самооцінку</h2>
+    <p>Ти бачиш себе в дзеркалі більше, ніж хто-небудь інший. Кожен з цих поглядів — або підтримка, або підтримує внутрішню критику. У середньому жінка дивиться у дзеркало 70 разів на день. Якщо кожен раз — критика, то це 70 ударів. Якщо прийняття — 70 моментів сили.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">😣</span>
+        <div class="card-title">Що ти насправді бачиш</div>
+        <div class="card-text">Не "себе", а свою інтерпретацію. Той самий рот при поганому настрої здається "великим", при гарному — "виразним". У дні гормональних спадів обличчя здається набряклим, навіть якщо об'єктивно ні. Дзеркало — це не камера, а проекція твого стану. Запам'ятай це.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📱</span>
+        <div class="card-title">Дзеркало vs селфі-камера</div>
+        <div class="card-text">Передня камера телефону спотворює риси (широкоформатний об'єктив). Сільня обличчя — твоя реальність. Чому ти на фото "не схожа на себе"? Бо ти звикла до дзеркального відображення, де твоє обличчя інверсоване. Покажи людям дзеркальне фото — вони тебе не впізнають.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔄</span>
+        <div class="card-title">"Mirror gazing"</div>
+        <div class="card-text">Психологічна практика: 5 хвилин дивитись собі в очі у дзеркалі без оцінки. Спочатку незручно, потім сльози, потім — щось дивне. Ти бачиш живу людину, не "недоліки шкіри". Це повертає зв'язок з собою. Терапевти використовують для роботи з самооцінкою.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🚫</span>
+        <div class="card-title">Body-checking</div>
+        <div class="card-text">Постійне перевіряння себе у дзеркалі (профіль, живіт, обличчя під різним кутом) — не "уважність до себе", а симптом тривоги. Чим більше дивишся, тим більше знаходиш до чого причепитись. Один раз вранці і один раз ввечері — здорово. Десятки разів на день — звуження уваги до тіла.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💖</span>
+        <div class="card-title">Mantra перед дзеркалом</div>
+        <div class="card-text">Зранку говорити вголос три речі, які тобі подобаються в собі. Без брехні і без ідеалізації — просто правду. "Мої очі сьогодні живі". "Я бачу свою силу". "Я тут". Через 3-4 тижні щоденної практики самооцінка змінюється фізіологічно — підтверджено fMRI-дослідженнями.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🪞</span>
+        <div class="card-title">Дзеркало в оточенні</div>
+        <div class="card-text">Якщо в домі багато дзеркал, особливо у спальні — будь обережна. Ти весь час "на сцені", навіть наодинці. Експеримент: на тиждень прибрати дзеркала зі спальні і кухні, лишити тільки у ванній. Багато людей повідомляють: "вперше за роки відчула себе у безпеці у власному тілі".</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 💤 Сон -->
+  <div class="section" id="sleep" style="animation-delay:1.9s">
+    <h2 class="section-title">💤 Краса і сон — що відбувається з тілом вночі</h2>
+    <p>Жоден крем не зробить того, що 8 годин сну. Це не метафора — це фізіологія. Уночі тіло переходить у режим відновлення, який неможливо ввімкнути нічим іншим. Брак сну видно за 2-3 дні: тьмяна шкіра, набряки, кола під очима. Хронічний — старіє на роки.</p>
+
+    <div class="list">
+      <div class="list-item">
+        <div class="list-num">01</div>
+        <div class="list-body">
+          <div class="list-head">Що відбувається з 22:00 до 02:00</div>
+          <div class="list-text">Пік виділення гормону росту — він відповідає за регенерацію клітин шкіри. У ці години відбувається 70% усього ремонту тіла за добу. Засинаєш о 1-й — пропускаєш половину. Тому "правильна година сну" існує: лягати о 22-23.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">02</div>
+        <div class="list-body">
+          <div class="list-head">Колаген</div>
+          <div class="list-text">Колаген — білок, який тримає шкіру пружною. Виробляється переважно під час глибокого сну (фаза N3, перші 3-4 години після засинання). Поганий сон = менше колагену = швидше виникають зморшки. Тому "сон краси" — буквально, не образно.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">03</div>
+        <div class="list-body">
+          <div class="list-head">Лімфа</div>
+          <div class="list-text">Лімфатична система не має своєї "помпи" — рухається завдяки руху і силі тяжіння. Уночі, коли ти лежиш, лімфа активно очищує обличчя від токсинів і зайвої рідини. Якщо погано спиш або спиш на животі — обличчя ранком набрякле. Ідеальна поза — на спині, голова вище серця.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">04</div>
+        <div class="list-body">
+          <div class="list-head">Кортизол</div>
+          <div class="list-text">Поганий сон = підвищений кортизол наступного дня. А кортизол руйнує колаген, провокує висипання, посилює запалення. Хронічно недосипаючий має не "втомлений вигляд", а реально гіршу шкіру через гормональний дисбаланс. Жоден ретинол не подолає кортизол.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">05</div>
+        <div class="list-body">
+          <div class="list-head">Подушка має значення</div>
+          <div class="list-text">Шовкова або сатинова наволочка — менше тертя, менше "сонних" складок на обличчі (особливо після 30, коли шкіра відновлюється повільніше). Бавовна "тягне" шкіру і волосся. Шовк зменшує ламкість волосся вночі. Інвестиція 30-50 € на 2 роки — і помітна різниця.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">06</div>
+        <div class="list-body">
+          <div class="list-head">Світло</div>
+          <div class="list-text">Навіть слабке світло у спальні (від роутера, заряджання) пригнічує мелатонін — головний гормон сну і антиоксидант. Темна кімната = здоровіша шкіра. Якщо у спальні має бути світло — тільки тепле червоне (нічник з лампою <50 люмен). Інше — змиває твій ремонт за ніч.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Парадокс: люди витрачають сотні євро на сироватки і нічні креми, але сплять по 5 годин. Це як <em>лити воду в дірявий цеберок</em>. Перш ніж купувати ще один продукт — почни з 8 годин сну на місяць. Ефект буде сильніший, ніж від будь-якої косметики.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 🌿 Натуральний догляд -->
+  <div class="section" id="natural" style="animation-delay:2.1s">
+    <h2 class="section-title">🌿 Натуральний догляд — що реально працює</h2>
+    <p>"Натуральне = безпечне" — небезпечний міф (отрута гадюки теж натуральна). "Хімічне = шкідливе" — теж неправда (вода це H₂O). Розберімо без маркетингу: що з натурального дійсно ефективне, а що — приємний ритуал без особливих переваг.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🫒</span>
+        <div class="card-title">Олії: працює</div>
+        <div class="card-text">Олія шипшини — найкраще для регенерації шкіри (висока концентрація вітаміну С, ретинолу A). Жожоба — найближче до природного шкірного жиру, добре для жирної шкіри (балансує). Сквалан — легкий, не комедогенний, ідеальний для денного зволоження. Ці три — must have, є наукова база.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🍯</span>
+        <div class="card-title">Мед і прополіс: працює</div>
+        <div class="card-text">Натуральний антибактеріальний агент. Мед-маска 15 хвилин — заспокоює запалення, зволожує. Манука-мед (з Нової Зеландії) — найпотужніший. Прополіс — лікує проблемну шкіру не гірше за лікарські креми. Корейські бренди (COSRX) на цьому збудували цілі лінії.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌱</span>
+        <div class="card-title">Алое: працює</div>
+        <div class="card-text">Гель прямо з листочка — найкращий after-sun, опіки, сухість, дрібні подразнення. Активних речовин більше, ніж у будь-якому косметичному продукті. Один кущ алое на підвіконні замінює половину аптечки. Один з небагатьох випадків, де "природне" реально перемагає аптечне.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌸</span>
+        <div class="card-title">Гідролати: приємно, ефект помірний</div>
+        <div class="card-text">Трояндова, ромашкова, нероліева вода. Гарний тонік, приємний запах, легкий зволожувальний ефект. Але не зробить чудес — це 90% води. Окей як ритуал, не варто платити шалені гроші.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚠️</span>
+        <div class="card-title">Що НЕ варто</div>
+        <div class="card-text">Лимонний сік на обличчя — обпікає шкіру (pH 2). Зубна паста на прищі — подразнює, не лікує. Сода в скрабах — руйнує захисний шар шкіри. Ефірна олія "чистого виду" — тільки розведену в основі (1-3 краплі на 30 мл олії), інакше опіки і алергії. Народна мудрість часом кривдить.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧪</span>
+        <div class="card-title">Чесна правда</div>
+        <div class="card-text">Найефективніше для шкіри після 25-30 — ретиноїди (синтетика, не натуральне), кислоти (AHA/BHA, синтетика), вітамін C у формі ascorbic acid (синтез). Це доведено десятками досліджень. Натуральне — приємно і працює для базового догляду. Серйозні зміни — синтетичні активи. Поєднуй обидва.</div>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Найбільший секрет шкіри після всього: <em>сонцезахист щодня, незалежно від погоди</em>. SPF 30+ блокує 80% старіння шкіри (фотостаріння). Жоден крем, олія чи маска не зробить того, що щоденний санскрин. Це найкорисніший продукт у косметичці. Якщо вибрати один — то цей.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:2.3s">
+    <h2 class="section-title">Замість висновку</h2>
+    <div class="final-quote">
+      <div class="final-text">Краса — це не війна з тілом, а діалог з ним. Дотик, ритуали, добрий погляд у дзеркало, повноцінний сон, чесний догляд. Ці п'ять речей коштують менше, ніж один курс ботокса — і дають ефект, який ніяка процедура не повторить. <strong>Бо вони лікують не зморшки, а твоє ставлення до того, у кого зморшки</strong>. Це і є справжня краса зсередини.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+</body>
+</html>

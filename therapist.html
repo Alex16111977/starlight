@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Психолог vs психіатр</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,220,.20) 0%,rgba(80,120,200,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,140,200,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(220,230,255,.92)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.72)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.82);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+
+.profile{background:rgba(200,216,255,.05);border:1px solid rgba(200,216,255,.14);border-radius:20px;padding:32px 28px;margin-bottom:20px;transition:all .4s}
+.profile:hover{background:rgba(200,216,255,.09);border-color:rgba(200,216,255,.22)}
+.profile-head{display:flex;align-items:baseline;gap:14px;margin-bottom:16px;flex-wrap:wrap}
+.profile-icon{font-size:30px}
+.profile-name{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:24px;color:rgba(220,230,255,.95);letter-spacing:.04em}
+.profile-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin-top:16px}
+.profile-item{padding:14px 16px;background:rgba(138,176,255,.05);border-radius:12px}
+.profile-label{font-size:9px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;color:rgba(212,175,110,.7);margin-bottom:6px}
+.profile-value{font-size:13px;font-weight:300;line-height:1.6;color:rgba(220,230,255,.88)}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Психолог vs психіатр</h1>
+  <p class="page-subtitle">Хто чим займається і до кого йти</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Якби ти зламала ногу — пішла б до травматолога. Чому з душею не так?"</div>
+      <div class="hero-author">Бренна Браун</div>
+    </div>
+    <p>Багато людей не йдуть по допомогу не тому, що "тримаються". А тому, що бояться: "до кого йти?", "а раптом мене покладуть?", "а чи я не схожу з розуму, якщо взагалі піду?". Ці страхи здебільшого з фільмів і пострадянського досвіду. Реальність значно простіша. Розберімось, хто є хто — і коли який потрібен.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Чотири професії -->
+  <div class="section" style="animation-delay:1.0s">
+    <h2 class="section-title">Чотири різні професії</h2>
+    <p>"Психо-" в назві лякає однаково. Але це чотири різні люди з різною освітою, методами і повноваженнями. Жоден не "вищий" за інших — вони доповнюють одне одного.</p>
+
+    <div class="profile">
+      <div class="profile-head">
+        <span class="profile-icon">🧑‍⚕️</span>
+        <span class="profile-name">Психіатр</span>
+      </div>
+      <div class="card-text" style="margin-bottom:14px">Лікар. Закінчив медичний університет, потім спеціалізацію з психіатрії. Може ставити діагнози і виписувати ліки — антидепресанти, нейролептики, стабілізатори настрою.</div>
+      <div class="profile-grid">
+        <div class="profile-item">
+          <div class="profile-label">Освіта</div>
+          <div class="profile-value">Медичний — 6 років + 4 роки психіатрія</div>
+        </div>
+        <div class="profile-item">
+          <div class="profile-label">Може лікувати</div>
+          <div class="profile-value">Депресія, біполярний, ОКР, шизофренія, тривожні розлади</div>
+        </div>
+        <div class="profile-item">
+          <div class="profile-label">Інструменти</div>
+          <div class="profile-value">Ліки, госпіталізація, групова терапія</div>
+        </div>
+        <div class="profile-item">
+          <div class="profile-label">Зазвичай не</div>
+          <div class="profile-value">Не веде довгу розмовну терапію — на це менше часу</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile">
+      <div class="profile-head">
+        <span class="profile-icon">🧑‍🎓</span>
+        <span class="profile-name">Психотерапевт</span>
+      </div>
+      <div class="card-text" style="margin-bottom:14px">Спеціаліст із розмовної терапії. У світі це найчастіше психолог з додатковою сертифікацією у конкретному методі (КПТ, гештальт, психоаналіз тощо). В Україні термін плутається — деколи так називають і лікарів-психотерапевтів, і психологів-консультантів.</div>
+      <div class="profile-grid">
+        <div class="profile-item">
+          <div class="profile-label">Освіта</div>
+          <div class="profile-value">Базова психологія + 3-5 років навчання у конкретному напрямі</div>
+        </div>
+        <div class="profile-item">
+          <div class="profile-label">Може лікувати</div>
+          <div class="profile-value">Тривога, депресія легка-середня, травми, стосунки, втрата</div>
+        </div>
+        <div class="profile-item">
+          <div class="profile-label">Інструменти</div>
+          <div class="profile-value">Розмова, домашні завдання, техніки конкретного підходу</div>
+        </div>
+        <div class="profile-item">
+          <div class="profile-label">Не може</div>
+          <div class="profile-value">Виписувати ліки (якщо не лікар одночасно)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile">
+      <div class="profile-head">
+        <span class="profile-icon">🧑‍💼</span>
+        <span class="profile-name">Психолог-консультант</span>
+      </div>
+      <div class="card-text" style="margin-bottom:14px">Консультує здорових людей із життєвими складнощами. Допомагає розібратись у стосунках, кар'єрі, прийнятті рішень. Працює з тимчасовими кризами, не з розладами.</div>
+      <div class="profile-grid">
+        <div class="profile-item">
+          <div class="profile-label">Освіта</div>
+          <div class="profile-value">Психологія (5 років бакалавр+магістр)</div>
+        </div>
+        <div class="profile-item">
+          <div class="profile-label">Може допомогти</div>
+          <div class="profile-value">Стрес на роботі, розрив, складні розмови, самопізнання</div>
+        </div>
+        <div class="profile-item">
+          <div class="profile-label">Інструменти</div>
+          <div class="profile-value">Розмова, тестування, рекомендації</div>
+        </div>
+        <div class="profile-item">
+          <div class="profile-label">Не може</div>
+          <div class="profile-value">Не лікує розлади і не призначає ліки</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="profile">
+      <div class="profile-head">
+        <span class="profile-icon">💼</span>
+        <span class="profile-name">Коуч</span>
+      </div>
+      <div class="card-text" style="margin-bottom:14px">Не з медичної чи психологічної професії. Допомагає ставити цілі і досягати їх. Не лікує, не діагностує — лише структурує процес досягнення. Якщо у тебе депресія, коуч не допоможе. Якщо ти хочеш змінити кар'єру — може.</div>
+      <div class="profile-grid">
+        <div class="profile-item">
+          <div class="profile-label">Освіта</div>
+          <div class="profile-value">Сертифікації різних шкіл (ICF, Erickson та ін.)</div>
+        </div>
+        <div class="profile-item">
+          <div class="profile-label">Може допомогти</div>
+          <div class="profile-value">Постановка цілей, підвищення ефективності, перехід кар'єри</div>
+        </div>
+        <div class="profile-item">
+          <div class="profile-label">Інструменти</div>
+          <div class="profile-value">Запитання, плани, відстеження прогресу</div>
+        </div>
+        <div class="profile-item">
+          <div class="profile-label">Не може</div>
+          <div class="profile-value">Працювати з ментальними розладами або глибокими травмами</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- До кого і коли -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">До кого йти і коли</h2>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">😔</span>
+        <div class="card-title">Тиждень-два важко</div>
+        <div class="card-text">Стресова подія, погані новини, тимчасовий розлад. Друзі, відпочинок, рух, природа. Психолог-консультант — якщо відчуваєш потребу в зовнішньому погляді.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌫️</span>
+        <div class="card-title">Місяць+ погано</div>
+        <div class="card-text">Не можеш встати, нічого не радує, всі ресурси закінчились, плачеш без причини. → Психолог/психотерапевт. Якщо вже місяць-два — психіатр для оцінки, чи потрібні ліки.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚠️</span>
+        <div class="card-title">Думки про "все закінчити"</div>
+        <div class="card-text">Це сигнал негайно йти до психіатра. Не "потерплю". Не "пройде". Це медична ситуація — як гострий апендицит. Лінія Lifeline 7333 в Україні (з мобільного, безкоштовно, цілодобово).</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌀</span>
+        <div class="card-title">Панічні атаки</div>
+        <div class="card-text">Раптовий жах, серце калатає, не можеш дихати. → Спочатку терапевт або кардіолог (виключити фізичні причини), потім психотерапевт. Якщо часто — психіатр може призначити заспокійливі.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💔</span>
+        <div class="card-title">Втрата, розрив, переїзд</div>
+        <div class="card-text">Великі зміни — окремо складно пережити. Психотерапевт або психолог-консультант. Не лікує — але не дає застрягти у горі або обернути біль усередину.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🪖</span>
+        <div class="card-title">Військові, війна, ПТСР</div>
+        <div class="card-text">Спеціалізована травматерапія: EMDR, схема-терапія, Соматичний експерієнсинг. Шукай терапевта з досвідом саме у травмі. Можливо — психіатр з ліками для початку.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Страхи -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Що насправді страшно і чому даремно</h2>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🏥</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">"Мене покладуть у лікарню"</div>
+          <div class="card-text">Психіатри кладуть у стаціонар тільки у дуже конкретних випадках: ризик для свого або чужого життя, гостра психотична криза, важка депресія без реакції на ліки. На прийомі за тривогу або депресію тебе ніхто нікуди не покладе.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">📋</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">"Поставлять на облік"</div>
+          <div class="card-text">"Психіатричний облік" з СРСР скасовано в Україні з 2000 року. Сьогодні є тільки медична картка — як у будь-якого лікаря. Доступ — лише за згоди пацієнта. Інформація не йде на роботу, у школу, у страхову.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">💊</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">"Антидепресанти — це наркотик"</div>
+          <div class="card-text">Сучасні антидепресанти (СІЗЗС) не викликають залежності і не "роблять щасливою штучно". Вони повертають мозок до нормальної роботи. Як інсулін — не для здорових, але для хворих рятівний. Призначає тільки лікар, дозу підбирають індивідуально.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🎭</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">"Я повинна сама"</div>
+          <div class="card-text">Сама — ти вже намагалась. Якщо вийшло — вітаю. Якщо ні — це не означає, що ти "слабка". Це означає, що тобі бракує інструментів, яких у тебе нема джерел отримати в одиночку. Терапевт — це людина, яка ці інструменти дає.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">💸</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">"Це дорого"</div>
+          <div class="card-text">В Україні є безкоштовні варіанти: муніципальні психологи, лінії допомоги, сервіси "Розкажи мені", "Tellme", деякі НГО. Платні починаються від 500-800 грн за сесію. Якщо порівняти з вартістю одного відвідання стоматолога — терапія одного разу на 2 тижні цілком посильна.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Як обрати -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Як обрати свого спеціаліста</h2>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">📜</span>
+        <div class="card-title">Перевір освіту</div>
+        <div class="card-text">"Психолог" в Україні — нерегульована професія, тому диплом важливий. Шукай: ВНЗ + сертифікат у конкретному напрямі (КПТ, гештальт, психоаналіз, EMDR тощо).</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💬</span>
+        <div class="card-title">Перша зустріч — пробна</div>
+        <div class="card-text">На першій сесії оцінюй: чи комфортно говорити, чи слухає, чи не перебиває, чи не нав'язує. Якщо щось не так — це нормально шукати іншого. "Хімія" з терапевтом важлива.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎯</span>
+        <div class="card-title">Підхід під запит</div>
+        <div class="card-text">КПТ — для конкретних проблем (тривога, фобії, ОКР). Гештальт — для глибокого самопізнання. Психоаналіз — для роботи з дитинством. EMDR/схема-терапія — для травм. Розпитай про метод.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🚩</span>
+        <div class="card-title">Червоні прапорці</div>
+        <div class="card-text">Дає однозначні поради ("розлучися з ним"), розповідає про себе більше, ніж про тебе, торкається без згоди, переходить на романтичні стосунки, "діагностує" знайомих за описом. Уникай.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Скільки часу -->
+  <div class="section" style="animation-delay:1.85s">
+    <h2 class="section-title">Скільки часу потрібно</h2>
+
+    <div class="highlight">
+      <p>Терапія — не магічна таблетка. Очікувані терміни (приблизно):</p>
+    </div>
+
+    <div class="phrases" style="margin-top:24px">
+      <div class="phrase">
+        <div class="phrase-icon">⏱️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">3-6 місяців · конкретна задача</div>
+          <div class="card-text">Боротьба з фобією, опанування технік для тривоги, переживання розриву — кілька місяців регулярних сесій (раз на тиждень) дають видимий результат.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">📅</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">1-2 роки · розлад або середня тема</div>
+          <div class="card-text">Депресія, складні стосунки, проблеми з самооцінкою. Після першого року видимі зміни. Після другого — часто можна закінчувати або переходити на рідші зустрічі.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🌱</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">3+ років · травма, дитинство, особистість</div>
+          <div class="card-text">Глибока робота з тим, що формувалось десятиліттями. Не швидка. Але найбільш системна — змінює спосіб, у який ти живеш.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Final -->
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Висновок</h2>
+    <div class="final-quote">
+      <div class="final-text">Йти до спеціаліста — не "слабкість". Це <strong>гігієна психіки</strong>, як гігієна зубів. Не чекай, поки буде боляче. У світі, де психічні розлади випереджають за поширеністю серцеві, не звертатись по допомогу — це не сила. Це 70-річна звичка із Союзу. Вона давно застаріла. Йди — і відкрий для себе, що "терапія" виявляється не такою страшною, як ти боялася.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>

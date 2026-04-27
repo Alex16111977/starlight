@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Соціальний тиск</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,100,140,.22) 0%,rgba(140,80,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,140,100,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(220,230,255,.9);margin-bottom:16px}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:14px;font-weight:300;line-height:1.75;color:rgba(220,230,255,.92)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(220,230,255,.92);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+
+.toc{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-bottom:48px;opacity:0;animation:riseIn 1s .9s ease forwards}
+.toc a{font-size:11px;font-weight:300;letter-spacing:.2em;text-transform:uppercase;color:rgba(200,216,255,.65);text-decoration:none;padding:10px 18px;border:1px solid rgba(200,216,255,.18);border-radius:100px;transition:all .3s;background:rgba(200,216,255,.04)}
+.toc a:hover{color:#fff;border-color:rgba(200,216,255,.4);background:rgba(200,216,255,.10);transform:translateY(-2px)}
+
+.list{margin-top:8px}
+.list-item{display:flex;gap:14px;padding:18px 0;border-bottom:1px solid rgba(200,216,255,.08)}
+.list-item:last-child{border-bottom:none}
+.list-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:22px;color:rgba(212,175,110,.8);min-width:32px;line-height:1.4}
+.list-body{flex:1}
+.list-head{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:17px;color:rgba(220,230,255,.95);margin-bottom:6px;letter-spacing:.03em}
+.list-text{font-size:14px;font-weight:300;line-height:1.8;color:rgba(220,230,255,.85)}
+
+.alert{background:linear-gradient(135deg,rgba(255,120,120,.06),rgba(255,180,80,.04));border:1px solid rgba(255,140,120,.18);border-radius:20px;padding:32px 28px;margin-top:20px;position:relative;overflow:hidden}
+.alert::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(255,140,120,.5),transparent)}
+.alert p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(255,225,215,.92);margin:0}
+.alert em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(255,180,140,.95)}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Соціальний тиск</h1>
+  <p class="page-subtitle">Чому ти робиш не те, що хочеш</p>
+
+  <nav class="toc">
+    <a href="#conformity">👥 Конформізм</a>
+    <a href="#proof">📊 Соціальний доказ</a>
+    <a href="#authority">🎖️ Авторитет</a>
+  </nav>
+
+  <div class="section" style="animation-delay:1.1s">
+    <div class="hero-quote">
+      <div class="hero-text">"Найжахливіше у людях не те, що вони злі. Жахливе — як легко вони стають слухняними"</div>
+      <div class="hero-author">Стенлі Мілгрем</div>
+    </div>
+    <p>Ми любимо думати, що мислимо самостійно. Що наші переконання — це наші переконання. Що в критичній ситуації ми зробимо "правильно". Психологічні експерименти ХХ століття довели зворотне: 75-99% людей — підкоряються групі, авторитету, "усім роблять так". Не тому що погані. Тому що ми тварини, яких еволюція навчила виживати у племені. Ця сторінка — про три головні механізми, що тобою керують щодня.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 👥 Конформізм -->
+  <div class="section" id="conformity" style="animation-delay:1.3s">
+    <h2 class="section-title">👥 Чому ми підстроюємось під групу</h2>
+    <p>У 1951 році психолог Соломон Аш провів простий експеримент, який змінив психологію назавжди. Показував учасникам три лінії й одну еталонну. Питав: "Котра з трьох такої ж довжини?" Відповідь — очевидна для шестирічної дитини. Але був нюанс — у кімнаті сиділо 7 "учасників", з яких 6 були акторами, що мали говорити неправильну відповідь. Реальний учасник був останнім.</p>
+
+    <div class="list">
+      <div class="list-item">
+        <div class="list-num">📊</div>
+        <div class="list-body">
+          <div class="list-head">Результат</div>
+          <div class="list-text">75% реальних учасників хоча б раз погодились із явно неправильною відповіддю групи. 32% робили це регулярно. Тільки 25% повністю довірились своїм очам. І це були не "слабкі" люди — це були звичайні студенти Гарварду. Аш був шокований власними результатами.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">🧠</div>
+        <div class="list-body">
+          <div class="list-head">Що відбувається в мозку</div>
+          <div class="list-text">МРТ-дослідження повторили експеримент із сканером. Виявилось: у тих, хто погоджувався з групою, активувалась не префронтальна кора (свідоме рішення), а зорова кора. Тобто мозок буквально <em>перебачив</em> картинку, щоб збігти з групою. Не "збрехав" — а реально перекрутив сприйняття.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">🦴</div>
+        <div class="list-body">
+          <div class="list-head">Еволюційна основа</div>
+          <div class="list-text">200 000 років тому "відрізнятись від племені" дорівнювало "помру сам". Племʼя виганяло — і ти не виживав один. Тому мозок виробив автоматичну реакцію: коли всі думають інакше, краще піти за ними, навіть проти власного судження. Спочатку врятувало нас. Зараз — заважає.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">😰</div>
+        <div class="list-body">
+          <div class="list-head">Фізичний біль незгоди</div>
+          <div class="list-text">Дослідження: коли людина відстоює позицію проти групи, в мозку активуються ті самі ділянки, що при фізичному болю (передня поясна кора). Бути "не таким, як усі" — буквально боляче. Тому потрібна свідома воля, щоб не погоджуватись. Це справжня мужність, а не "просто скажи що думаєш".</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">⚡</div>
+        <div class="list-body">
+          <div class="list-head">Що рятує</div>
+          <div class="list-text">Якщо в групі є <em>хоч один</em> союзник, відсоток конформізму падає з 75% до 5-10%. Один голос "так, я з тобою" руйнує силу групи. Тому диктатори завжди ізолюють інакомислячих — щоб вони не чули один одного. І чому в школі цькування зникає, коли один учитель став на бік жертви.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">🌐</div>
+        <div class="list-body">
+          <div class="list-head">У сучасному світі</div>
+          <div class="list-text">Соцмережі — конформізм на стероїдах. Бачиш 10 000 лайків під думкою — мозок автоматично "це правильно". Не лайків — "це непопулярно". Алгоритми це використовують: показують тобі думки, які поділяє більшість твоєї бульбашки, і ти ще більше переконуєшся в "правильності". Бульбашки фільтрів — інженерія конформізму.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 📊 Соціальний доказ -->
+  <div class="section" id="proof" style="animation-delay:1.5s">
+    <h2 class="section-title">📊 Соціальний доказ — чому робимо як всі</h2>
+    <p>Близький родич конформізму, але інший: тут не "групове тиск", а активна підказка. У ситуаціях невизначеності ми дивимось на інших, щоб зрозуміти, як діяти. Цей механізм описав Роберт Чалдіні у книзі "Психологія впливу" — і відтоді його використовує весь маркетинг планети.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">😶</span>
+        <div class="card-title">Ефект свідка</div>
+        <div class="card-text">У 1964 році в Нью-Йорку Кітті Дженовезе вбивали 35 хвилин. 38 свідків з вікон бачили — ніхто не викликав поліцію. Бо "інші, мабуть, вже викликали". Так Латане і Дарлі відкрили "ефект свідка": чим більше людей навколо, тим менший шанс, що хтось допоможе. Всі чекають дій інших. Якщо тобі погано на вулиці — звертайся до конкретної людини: "Ви, у синьому светрі — викличте швидку". Це обходить ефект.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🛒</span>
+        <div class="card-title">"Найпопулярніше" у магазинах</div>
+        <div class="card-text">Маркери "найкраще продається", "обрали 500+ покупців" — найдешевша і найдієвіша реклама. Booking показує "цей готель забронували 5 разів за останню годину" — продажі ростуть на 30%. Amazon — "цей товар часто купують разом з...". Не випадково. Соціальний доказ продає краще за будь-яку рекламу.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⭐</span>
+        <div class="card-title">Відгуки і рейтинги</div>
+        <div class="card-text">95% покупців читають відгуки перед купівлею. Товар з 50 відгуками і середнім 4.0 — продається краще за товар з 5 відгуками і середнім 5.0. Бо натовп = довіра, навіть якщо нижча оцінка. Тому накручення відгуків — мільярдний бізнес. Тому Amazon постійно видаляє фейкові — і досі програє.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎬</span>
+        <div class="card-title">Сміх за кадром</div>
+        <div class="card-text">У ситкомах 1950-х додали "консервований сміх" — записи сміху аудиторії. Серіали почали здаватись смішнішими, рейтинги ростли. Дослідження: ті ж жарти оцінюють як значно смішніші, коли чуєш сміх інших. Знаючи це, ми всі сміємось менше, коли дивимось наодинці.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🍴</span>
+        <div class="card-title">Ресторан з чергою</div>
+        <div class="card-text">Туристи завжди йдуть туди, де "довша черга" — навіть якщо їжа гірша. Деякі ресторани спеціально не пускають усіх клієнтів усередину, щоб черга була видимою з вулиці. Власники нічних клубів — те саме. "Всі хочуть сюди" — найкращий магніт.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌍</span>
+        <div class="card-title">Епідемії поведінки</div>
+        <div class="card-text">Самогубства "копіюються" після медіа-розголосу самогубства зірки (ефект Вертера). Масові скупки в моменти кризи — не "розумна обережність", а соціальний доказ ("якщо всі купують туалетний папір — то й мені треба"). Навіть мода — це чистий соціальний доказ масштабованого вигляду.</div>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Соціальний доказ <em>сильніший за логіку і факти</em>. Можна показати людині 100 досліджень, що вакцини безпечні — вона не повірить, поки її коло не повірить. І навпаки: одна впливова людина переконала — і вона повірить, навіть проти 100 досліджень. Знай це у себе. Не "що думає більшість?" — а "що говорять дані?".</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 🎖️ Авторитет -->
+  <div class="section" id="authority" style="animation-delay:1.7s">
+    <h2 class="section-title">🎖️ Ефект авторитету — чому слухаємо людей у формі</h2>
+    <p>У 1961 році Стенлі Мілгрем провів експеримент, який досі вважається найшокованішим в історії психології. Він хотів зрозуміти: як прості німці змогли стати катами в концтаборах? Чи це "особливі люди" — чи це може кожен?</p>
+
+    <div class="list">
+      <div class="list-item">
+        <div class="list-num">⚡</div>
+        <div class="list-body">
+          <div class="list-head">Експеримент</div>
+          <div class="list-text">Учасникам сказали: "це експеримент про навчання". Вони сиділи перед апаратом з кнопками від 15 до 450 вольт. У сусідній кімнаті — інший "учасник" (актор), якому за неправильні відповіді треба було вмикати струм. Чоловік у білому халаті казав: "Будь ласка, продовжуйте". Жертва кричала, благала припинити, потім замовкла (вдавала непритомність). Скільки людей дійшло до 450 вольт?</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">😱</div>
+        <div class="list-body">
+          <div class="list-head">Результат</div>
+          <div class="list-text">65% дійшли до максимуму. Не злі люди. Не садисти. Звичайні американці — вчителі, інженери, продавці. Більшість плакала, тремтіла, благала припинити — але продовжувала, бо людина в білому халаті казала "це необхідно для експерименту". Авторитет переміг особисту мораль у 2/3 людей.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">👮</div>
+        <div class="list-body">
+          <div class="list-head">Тюрма Зімбардо</div>
+          <div class="list-text">У 1971 році Філіп Зімбардо дав студентам Стенфорду ролі "охоронців" і "вʼязнів" у фейковій тюрмі. Експеримент мав тривати 2 тижні. Зупинили на 6-й день — "охоронці" стали садистами, "вʼязні" — психічно зламаними. Ніхто не казав їм бути жорстокими. Достатньо було уніформи, ролі і "повноваження". Це психологія всіх систем насильства.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">👨‍⚕️</div>
+        <div class="list-body">
+          <div class="list-head">Лікарі і помилки</div>
+          <div class="list-text">Дослідження медичних помилок: 80% летальних випадків в операційних — наслідок того, що медсестри/молодші лікарі бачили помилку старшого, але не сказали. Бо "він вище, він знає". Авторитет вбиває людей у буквальному сенсі. Тому зараз у літаках і операційних впроваджено правило: будь-хто з команди може зупинити процес без наслідків.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">🧥</div>
+        <div class="list-body">
+          <div class="list-head">Сила одягу</div>
+          <div class="list-text">Експеримент Бікмана 1974: чоловік на вулиці просив перехожих "підняти бичок" або "стати в інше місце". У звичайному одязі — слухались 33%. У формі охоронця — 89%. Не його повноваження, а лише вигляд. Тому шахраї одягаються "як банківські працівники" — обходять критичне мислення жертв за рахунок зовнішнього сигналу авторитету.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">📜</div>
+        <div class="list-body">
+          <div class="list-head">Атрибути авторитету</div>
+          <div class="list-text">Чалдіні виділив три тригери: <em>титули</em> (доктор, професор, директор), <em>одяг</em> (форма, костюм, халат), <em>речі</em> (дорога машина, годинник, кабінет з шкіряним кріслом). Будь-який з них автоматично підвищує довіру і знижує критичність. Шахраї знають це краще за чесних людей — і використовують.</div>
+        </div>
+      </div>
+      <div class="list-item">
+        <div class="list-num">🛡️</div>
+        <div class="list-body">
+          <div class="list-head">Як захиститись</div>
+          <div class="list-text">Перш ніж послухатись, спитай себе: <em>чи цей "експерт" дійсно експерт у тому, про що говорить</em>? Лікар у рекламі зубної пасти — авторитет тільки в медицині, не в продукті. Поліцейський у формі може тиснути на тебе незаконно — у тебе є право спитати посвідчення і причину. Не зупиняйся на видимості — перевіряй.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="alert" style="margin-top:24px">
+      <p>Найжахливіший висновок експериментів Мілгрема — <em>він повторювався в усіх країнах</em>. У Німеччині, Італії, Іспанії, Австралії, Південній Африці — те саме 65-85%. Не "національний характер" робить геноцид можливим. Це універсальний механізм мозку, який спрацьовує в кожному з нас. Знаючи це — ти можеш не стати тим, хто "просто виконував накази".</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Замість висновку</h2>
+    <div class="final-quote">
+      <div class="final-text">Ці три механізми керують тобою кожного дня — у магазині, у соцмережах, у розмові з начальником, у голосуванні. Ти не "слабка" — ти людина. Усі ми такі. Але <strong>знати про механізм — наполовину його перемогти</strong>. Наступного разу, коли збираєшся зробити "як усі" — спитай себе: чи я це обираю, чи це мене обирає?</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>

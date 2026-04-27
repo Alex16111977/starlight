@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Єгипетська міфологія</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+.step-label{text-align:center;font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(212,175,110,.7);margin-bottom:18px;opacity:0;animation:riseIn 1s .3s ease forwards}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:14px;font-weight:300;line-height:1.75;color:rgba(220,230,255,.92)}
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.82);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+.nav-next{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-top:64px;padding-top:32px;border-top:1px solid rgba(200,216,255,.1);opacity:0;animation:riseIn 1s 1.8s ease forwards;flex-wrap:wrap}
+.nav-next a{text-decoration:none;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:rgba(200,216,255,.7);transition:color .4s}
+.nav-next a:hover{color:#fff}
+.nav-next-hub{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.45);text-transform:uppercase;text-decoration:none;transition:color .4s}
+.nav-next-hub:hover{color:rgba(200,216,255,.9)}
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+<div class="content">
+  <div class="header">
+    <a class="back" href="mythology.html">← Міфологія</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+  <div class="step-label">Розділ 04</div>
+  <h1 class="page-title">Єгипетська міфологія</h1>
+  <p class="page-subtitle">Найдавніша система, яка ще говорить</p>
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Усі боги — лише імена одного, що тримає всесвіт"</div>
+      <div class="hero-author">давньоєгипетський гімн</div>
+    </div>
+    <p>Єгиптяни вірили в богів понад 3000 років — довше за будь-яку іншу культуру. Їхня міфологія народилась у долині Нілу й сформувалась навколо одного спостереження: щороку Ніл розливається й приносить життя, потім засуха — смерть. Цикл смерті й воскресіння. Саме тому єгипетські міфи більше за всі інші говорять про те, що буде після смерті.</p>
+  </div>
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Великі боги</h2>
+    <p>На відміну від греків з їхніми "людськими" богами, єгипетські — космічні. Вони уособлюють великі сили природи: сонце, землю, небо, смерть. Часто зображувались з головами тварин — символічна форма зв'язку божественного й природного.</p>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">☀️</span>
+        <div class="card-title">Ра — сонце</div>
+        <div class="card-text">Головний бог. Щодня перепливає небо у сонячному човні. Вночі спускається в підземний світ, бореться зі змієм Апопом — і знов сходить уранці. Цикл, що пояснює все: схід, захід, життя, смерть.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🪞</span>
+        <div class="card-title">Озіріс — смерть і відродження</div>
+        <div class="card-text">Бог підземного світу й воскресіння. Брат-вбивця Сет розрубав його на 14 частин. Дружина Ісіда зібрала тіло — і повернула до життя. Озіріс став суддею мертвих. Архетип: смерть — не кінець, а перехід.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💛</span>
+        <div class="card-title">Ісіда — велика мати</div>
+        <div class="card-text">Дружина Озіріса, мати Гора. Богиня материнства, магії, цілительства, мудрості. Зібрала розрубленого чоловіка, виховала сина, що помстився за батька. Один із найдревніших образів великої богині-матері.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🐺</span>
+        <div class="card-title">Анубіс — провідник мертвих</div>
+        <div class="card-text">Голова шакала. Бог муміфікації й проводу душ. Він стоїть біля терезів, де зважують серце померлого. Не страшний — а справедливий і обов'язковий. Тому шакалів-падальників побачили як охоронців переходу.</div>
+      </div>
+    </div>
+  </div>
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Інші важливі</h2>
+    <p>Пантеон — більше сотні богів. Тут найвпливовіші — ті, чиї імена ти зустрічаєш у книжках, фільмах, іграх.</p>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🦅</span>
+        <div class="card-title">Гор — небо й фараон</div>
+        <div class="card-text">Голова сокола. Син Озіріса й Ісіди. Бився із Сетом, помстився за батька. Уособлює фараона — кожен правитель Єгипту вважався втіленням Гора. "Око Гора" — символ захисту, який ти бачиш досі.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚔️</span>
+        <div class="card-title">Сет — хаос і пустеля</div>
+        <div class="card-text">Брат і вбивця Озіріса. Бог пустелі, бур, насилля. Не "просто злий" — він уособлює сили хаосу, без яких немає життя. У давнину Сета поважали як воїна; пізніше демонізували.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🐱</span>
+        <div class="card-title">Бастет — кішка</div>
+        <div class="card-text">Богиня дому, материнства, краси, захисту. Кішки в Єгипті були священними — їх муміфікували, шанували в храмах. Звідси любов до кішок — спадщина не звичка, а культ. Бастет уособлювала жіночу силу — і ніжну, і люту.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📜</span>
+        <div class="card-title">Тот — мудрість і письмо</div>
+        <div class="card-text">Голова ібіса. Бог писемності, науки, магії, місяця. Винайшов ієрогліфи. Записує суд над душами. Грецькі греки його ототожнили з Гермесом — звідси "Гермес Трисмегіст" — легендарна фігура магії.</div>
+      </div>
+    </div>
+  </div>
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Подорож душі</h2>
+    <p>Єгипетська міфологія — найдетальніша з усіх щодо того, що відбувається після смерті. "Книга мертвих" — священний путівник для душі. Розуміючи цю подорож, ти бачиш, чому єгиптяни так багато готувались до смерті ще за життя.</p>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🏛️</span>
+        <div class="card-title">Муміфікація</div>
+        <div class="card-text">Тіло потрібне душі для подорожі. Тому його зберігали — мумія була "будинком" для духовної частини. Без тіла душа не могла повернутись після подорожі. Звідси найскладніші ритуали бальзамування.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚖️</span>
+        <div class="card-title">Зважування серця</div>
+        <div class="card-text">У залі Озіріса серце померлого зважують на терезах. На іншій чашці — перо Маат (богиня правди). Якщо серце легше або рівне — людина праведна. Якщо важче — серце пожирає чудовисько Аммат, душа зникає.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌅</span>
+        <div class="card-title">Поля Іару</div>
+        <div class="card-text">Якщо ти пройшла суд — потрапляєш у Поля Іару, ідеалізована версія Єгипту. Вічна весна, вічний врожай. Це не "рай" у християнському сенсі — а продовження життя в кращій формі. Звідси й їжа в гробницях.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🪤</span>
+        <div class="card-title">Заклинання й тести</div>
+        <div class="card-text">"Книга мертвих" — це насправді колекція заклинань і інструкцій. Як назвати свого імені, як відповісти богам, як уникнути пасток. Її клали в гробниці, щоб душа знала маршрут. Найдавніший "путівник для подорожі".</div>
+      </div>
+    </div>
+  </div>
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Спадщина в культурі</h2>
+    <p>Єгипетська міфологія — найдревніша, але вона не зникла. Її образи живуть скрізь — від науки до поп-культури.</p>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">⚕️</span>
+        <div class="card-title">Медицина й магія</div>
+        <div class="card-text">Грецька медицина (Гіппократ) спиралась на єгипетську. Тот стає Гермесом Трисмегістом — легендарним батьком алхімії. Кадуцей, амулети, символи здоров'я — багато з єгипетської спадщини.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⛪</span>
+        <div class="card-title">Християнський вплив</div>
+        <div class="card-text">Образ Ісіди з Гором на колінах схожий на Богоматір з Ісусом. Ідея воскресіння бога (Озіріс) і суду після смерті — теж тут. Ранні християни Єгипту (копти) переплели свої образи з єгипетськими.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎬</span>
+        <div class="card-title">Голлівуд</div>
+        <div class="card-text">"Мумія", "Боги Єгипту", "Stargate", "Aladdin", серії про Тутанхамона. Єгипетська естетика — золото, ієрогліфи, прокляття — стала окремим жанром. Прокляття гробниці Тутанхамона — медіа-витвір 20-го століття.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🏛️</span>
+        <div class="card-title">Архітектура</div>
+        <div class="card-text">Обеліски стоять у Парижі, Лондоні, Римі, Нью-Йорку — всі справжні єгипетські, привезені століттями. Однодоларова банкнота США має піраміду й "око Гора". Архітектура столиць повна єгипетських цитат.</div>
+      </div>
+    </div>
+  </div>
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+  <div class="section" style="animation-delay:1.8s">
+    <div class="highlight">
+      <p>Єгипетська міфологія — про <em>смерть як подорож, а не кінець</em>. Жодна інша культура не приділила стільки уваги тому, що буде "потім". Її обрядові тексти — найдавніша духовна література людства. У світі, де ми знов почали говорити про смерть як про процес — ці тексти раптом виявляються свіжими. 4000 років, а вони знають про серце більше, ніж сучасні підручники психології.</p>
+    </div>
+  </div>
+  <div class="nav-next">
+    <a class="nav-next-hub" href="mythology.html">← Усі розділи</a>
+    <a href="mythology-japanese.html">Далі: Японська →</a>
+  </div>
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Криза середини життя</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+.step-label{text-align:center;font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(212,175,110,.7);margin-bottom:18px;opacity:0;animation:riseIn 1s .3s ease forwards}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:14px;font-weight:300;line-height:1.75;color:rgba(220,230,255,.92)}
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.82);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+.nav-next{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-top:64px;padding-top:32px;border-top:1px solid rgba(200,216,255,.1);opacity:0;animation:riseIn 1s 1.8s ease forwards;flex-wrap:wrap}
+.nav-next a{text-decoration:none;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:rgba(200,216,255,.7);transition:color .4s}
+.nav-next a:hover{color:#fff}
+.nav-next-hub{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.45);text-transform:uppercase;text-decoration:none;transition:color .4s}
+.nav-next-hub:hover{color:rgba(200,216,255,.9)}
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+<div class="content">
+  <div class="header">
+    <a class="back" href="crisis.html">← Кризи</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+  <div class="step-label">Розділ 02</div>
+  <h1 class="page-title">Криза середини життя</h1>
+  <p class="page-subtitle">Не червоний кабріолет — а тихий перегляд усього</p>
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"У середині життя я опинився в темному лісі — і шлях прямий було загублено"</div>
+      <div class="hero-author">Данте, "Божественна комедія"</div>
+    </div>
+    <p>Стереотип говорить: чоловіки під 50 купують спортивні машини й кидають дружин. Це майже карикатура. Реальна криза середини — глибша, тихіша, і зачіпає не лише чоловіків. Жінки переживають її не менше — просто інакше. Це момент, коли ти раптом усвідомлюєш: "у мене більше років позаду, ніж попереду". І те, як ти жила досі — раптом стає не очевидним вибором.</p>
+  </div>
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Як це насправді виглядає</h2>
+    <p>Не "купив мотоцикл і одружився з молодшою". Це лише найгучніша й рідкісна форма. Більшість людей переживають кризу тихо, всередині, без зовнішніх драм. Ось характерні ознаки.</p>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">⏳</span>
+        <div class="card-title">Гостре відчуття часу</div>
+        <div class="card-text">До 35-40 час був "нескінченним". Раптом — ні. Усвідомлення смертності стає буденним. Дивишся на 70-річних і думаєш: "це через 25-30 років буду я". Цей вид страху — не панічний, а мовчазний — одна з головних характеристик.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📋</span>
+        <div class="card-title">Перегляд усіх рішень</div>
+        <div class="card-text">"Чи правильно я вибрала професію? Партнера? Місто? Чи я взагалі прожила своє життя — чи чиєсь?". Кожен великий вибір переоцінюється. Інколи приходять болючі висновки. Інколи — навпаки, вдячність.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🪞</span>
+        <div class="card-title">Тіло змінюється</div>
+        <div class="card-text">Метаболізм сповільнюється. Сивина. Перші зморшки. Зміни в жіночій фізіології до менопаузи. У чоловіків — гормональні. Тіло, на яке завжди можна було покластись — тепер потребує уваги. Це психологічно складно.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">👨‍👩‍👧</span>
+        <div class="card-title">Подвійне навантаження</div>
+        <div class="card-text">"Сендвіч-покоління": дітей ще ростиш, але батьки вже немічні й потребують допомоги. Між двома залежними поколіннями — ти. Часу на себе майже немає. Це фізично й емоційно виснажує.</div>
+      </div>
+    </div>
+  </div>
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">У чоловіків і у жінок — різне</h2>
+    <p>Стереотип робить кризу "чоловічою справою". Насправді жінки переживають свою — просто з іншими акцентами. Розуміти різницю важливо: інакше ризикуєш не помітити свою.</p>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">👔</span>
+        <div class="card-title">Чоловіки — про досягнення</div>
+        <div class="card-text">Класична чоловіча криза — перегляд кар'єри й статусу. "Чи досяг я того, що мав? Чого ще не зробив? Чи не пізно?". Звідси спортивні машини, нові хобі, інколи — стрибки в нові стосунки. Спроба ще раз "встигнути жити".</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💝</span>
+        <div class="card-title">Жінки — про сенс і близькість</div>
+        <div class="card-text">У жінок частіше — питання "чи я щаслива?", "чи це справді моє життя?", "хто я, окрім матері/дружини?". Менопауза додає гормонального шару. Дослідження показують: жінки рідше "вибухають", але переживають кризу не менш глибоко.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🏠</span>
+        <div class="card-title">Empty nest синдром</div>
+        <div class="card-text">Діти виросли й пішли. Жінка, що 18 років жила в ритмі "школа-уроки-кухня", раптом залишається з тишею. "Хто я тепер?". Це специфічна жіноча форма кризи — і одна з найважчих, бо часто збігається з менопаузою.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎭</span>
+        <div class="card-title">Невидимість</div>
+        <div class="card-text">Жінки описують відчуття "невидимості" в 45+: чоловіки не дивляться на вулиці, на роботі обходять при підвищенні, реклама не для тебе. Це не паранойя — це реальний соціальний феномен. Болить більше, ніж кажеться вголос.</div>
+      </div>
+    </div>
+  </div>
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Що насправді відбувається в психіці</h2>
+    <p>Юнг, який і ввів поняття "криза середини життя", вважав це не "хворобою", а необхідною стадією. Психіка перебудовується — і це болить. Розумієш цей процес — менше боїшся.</p>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🌗</span>
+        <div class="card-title">Перша й друга половина</div>
+        <div class="card-text">Юнг писав: перша половина життя — про побудову егo (кар'єра, сім'я, статус). Друга — про звернення до Самості, до глибинного "я". Криза середини — точка переходу. Те, що працювало раніше, тепер не годиться.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎭</span>
+        <div class="card-title">Розрив із персоною</div>
+        <div class="card-text">"Персона" в Юнга — соціальна маска. У 40+ багатьом раптом стає мало бути просто "успішним юристом" чи "хорошою матір'ю". Хочеться чогось справжнього під маскою. Це й є криза.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌑</span>
+        <div class="card-title">Зустріч із тінню</div>
+        <div class="card-text">"Тінь" — те, що ти витіснила в собі. Темні бажання, нереалізовані частини. У середині життя вони повертаються. Творча людина, яка стала бухгалтером, чує крик тіні. Її треба не пригнічувати — а інтегрувати.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚖️</span>
+        <div class="card-title">Анімус і аніма</div>
+        <div class="card-text">У Юнга в кожній жінці є чоловіча частина (анімус), у кожному чоловікові — жіноча (аніма). У середині життя ці протилежні частини проявляються сильніше. Жінки стають "сильнішими", чоловіки — "м'якшими". Це не дивно — це психологічна норма.</div>
+      </div>
+    </div>
+  </div>
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Як проходити, не зруйнувавши все</h2>
+    <p>Криза не вирішується "купити мотоцикл" чи "розлучитись". Це шлях усередину. Радикальні зовнішні зміни часто — спроба втекти від того, що насправді треба прожити всередині.</p>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🪟</span>
+        <div class="card-title">Не приймай радикальних рішень швидко</div>
+        <div class="card-text">У кризі багато "негайно треба" — звільнитись, розлучитись, переїхати. Дай собі мінімум 6 місяців перш ніж робити велике. Часто за пів року хочеш уже зовсім іншого. Поспіх у кризі — друг катастроф.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎨</span>
+        <div class="card-title">Поверни забуте</div>
+        <div class="card-text">У 40-50 раптом хочеться знов малювати, грати на гітарі, писати, танцювати — те, що залишила в 20. Це не дитячий каприз. Це повернення витісненої частини себе. Дай їй місце — і криза стане легшою.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💬</span>
+        <div class="card-title">Психотерапія — особливо тут</div>
+        <div class="card-text">Криза середини — той випадок, де терапія дає найбільше. Не бо ти "хвора", а тому що це складна перебудова, яку добре проходити з провідником. Юнгіанські аналітики найкраще працюють із цим періодом.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🤝</span>
+        <div class="card-title">Спільнота тих, хто проходить</div>
+        <div class="card-text">Ти не одна. Цю кризу проходять усі, навіть ті, хто зовні ніби "ок". Розмови з друзями твого віку — про це, не про побутове — приносять полегшення. Розуміти, що це не "тільки в мене", лікує саме по собі.</div>
+      </div>
+    </div>
+  </div>
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+  <div class="section" style="animation-delay:1.8s">
+    <div class="highlight">
+      <p>Криза середини — не "поразка дорослості". Це <em>друге народження. Боляче — як перше</em>. Дослідження показують: люди, які пройшли її свідомо, у другій половині життя живуть глибше, спокійніше, повніше. Ті, хто заглушив — продовжують страждати. Ця криза — запрошення жити чесно. Інколи це означає кардинальні зміни. Частіше — внутрішнє повернення до себе, без зовнішніх вибухів. Не бійся. І не поспішай.</p>
+    </div>
+  </div>
+  <div class="nav-next">
+    <a class="nav-next-hub" href="crisis.html">← Усі розділи</a>
+    <a href="crisis-big-changes.html">Далі: Великі зміни →</a>
+  </div>
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>

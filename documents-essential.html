@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Документи людини</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(220,230,255,.92)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.72)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.82);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(200,216,255,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.35);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(26px,4vw,36px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="documents.html">Назад</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Документи людини</h1>
+  <p class="page-subtitle">Те, що мусить знати кожен дорослий</p>
+
+  <!-- Hero quote -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Документи — це не папірці. Це твоя присутність у системі"</div>
+      <div class="hero-author">Старе адвокатське правило</div>
+    </div>
+    <p>Колись людину впізнавали в обличчя. Сьогодні — за номером в реєстрі. Без правильних документів ти не можеш ні взяти кредит, ні поїхати за кордон, ні навіть отримати страховку, якщо тебе зіб'є машина. Цей розділ — швидкий гайд по тому, які документи мусить мати кожна доросла людина, як їх зберігати і як діяти, якщо вони загублені або вкрадені.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Базові -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Базові — без них нікуди</h2>
+    <p>П'ять документів, без яких сучасна людина фактично не існує для держави. Перевір прямо зараз — чи є в тебе всі. Чи знаєш, де лежать.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🪪</span>
+        <div class="card-title">Паспорт громадянина</div>
+        <div class="card-text">В Україні з 2016 — це ID-картка з чіпом. Замінює внутрішній паспорт. Видається з 14 років, дійсна 10 років (з 18 років — на 20 років). Без неї не зможеш ні відкрити рахунок у банку, ні укласти трудовий договір, ні підписати договір оренди. Тримай її в окремому місці, не носи завжди з собою — носи фотокопію.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌐</span>
+        <div class="card-title">Закордонний паспорт</div>
+        <div class="card-text">Дійсний 10 років (з 16 — на 10, до 16 — на 4). Якщо плануєш кудись летіти, перевіряй термін дії: для більшості країн він має бути дійсним ще 6+ місяців після дати повернення. Інакше не пустять у літак. Вартість виготовлення 558 грн (звичайний термін), 1085 грн (терміново — 7 робочих днів).</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔢</span>
+        <div class="card-title">ІПН (РНОКПП)</div>
+        <div class="card-text">Реєстраційний номер облікової картки платника податків. 10 цифр. Без нього не можеш офіційно працювати, отримати соціальну допомогу або декларацію. Видається безкоштовно і пожиттєво. Зберігається в Дії або у вигляді паперової довідки. Знай свій номер напам'ять — питатимуть постійно.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📱</span>
+        <div class="card-title">Дія</div>
+        <div class="card-text">Мобільний застосунок, що офіційно замінює багато паперових документів — паспорт, ІПН, посвідчення водія, ID студента. Із 2021 року юридично рівноцінні фізичним. Всі дані захищені біометрією. Поліція, банки, нотаріуси зобов'язані приймати. Встанови, налаштуй — і носи телефон, а не папери.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Менш очевидні -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Менш очевидні, але важливі</h2>
+    <p>Документи, які більшість людей мають, але не знає, навіщо вони. Кожен з них рятує життя в певній ситуації — буквально або фінансово.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🚗</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Посвідчення водія</div>
+          <div class="card-text">Видається на 30 років (категорії А, B), для решти — на 10. Не дій з простроченим: штраф від 510 до 850 грн і евакуація авто. Якщо посвідчення українське, в більшості країн ЄС воно діє лише з міжнародним перекладом (IDP). IDP можна отримати в МВС за 1 день, коштує близько 200 грн, дійсний 3 роки.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🏥</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Декларація з лікарем</div>
+          <div class="card-text">Безкоштовний договір з сімейним лікарем — без нього ти не входиш у систему первинної медичної допомоги і не отримуєш безкоштовного лікування. Підписується раз і діє доти, доки не змінив лікаря. Можна оформити в Дії за 5 хвилин. Без неї — лікарі тебе будуть приймати, але вже на платній основі. Невидимий, але дуже важливий папір.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🎓</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Дипломи і сертифікати</div>
+          <div class="card-text">Атестат школи, диплом ВНЗ, додаток з оцінками, всі сертифікати курсів — зберігай оригінали. Якщо плануєш роботу за кордоном, потрібно буде їх апостилювати або перекладати. Скани зроби заздалегідь — у Google Drive, на флешці. Сюди ж — мовні сертифікати IELTS, TOEFL, DAAD: вони мають термін дії 2 роки.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">📋</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Свідоцтво про народження</div>
+          <div class="card-text">Як не дивно, потрібно і дорослим: для оформлення спадщини, для виїзду дітей за кордон, для реєстрації шлюбу. Багато людей не знає, де їхнє свідоцтво. Якщо втрачено — відновити можна в РАЦСі або в Дії за 90 грн. Краще зробити це до того, як знадобиться — нагальне відновлення часто блокує важливі справи.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Як зберігати -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Як правильно зберігати</h2>
+    <p>Більшість людей тримає всі документи в одному місці — у тумбочці у спальні. Це найпоширеніша помилка. Якщо станеться пожежа, крадіжка або потоп — втратиш все одразу. Правильна стратегія — три рівні зберігання.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">📦</span>
+        <div class="card-title">Рівень 1: Оригінали</div>
+        <div class="card-text">Зберігай у вогнетривкому сейфі або у банківській комірці (від 1500 грн на рік). Розклад: на постійно — закордонний паспорт, дипломи, свідоцтва, страхові поліси, нотаріальні документи. ID-картку і права тримай у гаманці, бо потрібні постійно. Решту — закрито, і не носи з собою без потреби.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📷</span>
+        <div class="card-title">Рівень 2: Сканування</div>
+        <div class="card-text">Зроби якісні скани всіх важливих документів і збережи у захищеній папці на Google Drive або iCloud. Назви чітко: "passport-2024.pdf", не "scan001". Якщо втратив оригінал — можеш швидко довести особу і відновити. Скани не замінюють оригіналу, але часто рятують у момент, коли потрібно "зараз".</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📱</span>
+        <div class="card-title">Рівень 3: Дія</div>
+        <div class="card-text">Все, що можна, перенеси в застосунок Дія. Е-паспорт, ІПН, водійське посвідчення, страхове свідоцтво, виписку з банку, COVID-сертифікат. Юридично рівноцінне паперу, прийняття обов'язкове. Якщо телефон загубиш — можна відновити в Дії на новому пристрої за SMS-кодом і фото обличчя.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔐</span>
+        <div class="card-title">Окремо: паролі</div>
+        <div class="card-text">Не пиши паролі від банку чи Дії на папері в гаманці. Використовуй менеджер паролів (1Password, Bitwarden — безкоштовно). Один майстер-пароль, який пам'ятаєш напам'ять. Все інше — зашифроване і доступне з телефону. Це підвищує безпеку в десятки разів. Без цього ти беззахисний у разі будь-якого фішингу.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Якщо втрачено -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Якщо документи втрачено</h2>
+    <p>Перші 24 години — критичні. Те, що ти зробиш сьогодні, визначає, чи будеш страждати тиждень чи місяць. Покрокова інструкція.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">1️⃣</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Заблокуй банківські картки</div>
+          <div class="card-text">Перш ніж навіть зрозумів, де загубив, — заблокуй усі картки через додаток банку (зазвичай це 2-3 кліки). Якщо документи вкрадено разом із картками, шахраї спробують зняти гроші протягом години. Блок негайно — запит нової картки потім. До 100 грн на новій картці пізніше — це нічого порівняно з тим, що могли вкрасти.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">2️⃣</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Подай заяву в поліцію</div>
+          <div class="card-text">Це обов'язково — навіть якщо здається, що "просто загубив". Якщо твоїм паспортом скористаються (наприклад, оформлять кредит), без заяви неможливо буде довести, що ти не причетний. Заява подається в найближчий відділ поліції або через "Дію поліцію" онлайн. На руках — талон-повідомлення. Тримай його — він знадобиться при оформленні нових документів.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">3️⃣</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Заблокуй ЕЦП і Дію</div>
+          <div class="card-text">Якщо телефон вкрали разом із Дією і ЕЦП — твоїм підписом можуть оформити фірму на твоє ім'я. Подзвони на гарячу лінію Дії (0 800 503 080) і заблокуй усі електронні підписи. Зміни паролі від держпослуг. Це зробити можна за 5 хвилин з іншого пристрою, але мало хто знає, що це треба.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">4️⃣</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Подай на нові документи</div>
+          <div class="card-text">У ЦНАПі або в Дії, з талоном-повідомленням з поліції. Терміни: ID-картка — 10-30 днів (терміново — 7 днів за 558 грн). Закордонний паспорт — 20 днів. У цей час можна користуватись довідкою про подачу. Якщо терміново — пиши заяву на прискорене виготовлення.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Перевірка -->
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Чек-лист зрілої людини</h2>
+    <p>Зроби цей міні-аудит документів просто зараз. Якщо щось не сходиться — виправ протягом наступних двох тижнів. Це інвестиція спокою на роки вперед.</p>
+
+    <div class="highlight">
+      <p>1) Знаю свій ІПН напам'ять (10 цифр). 2) Маю встановлену і налаштовану Дію. 3) Знаю, де лежить оригінал паспорта (поза мобільним телефоном). 4) Маю скани усіх важливих документів у захмар'ї. 5) Закордонний паспорт дійсний ще 6+ місяців. 6) Підписана декларація з сімейним лікарем. 7) Знаю свого нотаріуса для термінових питань. 8) У гаманці є тільки те, що потрібно щодня — без оригіналу свідоцтва про шлюб і дипломів. <em>Якщо хоча б три пункти — "ні", це означає, що ти зараз вразливий перед першою ж проблемою</em>. Виправ це. На це піде 4 години сумарно — а збереже місяць паніки в найгірший момент.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Ключове питання -->
+  <div class="section" style="animation-delay:1.85s">
+    <h2 class="section-title">Ключове питання</h2>
+    <p>Документи здаються нудним адмінстративом. Насправді ж — це міра твоєї дорослості і самостійності у світі.</p>
+
+    <div class="question-card">
+      <div class="question-label">Запитай себе</div>
+      <div class="question-main">"Якщо завтра все згорить — що я знаю, де відновити?"</div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Більшість людей живе в ілюзії, що "якщо щось трапиться, я розберусь". Але насправді — без підготовки розбиратимешся у стресі, з зайвими витратами, з нервами і сльозами. <em>Підготуватись зараз, коли все спокійно, — це найдешевший інвестиція в особисту свободу</em>. Завтра можеш зайти в банк, відкрити сейф або комірку. Завтра можеш зробити скани і завантажити в хмару. Завтра можеш встановити менеджер паролів. Це нудно. Але ти подякуєш собі через 3 роки, коли документи зникнуть, і ти знатимеш, що робити, без паніки.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Final -->
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Висновок</h2>
+    <div class="final-quote">
+      <div class="final-text">Документи — не "бюрократія". Це <strong>скелет твоєї дорослої присутності у світі</strong>. Коли все на своєму місці — ти можеш зосередитись на житті. Коли все в безладі — будь-яка дрібниця стає катастрофою. Витрать одну суботу на те, щоб все привести до ладу. Це найкорисніша година адмінстрафу у житті — і єдина, яку ти подякуєш собі вічно.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>

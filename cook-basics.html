@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Як готувати з нуля</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.12) 0%,rgba(40,80,200,.06) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.07) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.78);margin-bottom:16px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.55)}
+
+.steps-grid{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.step-card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:24px;align-items:flex-start}
+.step-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.step-card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.step-card:hover::before{opacity:1}
+.step-num{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:48px;color:rgba(138,176,255,.25);line-height:1;flex-shrink:0;width:40px;text-align:center}
+.step-body{flex:1}
+
+.tips{list-style:none;margin-top:16px}
+.tips li{font-size:13px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.6);padding:12px 0 12px 28px;border-bottom:1px solid rgba(200,216,255,.04);position:relative}
+.tips li::before{content:'';position:absolute;left:8px;top:20px;width:4px;height:4px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 6px #8ab0ff}
+
+.rules-list{list-style:none;margin-top:16px;display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:12px}
+.rules-list li{font-size:12px;font-weight:200;line-height:1.7;color:rgba(200,216,255,.55);padding:14px 16px 14px 32px;background:rgba(200,216,255,.02);border:1px solid rgba(200,216,255,.05);border-radius:10px;position:relative}
+.rules-list li::before{content:'';position:absolute;left:14px;top:20px;width:4px;height:4px;border-radius:50%;background:rgba(212,175,110,.6);box-shadow:0 0 6px rgba(212,175,110,.3)}
+
+.food-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:20px}
+.food-item{background:rgba(200,216,255,.02);border:1px solid rgba(200,216,255,.05);border-radius:12px;padding:18px 20px;transition:all .3s}
+.food-item:hover{background:rgba(200,216,255,.05);border-color:rgba(200,216,255,.12)}
+.food-label{font-size:9px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;color:rgba(138,176,255,.5);margin-bottom:8px}
+.food-val{font-size:12px;font-weight:200;line-height:1.7;color:rgba(200,216,255,.72)}
+
+.recipe{background:rgba(200,216,255,.04);border:1px solid rgba(200,216,255,.12);border-radius:16px;padding:24px 28px;margin-bottom:14px;transition:all .4s}
+.recipe:hover{background:rgba(200,216,255,.08);border-color:rgba(200,216,255,.22)}
+.recipe-meta{font-size:9px;font-weight:400;letter-spacing:.4em;text-transform:uppercase;color:rgba(212,175,110,.7);margin-bottom:8px}
+.recipe-name{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:20px;color:rgba(230,238,255,.95);margin-bottom:12px}
+.recipe-list{list-style:none;font-size:12px;font-weight:200;line-height:1.9;color:rgba(200,216,255,.65);margin-bottom:12px}
+.recipe-list li{padding:3px 0 3px 18px;position:relative}
+.recipe-list li::before{content:'·';position:absolute;left:6px;top:3px;color:rgba(138,176,255,.6);font-weight:600}
+.recipe-text{font-size:13px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.7)}
+
+.quote{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.4vw,22px);line-height:1.6;color:rgba(220,230,255,.85);text-align:center;padding:32px 24px;border-top:1px solid rgba(200,216,255,.1);border-bottom:1px solid rgba(200,216,255,.1);margin:32px 0}
+.quote::before{content:'"';font-size:36px;color:rgba(138,176,255,.4);margin-right:6px;vertical-align:-6px}
+.quote::after{content:'"';font-size:36px;color:rgba(138,176,255,.4);margin-left:6px;vertical-align:-6px}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Як готувати з нуля</h1>
+  <p class="page-subtitle">Якщо ніколи не готував — а пора</p>
+
+  <div class="section" style="animation-delay:.9s">
+    <p>Готувати — це не талант, не магія і не «мама в дитинстві». Це базовий навик, який освоюється за місяць практики. Як їздити на велосипеді: перші разів п'ять — невпевнено, але через десять разів ти вже їздиш «автоматично», без думок про педалі.</p>
+    <p>Тобі не потрібна кулінарна школа, дорогі ножі чи 50 спецій. Тобі потрібно: 5 базових рецептів, мінімум кухонного приладдя і дозвіл собі на помилки. Перші страви будуть так собі. Це нормально. Через місяць ти будеш здивована, як легко все стало.</p>
+  </div>
+
+  <div class="quote">
+    Готувати самій — це найдешевший спосіб любити себе щодня.
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Чому варто</h2>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">💰</span>
+        <div class="card-title">Дешевше в 3-5 разів</div>
+        <div class="card-text">Тарілка пасти вдома — ~30 грн. Та сама в кафе — 200+. За рік економія — 50-100 тисяч грн. Це відпустка або хороший ноутбук.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🍎</span>
+        <div class="card-title">Здоровіше</div>
+        <div class="card-text">Ти знаєш, що там. Скільки солі, цукру, олії. Без посилювачів смаку, прихованого цукру в соусах, перевідсмаженого жиру.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧘</span>
+        <div class="card-title">Заспокоює</div>
+        <div class="card-text">Готування — повторювані рухи, тепло, запахи. Знижує кортизол. Багато психологів радять готувати при тривозі.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎁</span>
+        <div class="card-title">Любов у дії</div>
+        <div class="card-text">Приготувати комусь вечерю — більше ніж сказати «люблю». Це час, увага, турбота, з'єднані в тарілку.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Що купити: мінімум</h2>
+    <p>Не йди в IKEA за повним набором. Спочатку — найнеобхідніше. Решту докуповуй за потребою — а більшість «потреб» так і не з'явиться.</p>
+
+    <div class="food-grid">
+      <div class="food-item">
+        <div class="food-label">Сковорода</div>
+        <div class="food-val">Одна гарна, з покриттям, 24-26 см. Дешева ламається за рік. Хороша служить десятиліттями.</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Каструля</div>
+        <div class="food-val">Середня, 3-4 літри, з кришкою. Для супів, пасти, круп. Поки досить.</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Ніж</div>
+        <div class="food-val">Один великий, шеф-ніж 18-20 см. Не «набір з 12 штук», а один хороший. Гострий — безпечніший за тупий.</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Дошка</div>
+        <div class="food-val">Дерев'яна або пластикова. Велика, не «декоративна». Для всього, окрім сирого м'яса (там окрема).</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Лопатка</div>
+        <div class="food-val">Силіконова — щоб не дряпала сковорідку. І велика ложка для супу.</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Друшляк</div>
+        <div class="food-val">Зливати воду з пасти, мити овочі. Будь-який.</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Терка</div>
+        <div class="food-val">Звичайна, з кількома боками. Для сиру, моркви, цедри.</div>
+      </div>
+      <div class="food-item">
+        <div class="food-label">Мірний посуд</div>
+        <div class="food-val">Кухоль з поділками і чайна+столова ложки. Поки рецептами користуєшся — потрібно. Потім — на око.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Базові продукти на полиці</h2>
+    <p>Тримай це вдома — і завжди буде що приготувати, навіть з порожнім холодильником.</p>
+
+    <ul class="rules-list">
+      <li>Сіль, чорний перець, олія соняшникова, олія оливкова</li>
+      <li>Часник, цибуля — основа 70% страв</li>
+      <li>Макарони, гречка, рис, вівсянка</li>
+      <li>Яйця — найпростіший білок для будь-якого прийому їжі</li>
+      <li>Консервована квасоля або нут — швидкий білок без готування</li>
+      <li>Помідори в банці — основа тушкованих страв і соусів</li>
+      <li>Сир твердий — натирається куди завгодно</li>
+      <li>Лимон — врятує будь-яку прісну страву</li>
+      <li>Спеції: паприка, орегано, сухий часник, лавровий лист</li>
+      <li>Заморожені овочі — броколі, горошок, цвітна — без часу і витрат</li>
+    </ul>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1.15s">
+    <h2 class="section-title">5 страв, з яких варто починати</h2>
+    <p>Прості, дешеві, не вийде зіпсувати. Освой їх — і вже будеш самостійна на кухні.</p>
+
+    <div class="recipe">
+      <div class="recipe-meta">15 хв · сніданок</div>
+      <div class="recipe-name">Омлет з овочами</div>
+      <ul class="recipe-list">
+        <li>2-3 яйця</li>
+        <li>Що є у холодильнику: помідор, перець, сир, зелень</li>
+        <li>Сіль, перець, ложка олії</li>
+      </ul>
+      <div class="recipe-text">Розбий яйця в миску, посоли, збий виделкою. Розігрій сковороду з олією. Кинь нарізані овочі, обсмаж 2 хв. Залий яйцями, накрий кришкою на 3-4 хв. Готово.</div>
+    </div>
+
+    <div class="recipe">
+      <div class="recipe-meta">20 хв · обід / вечеря</div>
+      <div class="recipe-name">Паста з часником і олією (aglio e olio)</div>
+      <ul class="recipe-list">
+        <li>Спагеті — 100 г на людину</li>
+        <li>Часник — 3-4 зубки</li>
+        <li>Оливкова олія — 3 ст.л.</li>
+        <li>Сіль, перець, сир, зелень</li>
+      </ul>
+      <div class="recipe-text">Постав воду з сіллю кипіти. Кинь спагеті, вари за пачкою (зазвичай 8-10 хв). Поки вариться: на сковороді в оливковій олії підсмаж нарізаний часник до золотистого (1-2 хв, не пали!). Зціди спагеті, кинь у сковороду, перемішай. Перець, сир, зелень. Готово.</div>
+    </div>
+
+    <div class="recipe">
+      <div class="recipe-meta">30 хв · обід</div>
+      <div class="recipe-name">Курка з овочами в духовці</div>
+      <ul class="recipe-list">
+        <li>Курячі стегна — 2-3 шт.</li>
+        <li>Картопля — 3-4 шт.</li>
+        <li>Цибуля, морква, перець</li>
+        <li>Олія, сіль, перець, паприка, часник</li>
+      </ul>
+      <div class="recipe-text">Розігрій духовку до 200°. Наріж овочі великими шматками, кидай у форму. Курку зверху. Полий олією, посоли, поперчи, поприпороши паприкою. Часник — прямо у шкірці, цілими зубчиками. У духовку на 35-40 хв. Все. Майже неможливо зіпсувати.</div>
+    </div>
+
+    <div class="recipe">
+      <div class="recipe-meta">25 хв · обід / вечеря</div>
+      <div class="recipe-name">Овочевий суп з квасолею</div>
+      <ul class="recipe-list">
+        <li>Цибуля, морква, картопля — по 1 шт.</li>
+        <li>Банка консервованої квасолі</li>
+        <li>Помідори — свіжі або в банці</li>
+        <li>Сіль, лавровий лист, зелень</li>
+      </ul>
+      <div class="recipe-text">У каструлі на олії підсмаж цибулю + моркву (5 хв). Додай нарізану картоплю, залий 1.5 л води. Як закипить — посоли, кинь лавровий лист. Через 10 хв — помідори і квасолю. Ще 10 хв на повільному вогні. Зелень — у тарілку.</div>
+    </div>
+
+    <div class="recipe">
+      <div class="recipe-meta">15 хв · вечеря</div>
+      <div class="recipe-name">Гречка з яйцем і овочами</div>
+      <ul class="recipe-list">
+        <li>Гречка — 1 склянка</li>
+        <li>Вода — 2 склянки</li>
+        <li>Яйце — 1-2 шт.</li>
+        <li>Будь-які овочі: цибуля, морква, перець</li>
+      </ul>
+      <div class="recipe-text">Гречку залий водою (1:2), посоли, на повільний вогонь, накрий, 15 хв — і не відкривай. Поки готується: на сковороді обсмаж нарізані овочі, додай гречку, перемішай. Розбий зверху яйце, накрий кришкою на 2 хв — і готово.</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Принципи, які працюють завжди</h2>
+
+    <div class="step-card">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="card-title">Цибуля + часник + олія = 90% смаку</div>
+        <div class="card-text">Майже будь-яка страва смачна, якщо почати з підсмаженої цибулі і часнику в олії. Це база для супів, тушкованих, пасти, овочів. Запам'ятай — і вже знаєш, як готувати.</div>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="card-title">Соли по ходу, не в кінці</div>
+        <div class="card-text">Овочі, м'ясо, паста — соли під час готування, по чуть-чуть. У кінці важко виправити «недосолено». А пересолене — не виправиш зовсім.</div>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="card-title">Гаряча сковорода — золоте правило</div>
+        <div class="card-text">Більшість «не виходить» — від того, що сковорода ще холодна. Розігрій 2-3 хв ДО того, як кидати продукти. Вода, яку капнула, має шипіти.</div>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <div class="card-title">Не перевертай рано</div>
+        <div class="card-text">М'ясо, риба, овочі мають полежати 3-5 хв з одного боку, щоб утворилась корочка. Якщо перевертаєш одразу — виходить варене, бліде, без смаку.</div>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <div class="card-title">Кислота врятує прісне</div>
+        <div class="card-text">Страва без смаку? Додай лимонний сік, оцет, помідор. Кислота балансує жирне, освіжає прісне, оживляє все. Один з найбільших секретів кухні.</div>
+      </div>
+    </div>
+    <div class="step-card">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <div class="card-title">Зелень в кінці</div>
+        <div class="card-text">Кріп, петрушка, базилік — кидай у тарілку, не в каструлю. У готуванні вони втрачають смак. У свіжому — оживляють страву.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1.25s">
+    <h2 class="section-title">Як не злякатись</h2>
+
+    <ul class="tips">
+      <li>Перші разів п'ять буде так собі. Це не «у тебе не виходить» — це нормальна крива навчання. Через 20 разів буде смачно автоматично.</li>
+      <li>Помилки — це паливо. Пересолила? Запам'ятала, скільки солі. Згоріло? Знаєш, що такий вогонь — забагато. Все — досвід.</li>
+      <li>Не починай з «святкових» страв. Свято — поганий час для експериментів. Починай у середу ввечері, коли є час і ніхто не гуде.</li>
+      <li>Готуй під подкаст або музику. Робиться легше, час летить, не нудно.</li>
+      <li>Не намагайся одразу «по-ресторанному». Прості страви — найсмачніші. Українська бабусина кухня — це твоя база.</li>
+      <li>Один рецепт за раз. Готуй ту саму пасту тричі-чотири рази, поки не «увійде в руку». Потім — наступний рецепт.</li>
+      <li>Купуй якісне просте: добра олія, свіжі овочі, правильна сіль. Це впливає сильніше, ніж «складність» рецепту.</li>
+      <li>YouTube — твій вчитель. «Як нарізати цибулю», «як підсмажити курку» — є відео на 3 хвилини, в якому пояснять усе.</li>
+    </ul>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Хитрощі, які економлять час</h2>
+
+    <ul class="tips">
+      <li>Готуй на 2-3 дні. Звари більше супу — на завтра вже є обід. Закинула курку в духовку — поки сидиш, вечеря готова на два дні.</li>
+      <li>Замороз заздалегідь нарізану цибулю і моркву. Десять хвилин підготовки на тиждень — і не плачеш над цибулею щоразу.</li>
+      <li>Понеділок ввечері — план на тиждень. Один похід в магазин — продуктів на 5 днів.</li>
+      <li>Готуй паралельно. Поки вариться паста — нарізай овочі. Поки печеться курка — миєш посуд. Кухня тренує мультитаскінг.</li>
+      <li>Хороший контейнер для холодильника — твій друг. Готовий салат, нарізані овочі, варене яйце — ідеї для перекусу не пропадають.</li>
+      <li>Прибирай по ходу. Помила сковороду одразу — 30 секунд. Через годину з присохлим — 5 хвилин і нерви.</li>
+    </ul>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="quote">
+    Перший рецепт — найскладніший. Десятий — звичка. Сотий — ти вже знаєш кухню.
+  </div>
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/2200);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.4),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+
+const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.style.animationPlayState='running'}})},{threshold:.1});
+document.querySelectorAll('.section').forEach(el=>{el.style.animationPlayState='paused';observer.observe(el)});
+</script>
+</body>
+</html>

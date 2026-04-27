@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Тварини і людина</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(220,230,255,.9);margin-bottom:16px}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(220,230,255,.92)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:14px;font-weight:300;line-height:1.75;color:rgba(220,230,255,.92)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(220,230,255,.92);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(200,216,255,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.35);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(26px,4vw,36px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Тварини і людина</h1>
+  <p class="page-subtitle">Найдавніший союз на планеті</p>
+
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Що довше я живу серед людей, то більше мені подобаються собаки"</div>
+      <div class="hero-author">Блез Паскаль</div>
+    </div>
+    <p>Людство приручило вовка ~30 тисяч років тому. Кота — 10 тисяч. За цей час обидва види глибоко вписались у наше життя — і психіку. Вони не просто живуть поруч. Вони впливають на наш гормональний фон, на стрес, на самотність, на саме відчуття дому. Ця сторінка — про те, що насправді стоїть за цим стосунком.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 💛 Чому тварини лікують -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">💛 Чому домашні тварини лікують</h2>
+    <p>Це не "емоційна поезія" — за фактом, домашня тварина в домі змінює фізіологію її людини. Дослідження це підтвердили десятки разів. Ось що саме відбувається.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">💗</span>
+        <div class="card-title">Окситоцин від погладжування</div>
+        <div class="card-text">15 хвилин погладжування собаки — і у обох (людини й собаки) рівень окситоцину зростає в 3-5 разів. Окситоцин — "гормон привʼязаності", той самий, що виділяється у мам із дитиною. Тіло сприймає тварину як близького члена родини. Це знижує тривогу, артеріальний тиск, рівень кортизолу.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🫁</span>
+        <div class="card-title">Уповільнення нервової системи</div>
+        <div class="card-text">Слухати, як кіт муркоче (25-150 Гц), фізіологічно знижує тиск і серцебиття. Дивитись, як риба пливе в акваріумі, — теж: дослідження показують зниження стресу за 5 хвилин. Дихання, ритм, присутність тварини "стягує" перевантажену нервову систему до спокійнішого стану.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎯</span>
+        <div class="card-title">Структура життя</div>
+        <div class="card-text">Тварина потребує годування, прогулянки, уваги в певні години. Це створює рутину — те, чого катастрофічно бракує у депресії, тривозі, після переїздів. Часто люди говорять: "Якби не пес, я б не вставав із ліжка". Не метафора — буквально структура дня тримається на ньому.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🤲</span>
+        <div class="card-title">Безумовне прийняття</div>
+        <div class="card-text">Собака не оцінює тебе за зарплатою, успіхом, виглядом. Вона зустрічає тебе однаково в найкращий і найгірший день. У світі, де нас постійно оцінюють — це рідкісний досвід "просто бути". Психологи називають це "безумовним позитивним прийняттям" — тим, що Карл Роджерс вважав основою терапії.</div>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Цікавий факт: <em>люди з домашніми тваринами рідше помирають від інфаркту в перші роки після нього</em>. Нагляд за іншою істотою буквально подовжує життя. Це не магія тварини — це біологія тіла, яке знову має кого любити.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 🩺 Зоотерапія -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">🩺 Зоотерапія — наука про тварин у психіці</h2>
+    <p>"Animal-assisted therapy" — окрема галузь медицини. Не "піти погладити котика", а структуроване втручання з протоколами і дослідженнями. Працює там, де інші методи буксують.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🦮</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Каністерапія — собаки</div>
+          <div class="card-text">Найрозвинутіша галузь. Спеціально навчені собаки працюють із дітьми з аутизмом (полегшують комунікацію), людьми з PTSD (заземлюють у моменті паніки), у школах для дітей із проблемами читання (дитина читає собаці — без страху критики). Ефекти підтверджені дослідженнями: знижуються тривога, агресія, ізоляція.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🐴</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Іпотерапія — коні</div>
+          <div class="card-text">Робота з конями допомагає при ДЦП, аутизмі, депресії. Кінь — велика, чутлива тварина, що читає твій стан тілесно. Якщо ти напружена — він не дасть себе осідлати. Це навчає присутності, дихання, регуляції емоцій без слів. Окремо ефективна для ветеранів із PTSD — вертикальний рух коня нагадує заколисування і знижує гіперреактивність.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🐬</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Дельфінотерапія</div>
+          <div class="card-text">Контроверсійна. З одного боку — дослідження показують знижену тривогу і покращення комунікації у дітей з аутизмом. З іншого — етичні питання: дельфіни в неволі страждають. У 2020-х багато центрів закривають саме з цих причин. Ефект, який вони дають, можна досягати через інших тварин — і без страждання дельфінів.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🐈</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Фелінотерапія — коти</div>
+          <div class="card-text">Менш формалізована. Кіт сам обирає, до кого підходити — і часто обирає того, хто хворий або у важкому стані. Не наукове твердження, а спостереження медсестер у геріатричних відділеннях. Муркотіння кота діє заспокійливо, тепло тіла знижує болі (особливо при артриті, мігренях). Менш активна тварина для людей, у яких немає сил на прогулянки.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 🐈 Кішки vs собаки -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">🐈 Кішки vs собаки — психологічний портрет</h2>
+    <p>Дослідження "cat people vs dog people" — окрема ціла галузь. Не стереотипи, а статистично значущі відмінності у структурі особистості. Це не значить, що "усі котолюби такі" — але тенденції цікаві.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🐕</span>
+        <div class="card-title">Власники собак</div>
+        <div class="card-text">У середньому: екстравертніші, активніші, орієнтовані на групу. Більше цінують лояльність, структуру, чіткі стосунки. Психологи (Сем Гослінг, Техас) показали: "dog people" вище за шкалою "приємність" і "сумлінність". Часто — батьки родин, спортсмени, прихильники рутини.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🐈</span>
+        <div class="card-title">Власники котів</div>
+        <div class="card-text">У середньому: інтровертніші, відкриті до досвіду, креативніші. Вище за шкалою "невротизм" — і одночасно за "інтелект". Часто — творчі професії, інтелектуальна робота, цінують самостійність (свою і кота). За даними одного дослідження, IQ "cat people" статистично вище — але різниця маленька.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🤝</span>
+        <div class="card-title">Що це говорить</div>
+        <div class="card-text">Не "собаки кращі" чи "коти кращі". Просто різні люди потребують різного типу присутності. Хтось хоче відданого партнера, який зустрічає радісно. Інший — суверенної істоти, що приходить по своєму вибору. Обидва досвіди валідні — і обидва лікують. Питання, що тобі ближче.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌗</span>
+        <div class="card-title">Обидва — теж нормально</div>
+        <div class="card-text">"Both cat and dog people" — окрема група. Зазвичай — найгнучкіші у соціальному плані, з ширшим діапазоном емоцій. Вони відмовились від ідентифікації типу "я така-то". Що, можливо, і є знак особистої зрілості: брати з кожного джерела те, що збагачує, без замикання в категорії.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 🪞 Антропоморфізм -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">🪞 Чому ми антропоморфізуємо тварин</h2>
+    <p>"Кіт сьогодні в поганому настрої". "Собака на мене образилась". "Папуга мене розуміє". Ми постійно приписуємо тваринам людські емоції, думки, наміри. Чому — питання глибше, ніж здається.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🧠</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Це базова функція мозку</div>
+          <div class="card-text">Наш мозок еволюціонував читати наміри інших живих істот — щоб виживати в племені. Він застосовує цю функцію автоматично до всього, що рухається: до тварин, машин, навіть малюнків. Тому ми "бачимо" обличчя в розетках, "характер" у автомобіля, "почуття" у кота. Це не вигадка — це робота мозку.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🤝</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Тварини частково "людські"</div>
+          <div class="card-text">Не зовсім фантазія: ссавці справді переживають базові емоції — страх, радість, ніжність, гнів. Нейробіологія підтвердила це. Тварина дійсно "сумує" коли ти йдеш, "радіє" коли повертаєшся. Питання не "чи мають емоції" — а "які саме і як глибоко". Складні емоції (гордість, провину, заздрість) у простих формах є у приматів і собак.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🪞</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Проєкція своїх станів</div>
+          <div class="card-text">Часто те, що ми "бачимо" в тварині, — це наша проєкція. Кіт лежить біля тебе — ти кажеш "він мене любить". Можливо. Можливо, він просто шукає теплий обʼєкт. Бачити в тварині більше, ніж там є — спосіб задовольнити свою потребу любити і бути коханим. Ефект: ми отримуємо емоційну підтримку, навіть коли тварина не "розуміє" нас у людському сенсі.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🌍</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Етичні наслідки</div>
+          <div class="card-text">Антропоморфізм — двосічний меч. Він робить нас милосердніми (захищаємо собак, бо "вони відчувають як ми"). І шкідливим, коли не помічаємо реальних потреб тварини. Котів ми підгодовуємо людською їжею і бідаємо здоров'ю. Собак переодягаємо у одяг, забуваючи, що вони у нього не просили. Любов вимагає не лише серця — а й знання.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Парадокс: <em>тварина — і дзеркало нас, і окрема істота</em>. Ми бачимо в ній себе — і це нормально. Але якщо хочеш реально про неї дбати, варто крім любові цікавитись її біологією, потребами, природою. Любов плюс знання — найкраща форма стосунків. З тваринами і не тільки.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Ключове питання -->
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Ключове питання</h2>
+    <p>Перед тим як завести тварину — або осмислити свої стосунки з вже наявною — корисне одне питання, чесно поставлене собі.</p>
+
+    <div class="question-card">
+      <div class="question-label">Запитай себе</div>
+      <div class="question-main">"Що ця тварина дає мені — і що я готова дати їй взамін?"</div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Любов до тварини — не одностороння. Вона дає тобі окситоцин, структуру, прийняття. Ти даєш їй харч, прогулянки, увагу, життя. Якщо <em>обмін чесний</em> — ви обоє виграєте. Якщо ти береш, але не можеш дати — варто почекати. Тварина — не антидепресант одноразового вжитку. Це 10-15 років зобов'язань. Чесна оцінка перед тим — найкраща форма поваги до неї.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:2.05s">
+    <h2 class="section-title">Замість висновку</h2>
+    <div class="final-quote">
+      <div class="final-text">Тварини нагадують нам про те, що ми <strong>теж тварини</strong>. Зі своїми ритмами, з потребою тепла, з простими радощами. Через них ми торкаємось чогось до-вербального, до-думного, до-цивілізаційного. У цьому — лікування. Не в магії. У поверненні до базового. До дихання, тіла, присутності. До того, що собака знає, а ми забули.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>
