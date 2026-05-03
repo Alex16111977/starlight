@@ -47,6 +47,20 @@ canvas{position:fixed;inset:0;z-index:0}
 .phrase:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
 .phrase:hover::before{opacity:1}
 .phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.nav-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px;margin-top:20px}
+.nav-card{background:rgba(200,216,255,.10);border:1px solid rgba(200,216,255,.22);border-radius:20px;padding:32px 28px;text-decoration:none;transition:all .4s;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:12px;opacity:0;animation:riseIn .8s ease forwards;box-shadow:0 4px 24px rgba(0,0,0,.3),inset 0 1px 0 rgba(200,216,255,.08)}
+.nav-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.5),transparent);opacity:1;transition:opacity .4s}
+.nav-card:hover{background:rgba(200,216,255,.16);border-color:rgba(200,216,255,.35);transform:translateY(-6px);box-shadow:0 8px 32px rgba(0,0,0,.4),0 0 20px rgba(138,176,255,.08),inset 0 1px 0 rgba(200,216,255,.12)}
+.nav-card:hover .nav-card-title{color:#fff}
+.nav-card:hover .nav-card-arrow{opacity:1;transform:translateX(4px)}
+.nav-card:nth-child(1){animation-delay:1s}.nav-card:nth-child(2){animation-delay:1.1s}.nav-card:nth-child(3){animation-delay:1.2s}.nav-card:nth-child(4){animation-delay:1.3s}
+.nav-card-step{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(212,175,110,.7)}
+.nav-card-emoji{font-size:32px;margin-bottom:4px}
+.nav-card-top{display:flex;align-items:center;justify-content:space-between}
+.nav-card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:22px;letter-spacing:.05em;color:#fff;transition:color .4s}
+.nav-card-arrow{font-size:14px;color:rgba(200,216,255,.7);opacity:.5;transition:all .4s;font-weight:200}
+.nav-card-desc{font-size:12px;font-weight:300;line-height:1.7;color:rgba(200,216,255,.75)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
 .phrase-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(220,230,255,.92)}
 
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
@@ -301,6 +315,61 @@ canvas{position:fixed;inset:0;z-index:0}
         <div class="card-title">Інтерфейс мозок-компʼютер</div>
         <div class="card-text">Neuralink Маска і конкуренти вже випробовують чіпи, що дозволяють керувати компʼютером думкою. Спочатку — для паралізованих. Потім — для "звичайних" людей? Уявити: пишеш повідомлення без рук, гуглиш, не діставши телефона. Лякає? Так. Прийде? Майже неминуче.</div>
       </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Глибше — чотири теми</h2>
+    <p>Деякі питання майбутнього настільки великі, що заслуговують окремої розмови.</p>
+    <div class="nav-grid">
+      <a class="nav-card" href="future-immortality.html">
+        <div class="nav-card-step">Тема 01</div>
+        <div class="nav-card-emoji">♾️</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Безсмертя</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Чи можна зупинити старіння — і чи потрібно це робити</div>
+      </a>
+      <a class="nav-card" href="future-neuro.html">
+        <div class="nav-card-step">Тема 02</div>
+        <div class="nav-card-emoji">🧠</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Нейроінтерфейси</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Коли мозок з'єднається з комп'ютером — і що це змінить</div>
+      </a>
+      <a class="nav-card" href="future-work.html">
+        <div class="nav-card-step">Тема 03</div>
+        <div class="nav-card-emoji">💼</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Робота через 10 років</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Що зникне, що залишиться і як підготуватися</div>
+      </a>
+      <a class="nav-card" href="future-city.html">
+        <div class="nav-card-step">Тема 04</div>
+        <div class="nav-card-emoji">🏙️</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Місто майбутнього</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Як виглядатимуть міста — і де це вже будують</div>
+      </a>
     </div>
   </div>
 

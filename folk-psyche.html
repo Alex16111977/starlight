@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Народні способи: спокій</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,220,.20) 0%,rgba(80,120,200,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,200,140,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(38px,7vw,64px);letter-spacing:.08em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#a8d488 70%,#d4af6e 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:40px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.legend{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-bottom:48px;opacity:0;animation:riseIn 1s .9s ease forwards}
+.lg{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:100px;font-size:10px;font-weight:300;letter-spacing:.2em;text-transform:uppercase}
+.lg.works{background:rgba(128,212,168,.12);border:1px solid rgba(128,212,168,.3);color:rgba(128,212,168,.95)}
+.lg.partial{background:rgba(212,175,110,.12);border:1px solid rgba(212,175,110,.3);color:rgba(212,175,110,.95)}
+.lg.myth{background:rgba(220,128,144,.12);border:1px solid rgba(220,128,144,.3);color:rgba(220,128,144,.95)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:24px}
+
+.remedy{background:rgba(200,216,255,.05);border:1px solid rgba(200,216,255,.14);border-radius:20px;padding:30px 28px;margin-bottom:18px;transition:all .4s;position:relative;overflow:hidden}
+.remedy::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.remedy:hover{background:rgba(200,216,255,.09);border-color:rgba(200,216,255,.22);transform:translateY(-3px)}
+.remedy:hover::before{opacity:1}
+.remedy-head{display:flex;align-items:center;gap:14px;margin-bottom:14px;flex-wrap:wrap}
+.remedy-icon{font-size:30px;flex-shrink:0}
+.remedy-name{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:22px;color:rgba(220,230,255,.95);letter-spacing:.04em;flex:1}
+.remedy-badge{font-size:9px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;padding:5px 12px;border-radius:100px;white-space:nowrap}
+.remedy-badge.works{background:rgba(128,212,168,.14);color:rgba(128,212,168,.95);border:1px solid rgba(128,212,168,.35)}
+.remedy-badge.partial{background:rgba(212,175,110,.14);color:rgba(212,175,110,.95);border:1px solid rgba(212,175,110,.35)}
+.remedy-badge.myth{background:rgba(220,128,144,.14);color:rgba(220,128,144,.95);border:1px solid rgba(220,128,144,.35)}
+.remedy-text{font-size:13px;font-weight:300;line-height:1.85;color:rgba(200,216,255,.82);margin-bottom:8px}
+.remedy-science{font-size:12px;font-weight:300;line-height:1.7;color:rgba(212,175,110,.78);font-style:italic;padding-left:14px;border-left:2px solid rgba(212,175,110,.3);margin-top:10px}
+
+.hero-quote{text-align:center;padding:32px 20px;margin-bottom:32px;position:relative;opacity:0;animation:riseIn 1s 1s ease forwards}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(20px,3vw,26px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#a8d488,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.5vw,28px);letter-spacing:.06em;color:rgba(220,230,255,1);margin-bottom:20px;text-align:center;margin-top:48px}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="folk-remedies.html">← Народні способи</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Спокій і стан</h1>
+  <p class="page-subtitle">Народні способи розслабитись — і що каже наука</p>
+
+  <div class="legend">
+    <span class="lg works">✓ Працює</span>
+    <span class="lg partial">~ Частково</span>
+    <span class="lg myth">✗ Міф</span>
+  </div>
+
+  <div class="hero-quote">
+    <div class="hero-text">"Багато ритуалів працюють — але не з тих причин, які ти думаєш"</div>
+  </div>
+
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">5 способів повернути спокій</h2>
+
+    <div class="remedy">
+      <div class="remedy-head">
+        <span class="remedy-icon">🧖</span>
+        <span class="remedy-name">Лазня і сауна</span>
+        <span class="remedy-badge works">Працює</span>
+      </div>
+      <div class="remedy-text">Не "детокс" (печінка і нирки роблять усю детоксикацію самі), а реальна користь: тренування серця, зниження запалення, стимуляція білків теплового шоку, зменшення стресу. Регулярна сауна знижує ризик серцево-судинних подій і деменції.</div>
+      <div class="remedy-science">Наука: 20-річне фінське дослідження (JAMA, 2015): 4-7 сауни на тиждень — ризик смерті від ССЗ нижчий на 50% порівняно з 1 разом. Знижує рівень кортизолу. Не "виганяє токсини" — це міф.</div>
+    </div>
+
+    <div class="remedy">
+      <div class="remedy-head">
+        <span class="remedy-icon">🥶</span>
+        <span class="remedy-name">Холодна вода вранці</span>
+        <span class="remedy-badge works">Працює</span>
+      </div>
+      <div class="remedy-text">Холодний душ або обливання — реально підвищує бадьорість. Вивільняє норадреналін у 2-3 рази, активує симпатичну нервову систему, поліпшує настрій. Краще починати теплою, закінчувати холодною (30-60 секунд).</div>
+      <div class="remedy-science">Наука: дослідження 2016 року з Нідерландів (PLOS ONE): люди, які приймали холодний душ 30-90 секунд, на 29% рідше брали лікарняний. Не лікує депресію, але дає миттєвий "розгін" розуму і тіла.</div>
+    </div>
+
+    <div class="remedy">
+      <div class="remedy-head">
+        <span class="remedy-icon">🌿</span>
+        <span class="remedy-name">Трави для спокою — м'ята, валеріана, меліса</span>
+        <span class="remedy-badge partial">Залежить від трави</span>
+      </div>
+      <div class="remedy-text">Валеріана: реально знижує тривогу і допомагає засипати, ефект порівнянний зі слабкими снодійними. М'ята: розслаблює, але переважно через ритуал і ароматерапію. Меліса: легка анксіолітична дія підтверджена. Не лікує важку безсонницю — для цього потрібен лікар.</div>
+      <div class="remedy-science">Наука: Cochrane review про валеріану (2007): помірний ефект на якість сну. Меліса (Lemon balm) — Phytomedicine 2014: знижує тривогу і поліпшує когнітивні функції. М'ята — переважно ефект ароматерапії.</div>
+    </div>
+
+    <div class="remedy">
+      <div class="remedy-head">
+        <span class="remedy-icon">🌱</span>
+        <div style="display:flex;align-items:center;gap:14px;flex:1;flex-wrap:wrap"><span class="remedy-name" style="flex:initial">Прогулянка босоніж — "заземлення"</span></div>
+        <span class="remedy-badge partial">Працює, але не як думаєш</span>
+      </div>
+      <div class="remedy-text">Прихильники кажуть: "земля передає електрони, що нейтралізують вільні радикали". Цей механізм наукою не підтверджений. АЛЕ — реальна користь є: сенсорна стимуляція стопи, зв'язок з природою, повільніша хода, увага до моменту, розслаблення. Це працює.</div>
+      <div class="remedy-science">Наука: дослідження "earthing" критикуються за слабку методологію. Але користь босоногої прогулянки на природі підтверджена через "shinrin-yoku" — японський терапевтичний підхід "лісового купання". Зменшення кортизолу і артеріального тиску.</div>
+    </div>
+
+    <div class="remedy">
+      <div class="remedy-head">
+        <span class="remedy-icon">🙏</span>
+        <span class="remedy-name">Молитва і ритуали</span>
+        <span class="remedy-badge works">Працює — незалежно від віри</span>
+      </div>
+      <div class="remedy-text">Будь-який повторюваний усвідомлений ритуал — молитва, медитація, мантра — знижує активність блукаючого режиму мозку (DMN), знижує стрес, збільшує відчуття контролю. Працює навіть для атеїстів, які роблять подібні практики свідомо.</div>
+      <div class="remedy-science">Наука: дослідження Harvard (Andrew Newberg): молитва і медитація однаково знижують активність мигдалини. Мета-аналіз 2012: люди, які регулярно практикують духовні ритуали, мають на 25% нижчий рівень тривоги. Сам механізм — нейробіологічний.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>
