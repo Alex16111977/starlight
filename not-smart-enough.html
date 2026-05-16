@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Чому мені здається, що я недостатньо розумна</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(140,180,200,.20) 0%,rgba(80,130,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(138,176,255,.15) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(36px,6vw,62px);letter-spacing:.06em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#a0c8ff 70%,#d4e4ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.9;color:rgba(220,230,255,.92);margin-bottom:16px}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#a0c0ff);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(230,238,255,1)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:19px;letter-spacing:.05em;color:rgba(240,246,255,1);margin-bottom:10px}
+.card-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:13px;font-weight:300;line-height:1.9;color:rgba(220,230,255,.92)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(100,150,220,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.9;color:rgba(220,230,255,.95);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;color:rgba(180,210,255,1)}
+
+.voice-box{background:rgba(138,176,255,.10);border-left:3px solid rgba(138,176,255,.55);border-radius:0 16px 16px 0;padding:24px 28px;margin:16px 0;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18px;line-height:1.7;color:rgba(220,232,255,.97)}
+.voice-label{font-family:'Montserrat',sans-serif;font-size:9px;font-weight:400;letter-spacing:.4em;text-transform:uppercase;color:rgba(138,176,255,.75);margin-bottom:10px;font-style:normal}
+
+.reality-box{background:rgba(80,160,120,.10);border-left:3px solid rgba(80,200,150,.5);border-radius:0 16px 16px 0;padding:24px 28px;margin:8px 0;font-size:14px;font-weight:300;line-height:1.9;color:rgba(200,240,220,.97)}
+.reality-label{font-size:9px;font-weight:400;letter-spacing:.4em;text-transform:uppercase;color:rgba(80,200,150,.8);margin-bottom:10px}
+
+.big-number{font-family:'Cormorant Garamond',serif;font-size:clamp(48px,8vw,80px);font-weight:300;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff);-webkit-background-clip:text;background-clip:text;display:block;text-align:center;margin-bottom:8px}
+.number-label{text-align:center;font-size:12px;font-weight:300;letter-spacing:.3em;color:rgba(200,216,255,.8);text-transform:uppercase}
+
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:24px;margin-top:24px}
+.stat{text-align:center;padding:24px 16px;background:rgba(200,216,255,.05);border:1px solid rgba(200,216,255,.1);border-radius:16px}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:clamp(19px,2.6vw,26px);line-height:1.6;color:rgba(230,238,255,1);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(180,215,255,1)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Чому мені здається, що я недостатньо розумна</h1>
+  <p class="page-subtitle">І чому це відчуття майже нічого не говорить про реальність</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Справжній знак інтелекту — не знання, а уява і здатність ставити запитання"</div>
+      <div class="hero-author">Альберт Айнштайн</div>
+    </div>
+    <p>Якщо тобі здається, що всі навколо знають щось важливе, чого не знаєш ти — ти не одна. Це відчуття так поширене, що в психології є кілька різних назв для нього. І майже завжди воно говорить не про реальний рівень інтелекту, а про щось зовсім інше.</p>
+    <p>Розберімось, що насправді відбувається, коли з'являється думка: "я недостатньо розумна".</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Голос у голові -->
+  <div class="section" style="animation-delay:1.0s">
+    <h2 class="section-title">Знайомий голос</h2>
+    <p>Цей внутрішній голос має кілька улюблених фраз. Впізнаєш?</p>
+
+    <div class="voice-box"><div class="voice-label">Голос всередині</div>"Усі навколо розуміють, а я — ні. Мабуть, я просто тупа"</div>
+    <div class="voice-box"><div class="voice-label">Голос всередині</div>"Вони говорять про це так впевнено. Мені немає чого додати"</div>
+    <div class="voice-box"><div class="voice-label">Голос всередині</div>"Я нічого корисного не знаю. Нащо взагалі відкривати рота"</div>
+    <div class="voice-box"><div class="voice-label">Голос всередині</div>"Якби я була справді розумною — я б це вже знала"</div>
+
+    <div class="highlight" style="margin-top:28px">
+      <p>Важлива деталь: <em>цей голос не описує реальність</em>. Він описує твій стан в конкретний момент — втому, тривогу, порівняння з кимось. Це не факт про твій інтелект. Це відчуття, яке має причини.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Синдром самозванця -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Синдром самозванця</h2>
+    <p>У 1978 році психологи Поліна Клэнс і Сюзанна Аймс описали феномен: компетентні, успішні люди переконані, що "обдурюють" всіх навколо, і рано чи пізно їх викриють. Назвали це <em>синдромом самозванця</em>.</p>
+
+    <div class="stat-grid">
+      <div class="stat">
+        <span class="big-number">70%</span>
+        <div class="number-label">людей переживають це хоча б раз у житті</div>
+      </div>
+      <div class="stat">
+        <span class="big-number">№1</span>
+        <div class="number-label">серед жінок у науці та бізнесі</div>
+      </div>
+      <div class="stat">
+        <span class="big-number">≠</span>
+        <div class="number-label">не пов'язаний з реальним рівнем знань</div>
+      </div>
+    </div>
+
+    <div class="phrases" style="margin-top:28px">
+      <div class="phrase">
+        <div class="phrase-icon">🎭</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Як він виглядає</div>
+          <div class="card-text">Ти зробила щось добре — і думаєш "просто пощастило". Тебе похвалили — "вони не знають, якою я є насправді". Ти не знаєш чогось — "ось, і виявилось". Успіхи списуються зовнішнім факторам, невдачі — на внутрішні "вади".</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🔬</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Хто найбільше схильний</div>
+          <div class="card-text">Люди з високими стандартами. Ті, хто багато навчається — бо що більше знаєш, то більше розумієш, чого ще не знаєш. Перфекціоністи. Жінки в середовищах, де більшість — чоловіки. Перші в сім'ї, хто здобув освіту або досягнув чогось значного.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🪞</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Парадокс</div>
+          <div class="card-text">Найменш компетентні люди, як правило, не відчувають синдрому самозванця. Це ефект Даннінга-Крюґера: той, хто мало знає, не знає наскільки мало знає. Хто більше знає — яскравіше бачить безодню того, чого ще не знає. Тривога компетентних — це ознака компетентності.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Ефект Даннінга-Крюґера -->
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Ефект Даннінга-Крюґера</h2>
+    <p>Це один з найважливіших психологічних відкриттів про те, як ми оцінюємо власні знання.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🏔️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Пік самовпевненості</div>
+          <div class="card-text">Людина трохи дізналась про тему і думає: "о, я це розумію". Впевненість зашкалює. Вона ще не знає, що не знає.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🕳️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Яма відчаю</div>
+          <div class="card-text">Чим більше вивчає — тим більше розуміє масштаб того, чого не знає. Впевненість різко падає. "Я взагалі нічого не знаю". Саме тут знаходяться розумні, допитливі люди — і помилково думають, що це означає "я тупа".</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🌅</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Схил просвітлення</div>
+          <div class="card-text">З часом і практикою впевненість повертається — але вже реальна, заснована на досвіді. "Я знаю достатньо, щоб бути корисною. І знаю, чого не знаю". Це мудрість.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top:20px">
+      <p><em>Якщо ти відчуваєш, що "нічого не знаєш"</em> — найімовірніше, ти вже далеко не на початку. Ти в ямі відчаю — а це означає, що ти вже знаєш достатньо, щоб бачити складність. Це не провал. Це прогрес.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Чому здається -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Чому мозок створює це відчуття</h2>
+    <p>Є кілька конкретних механізмів, через які розумні люди переконані у власній недостатності.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">⚖️</span>
+        <div class="card-title">Несправедливе порівняння</div>
+        <div class="card-text">Ти бачиш чужий публічний результат і порівнюєш з власним приватним процесом. Людина виступає впевнено — ти не знаєш, що вона боялась перед цим три доби. Стаття виглядає блискуче — ти не бачила сотню правок. Ти порівнюєш їх "готове" зі своїм "в процесі".</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📡</span>
+        <div class="card-title">Вибіркова увага</div>
+        <div class="card-text">Мозок фіксує підтвердження того, у що вже вірить. Якщо ти переконана, що "нічого не знаєш" — ти помічатимеш кожен момент, коли не знаєш чогось, і ігноруватимеш сотні моментів, коли ти була корисна, точна, компетентна.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌊</span>
+        <div class="card-title">Інформаційне перевантаження</div>
+        <div class="card-text">Ще 50 років тому людина порівнювала себе з десятком знайомих. Зараз — з мільйонами в інтернеті. У кожній темі є хтось, хто знає більше. Це не означає "я мало знаю". Це означає, що світ величезний.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎯</span>
+        <div class="card-title">Висока планка</div>
+        <div class="card-text">Ти очікуєш від себе більше, ніж від інших. Те, що у когось іншого вважалось би "нормально", у себе ти вважаєш "недостатньо". Ці стандарти — не мірило реального рівня. Вони мірило твоїх вимог до себе.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">😴</span>
+        <div class="card-title">Фізичний стан</div>
+        <div class="card-text">Втома, стрес, брак сну — буквально знижують когнітивні функції. Коли ти не в ресурсі, мислити важче. Мозок фіксує "я не можу думати чітко" і перекладає це в "я тупа". Але це не висновок — це симптом втоми.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🗣️</span>
+        <div class="card-title">Старі голоси</div>
+        <div class="card-text">"Ти завжди все переплутаєш", "не вигадуй", "краще мовчи". Слова з дитинства, від вчителів, колишніх партнерів — вшиваються в те, як ти оцінюєш себе. Ти думаєш, що це твоя думка. Але часто це — чужий голос.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що таке розум насправді -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Що таке розум насправді</h2>
+    <p>Коли кажуть "розумна" — найчастіше мають на увазі дуже вузьке визначення. Швидко лічить, пам'ятає факти, добре склала іспити. Але психолог Говард Ґарднер ще в 1983 році описав вісім видів інтелекту.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">📖</span>
+        <div class="card-title">Мовний</div>
+        <div class="card-text">Чутливість до слів, вміння пояснювати, переконувати, розповідати. Журналісти, письменники, вчителі.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔢</span>
+        <div class="card-title">Логіко-математичний</div>
+        <div class="card-text">Той, що школа вважає "розумом". Але це лише один тип.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎵</span>
+        <div class="card-title">Музичний</div>
+        <div class="card-text">Відчуття ритму, тону, структури в звуці. Не менш складний, ніж математичний.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🤸</span>
+        <div class="card-title">Тілесно-кінестетичний</div>
+        <div class="card-text">Точний контроль тіла, навчання через рух. Танцюристи, хірурги, спортсмени.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🗺️</span>
+        <div class="card-title">Просторовий</div>
+        <div class="card-text">Мислити образами, орієнтуватись у просторі, бачити структуру. Архітектори, дизайнери.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🤝</span>
+        <div class="card-title">Міжособистісний</div>
+        <div class="card-text">Розуміти людей, їхні мотиви, настрої. Терапевти, лідери, ті, кому всі довіряють.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌿</span>
+        <div class="card-title">Внутрішньоособистісний</div>
+        <div class="card-text">Розуміти себе, свої реакції, патерни. Рідкісна і глибока форма інтелекту.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌱</span>
+        <div class="card-title">Натуралістичний</div>
+        <div class="card-text">Розуміти природні системи, живих істот, екосистеми. Не цінується в офісах — але не менш важливий.</div>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top:28px">
+      <p>Якщо тобі важко з формулами — це не означає "я тупа". Це означає, що твій мозок розвинений по-іншому. <em>Немає людей без інтелекту</em>. Є люди, чий тип інтелекту рідше вимірюється тестами.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що голос говорить vs що є насправді -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Голос vs реальність</h2>
+
+    <div class="voice-box"><div class="voice-label">Голос</div>"Я не знаю, як це працює — значить я тупа"</div>
+    <div class="reality-box"><div class="reality-label">Реальність</div>Ти ще не навчилась цього. "Ще не" і "ніколи" — принципово різні речі. Кожен, хто зараз щось знає — колись цього не знав.</div>
+
+    <div class="voice-box" style="margin-top:20px"><div class="voice-label">Голос</div>"Вони говорять такі розумні речі, а мені нічого додати"</div>
+    <div class="reality-box"><div class="reality-label">Реальність</div>Вміння слухати і не вставляти зайвого — рідкісна навичка. Мовчання не завжди порожнеча. Іноді це точність.</div>
+
+    <div class="voice-box" style="margin-top:20px"><div class="voice-label">Голос</div>"Я запитала — і виглядала безглуздо"</div>
+    <div class="reality-box"><div class="reality-label">Реальність</div>Питання — ознака мислення. Відсутність питань — ознака страху або байдужості. Справді впевнені люди запитують багато.</div>
+
+    <div class="voice-box" style="margin-top:20px"><div class="voice-label">Голос</div>"Я нічого корисного не знаю"</div>
+    <div class="reality-box"><div class="reality-label">Реальність</div>Ти знаєш свій досвід, своє тіло, свої стосунки, свою роботу, своє місто. Ти знаєш, що пережила. Це неможливо переоцінити.</div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що можна зробити -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Що допомагає</h2>
+    <p>Це не афірмації. Це конкретні практики, які змінюють те, як мозок оцінює себе.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">📝</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Список того, що ти знаєш</div>
+          <div class="card-text">Буквально. Виписати: що ти вмієш, що ти пережила, що ти розумієш краще за більшість. Мозок звик фіксувати "не знаю" — допоможи йому побачити протилежне. Це не хвастощі. Це корекція зору.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🔄</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Перефразувати "я не знаю"</div>
+          <div class="card-text">"Я не знаю" → "Я ще не знаю це. Мені цікаво розібратись". Маленька зміна слів — але для мозку це різниця між закритими дверима і відчиненими.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🔍</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Поставити під сумнів джерело</div>
+          <div class="card-text">"Звідки в мене це переконання?" Хто сказав, що я недостатньо розумна? Коли я це вперше вирішила? Часто знаходиться конкретна людина або ситуація — і стає ясно, що це не факт, а чужа думка, яку ти прийняла.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">💬</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Говорити з собою як з другом</div>
+          <div class="card-text">Уяви, що подруга каже тобі: "я така тупа, нічого не знаю". Що ти їй відповіла б? А тепер скажи це собі. Ти дозволяєш собі жорсткість, яку ніколи б не дозволила людині, яку любиш.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🌱</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Вчитись зі цікавості, а не доказу</div>
+          <div class="card-text">Різниця між "вчусь, щоб нарешті бути достатньою" і "вчусь, бо мені цікаво" — принципова. Перше — вічна гонитва за рятувальним колом. Друге — задоволення від самого процесу. Ти не зобов'язана знати все, щоб мати право бути.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Фінал -->
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Насамкінець</h2>
+    <div class="final-quote">
+      <div class="final-text">Відчуття "я нічого не знаю" — це не вирок. Це майже завжди ознака того, що ти <strong>думаєш глибше</strong>, ніж дозволяєш собі визнати. Той, хто дійсно нічого не знає — не задається такими питаннями. Сам факт, що тобі не байдуже, що ти порівнюєш, сумніваєшся і шукаєш — вже говорить про інтелект, який у тебе є.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#b0d0ff':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+</body>
+</html>
