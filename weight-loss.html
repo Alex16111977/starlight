@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Як схуднути здорово</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(60,160,100,.2) 0%,rgba(40,120,80,.1) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#7ecfa0 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#7ecfa0;box-shadow:0 0 12px #7ecfa0}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(220,230,255,.9);margin-bottom:16px}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#7ecfa0,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(126,207,160,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:14px;font-weight:300;line-height:1.75;color:rgba(220,230,255,.92)}
+
+.steps-grid{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.step-card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:24px;align-items:flex-start}
+.step-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(126,207,160,.3),transparent);opacity:0;transition:opacity .4s}
+.step-card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.step-card:hover::before{opacity:1}
+.step-num{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:48px;color:rgba(126,207,160,.25);line-height:1;flex-shrink:0;width:40px;text-align:center}
+.step-body{flex:1}
+
+.tips{list-style:none;margin-top:16px}
+.tips li{font-size:13px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.6);padding:12px 0 12px 28px;border-bottom:1px solid rgba(200,216,255,.04);position:relative}
+.tips li::before{content:'';position:absolute;left:8px;top:20px;width:4px;height:4px;border-radius:50%;background:#7ecfa0;box-shadow:0 0 6px #7ecfa0}
+
+.highlight{background:linear-gradient(135deg,rgba(126,207,160,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(220,230,255,.92);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(126,207,160,.9)}
+
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-top:20px}
+.stat{background:rgba(200,216,255,.04);border:1px solid rgba(200,216,255,.1);border-radius:14px;padding:20px 18px;text-align:center;transition:all .3s}
+.stat:hover{background:rgba(200,216,255,.08);border-color:rgba(200,216,255,.18)}
+.stat-num{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:36px;color:rgba(126,207,160,.85);display:block;margin-bottom:6px}
+.stat-label{font-size:11px;font-weight:200;letter-spacing:.15em;color:rgba(200,216,255,.55);line-height:1.5}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.25);border-radius:100px;color:rgba(200,216,255,.75);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(220,230,255,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:rgba(245,225,180,1)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Схуднути здорово</h1>
+  <p class="page-subtitle">Без тортур і повернення назад</p>
+
+  <!-- Hero quote -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Тіло — не ворог, якого треба підкорити. Це партнер, якого треба зрозуміти"</div>
+      <div class="hero-author">Ґабріель Консенс, дієтолог</div>
+    </div>
+    <p>Щороку мільйони людей сідають на дієту. 95% з них через рік повертаються до попередньої ваги або набирають більше. Ця невтішна статистика — не провал сили волі. Це провал підходу. Коли людина голодує, тіло починає боротися: сповільнює метаболізм, підвищує гормон голоду і знижує гормон ситості. Воно просто рятує тебе від того, що сприймає як голод. Тому "просто менше їсти" — це стратегія, яка програє фізіології.</p>
+    <p>Є інший шлях. Він повільніший, ніж обіцяє реклама, але дає результат, який залишається. Він побудований не на заборонах, а на розумінні — того, як тіло насправді втрачає жир.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що таке дефіцит -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Одне правило, яке реально працює</h2>
+    <p>Схуднення — це дефіцит калорій. Жодного іншого механізму немає. Якщо тіло отримує менше енергії, ніж витрачає, воно бере різницю з жирових запасів. Це фізика, яку не скасує жодна кетодієта, голодування чи "детокс".</p>
+    <p>Але між "просто їж менше" і "здоровим дефіцитом" — прірва. Перше — це страждання, зриви і ефект йо-йо. Друге — це інженерія: ти їси так, щоб тіло отримувало менше калорій, але не відчувало голоду і не запускало захисний режим.</p>
+
+    <div class="stat-row">
+      <div class="stat">
+        <span class="stat-num">200–500</span>
+        <span class="stat-label">ккал на день — комфортний дефіцит без стресу для тіла</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">0,5–1</span>
+        <span class="stat-label">кг на тиждень — безпечний темп втрати ваги</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">90%</span>
+        <span class="stat-label">успіху залежить від харчування, лише 10% — від спорту</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">12+</span>
+        <span class="stat-label">тижнів потрібно, щоб новий режим став звичкою</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що їсти -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Три стовпи здорового дефіциту</h2>
+    <p>Щоб їсти менше і не страждати від голоду, треба розуміти, що дає ситість. Не кількість їжі — а її склад. Ось три речі, на яких тримається будь-який успішний підхід до зниження ваги.</p>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="card-title">Білок — це основа</div>
+          <div class="card-text">Білок дає найдовшу ситість із усіх нутрієнтів. Щоб перетравити 100 ккал білка, тіло саме витрачає близько 25 ккал — цього немає в жирах чи вуглеводах. Білок також зберігає м'язи під час схуднення: без нього тіло спалює не жир, а м'язи. Норма: 1,2–2 г білка на кожен кілограм ваги на день. Курка, яйця, риба, сир, бобові, грецький йогурт — щоразу на тарілці.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="card-title">Клітковина — об'єм без калорій</div>
+          <div class="card-text">Клітковина — це вуглевод, який тіло не може розщепити. Вона заповнює шлунок, уповільнює засвоєння цукру і годує мікробіом — бактерії кишечника, що впливають на апетит. Людина на дієті, багатій на клітковину, з'їдає в середньому на 300–400 ккал менше на день без будь-яких зусиль. Овочі, зелень, бобові, ягоди, цільнозернові — до кожного прийому їжі.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="card-title">Ультраоброблені продукти — головний ворог</div>
+          <div class="card-text">Дослідження Національного інституту здоров'я США (2019): люди, яким давали ультраоброблені продукти, з'їдали на 500 ккал на день більше — навіть коли казали, що не голодні. Чіпси, ковбаса, печиво, солодкі йогурти, соки з магазину — ці продукти спеціально розроблені, щоб ти не міг зупинитись. Не тому що ти слабкий, а тому що їх так створили. Прибери їх зі свого оточення — і дефіцит з'явиться сам собою.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Практичний план -->
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Що робити — конкретно</h2>
+    <p>Не "харчуйся правильно", а — конкретні дії, які дають результат без підрахунку кожної калорії.</p>
+
+    <ul class="tips">
+      <li>Збудуй тарілку за правилом: ½ — овочі, ¼ — білок, ¼ — складні вуглеводи. Це автоматично створює дефіцит і гарантує ситість. Жодних калькуляторів.</li>
+      <li>З'їж білок першим у кожному прийомі їжі. Це знижує загальне споживання калорій за їжу на 10–15% — просто через порядок.</li>
+      <li>Пий воду перед їжею — стакан за 20 хвилин. Шлунок частково заповнений, їси менше. Часто тіло плутає спрагу з голодом.</li>
+      <li>Не купуй продукти, яких не можеш контролювати. Якщо чіпси в будинку є — ти їх з'їси. Якщо їх немає — не з'їси. Самоконтроль у магазині легший, ніж вдома о 23:00.</li>
+      <li>Їж повільно і без екрана. Сигнал ситості від кишечника до мозку йде 20 хвилин. Їжа за телефоном — це майже завжди переїдання.</li>
+      <li>Не пропускай сніданок. Ті, хто снідає з білком, з'їдають на 400 ккал менше за день — не завдяки сніданку, а тому що не перекушують між обідом і вечерею.</li>
+      <li>Обери одну "змінну" на тиждень — не все одразу. Цього тижня — більше білка. Наступного — менше солодкого. Поступові зміни тримаються; різкі — зриваються.</li>
+      <li>Зважуйся раз на тиждень, зранку, після туалету. Щоденне зважування — це стрес і брехня: вага коливається на 1–2 кг залежно від води, солі, часу циклу. Важлива тенденція, а не число дня.</li>
+    </ul>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Рух -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Рух — не для спалювання калорій</h2>
+    <p>Є поширений міф: "зайшла в зал — схудну". Насправді одна година кардіо спалює 300–400 ккал. Це одна шоколадка. Фізичне навантаження важливе — але не тим, що ти думаєш.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🏋️</span>
+        <div class="card-title">Силові вправи — головні</div>
+        <div class="card-text">М'язи — це "піч" метаболізму. Кожен кілограм м'язів спалює 13 ккал на добу просто в спокої. Більше м'язів — вищий базовий метаболізм — легше утримувати дефіцит. Силові тричі на тиждень важливіші за щоденні пробіжки.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🚶</span>
+        <div class="card-title">Ходьба — недооцінений інструмент</div>
+        <div class="card-text">10 000 кроків на день — це 400–500 ккал. Без тренування, без болю в м'язах, без виснаження. Ходьба не підвищує апетит (на відміну від інтенсивного кардіо) і не сприймається тілом як стрес. Для більшості людей це найефективніший інструмент.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧘</span>
+        <div class="card-title">Будь-яка активність — краще за нічого</div>
+        <div class="card-text">Танці, плавання, велосипед, йога, ранкова зарядка — все це. Найкращий спорт — той, який тобі подобається і який ти будеш робити регулярно. Ненависть до тренажерного залу — не перешкода для схуднення.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚠️</span>
+        <div class="card-title">Обережно з кардіо</div>
+        <div class="card-text">Інтенсивні тренування підвищують рівень кортизолу (гормону стресу) і апетит. Деякі люди після годинного бігу з'їдають більше — і не худнуть. Кардіо корисне для серця, але не є основою схуднення. Це добавка, а не стратегія.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Сон і стрес -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Чого не кажуть у дієтах: сон і стрес</h2>
+    <p>Два найбільш ігноровані фактори у схудненні — не їжа і не спорт. Це кортизол і сон. Без них жодна дієта не спрацює стабільно.</p>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">★</div>
+        <div class="step-body">
+          <div class="card-title">Недосипання робить тебе голоднішим</div>
+          <div class="card-text">Одна ніч із 5 годинами сну замість 7-8 підвищує рівень греліну (гормону голоду) на 24% і знижує лептин (гормон ситості) на 18%. На наступний день ти з'їдаєш у середньому на 385 ккал більше — і хочеться не брокколі, а жирного і солодкого. Хронічне недосипання блокує схуднення навіть при суворій дієті. Це не міф — це нейроендокринологія.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">★</div>
+        <div class="step-body">
+          <div class="card-title">Хронічний стрес тримає жир</div>
+          <div class="card-text">Кортизол — гормон стресу — наказує тілу зберігати жир, особливо на животі. Це еволюційна програма: якщо небезпека, треба мати запаси. Тіло не відрізняє стрес від роботи від стресу від голоду. Жорстка дієта — теж стрес. Тому "сиджу на 800 ккал і не худну" буває реально: кортисол тримає жирові клітини заблокованими. Медитація, прогулянки, якісний відпочинок — це не розкіш, а умова схуднення.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">★</div>
+        <div class="step-body">
+          <div class="card-title">Щитовидна залоза і гормони</div>
+          <div class="card-text">Якщо ти робиш усе правильно — дефіцит є, рухаєшся, спиш — але вага не рухається місяцями, варто перевірити гормони. Гіпотиреоз (знижена функція щитовидної залози) є у 5-10% людей і сповільнює метаболізм на 15-30%. Інсулінорезистентність, полікістоз, порушення рівня лептину — все це реальні медичні причини, які лікар може знайти і виправити.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Психологія -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Психологія: чому зриваємось</h2>
+
+    <div class="highlight">
+      <p>Найчастіша причина провалу дієти — не відсутність дисципліни, а <em>перфекціонізм</em>. "З'їла одне печиво — день провалено, можна продовжувати". Це мислення "все або нічого", і воно руйнує більше планів схуднення, ніж саме те печиво. Дослідники називають це "ефектом яке там". Одна людина з'їдає печиво і повертається до плану. Інша з'їдає печиво, думає "яке там вже", і з'їдає все інше. Різниця — не в силі волі. Це в ставленні до відхилення.</p>
+    </div>
+
+    <p style="margin-top:24px">Схуднення — не прямий шлях вниз. Це плато, коливання, тижні без змін, потім стрибок. Тіло адаптується, гормони коригуються, темп змінюється. Очікувати лінійного результату — значить гарантувати розчарування. Люди, що досягають довгострокового результату, мають одну спільну рису: вони не здаються після перших трьох тижнів стагнації. Вони коригують план і продовжують.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Міфи -->
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">Міфи, які заважають</h2>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🚫</span>
+        <div class="card-title">Вуглеводи — ворог</div>
+        <div class="card-text">Вуглеводи не роблять тебе товстою. Надлишок калорій робить тебе товстою — незалежно від джерела. Гречка, вівсянка, бобові — це вуглеводи, але вони насичені клітковиною і не викликають різких стрибків цукру. Ворог — не вуглевод, а цукор і ультраоброблені продукти.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🚫</span>
+        <div class="card-title">Треба їсти кожні 3 години</div>
+        <div class="card-text">Міф, народжений у фітнес-культурі 90-х. Насправді частота прийомів їжі не впливає на метаболізм, якщо загальна кількість калорій однакова. Їж коли голодний — 2-3 рази або 5. Для більшості людей три ситних прийоми їжі ліпше, ніж шість маленьких, після яких завжди хочеться ще.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🚫</span>
+        <div class="card-title">Жири треба виключити</div>
+        <div class="card-text">Жири дають ситність, потрібні для гормонів і засвоєння вітамінів A, D, E, K. Низькожирні дієти 80-х років провалилися — люди замінили жир на цукор і стали важчими. Потрібно їсти корисні жири: авокадо, горіхи, оливкову олію, рибу. Виключити — транс-жири з маргарину і фастфуду.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🚫</span>
+        <div class="card-title">Після 18:00 не їсти</div>
+        <div class="card-text">Тіло не вмикає "режим жиронакопичення" о 18:00. Калорія вечері — та сама калорія сніданку. Проблема вечірньої їжі інша: ввечері ми їмо неуважно, багато, перед екраном, і часто — не від голоду. Якщо контролюєш якість і кількість — час не має значення.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🚫</span>
+        <div class="card-title">Детокс і "очищення" спалюють жир</div>
+        <div class="card-text">Жодне "очищення" не прискорює схуднення. Детокс-коктейлі, соки, голодні дні — це в кращому випадку плацебо, в гіршому — втрата м'язів і електролітів. Печінка і нирки — найкращий детокс. Їм не потрібна допомога від зеленого смузі за 400 гривень.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🚫</span>
+        <div class="card-title">Схуднення лінійне</div>
+        <div class="card-text">Вага може стояти на місці 2-3 тижні, потім впасти на 1,5 кг за тиждень. Плато — це не зупинка схуднення, це адаптація тіла. Якщо дефіцит є, жир іде — навіть якщо терези мовчать. Вода, гормональний цикл, запалення у м'язах — все це "маскує" реальну втрату жиру на терезах.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Як не повернутися -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Як утримати результат назавжди</h2>
+    <p>95% тих, хто схуднув на дієті, повертаються до попередньої ваги протягом 5 років. Єдина стратегія, що працює довгостроково — не схудлення, а зміна звичок. Різниця принципова.</p>
+
+    <div class="highlight">
+      <p>Дієта — це тимчасово. Спосіб харчування — це назавжди. Коли людина думає "я на дієті", є відчуття, що колись вона закінчиться і можна буде повернутись до нормального. Але "нормальне" — це те, що привело до зайвої ваги. <em>Питання не "як схуднути", а "як мені хочеться харчуватися на решту свого життя".</em> Відповідь на це питання — і є твоя дієта.</p>
+    </div>
+
+    <ul class="tips" style="margin-top:24px">
+      <li>Не шукай "мотивацію" — будуй систему. Мотивація коливається. Якщо здоровий сніданок приготований ввечері, ти його з'їси навіть без мотивації. Середовище вирішує більше за рішучість.</li>
+      <li>Слідкуй за тенденцією, а не за числом. Вага за місяць — важливіша за вагу за день. Фото тіла раз на місяць показує більше, ніж щоденні терези.</li>
+      <li>Знайди рух, який тобі подобається. Той, хто ходить у зал через силу, зупиниться. Той, хто танцює або грає у баскетбол заради радості — продовжить роками.</li>
+      <li>Не тримай вдома їжу, яку не можеш контролювати. Це не слабкість — це нейробіологія. Вольових ресурсів вистачить на щось важливіше.</li>
+      <li>Якщо зірвався — не карай себе. Один поганий день не руйнує прогрес. Зупинись, зроби один правильний вибір — і це вже повернення до курсу.</li>
+    </ul>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Final -->
+  <div class="section" style="animation-delay:1.8s">
+    <div class="final-quote">
+      <div class="final-text">Схуднення — це не покарання за надмірну вагу. Це <strong>турбота про себе</strong>, повільна і терпелива. Тіло, з яким ти воюєш, — не ворог. Це те саме тіло, яке дихає за тебе вночі, гоїть рани і несе тебе через весь день. Воно заслуговує на увагу і повагу — не тільки коли вже схудло.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b4ffd4':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+</body>
+</html>

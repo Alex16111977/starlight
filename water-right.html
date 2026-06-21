@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Як пити воду правильно</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,140,220,.22) 0%,rgba(60,100,200,.13) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(100,200,220,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(38px,7vw,66px);letter-spacing:.08em;color:transparent;background:linear-gradient(135deg,#70c8e8 0%,#8ab0ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#70c8e8;box-shadow:0 0 12px #70c8e8}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(220,230,255,.9);margin-bottom:16px}
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(112,200,232,.5),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(20px,3.4vw,30px);line-height:1.45;color:transparent;background:linear-gradient(135deg,#70c8e8,#8ab0ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(112,200,232,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:14px;font-weight:300;line-height:1.75;color:rgba(220,230,255,.88)}
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:26px 26px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:20px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(112,200,232,.3),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-3px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:26px;flex-shrink:0;width:34px;text-align:center;padding-top:2px}
+.highlight{background:linear-gradient(135deg,rgba(112,200,232,.08),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.16);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(220,230,255,.92);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(112,200,232,.9)}
+.bad{background:linear-gradient(135deg,rgba(220,100,100,.07),rgba(200,80,80,.04));border:1px solid rgba(220,100,100,.18);border-radius:20px;padding:28px 28px;margin-bottom:16px;position:relative;overflow:hidden}
+.bad::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(220,100,100,.3),transparent)}
+.bad-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;color:rgba(240,160,160,.9);margin-bottom:10px;display:flex;gap:10px;align-items:center}
+.bad-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(220,200,200,.85)}
+.badge-row{display:flex;gap:12px;flex-wrap:wrap;margin:20px 0}
+.badge{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:100px;font-size:11px;font-weight:300;letter-spacing:.2em;text-transform:uppercase}
+.badge.blue{background:rgba(112,200,232,.12);border:1px solid rgba(112,200,232,.3);color:rgba(112,200,232,.95)}
+.badge.gold{background:rgba(212,175,110,.12);border:1px solid rgba(212,175,110,.3);color:rgba(212,175,110,.95)}
+.badge.red{background:rgba(220,100,100,.12);border:1px solid rgba(220,100,100,.3);color:rgba(240,160,160,.95)}
+.question-card{background:linear-gradient(135deg,rgba(112,200,232,.08),rgba(212,175,110,.05));border:1px solid rgba(200,216,255,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(112,200,232,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.35);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.5vw,32px);color:transparent;background:linear-gradient(135deg,#70c8e8,#8ab0ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.35}
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(112,200,232,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(112,200,232,.9)}
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.25);border-radius:100px;color:rgba(200,216,255,.75);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}
+.read-toggle:hover{background:rgba(112,200,232,.1);border-color:rgba(112,200,232,.4);color:rgba(220,230,255,.95)}
+.read-toggle.active{background:rgba(112,200,232,.18);border-color:rgba(112,200,232,.6);color:rgba(180,230,245,1)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">← Starlight</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Як пити воду правильно</h1>
+  <p class="page-subtitle">щоб не бігати в туалет кожні 20 хвилин</p>
+
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Ти не зневоднена — ти просто п'єш воду неправильно"</div>
+    </div>
+    <p>Якщо ти п'єш воду, але постійно бігаєш в туалет і при цьому все одно відчуваєш спрагу або сухість — це не норма і не "так має бути". Це сигнал, що вода не засвоюється. Клітини її не отримують — організм просто виводить її назовні. Розберемо чому і як це виправити.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Чому ти бігаєш в туалет</h2>
+    <p>Причин кілька, і вони накладаються одна на одну. Ось найпоширеніші.</p>
+
+    <div class="bad">
+      <div class="bad-title">💧 П'єш занадто багато за раз</div>
+      <div class="bad-text">Великий стакан або пляшка за короткий час — організм не встигає засвоїти. Нирки сприймають це як надлишок і просто виводять. Ти зробила "правильний" вчинок — але вода пройшла транзитом.</div>
+    </div>
+
+    <div class="bad">
+      <div class="bad-title">☕ Починаєш день з кави або чаю</div>
+      <div class="bad-text">Кофеїн — діуретик. Він блокує всмоктування рідини і підсилює виведення. Чашка кави вранці натщесерце дає сигнал "виводь воду" ще до того, як ти встигла попити нормально.</div>
+    </div>
+
+    <div class="bad">
+      <div class="bad-title">🧂 Немає електролітів</div>
+      <div class="bad-text">Вода без мінералів погано затримується в клітинах. Натрій, калій, магній — це "транспорт" для води всередину клітини. Без них вода просто проходить крізь тебе. Це головна причина, чому людина п'є і все одно хоче пити.</div>
+    </div>
+
+    <div class="bad">
+      <div class="bad-title">🌊 П'єш холодну воду</div>
+      <div class="bad-text">Дуже холодна вода проходить через ШКТ швидше — організм не встигає її всмоктати. Тепла або кімнатної температури вода засвоюється значно краще і повільніше виводиться.</div>
+    </div>
+
+    <div class="bad">
+      <div class="bad-title">⏰ П'єш відразу перед сном або за їжею</div>
+      <div class="bad-text">Велика кількість води за 30 хвилин до сну — гарантований похід вночі. Вода під час їжі або відразу після розводить шлунковий сік і швидше проходить через систему.</div>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Як пити, щоб вода засвоювалась</h2>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🐢</div>
+        <div>
+          <div class="card-title" style="margin-bottom:8px">Маленькими ковтками, повільно</div>
+          <div class="card-text">50–100 мл за раз, невеликими ковтками — не залпом. Слина частково бере участь у засвоєнні рідини. Маленький ковток → слина → засвоєння. Великий залп → миттєве навантаження → туалет.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🌡️</div>
+        <div>
+          <div class="card-title" style="margin-bottom:8px">Кімнатна температура або тепла</div>
+          <div class="card-text">Ідеально — 30–40°C. Тепла вода розслаблює стінки судин, кращим всмоктується через слизові. Холодна — шокує організм і прискорює транзит. Якщо хочеш щоб вода "зайшла" — грій її.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🕐</div>
+        <div>
+          <div class="card-title" style="margin-bottom:8px">Рівномірно протягом дня</div>
+          <div class="card-text">Не "виконати план" за вечір. Розподіл: прокинулась — 200 мл, через годину — ще 150–200 мл, і так кожні 1–1.5 години. Маленькі порції весь день — замість великих залпів кілька разів.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🧂</div>
+        <div>
+          <div class="card-title" style="margin-bottom:8px">Додавай електроліти</div>
+          <div class="card-text">Щіпка гімалайської або морської солі в склянку — вже дає ефект. Або вода з шматочком лимона + щіпка солі. Або кокосова вода. Або аптечний електролітний порошок без цукру. Без мінералів вода в клітини не потрапляє.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🌅</div>
+        <div>
+          <div class="card-title" style="margin-bottom:8px">Вода — перше, кава — друге</div>
+          <div class="card-text">Прокинулась → 200–300 мл теплої води → потім через 20–30 хвилин каву. Ранком після сну організм зневоднений. Кава першою замість води — це як заправляти машину без двигуна. Порядок важливий.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🍽️</div>
+        <div>
+          <div class="card-title" style="margin-bottom:8px">Не під час їжі</div>
+          <div class="card-text">Під час їжі — не більше 150 мл, і лише маленькими ковтками. Велика кількість рідини під час їжі розводить шлунковий сік, погіршує травлення і прискорює виведення. Пий за 30 хвилин до їжі або через 45–60 хвилин після.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.35s">
+    <h2 class="section-title">Скільки насправді потрібно</h2>
+    <p>Формула "2 літри на день" — спрощення. Насправді норма залежить від ваги, активності та клімату.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">⚖️</span>
+        <div class="card-title">Базова формула</div>
+        <div class="card-text">30–35 мл на кілограм ваги. 60 кг → 1.8–2.1 л на день. 70 кг → 2.1–2.5 л. Це не чиста вода — це загальна рідина: вода, чаї, бульйони, фрукти (вони на 85–90% вода).</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🏃‍♀️</span>
+        <div class="card-title">Якщо займаєшся спортом</div>
+        <div class="card-text">Додай 500–700 мл на годину тренування. Після тренування — вода з електролітами, не чиста. Чиста вода після інтенсивного навантаження вимиває залишки мінералів — звідси судоми і "розбитість".</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">☀️</span>
+        <div class="card-title">Якщо жарко або в кондиціонованому приміщенні</div>
+        <div class="card-text">Кондиціонер сушить повітря сильніше, ніж на вулиці. В офісі з кондиціонером треба пити частіше — організм втрачає воду через дихання і шкіру непомітно для тебе.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🫐</span>
+        <div class="card-title">Вода з їжі рахується</div>
+        <div class="card-text">Огірок — 97% вода. Кавун, полуниця, апельсин, помідори — теж. Якщо їсиш багато свіжих овочів і фруктів — твоя потреба в питній воді нижча. Не треба пити "понад" їжу, де вже є рідина.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Що рахується, а що ні</h2>
+
+    <div class="badge-row">
+      <span class="badge blue">✓ Вода</span>
+      <span class="badge blue">✓ Трав'яний чай</span>
+      <span class="badge blue">✓ Кокосова вода</span>
+      <span class="badge blue">✓ Бульйон</span>
+      <span class="badge gold">~ Зелений чай</span>
+      <span class="badge gold">~ Молоко</span>
+      <span class="badge gold">~ Чорний чай</span>
+      <span class="badge red">✗ Кава (діуретик)</span>
+      <span class="badge red">✗ Алкоголь</span>
+      <span class="badge red">✗ Солодкі напої</span>
+      <span class="badge red">✗ Енергетики</span>
+    </div>
+
+    <p style="margin-top:8px">Кава і алкоголь не тільки не рахуються — вони ще й виводять воду. На кожну чашку кави бажано додати 100–150 мл води понад норму.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">Чарівна добавка: щіпка солі</h2>
+
+    <div class="highlight">
+      <p>Звучить дивно — але щіпка морської або гімалайської солі в склянці води кардинально змінює ефект.<br><br>
+      <em>Як це працює:</em> натрій — головний електроліт, який "відкриває двері" в клітину для води. Без натрію клітина не пропускає воду всередину, вона просто йде в сечу. Зі щіпкою солі — вода доходить до клітин і реально зволожує.<br><br>
+      <em>Скільки:</em> буквально щіпка на 500 мл — так, що ти ледве відчуваєш смак або взагалі не відчуваєш. Це не "підсолена вода", це мікродоза мінералів.<br><br>
+      <em>Коли особливо важливо:</em> вранці після сну, після тренування, в жарку погоду, якщо п'єш багато чистої дистильованої або фільтрованої води (вона вимиває мінерали).</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Як виглядає правильний день</h2>
+
+    <div class="highlight">
+      <p>
+      <em>07:00 — прокинулась.</em> 200–300 мл теплої води зі щіпкою солі або шматочком лимона. Не кава. Вода — першою.<br><br>
+      <em>07:30 — кава або чай.</em> Після води, не до. Маленькими ковтками.<br><br>
+      <em>08:30–09:00 — знову вода.</em> 150–200 мл. Маленькими ковтками. Кімнатна температура.<br><br>
+      <em>Кожні 1–1.5 години</em> — 100–200 мл. Не чекай спраги: якщо відчуваєш спрагу — вже є легка дегідрація.<br><br>
+      <em>За 30 хвилин до їжі</em> — 200 мл. Допомагає шлунку підготуватись і знижує апетит.<br><br>
+      <em>Під час їжі</em> — не більше 100–150 мл, маленькими ковтками.<br><br>
+      <em>За 2 години до сну</em> — зупинись. Маленький ковток якщо дуже хочеться — але не склянку. Нирки вночі теж хочуть відпочити.<br><br>
+      <em>Ввечері після вечері</em> — трав'яний чай без кофеїну рахується і зволожує, і допомагає заснути.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Як зрозуміти, що все добре</h2>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🟡</span>
+        <div class="card-title">Колір сечі</div>
+        <div class="card-text">Найпростіший маркер. Ідеал — блідо-жовтий, майже прозорий. Яскраво-жовтий — п'єш мало. Прозорий як вода — п'єш занадто багато або занадто швидко. Темний — термінова дегідрація.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🚶</span>
+        <div class="card-title">Частота туалету</div>
+        <div class="card-text">Норма — 4–8 разів на день. Якщо ходиш рідше — п'єш мало. Якщо частіше 10 разів — п'єш занадто швидко або багато за раз, або є інша причина. Якщо нічого не змінилось після корекції — до лікаря.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">✋</span>
+        <div class="card-title">Тест на гідрацію</div>
+        <div class="card-text">Защипни шкіру на тильній стороні долоні і відпусти. Якщо розправилась за секунду — добре зволожена. Якщо повільно — є дегідрація. Грубий метод, але швидкий.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💆</span>
+        <div class="card-title">Відчуття</div>
+        <div class="card-text">Якщо правильно зволожена: немає спраги, голова ясна, шкіра пружна, немає набряків вранці, немає "ваги" в тілі. Набряки з ранку — не від "багато води", а від солі в їжі або нестачі калію.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Головне питання</h2>
+
+    <div class="question-card">
+      <div class="question-label">Запитай себе</div>
+      <div class="question-main">"Я п'ю воду залпами або маленькими ковтками?"</div>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.95s">
+    <h2 class="section-title">Висновок</h2>
+    <div class="final-quote">
+      <div class="final-text">Частий туалет — це майже завжди питання <strong>як ти п'єш</strong>, а не скільки. Маленькі ковтки, тепла вода, щіпка солі, не залпами і не перед сном — і ти відчуєш різницю вже за кілька днів. Вода почне реально зволожувати, а не просто проходити транзитом.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b0e8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+</body>
+</html>
