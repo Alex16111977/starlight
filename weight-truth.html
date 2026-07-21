@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Правда про вагу</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(60,160,100,.2) 0%,rgba(40,120,80,.1) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#7ecfa0 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#7ecfa0;box-shadow:0 0 12px #7ecfa0}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(220,230,255,.9);margin-bottom:16px}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#7ecfa0,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(126,207,160,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:14px;font-weight:300;line-height:1.75;color:rgba(220,230,255,.92)}
+
+.steps-grid{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.step-card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:24px;align-items:flex-start}
+.step-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(126,207,160,.3),transparent);opacity:0;transition:opacity .4s}
+.step-card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.step-card:hover::before{opacity:1}
+.step-num{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:48px;color:rgba(126,207,160,.25);line-height:1;flex-shrink:0;width:40px;text-align:center}
+.step-body{flex:1}
+
+.tips{list-style:none;margin-top:16px}
+.tips li{font-size:13px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.6);padding:12px 0 12px 28px;border-bottom:1px solid rgba(200,216,255,.04);position:relative}
+.tips li::before{content:'';position:absolute;left:8px;top:20px;width:4px;height:4px;border-radius:50%;background:#7ecfa0;box-shadow:0 0 6px #7ecfa0}
+
+.highlight{background:linear-gradient(135deg,rgba(126,207,160,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(220,230,255,.92);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(126,207,160,.9)}
+
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-top:20px}
+.stat{background:rgba(200,216,255,.04);border:1px solid rgba(200,216,255,.1);border-radius:14px;padding:20px 18px;text-align:center;transition:all .3s}
+.stat:hover{background:rgba(200,216,255,.08);border-color:rgba(200,216,255,.18)}
+.stat-num{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:36px;color:rgba(126,207,160,.85);display:block;margin-bottom:6px}
+.stat-label{font-size:11px;font-weight:200;letter-spacing:.15em;color:rgba(200,216,255,.55);line-height:1.5}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.25);border-radius:100px;color:rgba(200,216,255,.75);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(220,230,255,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:rgba(245,225,180,1)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Правда про вагу</h1>
+  <p class="page-subtitle">Розмова з ендокринологом</p>
+
+  <!-- Hero quote -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Не буває набору ваги з нізвідки. Є лише калорії, час і звички — а не магія годинника чи заборонених продуктів"</div>
+      <div class="hero-author">Ендокринолог-дієтолог</div>
+    </div>
+    <p>Це не чергова стаття про «мінус 10 кг за тиждень». Це спокійна розмова з лікарем-ендокринологом, який годину поспіль розбирає на частини те, що тобі продає індустрія краси й дієт. Без заборонених продуктів. Без чарівних таблеток. Без «після шостої не можна». Натомість — фізіологія, чесні цифри й план, який поважає твоє життя, а не ламає його.</p>
+    <p>Багато з того, що ти чула про вагу, — неправда або напівправда. І майже все, що справді працює, звучить нудно: сон, білок, овочі, ходьба, терпіння. Але саме нудне й тримається роками. Розберемо по пунктах.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Целюліт і генетика -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Целюліт і гени: тіло, яке в тебе вже є</h2>
+    <p>Почнімо з того, за що жінки картають себе найчастіше. Целюліт — це не хвороба, не «зашлакованість» і не наслідок лінощів. Це <em>нормальний стан підшкірної жирової клітковини</em>, який є у всіх жінок тією чи іншою мірою — навіть у худеньких, навіть у моделей. Так влаштована жіноча шкіра й тканина під нею.</p>
+    <p>Сучасна медицина не вміє прибрати целюліт повністю. Спроби хірургічно розсікти сполучні перегородки між часточками жиру не дають стійкого результату: тканина зростається знову. Реально можна лише зменшити його прояв — наростити трохи м'язів, знизити відсоток жиру, покращити тургор шкіри. Але «ідеально гладко» — це фотошоп, а не мета.</p>
+
+    <div class="highlight">
+      <p>Про гени. Так, люди різні від народження — хтось стрункий «просто так», комусь важче. Але між людьми не «прірва», і головне не в генах, а в тому, що ти можеш зробити сама. Порівнювати себе за принципом «комусь пощастило більше» — це <em>програшна стратегія</em>. Вона веде не до стрункості, а до депресії. Працюй із тим, що є, а не з чужою генетикою у стрічці інстаграму.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Вісцеральний жир -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Найнебезпечніший жир — не там, де ти думаєш</h2>
+    <p>Не весь жир однаковий. Жир на стегнах і сідницях — переважно косметичне питання. А от жир на животі значно небезпечніший — і не через естетику. Це <em>вісцеральний жир</em>, той, що огортає внутрішні органи. Він набагато більш інсулінорезистентний, ніж підшкірний, і поводиться майже як окремий гормональний орган.</p>
+    <p>Саме він пов'язаний із підвищеним тиском, діабетом, інфарктами та інсультами — тобто з головними причинами смертності. Тому обхват талії лікарю каже більше, ніж цифра на терезах. Худнути «заради живота» — це не про красу, а про те, щоб дожити здоровою.</p>
+
+    <div class="stat-row">
+      <div class="stat">
+        <span class="stat-num">живіт</span>
+        <span class="stat-label">небезпечніший за стегна — це вісцеральний жир навколо органів</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">↑</span>
+        <span class="stat-label">тиск, діабет, інфаркти, інсульти — з чим він пов'язаний</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">талія</span>
+        <span class="stat-label">обхват талії — важливіший показник за саму вагу</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Метаболізм і вік -->
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Метаболізм і вік: головний міф про «після 30»</h2>
+    <p>«Після 30 метаболізм сповільнюється, тому я набираю» — це заспокійлива, але хибна історія. Метаболізм справді сповільнюється з віком, але не о 30, а відчутно лише <em>після 60</em> — приблизно на 0,7% на рік, і головно через втрату м'язової маси.</p>
+    <p>Що ж тоді відбувається після 30? Змінюється спосіб життя: менше руху, спокійніша робота, більше доступної їжі, машина замість пішки. Вага росте не через «поламаний обмін речовин», а через тихі щоденні звички. І це добра новина — бо звички ти можеш змінити, а вік ні.</p>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">★</div>
+        <div class="step-body">
+          <div class="card-title">Схильність до повноти існує</div>
+          <div class="card-text">Генетично люди різняться в тому, наскільки сильно їх тягне до їжі й скільки задоволення вона дає. Але схильність — це не вирок. Жир накопичується <strong>лише</strong> за фізичного надлишку калорій. Набору ваги «з нізвідки» не буває — це фізика, а не карма.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">★</div>
+        <div class="step-body">
+          <div class="card-title">Одне переїдання нічого не вирішує</div>
+          <div class="card-text">З'їла зайве на одному прийомі їжі — це не відкладається у вагу назавтра. Дефіцит і профіцит калорій працюють лише на довгій дистанції — місяць, два. Тому один святковий обід не «зіпсує все», а один салат не «врятує». Дивись на місяці, не на дні.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Чому переїдаємо -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Чому нас тягне переїдати</h2>
+    <p>Переїдання — рідко про голод. Частіше про емоції й про середовище, яке спеціально влаштоване, щоб ми їли більше.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🎭</span>
+        <div class="card-title">Інфляція емоцій</div>
+        <div class="card-text">З віком стає важче отримувати радість від простих речей. А їжа лишається надійним, доступним і соціально схваленим джерелом задоволення — на відміну від алкоголю чи куріння. Тому їсти «для настрою» так легко: це найдешевша радість під рукою.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🍟</span>
+        <div class="card-title">Гіперстимулюючі продукти</div>
+        <div class="card-text">Сучасна харчова промисловість створює смаки, яких у природі просто не існує — така солодкість, такий хрускіт, таке поєднання жиру й солі. Це не про твою слабкість: продукт спеціально спроєктований так, щоб ти не могла зупинитись.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎄</span>
+        <div class="card-title">Сезонні піки</div>
+        <div class="card-text">Є виражені сплески набору ваги — кінець року, свята, застілля. І ці «зайві» 2–3 кг часто залишаються з людиною на весь наступний рік. Не тому що зима, а тому що місяць їжі, стресу й малорухомості.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💞</span>
+        <div class="card-title">Щасливі стосунки</div>
+        <div class="card-text">Парадокс: у комфортних, спокійних стосунках люди в середньому набирають більше. Менше стресу, більше доступної їжі, а іноді їжа стає проявом любові. Чоловіки часто помітно повнішають через рік-два після весілля. Це не про «розпустився» — це про спокій.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Цифри, які вводять в оману -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Цифри, які вводять в оману</h2>
+    <p>Три інструменти, які мали б допомагати, а насправді частіше псують мотивацію й нерви.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">⚖️</span>
+        <div class="card-title">Щоденне зважування</div>
+        <div class="card-text">Не зважуйся щодня. Правильно — зробити заміри один раз на старті (вага, обхвати грудей / живота / стегон, фото) і не повторювати їх місяць-півтора. Щоденні терези демотивують: випадкові +300 г від води чи солі сприймаються як «провал» і провокують компенсаторні зриви — а часом і патерни, близькі до розладів харчової поведінки.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔢</span>
+        <div class="card-title">Підрахунок калорій</div>
+        <div class="card-text">Корисний як орієнтир — щоб розуміти, скільки «важить» той чи інший продукт. Але має межі: він не враховує індивідуальні особливості засвоєння (ферментні системи в усіх різні), а в схильних людей може посилювати тривогу й розлади харчової поведінки. Інструмент — не релігія.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📏</span>
+        <div class="card-title">Індекс маси тіла</div>
+        <div class="card-text">Простий орієнтир здорового діапазону: помнож свій зріст у метрах у квадраті на 19 (нижня межа норми) і на 25 (верхня) — отримаєш «вилку» ваги в кілограмах. Але ІМТ не годиться для спортсменів з великою м'язовою масою: у них він може показувати «ожиріння» при видимому рельєфі.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Чому зриваємось -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Чому зриваємось: забагато зусиль</h2>
+    <p>Головна причина зривів — парадоксально — надмірні зусилля. Сильний дефіцит калорій плюс щоденні виснажливі тренування — це не «сила волі», це прямий шлях до зриву.</p>
+
+    <div class="highlight">
+      <p>Дефіцит калорій — це стрес для тіла. І він має бути <em>помірним</em>. Більшість людей здатні витримати жорсткий режим лише 1–2 місяці, після чого результат не втримується й вага повертається. Тому не питай себе «як помучитись сильніше», питай «як зробити режим таким, щоб я протрималась на ньому роками».</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Міфи про час і голодування -->
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">Міфи про час і голодування</h2>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">⏳</span>
+        <div class="card-title">Інтервальне голодування</div>
+        <div class="card-text">Не дає жодних додаткових переваг порівняно зі звичайним дефіцитом — це той самий дефіцит, просто з обмеженням у часі. Гучні обіцянки про «аутофагію» саме від цього методу науково не підтверджені. А от мінус є: за великих проміжків між їжею жовч довше застоюється в жовчному міхурі, що підвищує ризик каменів.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌙</span>
+        <div class="card-title">«Після 18:00 — у жир»</div>
+        <div class="card-text">Ні. Калорія вечері дорівнює калорії сніданку — важлива лише сумарна калорійність на дистанції. Єдина науково обґрунтована рекомендація щодо часу: не їсти за 3 години до сну. І то не через жир, а через якість сну — а сон реально впливає на контроль ваги.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🍎</span>
+        <div class="card-title">Перекус vs «кусочництво»</div>
+        <div class="card-text">Перекус — це усвідомлений інструмент під конкретну задачу: наприклад, щоб не дійти до вечері вовком і не переїсти. «Кусочництво» — неусвідомлене жування просто тому, що їжа поруч, без жодного голоду. Перше допомагає, друге тихо додає сотні калорій.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌆</span>
+        <div class="card-title">Вечірнє переїдання</div>
+        <div class="card-text">Причина не в «магії» вечора, а в недоїданні протягом дня. Тіло просто добирає своє. Реагуй на вечірній голод нормальним прийомом їжі за правилом тарілки — незалежно від часу. І пам'ятай про кофеїн (у чаї й колі теж): випитий увечері, він псує сон, а поганий сон завтра штовхає переїдати.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Небезпечні методи -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Небезпечні методи, від яких краще тікати</h2>
+    <p>Індустрія «швидкого схуднення» повна речей, які коштують здоров'я. Деякі — просто марні, деякі — реально небезпечні.</p>
+
+    <ul class="tips">
+      <li>Жорсткі «детокси» й голодні дні — печінка й нирки очищають тіло краще за будь-який смузі; додаткове «очищення» нічого не прискорює.</li>
+      <li>БАДи «для схуднення» — з недоведеною ефективністю й часто непрозорим складом.</li>
+      <li>Сечогінні й діуретики «щоб зігнати вагу» — це вода, а не жир; описані випадки втрати функції нирок аж до потреби в трансплантації.</li>
+      <li>Історично люди доходили до крайнощів — підселення паразитів, використання важких металів ще у XVI столітті. Змінилися часи, спокуса «швидко й будь-якою ціною» — ні.</li>
+    </ul>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Просте правило: якщо метод обіцяє швидкий результат в обхід їжі, сну й руху — він або не працює, або платиш здоров'ям. <em>Втрачені нирки не варті мінус трьох кілограмів.</em></p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Оземпік -->
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Оземпік і нові ліки: чесно</h2>
+    <p>Окрема тема, довкола якої багато галасу. Головне, що варто розуміти: це <em>ліки від хвороби</em> (ожиріння, діабет), а не косметичний засіб «до літа».</p>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="card-title">Як діє</div>
+          <div class="card-text">Препарат імітує гормон насичення, який у нормі виробляється в кишечнику. Він притлумлює відчуття голоду й сповільнює перистальтику — тому людина їсть менше, бо їй справді менше хочеться. Це не «спалювач жиру», а вимикач апетиту.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="card-title">Ймовірно, довічно</div>
+          <div class="card-text">За наявними даними, у більшості — близько 70% — вага повертається протягом 2–3 років після відміни. Тобто це, найпевніше, довічна терапія, а не курс. Скасувала — і тіло згадало старий апетит.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="card-title">Ціна й побічні ефекти</div>
+          <div class="card-text">Терапія дорога — орієнтовно близько 1000 доларів на місяць (дані на момент запису). Побічні ефекти: диспептичний синдром (відрижка, розлад стільця), у рідких випадках гастропарез, підвищений ризик гострого панкреатиту. Це призначає лікар, а не інстаграм.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="card-title">Нові покоління</div>
+          <div class="card-text">Наступні препарати дозволяють знижувати вагу на 20–25% — ефективніше за баріатричні операції. Але є ризик: надто швидке схуднення означає втрату не лише жиру, а й м'язів. Оптимальний темп — 2–4 кг на місяць, не більше.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-row">
+      <div class="stat">
+        <span class="stat-num">~70%</span>
+        <span class="stat-label">повертають вагу за 2–3 роки після відміни</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">20–25%</span>
+        <span class="stat-label">втрата ваги на нових препаратах</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">2–4</span>
+        <span class="stat-label">кг на місяць — безпечний темп</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">~$1000</span>
+        <span class="stat-label">орієнтовна вартість терапії на місяць</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- План на 4 тижні -->
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">План на 4 тижні: без фанатизму</h2>
+    <p>А тепер — що робити конкретно. Не «сядь на дієту з понеділка», а м'який захід, тиждень за тижнем. Кожен наступний крок додається до попереднього, а не замінює життя на страждання.</p>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="card-title">Тиждень 1 · Фон — сон, а не їжа</div>
+          <div class="card-text">Жодних змін у харчуванні й жодного зважування. Єдине завдання — налагодити сон: лягати й вставати в один і той самий час, не «відсипатися» у вихідні (це створює «соціальний джетлаг»). Сон — це ресурс, з якого ти прийматимеш усі рішення про їжу. Виспана людина не гризе холодильник о 23:00.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="card-title">Тиждень 2 · Правило тарілки</div>
+          <div class="card-text">Половину порції заповнюй овочами — <strong>не зменшуючи</strong> загальний об'єм тарілки. Калорійність падає сама за рахунок клітковини, а вона ще й годує мікрофлору, сповільнює всмоктування вуглеводів і жирів, знижує ризики раку кишечника й діабету. Немає «шкідливих» продуктів самих по собі (навіть майонез) — важлива кількість і пропорція. Білок і складні вуглеводи бери з цільних продуктів (риба, сир, м'ясо, яйця, бобові), а не з високооброблених ковбас і сосисок, де мало білка й багато жиру та солі.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="card-title">Тиждень 3 · Рух — ходьба</div>
+          <div class="card-text">Найуніверсальніша активність — просто ходьба. Додавай по 500 кроків кожні 4 дні, поки не дійдеш орієнтовно до 10 000 на день. І запам'ятай: схуднення починається не в спортзалі. За інтенсивне тренування витрачається лише 500–700 ккал, які легко «з'їдаються» назад. Основний внесок у дефіцит робить харчування, а не піт у залі.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="card-title">Тиждень 4 · Робота зі зривами</div>
+          <div class="card-text">До цього моменту вже накопичились дані — фото, нотатки, спостереження. Вони допомагають побачити закономірності зривів, твоїх «чорних лебедів»: стрес, соціальний тиск, звички з батьківської сім'ї. Стійке утримання ваги — це розв'язання психологічних патернів, а не лише сила волі. Тут психолог доречний не менше за тренера.</div>
+        </div>
+      </div>
+    </div>
+
+    <p style="margin-top:28px">Снідати, до речі, не обов'язково — якщо тобі зручніше без сніданку, це нормально. Харчування має підлаштовуватись під ритм твого життя, а не навпаки. Але якщо снідаєш — ось три варіанти від лікаря:</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🍳</span>
+        <div class="card-title">Шакшука</div>
+        <div class="card-text">Яйця, багато овочів і спецій. Ситно, багато білка й клітковини, майже неможливо переїсти.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🫐</span>
+        <div class="card-title">Сир із йогуртом</div>
+        <div class="card-text">Творог із грецьким йогуртом, ягодами й насінням чіа. Білок, клітковина й трохи корисних жирів.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🥣</span>
+        <div class="card-title">Вівсянка + білок</div>
+        <div class="card-text">Вівсяна каша з додаванням білка (наприклад, яйця) і фруктів. Повільні вуглеводи, які тримають до обіду.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Мотивація -->
+  <div class="section" style="animation-delay:2s">
+    <h2 class="section-title">Мотивація, яка тримається</h2>
+    <div class="highlight">
+      <p>Стійка мотивація працює тоді, коли ти робиш це <em>для себе</em> — а не зі страху бути покинутою й не заради чужого схвалення. Підхід «схуднути, бо мене інакше розлюблять» — це підхід із самонелюбові, і в довгій перспективі він тендітний. А ось «я дбаю про себе, бо хочу дожити здоровою й почуватися легше» — тримається роками. Свята, ритуали, олів'є на Новий рік — це неусвідомлені соціальні конструкти. Їх можна свідомо змінювати або зберігати — але вже за власним вибором, а не за інерцією.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Питання зі студії -->
+  <div class="section" style="animation-delay:2.1s">
+    <h2 class="section-title">Питання зі студії</h2>
+    <p>Два запитання, які лікарю ставлять найчастіше — і де багато плутанини.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🫀</span>
+        <div class="card-title">Статини й холестерин</div>
+        <div class="card-text">Рішення про статини не ухвалюють лише за загальним рівнем холестерину. Дивляться на ліпідограму — частки «шкідливого» й «корисного» холестерину — і на індивідуальні серцево-судинні ризики загалом. «Високий холестерин» сам по собі ще не діагноз і не привід панікувати.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🦋</span>
+        <div class="card-title">Вузли щитоподібної залози</div>
+        <div class="card-text">Вузли поширені, особливо в жінок після 50, і в переважній більшості випадків (близько 99%) доброякісні. Самі по собі вони не впливають на планування вагітності. А ось підвищені антитіла — фактор, який має враховувати лікар-ендокринолог.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Звички лікаря -->
+  <div class="section" style="animation-delay:2.2s">
+    <h2 class="section-title">А що робить сам лікар</h2>
+    <p>Наостанок — дві щоденні звички самого ендокринолога. Не «секрети», а просто те, що він робить сам, без винятків.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🌅</span>
+        <div class="card-title">Рух щоранку</div>
+        <div class="card-text">Щоденна фізична активність зранку — зал, біг або хоча б розтяжка. Не заради спалених калорій, а заради тонусу, голови й ритму дня.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📵</span>
+        <div class="card-title">Без телефону до обіду</div>
+        <div class="card-text">Жодного телефону й соцмереж до обіду. Перша половина дня — для власних думок і справ, а не для чужої стрічки й тривоги, яку вона приносить.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Final -->
+  <div class="section" style="animation-delay:2.3s">
+    <div class="final-quote">
+      <div class="final-text">Уся ця розмова зводиться до одного: <strong>немає магії, але немає й вироку</strong>. Ні целюліт, ні гени, ні вік не тримають тебе в заручниках. Тримають — сон, тарілка, кроки, терпіння й лагідність до себе. Тіло не потрібно перемагати. Його треба зрозуміти — і воно відповість тим самим.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b4ffd4':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+</body>
+</html>

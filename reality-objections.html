@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Заперечення до теорії</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(220,230,255,.9);margin-bottom:16px}
+.section p a{color:rgba(138,176,255,.9);text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#c8d8ff}
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:14px;font-weight:300;line-height:1.75;color:rgba(220,230,255,.92)}
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(220,230,255,.92);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:19px;color:rgba(226,190,128,1)}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:16px;position:relative;overflow:hidden}
+.soft::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(110,200,160,.45),transparent)}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(220,240,230,.92);margin:0}
+.soft em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:19px;color:rgba(158,235,196,1)}
+.objection{background:linear-gradient(135deg,rgba(220,120,110,.09),rgba(200,150,90,.05));border:1px solid rgba(220,140,120,.2);border-radius:16px;padding:24px 26px;margin-top:4px;position:relative;overflow:hidden}
+.objection::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(230,150,120,.4),transparent)}
+.objection p{margin:0;color:rgba(240,225,220,.9)}
+.tag{display:inline-block;font-size:8px;font-weight:400;letter-spacing:.35em;text-transform:uppercase;margin-bottom:12px;margin-right:12px}
+.highlight .tag,.soft .tag{display:block;margin-right:0}
+.tag.red{color:rgba(235,150,120,.85)}
+.tag.gold{color:rgba(212,175,110,.85)}
+.tag.green{color:rgba(140,220,180,.85)}
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(200,216,255,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.35);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(26px,4vw,36px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:640px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.25);border-radius:100px;color:rgba(200,216,255,.75);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(220,230,255,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:rgba(245,225,180,1)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="reality.html">← Рівні сприйняття</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Заперечення до теорії</h1>
+  <p class="page-subtitle">Найсильніші контраргументи світу — і відповіді на них</p>
+
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Теорію, яку не можна спростувати, не можна й довести. Тож перевірмо її найсильнішими запереченнями."</div>
+      <div class="hero-author">Чесний погляд на всю серію</div>
+    </div>
+    <p>Уся ця серія — про одну сміливу ідею: немає розділення, ти — сам досвід, а світ, який ти бачиш, єдиний. Ідея красива. Але чесність вимагає протилежного руху: зібрати найсильніші заперечення з боку науки, філософії, здорового глузду й релігії — і подивитись, що теорія має на них сказати.</p>
+    <p>Одразу домовмося про головне: це <em style="font-family:'Cormorant Garamond',serif;color:rgba(212,175,110,.85)">не наукова теорія</em>, яку можна перевірити приладом. Це радше спосіб дивитись, інтерпретація досвіду. Тому чесна відповідь на кожне заперечення має два поверхи: <strong style="color:rgba(212,175,110,.9);font-weight:400">що відповідає теорія</strong> (золотим) — і <strong style="color:rgba(140,220,180,.9);font-weight:400">де заперечення все одно лишається сильним</strong> (зеленим).</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">🌍 1. Світ існував мільярди років до тебе</h2>
+    <div class="objection">
+      <div class="tag red">Заперечення · наука</div>
+      <p>Викопні рештки, реліктове випромінювання, геологія: Всесвіту близько 13,8 млрд років, Землі — 4,5. Динозаври жили й вимерли задовго до будь-якого спостерігача. Якщо реальність — твоя проєкція, як вона існувала без тебе? І чому впевнено продовжиться після твоєї смерті?</p>
+    </div>
+    <div class="highlight">
+      <p><span class="tag gold">Відповідь теорії</span><em>«До» і «після» — це поняття, що з'являються зараз.</em> Минуле ти ніколи не переживаєш напряму — лише як образ, спогад чи дані в теперішньому. З погляду теорії, 13 мільярдів років — це історія, що розгортається в цій-таки свідомості, а не доказ світу поза нею.</p>
+    </div>
+    <div class="soft">
+      <p><span class="tag green">Але чесно</span><em>Це найважче заперечення.</em> Пояснення «минуле — це думка зараз» логічно несуперечливе, але неспростовне й суперечить усьому, як влаштована наука. Більшість фізиків вважає матерію реальною й давнішою за спостерігача. Тут теорія радше перетлумачує факти, ніж перемагає їх.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">🧠 2. Інші справді свідомі — і дивують тебе</h2>
+    <div class="objection">
+      <div class="tag red">Заперечення · проблема інших свідомостей</div>
+      <p>Люди кажуть тобі те, чого ти не знала. Опираються твоїй волі. Створюють геніальне, до чого ти б не додумалась. Страждають, коли ти не дивишся. Їхні мозки фізично такі самі, як твій. Звідки в «твоєї проєкції» власна воля й новизна?</p>
+    </div>
+    <div class="highlight">
+      <p><span class="tag gold">Відповідь теорії</span><em>Інші — не порожні ляльки.</em> Теорія каже: вони не окремі від тебе — це та сама єдина свідомість, що дивиться крізь інші очі. Новизна від інших — це новизна, яку ціле відкриває саме собі через безліч перспектив.</p>
+    </div>
+    <div class="soft">
+      <p><span class="tag green">Але чесно</span><em>Елегантно — проте нефальсифіковно.</em> «Соліпсизм одного я» справді ламається об те, що інші носять незалежну інформацію. Версія «одна свідомість, багато перспектив» (це вже не соліпсизм, а ідеалізм / недвоїстість) тримається краще — але ціною того, що «тільки ти» перестає означати «тільки твоє маленьке я».</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">💊 3. Пошкодь мозок — і зміниться «я»</h2>
+    <div class="objection">
+      <div class="tag red">Заперечення · нейронаука</div>
+      <p>Наркоз вимикає свідомість за секунди. Інсульт стирає мову, травма — характер, Альцгеймер — пам'ять і особистість. Якщо ти — усвідомлення поза тілом, чому фізичний удар по мозку стирає «тебе»? Схоже, свідомість виробляється матерією.</p>
+    </div>
+    <div class="highlight">
+      <p><span class="tag gold">Відповідь теорії</span><em>Мозок — не джерело, а приймач.</em> Він «налаштовує» свідомість на цю форму. Розбитий радіоприймач не доводить, що музика народжувалась усередині нього. Кореляція (мозок ↔ досвід) — не те саме, що виробництво.</p>
+    </div>
+    <div class="soft">
+      <p><span class="tag green">Але чесно</span><em>Це і є нерозв'язана «важка проблема свідомості».</em> Чесний рахунок — нічия: матеріалізм не вміє пояснити, чому взагалі є переживання (qualia); ідеалізм не вміє чисто пояснити, чому досвід так жорстко залежить від мозку. Жодна сторона не має права казати «доведено».</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">⚛️ 4. Дзеркало, яке не гнеться</h2>
+    <div class="objection">
+      <div class="tag red">Заперечення · фізика</div>
+      <p>Гравітація вб'є тебе, віриш ти в неї чи ні. Ліки працюють через механізм, а не через настрій. Якщо світ — дзеркало тебе, чому ти не можеш змінити закон фізики, змінивши себе?</p>
+    </div>
+    <div class="highlight">
+      <p><span class="tag gold">Відповідь теорії</span><em>Теорія й не обіцяла, що ти керуєш усім.</em> Закони фізики — це «правила сцени», структура сну, а не те, що підлягає особистій волі. Дзеркальним є твій досвід і твої реакції, а не константа тяжіння. Про це — <a href="reality-experience.html">розділ про закони фізики й країни</a>.</p>
+    </div>
+    <div class="soft">
+      <p><span class="tag green">Але чесно</span><em>Тут теорія сама визнає межу «дзеркала».</em> Якщо величезна частина реальності тобі не підкоряється й поводиться як незалежна структура — це підозріло схоже на... незалежну реальність. Метафора дзеркала працює для психології («світ віддзеркалює твій стан»), але не для фізики.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">🧪 5. Пояснює все — отже, нічого</h2>
+    <div class="objection">
+      <div class="tag red">Заперечення · філософія науки</div>
+      <p>Карл Поппер: теорія, яку жоден можливий факт не може спростувати, — не знання, а інтерпретація. «Усе — це ти» пояснює будь-що: і коли світ слухається, і коли ні. А що пояснює все — не передбачає нічого.</p>
+    </div>
+    <div class="highlight">
+      <p><span class="tag gold">Відповідь теорії</span><em>Згода — і це не вада, якщо не плутати жанри.</em> Теорія не претендує бути фізикою. Це не гіпотеза про механізм світу, а зсув перспективи, який змінює переживання, а не показники приладів. Її «доказ» — не експеримент, а те, як інакше почувається життя.</p>
+    </div>
+    <div class="soft">
+      <p><span class="tag green">Але чесно</span><em>Тоді вона й не сперечається з наукою — вони про різне.</em> Проблема виникає лише тоді, коли теорію видають за факт про світ («матерії немає», «іншим не боляче»). Як перспектива — законна. Як твердження про фізичну реальність — бездоказова.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.1s">
+    <h2 class="section-title">⚖️ 6. Якщо всі — «моя проєкція», жорстокість дозволена?</h2>
+    <div class="objection">
+      <div class="tag red">Заперечення · етика</div>
+      <p>Найнебезпечніше заперечення. Якщо інші не окремі й «не зовсім реальні», що заважає робити що завгодно? Соліпсизм історично звинувачують у тому, що він стирає етику й знецінює чужий біль.</p>
+    </div>
+    <div class="highlight">
+      <p><span class="tag gold">Відповідь теорії</span><em>Вона перевертає це навпаки.</em> Саме тому, що інший — це ти, шкодити йому = шкодити собі. Дзеркало реагує ідентично: підняв руку на іншого — підняв на себе. Виходить не вседозволеність, а <strong>радикальна відповідальність</strong>.</p>
+    </div>
+    <div class="soft">
+      <p><span class="tag green">Але чесно</span><em>Правильне прочитання веде до співчуття — але теорію легко зловжити.</em> «Твій біль — лише твоя проєкція, розберися сама» — це духовне уникання (spiritual bypassing). Критерій простий: якщо ідея єдності зменшує твоє співчуття — ти зрозуміла її неправильно.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.3s">
+    <h2 class="section-title">🎞️ 7. Якщо фільм уже знято — навіщо грати?</h2>
+    <div class="objection">
+      <div class="tag red">Заперечення · свобода волі</div>
+      <p>Теорія каже: час не існує, ти «вже знаєш гру», «вже мертва», фінал уже записаний. Але тоді немає вибору, а обдумування рішень — ілюзія. Навіщо старатися, якщо все вирішено?</p>
+    </div>
+    <div class="highlight">
+      <p><span class="tag gold">Відповідь теорії</span><em>Відчуття вибору — частина самого досвіду, заради якого все й затівалось.</em> «Уже зіграно» знімає не дію, а страх: немає чого програти, тож можна грати вільно. Не пасивність, а легкість.</p>
+    </div>
+    <div class="soft">
+      <p><span class="tag green">Але чесно</span><em>«Блоковий Всесвіт» (усі моменти існують разом) — законна інтерпретація у фізиці.</em> Але «ти вже мертва / вже все знаєш» — поетичне перебільшення. Проживання часу й здатність діяти — реальні риси досвіду, хоч би що там із метафізикою. Фаталізм тут — ризик настрою, а не висновок.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.5s">
+    <h2 class="section-title">🙏 8. «Ти — реальність» звучить як гординя</h2>
+    <div class="objection">
+      <div class="tag red">Заперечення · релігія й здоровий глузд</div>
+      <p>Майже всі традиції припускають реального Іншого: Бог, окремі душі, космос, що не тотожний тобі. Сказати «я і є реальність» звучить або як гординя, або як єресь. Хіба мільярди людей помиляються?</p>
+    </div>
+    <div class="highlight">
+      <p><span class="tag gold">Відповідь теорії</span><em>Ідеться не про твоє его-«я».</em> Недвоїсті течії існують і в релігіях: адвайта-веданта, суфізм, «Царство Боже всередині вас», містики всіх конфесій. Твердження не «моє маленьке я = Бог», а що основа буття — одна, і вона проявляється тобою.</p>
+    </div>
+    <div class="soft">
+      <p><span class="tag green">Але чесно</span><em>Це одна інтерпретаційна традиція серед багатьох, а не консенсус людства.</em> Тому доречна скромність: не «я довела істину», а «я обрала оптику, яка мені допомагає». Надмірна впевненість тут — червоний прапорець; тиха відкритість — ознака зрілості.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.7s">
+    <h2 class="section-title">Як тримати теорію, яку не можна довести</h2>
+    <p>Жодне із заперечень не «вбиває» теорію — але й вона не «перемагає» їх. І це нормально: це не рівняння з єдиною відповіддю, а лінза. Тому правильне питання не «істина це чи брехня», а «що з нею робити».</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">💚</span>
+        <div class="card-title">Бери те, що звільняє</div>
+        <div class="card-text">Відповідальність (немає на кого звалити). Співчуття (інший — це ти). Спокій (менше страху програти). Свіжий погляд (світ знову як диво).</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🚫</span>
+        <div class="card-title">Залиш те, що засліплює</div>
+        <div class="card-text">Знецінення чужого болю. Фаталізм («нічого не роблю»). Гординю («я осягнула істину»). Заперечення фактів («науки не існує»).</div>
+      </div>
+    </div>
+
+    <div class="question-card">
+      <div class="question-label">Критерій</div>
+      <div class="question-main">Робить добрішою і вільнішою — тримай. Робить сліпою чи холодною — відпусти.</div>
+    </div>
+
+    <div class="final-quote">
+      <div class="final-text">Сильна не та ідея, що не має заперечень, а та, що вміє з ними жити. <strong>Істину не конче довести — з нею досить чесно жити.</strong></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+</body>
+</html>

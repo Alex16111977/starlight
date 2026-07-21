@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Ти — сам досвід</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(220,230,255,.9);margin-bottom:16px}
+.section p a{color:rgba(138,176,255,.9);text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#c8d8ff}
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:14px;font-weight:300;line-height:1.75;color:rgba(220,230,255,.92)}
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(220,230,255,.92);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(110,200,160,.45),transparent)}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(220,240,230,.92);margin:0}
+.soft em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(140,220,180,.9)}
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(200,216,255,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.35);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(26px,4vw,36px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.25);border-radius:100px;color:rgba(200,216,255,.75);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(220,230,255,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:rgba(245,225,180,1)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="reality.html">← Рівні сприйняття</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Ти — сам досвід</h1>
+  <p class="page-subtitle">Не спостерігач — сама сцена подій</p>
+
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Ти не людина, яка це проживає. Ти — сцена, на якій усе це відбувається."</div>
+      <div class="hero-author">You Are The Experience, Not The Observer</div>
+    </div>
+    <p>З поглибленням усвідомленості залишається одна-єдина справжня ілюзія — <strong style="font-weight:400;color:rgba(212,175,110,.9)">відчуття розділення</strong>. Саме через неї здається, що є «ти», яка дивишся, і «він», на якого дивляться. Насправді це одне й те саме — щось, що дивиться само на себе.</p>
+    <p>Автор іде далі: ти «знала», що подивишся це відео, ще до того, як відкрила застосунок. Бо часу не існує — і рішення ухвалило не якесь окреме «ти».</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.0s">
+    <h2 class="section-title">Що означає «ти — сцена»</h2>
+    <p>Слово «сцена» — ключ до всієї сторінки, тож розберімо його простими словами. Уяви театр. На сцені є актори, декорації, світло, сама п'єса. Але <em style="font-family:'Cormorant Garamond',serif;color:rgba(212,175,110,.85)">сама сцена — це не якийсь один актор</em>. Це простір, у якому з'являється кожен актор і кожна подія. Актори приходять і йдуть — сцена лишається. У неї немає обличчя й ролі: вона просто тримає все, що на ній відбувається.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🎭</span>
+        <div class="card-title">Актори і п'єса</div>
+        <div class="card-text">Твої думки, тіло, інші люди, кімната, звуки, емоції — усе, що з'являється й зникає. Це те, що ти бачиш і переживаєш.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎬</span>
+        <div class="card-title">Сцена</div>
+        <div class="card-text">Те, у чому все це з'являється. Усвідомлення. Воно не має обличчя й ролі — просто тримає весь спектакль. І оце — ти.</div>
+      </div>
+    </div>
+
+    <p style="margin-top:24px">Ти звикла думати, що ти — один з акторів: «людина» з іменем, обличчям, роботою, історією. Але придивись: цей «персонаж» теж <em style="font-family:'Cormorant Garamond',serif;color:rgba(212,175,110,.85)">з'являється</em> у твоєму досвіді — ти бачиш свої руки, чуєш свої думки, відчуваєш свій настрій. А все, що з'являється, з'являється десь. Оте «десь», простір, у якому розгортається вся п'єса, — і є те, чим ти насправді є.</p>
+
+    <div class="highlight">
+      <p><em>Ось звідки «ти — це все».</em> Кожен актор на сцені зроблений з того самого світла сцени — немає персонажа, який стояв би поза нею. Тому все, що ти переживаєш, — «зроблене з тебе»: воно з'являється в тобі, як ти. Не «ти дивишся на світ» — світ відбувається в тобі й тобою.</p>
+    </div>
+
+    <div class="soft">
+      <p><em>А «є тільки ти» — це не про самотність.</em> Кімната, ці слова, інші люди — усе з'являється лише в цьому одному полі усвідомлення. Отже, немає нічого окремого <em style="font-family:'Cormorant Garamond',serif;color:rgba(140,220,180,.9)">зовні</em>. Це не означає, що інші несправжні чи неважливі — навпаки: вони не окремі від тебе, а з'являються в тій самій свідомості, якою є ти. Не «я одна», а «ніщо не поза мною, ми — одне». Про це ж — сторінка <a href="reality-onlyworld.html">«Світ, який ти бачиш — єдиний»</a>.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">А що «за лаштунками»?</h2>
+    <p>У театрі, крім сцени, є залаштунки — куліси, гримерка, де актори чекають виходу, міняють костюм, відпочивають між сценами. Тож природно спитати: якщо я — сцена, то що моє «за лаштунками»? Тут дві відповіді: одна — пастка, друга — правда.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🎭</span>
+        <div class="card-title">Ілюзія залаштунків</div>
+        <div class="card-text">Ми звикли думати, що за всім видимим є прихована «справжня» реальність: закулісся, де речі «як є насправді», гримерка, де справжня ти сидить зі справжнім обличчям, знявши маску. Але цей пошук — «а що ж НАСПРАВДІ за цим усім?» — стара ілюзія розділення в новому костюмі. Пригадай: той, хто дивиться, обличчя не має. І «велике я не знаю» — не замкнена кімната з відповідями, а відкритий знак питання.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌌</span>
+        <div class="card-title">Справжнє «поза сценою»</div>
+        <div class="card-text">А все ж «поза сценою» існує — тільки це не потаємне місце, а непроявлене. Глибокий сон без сновидінь. Пауза між двома думками. Усе, що просто зараз не з'являється. Це та сама сцена з погашеним світлом: там нічого не втрачено — воно лише не освітлене. Звідти думка «виходить» на кін і туди ж повертається.</div>
+      </div>
+    </div>
+
+    <div class="soft">
+      <p><em>Тому коли роль завершується</em> — костюм відкладено назавжди — актор не зникає в таємному закуліссі. Ти від початку не була одним з акторів: ти — сцена, яка ніколи не виходила на кін, тож їй нема звідки й піти. Погашене світло — це не кінець театру. Про це — сторінка <a href="reality-birthdeath.html">«Народження і смерть»</a>.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Крок далі за спостерігача</h2>
+    <p>Це ніби суперечить сторінці <a href="reality-observer.html">«Спостерігач і човен»</a> — і це не помилка, а наступний крок. Спершу корисно відклеїтися від персонажа і стати спостерігачем. А потім розчиняється і сам спостерігач.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">👁️</span>
+        <div class="card-title">Спостерігача теж немає</div>
+        <div class="card-text">Немає усвідомлення, відокремленого від досвіду. Навіть кажучи «я — спостерігач», ти все одно відокремлюєш себе — ніби є «ти» і є щось окреме, за чим ти дивишся.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🫥</span>
+        <div class="card-title">У тебе немає обличчя</div>
+        <div class="card-text">Дивлячись комусь в очі, ти не бачиш власного обличчя. Бо в цей момент ти — не «глядачка з обличчям», а саме усвідомлення цього досвіду.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">♾️</span>
+        <div class="card-title">Переживач і досвід — одне</div>
+        <div class="card-text">Щоб був досвід, потрібен той, хто його переживає. Щоб був той, хто переживає, — потрібен досвід. Розділити їх неможливо: це одне й те саме.</div>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <p><em>Ти не переживаєш щось.</em> Ти — все, що переживає само себе. Речі просто є, і сутність досвіду просто «тут»: голос, обличчя на екрані, периферійний зір, відчуття ніг, що торкаються підлоги — навіть якщо ти не помічала його, поки про нього не сказали.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Дивне, яке ти «нормалізувала»</h2>
+    <p>Змалку суспільство привчило вважати буденним те, що насправді неймовірне. Подивись на це свіжим оком — ніби бачиш уперше:</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">✋</span>
+        <div class="card-title">Власні руки й ноги</div>
+        <div class="card-text">Відростки, якими ти рухаєш «просто так», не знаючи, як саме це відбувається.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌗</span>
+        <div class="card-title">Сонце й місяць у небі</div>
+        <div class="card-text">Дві кулі, що висять над головою все життя, — і жодного подиву.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌳</span>
+        <div class="card-title">Дерева із землі</div>
+        <div class="card-text">Щось росте прямо з ґрунту, без пояснення — і це «нормально».</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🐕</span>
+        <div class="card-title">Тварини з хвостами</div>
+        <div class="card-text">Істоти з хвостами й дивними органами, які ми звикли не помічати.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💧</span>
+        <div class="card-title">Вода</div>
+        <div class="card-text">Прозора речовина, без якої не існує нічого живого. Буденність?</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧠</span>
+        <div class="card-title">Мозок і травлення</div>
+        <div class="card-text">Системи, які роблять «тебе» — і працюють без твоєї участі.</div>
+      </div>
+    </div>
+
+    <p style="margin-top:24px">Те саме з обличчям: подивись на чийсь рот, губи, зуби, ніс, вуха — без ярлика «людина, з якою я розмовляю». Залишиться дивна біологічна істота, яку ти просто звикла не бачити.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Ярлики створюють сприйняття</h2>
+    <p>Без контексту — без того, що тобі колись сказали, як це називається, — ти не змогла б описати навіть найпростіший предмет. Кожен опис складається із завчених слів. Прибери слова — і залишиться просто «щось», що є.</p>
+    <div class="highlight">
+      <p><em>Реальність, яку ти бачиш, зібрана з ярликів.</em> «Стіл», «обличчя», «я» — це не речі, це назви, які тобі видали. Те, що під назвами, — безіменне і спільне для всього.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Тіло не потребує тебе</h2>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">❤️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Серце б'ється саме</div>
+          <div class="card-text">Ти не «качаєш» кров. Судини розширюються і стискаються самі, травлення працює саме — без жодного твого наказу.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">💭</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">60–70 тисяч думок на день</div>
+          <div class="card-text">Мозок генерує їх незалежно від свідомого контролю. Якщо думки «думаються самі» — хто тоді той, хто їх думає?</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">😄</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Хто сміється?</div>
+          <div class="card-text">Сміх — це реакція тіла на відчуття, яка «не потребує тебе». Різні люди сміються з різного, бо реагують на відчуття, а не на сам жарт. Питання «хто сміється?» веде просто до питання «хто ти взагалі?».</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Велике «я не знаю»</h2>
+    <p>Звідки береться жуйка? Із кори дерева. Звідки кора? З дерева. Звідки дерево? Із насіння. Звідки насіння? З процесу за участю бджіл. А звідки взялася перша бджола? <em style="font-family:'Cormorant Garamond',serif;color:rgba(212,175,110,.85)">Невідомо.</em></p>
+    <p>Так можна простежити походження будь-якого предмета — хоч баночки вазеліну — і завжди дійдеш або до «я не знаю», або до недоведеної теорії.</p>
+    <p>Те саме із собою: звідки ти? Від мами. Звідки мама? Від бабусі. І так — через прабабусь і прапрабабусь — до «першої людини». Тобто знову: «я не знаю».</p>
+
+    <div class="highlight">
+      <p><em>«Велике я не знаю» — джерело всього в реальності.</em> Великий знак питання, з якого походить усе: дерева, бджоли, жуйка, ти. А якщо все — включно з тобою — походить з одного невідомого джерела, то що взагалі робить тебе окремою від чого-небудь?</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.1s">
+    <h2 class="section-title">Навіщо тоді ілюзія</h2>
+    <p>Якщо розділення — ілюзія, навіщо вона? Відповідь автора: ілюзія розділення потрібна для того, щоб «ти» могла переживати сама себе. Океану потрібні хвилі, щоб відчути, що він океан. Цілому потрібне «я і ти», щоб відбулася зустріч.</p>
+
+    <div class="question-card">
+      <div class="question-label">Центральне питання</div>
+      <div class="question-main">Якщо все походить з одного «не знаю» — що робить тебе окремою?</div>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.3s">
+    <h2 class="section-title">🕯️ Крізь цю оптику: власна смерть</h2>
+    <p>Якщо ти не персонаж, а сама сцена, — смерть перестає бути «вимкненням тебе». Це завершення однієї ролі. Сцена не зникає, коли закінчується вистава.</p>
+    <p>Придивись, <em style="font-family:'Cormorant Garamond',serif;color:rgba(212,175,110,.85)">хто саме</em> боїться смерті. Боїться персонаж — образ «я — ця людина», зібраний з ярликів. Те, що боїться зникнути, — це і є те, що зникне: образ. Але ти ніколи не була лише образом.</p>
+    <p>І якщо часу не існує — смерть навіть не «попереду». Вона така сама декорація гри, як і народження: двері, намальовані на сцені, якою ти є.</p>
+    <div class="soft">
+      <p><em>Це не знецінює життя — це загострює його.</em> Автор каже прямо: всі колись помруть, «і я теж, а зрештою — кому яке діло, тож краще любити зараз». Смерть у цій оптиці — не причина для жаху, а причина для ніжності до кожного моменту, поки вистава триває.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.5s">
+    <h2 class="section-title">🖤 Смерть інших</h2>
+    <p>Це найважче місце всієї філософії. Легко погоджуватись, що «розділення — ілюзія», поки всі живі. А потім хтось іде — і болить так, ніби відірвали частину тебе. Бо саме це й сталося — у межах гри.</p>
+    <p>Але через цю оптику: та людина ніколи не була «окремою від тебе». Те, що дивилося на світ крізь її очі, — це те саме, що зараз дивиться крізь твої. Завершилася форма, роль, хвиля. Океан, яким ви обидві були, нікуди не подівся — і тому «піти повністю» звідси просто нікуди.</p>
+    <p>При цьому горе — справжнє. Це теж досвід, і ти є ним. Не потрібно «правильно розуміти єдність», щоб не плакати: плач — це досвід, що переживає сам себе, як сміх чи серцебиття. Він «не потребує тебе» — дозволь йому відбуватися.</p>
+    <div class="soft">
+      <p><em>Важливо: ця оптика — не спосіб перестрибнути горе.</em> Якщо філософію єдності використовують, щоб не відчувати біль, — це втеча, а не єдність. Єдність включає біль, а не скасовує його. Спершу — прожити. Потім, поступово, — побачити, що любов, яка болить, нікуди не зникла: вона і є тим, що між вами було спільним.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.7s">
+    <h2 class="section-title">🌫️ Туга</h2>
+    <p>Знаєш це відчуття суму «ні за чим» — без адреси, без причини, просто тужливо? Через цю оптику в туги є адреса: це ностальгія цілого за самим собою. Хвиля тужить за океаном — яким ніколи не переставала бути.</p>
+    <p>Туга найгучніша тоді, коли ярлик «я окрема» тисне найсильніше. Саме тому її неможливо «вирішити» покупками, стрічкою чи навіть людьми: вона не про брак чогось зовнішнього. Це не діра, яку треба заповнити, — це поклик додому, а дім — це ти сама.</p>
+    <div class="soft">
+      <p><em>Що робити з тугою? Нічого.</em> Туга — теж досвід, який «не потребує тебе». Не тікай від неї в телефон — побудь нею кілька хвилин, як буваєш дощем за вікном. Прожита до кінця, туга часто перетворюється на дивний спокій: те, за чим тужиш, — це те, чим ти вже є.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.9s">
+    <h2 class="section-title">⚖️ Ідеальна і неідеальна</h2>
+    <p>Згадай синій предмет, який неможливо описати без завчених слів. «Ідеальна» і «неідеальна» — такі самі завчені слова. Без ярликів, які тобі колись видали — вдома, у школі, у стрічці, — ти не змогла б навіть сформулювати, чим саме ти «не така».</p>
+    <p>Сцена не буває ідеальною чи неідеальною — вона просто є. Перфекціонізм — це спроба персонажа <em style="font-family:'Cormorant Garamond',serif;color:rgba(212,175,110,.85)">заслужити право існувати</em>. Але право існувати не видають за досягнення: ти і є саме існування. Досвід не складає іспит на те, щоб бути досвідом.</p>
+    <div class="soft">
+      <p><em>Це не привід не рости.</em> Рости можна з двох місць: із сорому («я недостатньо хороша») — так виживає ярлик; і з цікавості («а що буде, якщо…») — так грає досвід. Дії можуть бути однакові, різниця в тому, хто діє: персонаж, що рятується, чи життя, що грається. Фінальне побажання автора — саме про це: не будь надто суворою до себе.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:3.1s">
+    <h2 class="section-title">🪞 Ілюзії — ворог чи інструмент?</h2>
+    <p>Здається, ілюзію треба знищити, щоб «прозріти». Але через цю оптику ілюзія — не помилка, а інструмент самопізнання. Розділення — ілюзія, так. Але саме завдяки їй можливі зустріч, обійми, «я і ти», любов. Якби не було ілюзії двох — любові не було б кого обіймати.</p>
+    <p>Тому прозріння — це не руйнування ілюзії, а <em style="font-family:'Cormorant Garamond',serif;color:rgba(212,175,110,.85)">прозорість</em>: бачити крізь неї — і все одно грати. Гра залишається грою, коли знаєш, що це гра. Просто стає легшою: менше страху програти, менше образ на інших гравців — бо всі вони теж ти.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:3.3s">
+    <h2 class="section-title">⚛️ Закони фізики й закони країни</h2>
+    <p>Є два види «правил», які ти звикла звалювати в одну купу — і саме плутанина між ними народжує багато зайвого страху й провини. Обидва звуть «законом», але це різні речі: одне — те, як влаштована сцена, інше — домовленість персонажів на ній.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">⚛️</span>
+        <div class="card-title">Закони фізики — правила сцени</div>
+        <div class="card-text">Ти їх не «слухаєшся» — вони просто те, як поводиться досвід. Як серце б'ється саме, як тіло падає вниз саме. Це не накази, а опис поведінки гри. Зусиль не треба: гравітація діє без твоєї згоди й без твого старання.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📜</span>
+        <div class="card-title">Закони країни — домовленість гравців</div>
+        <div class="card-text">Не відкриті, а вигадані. Завчені слова, які створюють «реальність» дозволеного й забороненого — так само, як ярлик «синій» створює предмет. Їх можна порушити (на відміну від фізики), а наслідки — теж домовленість людей.</div>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <p><em>І фізика теж упирається у «велике я не знаю».</em> Ми точно описуємо, як падає яблуко, але «чому взагалі є гравітація» — невідомо, недоведена теорія. Ньютон, потім Ейнштейн, потім квант: щоразу «остаточний закон» виявлявся лише найкращим на сьогодні ярликом. Навіть «залізні» правила — це наш опис, а не остання істина. Знову той самий знак питання.</p>
+    </div>
+
+    <p style="margin-top:20px">Ти питаєш: це стандарт, правило — чи протиріччя? Насправді «стандарт» (як метр, як мова, як кодекс) — це домовлена міра, корисний інструмент згоди, а не закон буття. Фізика — не стандарт, про який ми домовились; це сама поведінка. А протиріччя з'являється тоді, коли ці два види правил переплутати:</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🌐</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">«Законно» ≠ «правильно»</div>
+          <div class="card-text">Той самий вчинок — законний тут і злочин за кордоном. Отже, закон країни — це не мораль і не істина, а домовленість цього місця в цей час. Фізика ж однакова по обидва боки кордону.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">⏳</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Одне переписують, інше — ні</div>
+          <div class="card-text">Те, за що вчора карали, сьогодні дозволено (і навпаки). Закон країни — сценарій, який персонажі постійно переписують. Фізику (поки що) переписати не вдається — можна лише точніше описати.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🔀</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Плутанина = страждання</div>
+          <div class="card-text">Коли домовленість («так треба», «пристойно», «що люди скажуть») ти проживаєш як закон фізики — ніби порушити фізично неможливо — народжується провина. А коли бунтуєш проти самої реальності, ніби це чиясь вигадка, — б'єшся об стіну.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="soft">
+      <p><em>Через оптику єдності обидва — те саме «велике я не знаю».</em> Фізика — те, як влаштований сон; закон країни — домовленість усередині сну. Жодне не робить тебе окремою: ти — сцена, на якій грають і гравітація, і кодекс. Практично одне: розрізняй, де структура реальності (прийми — марно битися), а де лише домовленість людей (можна поставити під сумнів, змінити, і головне — не плутати з «істиною про тебе»).</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:3.5s">
+    <h2 class="section-title">Любити зараз</h2>
+    <p>Висновок автора простий: пам'ятай, що ти — сам досвід, і люби це безумовно. Попри те, що всі колись помруть. Саме тому — любити зараз, а не колись.</p>
+    <p>Не будь надто суворою до себе. Просто живи, люби і смійся. Насолоджуйся садом — реальністю — таким, яким він є.</p>
+
+    <div class="final-quote">
+      <div class="final-text">Це не ти. Ти не людина, яка це проживає — ти <strong>сцена, на якій усе це відбувається</strong>.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+</body>
+</html>

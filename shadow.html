@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Твоя Тінь</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(90,60,180,.24) 0%,rgba(50,40,150,.13) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.13) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#a88fff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#a88fff;box-shadow:0 0 12px #a88fff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(220,230,255,.9);margin-bottom:16px}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#a88fff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(168,143,255,.35),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:14px;font-weight:300;line-height:1.75;color:rgba(220,230,255,.92)}
+
+.steps-grid{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.step-card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:24px;align-items:flex-start}
+.step-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(168,143,255,.35),transparent);opacity:0;transition:opacity .4s}
+.step-card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.step-card:hover::before{opacity:1}
+.step-num{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:48px;color:rgba(168,143,255,.3);line-height:1;flex-shrink:0;width:40px;text-align:center}
+.step-body{flex:1}
+
+.tips{list-style:none;margin-top:16px}
+.tips li{font-size:13px;font-weight:200;line-height:1.8;color:rgba(200,216,255,.6);padding:12px 0 12px 28px;border-bottom:1px solid rgba(200,216,255,.04);position:relative}
+.tips li::before{content:'';position:absolute;left:8px;top:20px;width:4px;height:4px;border-radius:50%;background:#a88fff;box-shadow:0 0 6px #a88fff}
+
+.highlight{background:linear-gradient(135deg,rgba(120,90,200,.13),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(220,230,255,.92);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(184,164,255,.92)}
+
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-top:20px}
+.stat{background:rgba(200,216,255,.04);border:1px solid rgba(200,216,255,.1);border-radius:14px;padding:20px 18px;text-align:center;transition:all .3s}
+.stat:hover{background:rgba(200,216,255,.08);border-color:rgba(200,216,255,.18)}
+.stat-num{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:36px;color:rgba(184,164,255,.9);display:block;margin-bottom:6px}
+.stat-label{font-size:11px;font-weight:200;letter-spacing:.15em;color:rgba(200,216,255,.55);line-height:1.5}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:640px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.25);border-radius:100px;color:rgba(200,216,255,.75);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(220,230,255,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:rgba(245,225,180,1)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Твоя Тінь</h1>
+  <p class="page-subtitle">Карл Юнг і те, що дратує в інших</p>
+
+  <!-- Hero quote -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Усе, що дратує нас в інших, може привести нас до розуміння себе"</div>
+      <div class="hero-author">Карл Ґустав Юнг</div>
+    </div>
+    <p>Є в тобі частина, з якою ти майже не знайома. Не тому що вона десь глибоко захована природою — а тому що ти колись сама вирішила її не бачити. Карл Юнг назвав її <em>Тінню</em>: усе, що ти в собі відкинула, бо воно здавалося поганим, соромним, небезпечним чи «не таким, як треба».</p>
+    <p>Гнів, заздрість, егоїзм, жага уваги, слабкість, бажання — усе, за що тебе колись сварили або соромили, ти акуратно склала в темну кімнату всередині й зачинила двері. Але викинуте нікуди не зникає. Воно чекає. І найгучніше нагадує про себе тоді, коли ти дивишся на інших людей.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що таке Тінь -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Що таке Тінь</h2>
+    <p>Ще зовсім маленькою ти швидко зрозуміла, які твої прояви приносять любов, а які — покарання, сором чи холод. Щоб тебе прийняли, ти навчилася показувати «хороші» частини і ховати «погані». Так народжується Персона — маска, обличчя для світу. А все, що під неї не вмістилося, іде в Тінь.</p>
+    <p>Головне, що варто зрозуміти: Тінь — не зло. Це просто те, що ти в собі не визнаєш. І там, у темряві, часто ховається жива, потрібна енергія: злість, яка насправді про кордони; егоїзм, який насправді про турботу про себе; впертість, яка насправді про волю. Ти замкнула це не тому, що воно погане, а тому, що колись за нього дісталося.</p>
+
+    <div class="highlight">
+      <p>Тінь є у кожного — і що більше людина переконана, що в неї її немає, то товща й густіша ця Тінь. «Хороша», зручна, завжди правильна людина носить її найбільшу. Бо все, що не вмістилося в образ «хорошої», їй довелося <em>десь подіти</em>.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Проєкція -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Проєкція: дзеркало в чужому обличчі</h2>
+    <p>Власну Тінь ти не бачиш напряму — психіка так влаштована, щоб її ховати. Але є хитрий обхідний шлях: Тінь показує себе в інших людях. Це називається <em>проєкцією</em>. Те, що ти в собі витісняєш, ти починаєш гостро помічати — і ненавидіти — зовні.</p>
+    <p>Ключ тут — не легка неприязнь, а непропорційна лють. Коли когось «просто занадто», коли твоя реакція сильніша за привід, коли одна людина бісить тебе так, що аж трусить, — це майже завжди не про неї. Це про ту частину тебе, яку ти впізнала й не захотіла впізнавати.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🔥</span>
+        <div class="card-title">«Як вона вихваляється»</div>
+        <div class="card-text">Тебе бісять ті, хто відкрито пишається собою й займає багато місця? Можливо, тобі змалку заборонили висовуватися — і власну гордість, право сяяти, ти давно замкнула в темряві.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🥺</span>
+        <div class="card-title">«Він такий слабкий»</div>
+        <div class="card-text">Нестерпні «прилиплі», «жалюгідні», ті, хто відкрито потребує? Часто це зневага до власної потреби в турботі — бо тебе вчили бути сильною й не просити.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">😤</span>
+        <div class="card-title">«Яка нахабна»</div>
+        <div class="card-text">Чужа нахабність вибішує найдужче? Зазвичай це про власну придушену здатність казати «ні», злитися вголос і без вибачень займати свій простір.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🛋️</span>
+        <div class="card-title">«Ледащо, нічого не робить»</div>
+        <div class="card-text">Ненавидиш «лінивих»? Придивись: можливо, ти жену себе без спочинку, а відпочинок собі суворо забороняєш — і чужа легкість нагадує про цю заборону.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Іспанський сором -->
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Коли соромно за когось іншого</h2>
+    <p>Є окремий, дуже впізнаваний випадок проєкції. Хтось співає фальшиво, недоречно жартує, «занадто» танцює, забагато розповідає про себе — а червонієш і зіщулюєшся <em>ти</em>. Соромно не йому. Соромно тобі. За нього. Цей «іспанський сором» знайомий майже кожному.</p>
+    <p>Чому так? Бо він робить відкрито те, що ти собі суворо заборонила. Твій сором — це голос твого внутрішнього цензора. Якби <em>ти</em> так зробила, ти б згоріла від сорому — тому дивитися на того, хто робить це вільно й безкарно, майже нестерпно. Ти проживаєш його ситуацію як свою.</p>
+
+    <div class="highlight">
+      <p>Чим сильніший твій сором за іншого — тим тісніша клітка, у якій сидиш ти сама. Людина, яка дозволяє собі бути «занадто», викликає в тебе сором рівно настільки, наскільки ти забороняєш це собі. <em>Твоє зіщулення — це мапа твоїх власних «не можна».</em> І якщо навчитися її читати, вона показує не сором, а те, чого тобі бракує дозволити.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Золота Тінь -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Золота Тінь: не лише про погане</h2>
+    <p>Важлива й часто пропущена деталь. У Тінь ідуть не тільки «погані» риси. Туди ж потрапляють і світлі, хороші частини — якщо колись вони виявилися небезпечними. «Не висовуйся», «не хвались», «куди ти лізеш», «хто ти така» — і талант, сміливість, амбіція, спонтанність теж опиняються в темряві. Це <em>золота Тінь</em>.</p>
+    <p>Її ознака — не роздратування, а гостре захоплення чи заздрість. Коли хтось викликає в тебе щемливе «ох, як я так не вмію», «щастить же людям», — придивись уважно. Дуже часто це не про нього. Це про твій власний закопаний дар, який проситься назовні через захоплення кимось, хто вже наважився.</p>
+
+    <div class="highlight">
+      <p>Захоплення — теж проєкція, просто золота. Те, що ти найсильніше цінуєш і заздрісно любиш в інших, майже завжди вже живе в тобі — просто поки в зародку, поки в тіні. <em>Ми впізнаємо зовні тільки те, що вже носимо всередині.</em></p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Чому це відбувається -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Чому Тінь узагалі з'являється</h2>
+    <p>Тінь — не дефект і не твоя провина. Це ціна належності. Щоб вижити й бути любленою в дитинстві, ти адаптувалася: приглушила те, що не приймали дорослі. Для маленької людини, чиє життя залежить від любові батьків, це була найрозумніша стратегія на світі.</p>
+    <p>Але непрожиті частини не розчиняються. Вони протікають назовні: раптовою люттю «на рівному місці», тим, що звемо самосаботажем, дивним потягом до людей, які живуть твою Тінь замість тебе. Тому «правильних» дівчат так тягне до «поганих хлопців» — вони наче віддають на аутсорс власну заборонену дикість.</p>
+
+    <div class="highlight">
+      <p>«Людина не стає світлою, уявляючи світло, а роблячи темряву свідомою», — писав Юнг. Поки Тінь несвідома, вона керує тобою й обирає за тебе. Щойно ти її побачила й назвала — вона перестає бути диверсантом і стає союзником. Мета не в тому, щоб позбутися темряви. Мета — щоб вона перестала діяти <em>за твоєю спиною</em>.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Ознаки -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Як упізнати, що говорить Тінь</h2>
+    <p>Не кожна емоція — про Тінь. Але є досить чіткі маркери, за якими можна впіймати проєкцію на гарячому:</p>
+
+    <ul class="tips">
+      <li>Реакція непропорційна приводу — лють, огида чи сором сильніші, ніж ситуація «заслужила».</li>
+      <li>Ти засуджуєш в іншому саме те, чого не дозволяєш собі.</li>
+      <li>Один і той самий «тип» людей тригерить тебе знову і знову, з року в рік.</li>
+      <li>Одночасно вабить і відштовхує — не можеш ані пробачити, ані відвести очей.</li>
+      <li>Ти надто палко, надто швидко кажеш: «я б НІКОЛИ так не зробила».</li>
+      <li>Реагує тіло: стискаєшся, гарячієш, зневажливо кривишся ще до слів.</li>
+    </ul>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Як працювати -->
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">Як із цим працювати</h2>
+    <p>Робота з Тінню — це не самокатування й не пошук у собі «монстра». Це радше повільне знайомство з відкинутою половиною себе. Ось шість кроків, які реально допомагають.</p>
+
+    <div class="steps-grid">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-body">
+          <div class="card-title">Помічай тригер, не гаси його</div>
+          <div class="card-text">Роздратування — не перешкода, а двері. Наступного разу, коли хтось тебе «бісить понад міру», замість «яка жахлива людина» став собі інше запитання: «а що моя реакція каже про <strong>мене</strong>?» Це вже пів справи.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-body">
+          <div class="card-title">Постав дзеркальне питання</div>
+          <div class="card-text">«Ця риса — де вона живе в мені? Де я її забороняю, соромлюся, витісняю?» Не поспішай втекти від відповіді у «це геть не про мене». Побудь із незручністю кілька секунд довше, ніж хочеться.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-body">
+          <div class="card-title">Забери проєкцію назад</div>
+          <div class="card-text">Відділи реальну людину від свого екрана. Буває, що вона й справді нестерпна — <strong>і</strong> водночас ти на неї щось проєктуєш. Одне не скасовує іншого. Питання не «хто винен», а «що з цього — моє».</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <div class="step-body">
+          <div class="card-title">Назви й познайомся</div>
+          <div class="card-text">Дай витісненій частині ім'я й голос: мій гнів, моя потреба, моє бажання сяяти. Випиши на папір, поговори з нею, спитай, чого вона хоче. Те, що назване, перестає керувати з темряви.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">5</div>
+        <div class="step-body">
+          <div class="card-title">Інтегруй, а не воюй</div>
+          <div class="card-text">Мета — не вбити Тінь, а повернути собі її енергію. Хто визнав свій гнів — має кордони. Хто визнав амбіцію — має драйв. Хто визнав вразливість — має справжню близькість. Заборонене стає ресурсом.</div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">6</div>
+        <div class="step-body">
+          <div class="card-title">Зустрічай себе зі співчуттям</div>
+          <div class="card-text">Тінь народилася зі сорому — новим соромом її не зцілити. Тільки цікавістю й теплом. Ти не «погана» через те, що там знайшла. Ти просто ціліша, ніж думала. Це не викриття, це повернення додому.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Нюанс: не все проєкція -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Обережно: не все — проєкція</h2>
+    <p>І тут важлива протилежна пересторога. Не кожне роздратування — твоя Тінь. Іноді людина справді порушує твій кордон, поводиться жорстоко чи небезпечно — і твій гнів точний, здоровий і абсолютно потрібний. Це не проєкція. Це інформація. Плутати ці дві речі — небезпечно в обидва боки.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🌑</span>
+        <div class="card-title">Радше Тінь, якщо…</div>
+        <div class="card-text">Заряд непропорційний ситуації. Тебе бісить сама <strong>риса</strong>, а не конкретна шкода. Той самий тип людей тригерить постійно. Є те «вабить-відштовхує». А коли чесно дивишся всередину — стає видно, що це більше про тебе.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🛡️</span>
+        <div class="card-title">Радше реальний кордон, якщо…</div>
+        <div class="card-text">Ідеться про конкретний <strong>вчинок</strong>, який тобі шкодить. Реакція співмірна події. Вона не розчиняється, коли ти чесно заглядаєш у себе. І будь-хто на твоєму місці мав би повне право злитися.</div>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Ключове: «це просто твоя тінь» — <em>не привід терпіти те, що ранить</em>. Робота з Тінню існує, щоб ти бачила ясніше, а не щоб газлайтити себе й списувати чужу жорстокість на власні проєкції. Здорова мета — і повертати собі відкинуте, і зберігати кордони. Одне іншому не заважає.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що дає інтеграція -->
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Що дає ця робота</h2>
+    <p>Коли ти потроху повертаєш собі відкинуті частини, стається дещо дивне: світ навколо тихішає. Люди дратують менше — бо ти більше не зустрічаєш у них саму себе. Звільняється купа енергії, яку роками витрачала на те, щоб тримати двері зачиненими.</p>
+    <p>Ти стаєш не «кращою» — ти стаєш цілішою. Юнг називав це індивідуацією: шлях не до святості, а до повноти. Не ідеальна людина без темряви, а жива людина, яка знає свою темряву й тому володіє нею, а не навпаки.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Final -->
+  <div class="section" style="animation-delay:1.9s">
+    <div class="final-quote">
+      <div class="final-text">«Я волію бути <strong>цілісною</strong>, ніж хорошою», — казав Юнг. Твоя Тінь — не ворог, якого треба перемогти. Це загублена половина тебе, що всі ці роки чекала, поки ти наважишся подивитись. Те, що дратує тебе в інших, і те, за що тобі соромно, — це не про них. Це тихий стукіт із твоєї власної темної кімнати: «впусти мене назад — я теж ти».</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#c9b8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+</body>
+</html>
