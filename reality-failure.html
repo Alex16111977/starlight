@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Страху немає, є невдача</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(40px,7.4vw,68px);letter-spacing:.08em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(220,230,255,.9);margin-bottom:16px}
+.section p a{color:rgba(138,176,255,.9);text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#c8d8ff}
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
+.card-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:14px;font-weight:300;line-height:1.75;color:rgba(220,230,255,.92)}
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(220,230,255,.92);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:19px;color:rgba(226,190,128,1)}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(110,200,160,.45),transparent)}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(220,240,230,.92);margin:0}
+.soft em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:19px;color:rgba(158,235,196,1)}
+.warn{background:linear-gradient(135deg,rgba(220,120,110,.09),rgba(200,150,90,.05));border:1px solid rgba(220,140,120,.2);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(230,150,120,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(240,225,220,.92);margin:0}
+.warn em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:19px;color:rgba(235,160,130,1)}
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(200,216,255,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.35);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(26px,4vw,36px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:640px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.25);border-radius:100px;color:rgba(200,216,255,.75);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(220,230,255,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:rgba(245,225,180,1)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="reality.html">← Рівні сприйняття</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Страху немає — є невдача</h1>
+  <p class="page-subtitle">Вчися програвати, а не не боятися</p>
+
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Ти боїшся не вчинку. Ти боїшся не знати, чим він закінчиться."</div>
+      <div class="hero-author">Fear Isn't Real… This Is</div>
+    </div>
+    <p>Автор зізнається: страх заважав йому півжиття. У своєму колі він був відомий через одяговий бренд і бізнес, але свою «3K Knowledge» — метафізику й недуальність — ховав, боячись ненависті, сумнівів і осуду. І додає: якби він тоді піддався сумніву, ти б зараз цього не читала.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Страх — це незнання результату</h2>
+    <p>Головне відкриття: той сумнів ішов не від самого вчинку, а від незнання, чим усе закінчиться. Ти не знаєш, куди приведе шлях.</p>
+    <p>Той самий страх невідомого лежить в основі майже будь-якого життєвого сценарію, а не лише кар'єри. Навіть страх бійки — це не страх самої бійки, а незнання, що станеться: раптом нокаутують.</p>
+    <div class="highlight">
+      <p><em>Страх живиться не небезпекою, а невизначеністю.</em> Прибери проміжок «а що буде далі» — і страх слабне сам. Саме тому він найгучніший там, де результат найтуманніший. Споріднена тема — <a href="reality-anxiety.html">«Тривога і страх майбутнього»</a>.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Де ховається цей страх</h2>
+    <p>Придивись, скільки рішень ти не ухвалюєш саме через незнання наслідків:</p>
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">💔</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Токсичні стосунки</div>
+          <div class="card-text">Лишаєшся, бо боїшся, що партнер піде, — і тому постійно стежиш за кожним його кроком, замість того щоб жити.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">👥</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Погана дружба</div>
+          <div class="card-text">Не йдеш, бо боїшся осуду: «як це ти нас кинула». Незнання їхньої реакції важить більше за твій власний спокій.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🚬</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Шкідливі звички</div>
+          <div class="card-text">Не кидаєш, бо боїшся реакції компанії: «о, ти став слабким». Звичка тримається на страху чужих слів.</div>
+        </div>
+      </div>
+    </div>
+    <div class="warn">
+      <p><em>Одне важливе застереження.</em> Автор згадує й тих, хто лишається в абʼюзивних стосунках, бо не знає, що партнер зробить у відповідь на розрив. Тут «просто стрибни» — небезпечна порада: вихід із насильства часто найризикованіший момент. Це не про «переступити страх наосліп», а про <strong>план безпеки й підтримку</strong> — довірених людей, гарячі лінії, фахівців. Іноді страх — тверезий сигнал, а не бар'єр.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Прийти порожнім</h2>
+    <p>Практика, що допомогла авторові заходити в непередбачуваність, — «прийти порожнім» (arriving empty), яку він оформив разом із людиною на ім'я Jadina.</p>
+    <p>Це означає взяти на себе рішення на питання, що весь час постає («чи припинити це», «чи піти»), — і ухвалити його, повністю усвідомлюючи, що ти не знаєш наслідків. Так ти звільняєш місце для непередбачуваного <em style="font-family:'Cormorant Garamond',serif;color:rgba(212,175,110,.85)">потенціалу</em> замість непередбачуваного хаосу.</p>
+    <div class="question-card">
+      <div class="question-label">Практика</div>
+      <div class="question-main">Прийди порожнім — і будеш наповнена.</div>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Чому люди застрягають</h2>
+    <p>Страх зашитий у підсвідомість так, щоб ти уникала непередбачуваних рішень. Тому люди по 50 років сидять на одній роботі, не наважуючись на своє, або надто обережні там, де не можуть прорахувати наслідки.</p>
+    <p>І водночас майже кожен, хто досяг успіху, вийшов із залежності чи з важкої ситуації, зробив це через «стрибок віри» (leap of faith). Це навіть не таємне знання — це заяложене кліше. Але воно працює саме тому, що правдиве.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Ти боїшся не страху, а невдачі</h2>
+    <p>А тепер головне питання відео. Що насправді тебе тримає — не сам страх, а звичка до відчуття невдачі. Воно болить, тому ти будуєш внутрішній бар'єр, який здається захистом, а насправді не пускає вперед.</p>
+    <div class="highlight">
+      <p><em>Страху як такого не існує — існує невдача.</em> Страх бійки — це насправді страх програти. Якби ти вміла битися, ти б билася без вагань. Скрізь, де ти бачиш «страх», під ним ховається тихе «а раптом програю».</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.1s">
+    <h2 class="section-title">Вчися програвати, а не не боятися</h2>
+    <p>Невдача сплетена з купою емоцій: втрата грошей, розбите серце, сором. Тому марно вчитися «не відчувати страх». Вчися іншого — програвати. Зазнати невдачі й лишитися цілою.</p>
+    <p>Коли ти навчишся приймати невдачу, ти перестаєш боятися заходити — у стосунки, у бізнес, у бій. Бо знаєш: навіть якщо не вийде, ти будеш у порядку. Успіх приходить у парі з невдачею, а не замість неї.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.3s">
+    <h2 class="section-title">Невдача — не менша цінність</h2>
+    <p>Але є ще глибший шар. Проблема не лише в тому, що невдача болить, — а в тому, що ти ототожнюєш її зі зменшенням власної цінності. «Не вийшло» непомітно перетворюється на «я нікчемна».</p>
+    <div class="soft">
+      <p><em>Розчепи ці дві речі.</em> Невдача — це подія, а не вирок про те, хто ти. Спробуй бачити її не як мінус до цінності, а як єдиний спосіб вирости: ще жоден навик не з'явився без низки провалів. Ти не стаєш меншою, коли падаєш, — ти вчишся. Про цінність, що не залежить від результату, — <a href="reality-letgo.html">«Ти не мала керувати реальністю»</a>.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.5s">
+    <h2 class="section-title">Страх не зникне — але стане тихішим</h2>
+    <p>Чесно: ця оптика не прибирає страх повністю. Ти лишаєшся людиною, і страх ще з'являтиметься. Але коли ти перестаєш боятися саме невдачі, страх перестає бути «гучним».</p>
+    <p>Він нікуди не дівається — просто ти більше не мусиш його слухати. Одна справа, коли в кімнаті виє сирена; інша — коли десь тихо цокає годинник. Звук є, але він більше не керує тобою.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.7s">
+    <h2 class="section-title">Готовність програти</h2>
+    <p>Автор ділиться, до чого був внутрішньо готовий, — і саме ця готовність його звільнила:</p>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">📹</span>
+        <div class="card-title">Нуль переглядів</div>
+        <div class="card-text">Викласти відео — і що з того, як ніхто не подивиться. Однаково викласти.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🏁</span>
+        <div class="card-title">Останнє місце</div>
+        <div class="card-text">Прийти в марафоні останнім. Пробіг важить більше за місце в протоколі.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⏳</span>
+        <div class="card-title">2–5 років спроб</div>
+        <div class="card-text">Роками невдало пробувати нове — і все одно пробувати далі.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💘</span>
+        <div class="card-title">Кохання без взаємності</div>
+        <div class="card-text">Закохатися й не отримати нічого у відповідь. І все одно наважитися відчувати.</div>
+      </div>
+    </div>
+    <div class="final-quote">
+      <div class="final-text">Ти не мусиш перестати боятися. Досить дозволити собі програти. <strong>Бо по той бік невдачі — не кінець, а той, ким ти станеш, спробувавши.</strong></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+</body>
+</html>

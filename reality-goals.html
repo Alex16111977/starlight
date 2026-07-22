@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Ціль — це ти</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(52,58,94,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(52,58,94,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a,.card-text a{color:rgba(212,175,110,.9);text-decoration:none;border-bottom:1px solid rgba(212,175,110,.35);transition:all .3s}
+.section p a:hover,.card-text a:hover{color:#f0d9a8;border-bottom-color:rgba(212,175,110,.7)}
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(52,58,94,.4)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.92)}
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(52,58,94,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:19px;color:rgba(226,190,128,1)}
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(52,58,94,.35);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(26px,4vw,36px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.75);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:rgba(245,225,180,1)}
+/* --- light theme overrides --- */
+.page-logo,.page-title,.hero-text,.question-main{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text}
+.section-title::before{background:#5261c2;box-shadow:0 0 12px rgba(82,97,194,.45)}
+.section p a,.card-text a{color:#946717;border-bottom-color:rgba(148,103,23,.4)}
+.section p a:hover,.card-text a:hover{color:#754f0f;border-bottom-color:rgba(148,103,23,.7)}
+.highlight em,.final-text strong{color:#946717}
+.nebula::before{background:radial-gradient(ellipse,rgba(120,110,215,.13) 0%,rgba(90,120,215,.08) 35%,transparent 70%)}
+.nebula::after{background:radial-gradient(ellipse,rgba(214,175,120,.12) 0%,transparent 60%)}
+.shoot{background:rgba(110,116,185,.85)}
+.shoot::after{background:linear-gradient(to left,rgba(110,116,185,.85),transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="reality.html">← Рівні сприйняття</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Ціль — це ти</h1>
+  <p class="page-subtitle">Ти женешся не за річчю, а за відчуттям</p>
+
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Тобі потрібен не мільйон. Тобі потрібна та, ким ти станеш, прокинувшись і знаючи, що досягла"</div>
+      <div class="hero-author">Оптика реальності</div>
+    </div>
+    <p>Ти ставиш собі мету — суму, машину, тіло, людину — і впевнена, що саме цього хочеш. Але придивись ближче: ти хочеш не сам предмет. Ти хочеш відчуття, яке він обіцяє. Того стану, у якому прокидатимешся щоранку, знаючи, що це вже є. Річ — лише історія, обгорнута навколо однієї сенсації.</p>
+    <p>Ця тема — про приховану ілюзію цілей. Не про те, щоб перестати їх мати, а про те, щоб побачити, за чим ти женешся насправді. Бо коли це стає видно, гра змінюється.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Ціль є ціллю</h2>
+    <p>Справжня мета — не результат, а відчуття досягнення, яке він дає. Тебе цікавить не цифра на рахунку сама по собі, а стан, у якому ти щодня прокидаєшся: спокій, гордість, свобода, «я змогла». Гроші, авто, форма тіла — це лише упаковка навколо цього відчуття.</p>
+    <p>І щойно це стає ясно, багато що зсувається. Бо якщо тобі потрібен стан, а не предмет, то цей стан можна знайти не тільки там, де ти звикла його шукати. Це та сама ідея, що й у темі <a href="reality-abundance.html">відчуття достатку</a>: достаток — це стан, а не сума.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">У цілі немає вбудованого дедлайну</h2>
+    <p>Сама ціль не несе в собі ні терміну, ні обов'язку «бігти». Поспіх ти додаєш зверху сама. Бо саме «досягнення» — річ насквозь суб'єктивна: схуднути на двадцять кілограмів за рік — величезна перемога для однієї людини й дрібниця для професійного бодібілдера.</p>
+    <p>Той самий факт — і геть різна вага. Немає універсальної лінійки, яка об'єктивно каже, що ти «встигла» чи «спізнилася». Є лише той масштаб, який ти сама прикладаєш до себе — і часто надто жорсткий.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.35s">
+    <h2 class="section-title">Як влаштоване бажання</h2>
+    <p>Придивись до самого механізму. Щось є «бажанням» рівно доти, доки ти цього не маєш. Щойно отримала — воно миттю перестає бути бажанням і тихо заміщається новим. У лінійному відчутті часу це просто правда.</p>
+    <p>Але є тонший погляд. Реальність не рухається крізь час — це час рухається всередині реальності. І сам час, по суті, не існує як щось тверде й окреме. Тому й відчуття «хочу» таке ж тимчасове, як усе інше: воно не веде до фінальної станції, воно просто змінює форму.</p>
+
+    <div class="highlight">
+      <p><em>«Ще одне — і тоді я нарешті заспокоюся».</em> Це обіцянка, яку розум дає й ніколи не виконує. Ти віриш, що досягнення мети «завершить гру», — але після неї життя просто триває далі, і на порожнє місце одразу стає наступне «хочу».</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Поза часом воно вже здійснене</h2>
+    <p>А тепер парадокс. Якщо подивитися поза ілюзією часу, те, що ти прямо зараз тримаєш у голові як «мету», уже виконано — у цьому єдиному моменті. Немає окремого «потім», у якому воно нарешті збудеться. Є лише «зараз», у якому все вже присутнє.</p>
+
+    <div class="question-card">
+      <div class="question-label">Тихе питання</div>
+      <div class="question-main">"Хто ти — без постійного «наздогнати»?"</div>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.65s">
+    <h2 class="section-title">«Я», що женеться, — лише заповнювач</h2>
+    <p>Те «я», що біжить за метою, — не така вже й тверда, постійна річ. Це радше тимчасовий заповнювач, ідентичність-placeholder, що може виникати й зникати будь-якої миті. Зміняться обставини — і розум просто підбере собі нову ідентичність під нову гонитву.</p>
+    <p>Уяви: народилася б ти в іншій країні, з іншими батьками, в іншу епоху — і цілі були б зовсім інші. Та сама жага, та сама напруга — зовсім інший об'єкт. Отже, конкретна ціль не має принципового значення. Важлива не вона, а те, що <a href="reality-experience.html">ти — сам цей досвід</a>, а не роль, яку він зараз одягнув.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Навіть досягнуте — згасне</h2>
+    <p>М'яка, але чесна нагадка. Навіть якщо ти здобудеш усе зі свого списку — за сорок-п'ятдесят років ти постарієш і просто перестанеш про це дбати. І ніхто інший не носитиме в серці факт, що ти колись цього досягла.</p>
+    <p>Це не привід зневіритися — це привід видихнути. Якщо фінал однаковий для всіх, то сенс ніколи й не був у фінальному рахунку. Він у тому, <em>як гралося</em> — тут і зараз. Про це ж, зрештою, і тема <a href="reality-birthdeath.html">народження і смерті</a>.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.95s">
+    <h2 class="section-title">Гонитва завжди була про тебе</h2>
+    <p>Ось де все сходиться. Гонитва по суті нескінченна — і вона ніколи не була про річ. Гроші, партнер, машина здаються необхідними, щоб виникло певне відчуття. Але саме відчуття завжди народжується в тобі, а не в об'єкті. Об'єкт — лише привід, дозвіл собі відчути те, що й так уже було всередині.</p>
+    <p>А отже, вся твоя реальність від початку була про тебе, а не про матеріальні речі. Ти женешся не за світом — ти женешся за собою. Це та сама думка, що й у сусідній темі: усе трапляється <a href="reality-foryou.html">заради тебе</a>.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.1s">
+    <h2 class="section-title">Вправа: дзеркало без ролей</h2>
+    <p>Проста, майже тілесна практика — коли теорія починає відчуватися по-справжньому.</p>
+
+    <div class="highlight">
+      <p>Роздягнись і подивись у дзеркало. Без одягу, статусів, посад і ролей ідентичність наче відпадає — і лишається просто тіло-створіння: очі, що дивляться, руки, що рухаються, груди, що дихають. І десь тут приходить тихе усвідомлення: <em>насправді тебе завжди цікавило лише відчуття.</em> Те саме, яке навіть до кінця не вдається пояснити словами.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.25s">
+    <h2 class="section-title">Це не про те, щоб кинути мрії</h2>
+    <p>Тільки не переплутай це з «навіщо тоді взагалі щось робити». Побачити ілюзію цілей — не означає лягти обличчям до стіни й нічого не хотіти. Навпаки: коли перестаєш вірити, що фініш тебе врятує, з'являється дивна свобода — насолоджуватися самою грою, а не тільки її кінцем.</p>
+    <p>Ставити цілі — прекрасно. Просто пам'ятай, за чим ти йдеш насправді. Важливий <a href="reality-choice.html">процес, а не результат</a> — бо результату, який «нарешті все завершить», не існує. Є тільки наступний крок, який можна прожити з увагою.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.4s">
+    <div class="final-quote">
+      <div class="final-text">Твоє серце б'ється не заради машини й не заради мільйона. Воно б'ється заради самих <strong>відчуттів</strong> — хвилювання, трепету, живого струму в тілі. Заради них узагалі існує тіло, а не заради контексту цілей. Побач гру такою, яка вона є, — і навчишся грати в неї правильно. Не щоб виграти. Щоб <strong>відчувати</strong>.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+</body>
+</html>
