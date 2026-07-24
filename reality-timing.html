@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Starlight — Звільнити увагу</title>
+<title>Starlight — Чому ти народилася саме зараз</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -19,7 +19,7 @@ canvas{position:fixed;inset:0;z-index:0}
 .back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(52,58,94,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
 .back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
 .page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
-.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(40px,7.4vw,68px);letter-spacing:.08em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
 .page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(52,58,94,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
 .divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
 .div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
@@ -29,8 +29,8 @@ canvas{position:fixed;inset:0;z-index:0}
 .section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
 .section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
 .section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
-.section p a,.card-text a{color:rgba(212,175,110,.9);text-decoration:none;border-bottom:1px solid rgba(212,175,110,.35);transition:all .3s}
-.section p a:hover,.card-text a:hover{color:#f0d9a8;border-bottom-color:rgba(212,175,110,.7)}
+.section p a{color:rgba(138,176,255,.9);text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#c8d8ff}
 .hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
 .hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
 .hero-quote::before{top:0}
@@ -43,23 +43,32 @@ canvas{position:fixed;inset:0;z-index:0}
 .card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
 .card:hover::before{opacity:1}
 .card-icon{font-size:28px;margin-bottom:14px;display:block}
-.card-step{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(212,175,110,.7);margin-bottom:10px}
 .card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
 .card-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.92)}
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
 .highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(52,58,94,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
 .highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
 .highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
 .highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:19px;color:rgba(226,190,128,1)}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(110,200,160,.45),transparent)}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(220,240,230,.92);margin:0}
+.soft em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:19px;color:rgba(158,235,196,1)}
 .question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
 .question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
 .question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
 .question-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(52,58,94,.35);margin-bottom:18px}
-.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,34px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(26px,4vw,36px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
 .final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
 .final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
 .final-quote::before{top:0}
 .final-quote::after{bottom:0}
-.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:640px;margin:0 auto}
 .final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
 @keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 .shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
@@ -111,98 +120,101 @@ html{color:rgba(52,58,94,.9)!important}
     <span class="page-logo">Starlight</span>
   </div>
 
-  <h1 class="page-title">Звільнити увагу</h1>
-  <p class="page-subtitle">7 кроків, щоб повернути собі фокус</p>
+  <h1 class="page-title">Чому ти народилася саме зараз</h1>
+  <p class="page-subtitle">Народитися на піку технологій — збіг?</p>
 
   <div class="section" style="animation-delay:.9s">
     <div class="hero-quote">
-      <div class="hero-text">"Увага — головний ресурс, яким ти твориш своє сприйняття реальності"</div>
-      <div class="hero-author">Роздуми про увагу</div>
+      <div class="hero-text">"З усіх часів історії ти народилася саме на піку технологій. Збіг? Чи просто те, що є?"</div>
+      <div class="hero-author">Why Were You Born In The Beginning Of Technology</div>
     </div>
-    <p>Уся ця розмова про "творення реальності" впирається в одну річ — увагу. Саме нею людина створює своє сприйняття світу. Але в більшості увага "забита" й розпорошена: на усвідомлене керування власним життям ресурсу просто не лишається. Ось 7 кроків, щоб цю увагу звільнити.</p>
+    <p>Дивне питання, з якого починає автор: чи випадково ти з'явилася саме на початку технологічної ери? І далі розкручує його аж до того, що ніякого «сценарію гри», який ти намагаєшся зрозуміти, узагалі немає.</p>
   </div>
 
   <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
 
   <div class="section" style="animation-delay:1.1s">
-    <h2 class="section-title">7 кроків, щоб звільнити увагу</h2>
-    <p>Кожен крок прибирає одного зі "споживачів" уваги — зовнішній безлад, фонові витоки або звичку тікати від теперішнього моменту.</p>
-
-    <div class="cards">
-      <div class="card">
-        <div class="card-step">Крок 01</div>
-        <span class="card-icon">🧹</span>
-        <div class="card-title">Прибрати фізичний безлад</div>
-        <div class="card-text">Чим більше хаотичних речей навколо (кімната, шафи, стіл), тим більше дрібних асоціацій і думок вони викликають — і тим менше уваги лишається на важливе.</div>
-      </div>
-      <div class="card">
-        <div class="card-step">Крок 02</div>
-        <span class="card-icon">📵</span>
-        <div class="card-title">Інформаційна гігієна</div>
-        <div class="card-text">Вимкни зайві сповіщення, видали невживані застосунки й підписки, залиш тільки потрібне. Авторка ділиться: тривожність помітно знизилась саме після вимкнення сповіщень.</div>
-      </div>
-      <div class="card">
-        <div class="card-step">Крок 03</div>
-        <span class="card-icon">📰</span>
-        <div class="card-title">Новини без емоційного залучення</div>
-        <div class="card-text">Можна бути в курсі подій, але не "занурюватися" емоційно в кожне повідомлення. Сприймай його як потік інформації, не йдучи за реакцією.</div>
-      </div>
-      <div class="card">
-        <div class="card-step">Крок 04</div>
-        <span class="card-icon">✅</span>
-        <div class="card-title">Виписати незавершені справи</div>
-        <div class="card-text">Речі, що відкладаються місяцями, фоново "з'їдають" увагу — як застосунки, що працюють у фоні й розряджають телефон. Випиши все й чесно вирішити: що зробити, а що відпустити.</div>
-      </div>
-      <div class="card">
-        <div class="card-step">Крок 05</div>
-        <span class="card-icon">🔋</span>
-        <div class="card-title">Подбати про джерела енергії</div>
-        <div class="card-text">Розумій, що особисто тебе заряджає, а що виснажує. Свідомо додавай перше й прибирай друге — увага й енергія течуть разом.</div>
-      </div>
-      <div class="card">
-        <div class="card-step">Крок 06</div>
-        <span class="card-icon">🧘</span>
-        <div class="card-title">Практика присутності</div>
-        <div class="card-text">Сідай і <a href="reality-observer.html">спостерігай за думками</a>, не йдучи за ними (класична техніка). Це зменшує "енергетичний злив" через постійний внутрішній діалог.</div>
-      </div>
-      <div class="card">
-        <div class="card-step">Крок 07</div>
-        <span class="card-icon">🏃</span>
-        <div class="card-title">Активність із концентрацією на тілі</div>
-        <div class="card-text">Не рухайся "на автоматі" під музику, а справді відчувай роботу м'язів під час тренування чи бігу. Повна присутність у тілі підсилює ефект.</div>
-      </div>
+    <h2 class="section-title">Ти народилася на піку</h2>
+    <p>Подумай: старші застали появу комп'ютерів, Bluetooth, плоских телевізорів; молодші — ШІ, смартфони, безпілотні авто. Ти могла народитися будь-коли за всю історію людства. Народись ти у 1800-х — уся ця техніка була б немислима.</p>
+    <p>Але ти з'явилася саме зараз — у моменті еволюції, якого людство раніше не бачило. І дивне: поки ти дорослішала, світ ніби ріс разом із тобою, стаючи все технологічнішим паралельно. Збіг?</p>
+    <div class="highlight">
+      <p><em>Так само ти «нормалізувала» сонце й місяць у небі.</em> Дива швидко стають буденністю. І те, що ти опинилася саме в цій точці часу, теж здається випадковістю — а може, це просто те, що є.</p>
     </div>
   </div>
 
   <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
 
   <div class="section" style="animation-delay:1.3s">
-    <h2 class="section-title">Бонус: день нічогонероблення</h2>
-    <p>Коли базові кроки вже освоєні, авторка пропонує глибший експеримент.</p>
-
-    <div class="highlight">
-      <p><em>Один день без справ, телефону, книг і розваг — просто спостерігати за думками й опором, який виникає.</em> Це не відпочинок у звичному сенсі, а зустріч із тим, що ховається під постійною зайнятістю. Спершу буде тягнути "хоч щось зробити" — і саме цей опір найцікавіше поспостерігати.</p>
-    </div>
+    <h2 class="section-title">«Давнина» — це ярлик</h2>
+    <p>Автор чіпляється навіть до слова «древнє». Піраміди, зроблені нібито в давнину, фізично існують тут і зараз — до них можна долетіти й торкнутися.</p>
+    <p>Отже, поділ на «давнє» й «теперішнє» — це ярлик, умовність, яку ти накладаєш на реальність. Про владу ярликів — <a href="reality-fake.html">«Чому реальність фейкова»</a>.</p>
   </div>
 
   <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
 
   <div class="section" style="animation-delay:1.5s">
-    <h2 class="section-title">Перший крок</h2>
-    <p>Не обов'язково братися за всі сім одразу. Один прибраний "споживач" уваги вже відчутно вивільняє ресурс.</p>
-
-    <div class="question-card">
-      <div class="question-label">Запитай себе</div>
-      <div class="question-main">"З якого одного кроку я могла б почати вже сьогодні?"</div>
-    </div>
+    <h2 class="section-title">Клац — і того вже немає</h2>
+    <p>Автор клацає пальцями й каже: того, хто щойно клацнув, уже немає — хоч ти його пам'ятаєш. І немає різниці між тим, хто клацнув секунду тому, і тим, хто клацнув давно: обох однаково немає зараз.</p>
+    <p>Спробуй згадати чи відчути мить, коли тебе не існувало. Не вийде — бо ти ніколи не була «не тут». А приписувати тому, чого вже нема, «фіктивну тривалість часу» — це конструкція свідомості. Про це — <a href="reality-noend.html">«Немає кінця — це ілюзія»</a>.</p>
   </div>
 
   <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
 
   <div class="section" style="animation-delay:1.7s">
-    <h2 class="section-title">Висновок</h2>
+    <h2 class="section-title">Усе — кольори й форми плюс контекст</h2>
+    <p>Центральна теза: без контексту не було б досвіду. Обличчя й рот на екрані — це просто рухомі кольори й форми. І лише доданий тобою контекст робить із них «обличчя» й «мову».</p>
+    <div class="highlight">
+      <p><em>Ніщо ніколи не було «нормальним».</em> «Давнина», «правильно», «неправильно», «натхнення», «сум», «біль», «блаженство» — не мають об'єктивного змісту. Те, що відбувається, зветься «досвідом» саме тому, що контекст накладається на пляму кольорів і форм. Про світло під ярликами — <a href="reality-god.html">«Ти щодня бачиш Бога»</a>.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Зелений екран: ти і є досвід</h2>
+    <p>Уяви, що дивишся «Месників», але бачиш зелений екран і мікрофони в кадрі. Дивитися не хотілося б. Потрібна ілюзія — графіка, музика, — щоб фільм здавався справжнім і приносив насолоду.</p>
+    <div class="highlight">
+      <p><em>Автор порівнює себе із зеленим екраном:</em> те, що він показує, водночас не має значення і має. Звідси теза: ти не всередині досвіду — ти і є досвід. Докладніше — <a href="reality-experience.html">«Ти — сам досвід»</a>.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.1s">
+    <h2 class="section-title">Звідки взялась усвідомленість?</h2>
+    <p>Автор переказує розмову з Ентоні, який спитав: що після смерті й що було «до усвідомленості»? Відповідь: ми за замовчуванням думаємо, що усвідомленість мусила «звідкись виникнути», — бо весь наш досвід збудований на ідеї творення: народження, створення речей.</p>
+    <p>Пісні не було, поки її не написали; машини, іграшки, телефони хтось зробив; дітей зачинають. Звідси й народжується ідея Бога чи творця — бо в нас є контекст «щось мусить створювати щось». Але, можливо, нічого й не потребує джерела: думки виникають нізвідки, і науковці не можуть указати їхнє джерело — бо джерело їм ніколи й не було потрібне.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.3s">
+    <h2 class="section-title">Усвідомлення усвідомлення</h2>
+    <p>Ти можеш усвідомлювати сам факт, що дивишся це, — тобто бути «усвідомленою усвідомленості». А що тоді усвідомлює саму цю усвідомленість? Відповіді немає. Це найглибша точка, далі якої не піти.</p>
+    <div class="soft">
+      <p><em>Звідси ж — про «немає правил і дисципліни».</em> Автор каже: ти робитимеш те, що робиш; у 7 років він не планував говорити про свідомість — «це просто стається, і мені подобається». Але прочитай це не як «нічого не роби», а як полегшення: менше самопримусу, більше руху за тим, що справді твоє. Пор. <a href="reality-change.html">«Ти чекаєш на себе»</a>.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.5s">
+    <h2 class="section-title">Ти говориш сама із собою</h2>
+    <p>Автор уточнює: він звертається не до «людини», що дивиться, а до тієї, хто цю людину усвідомлює, — і не до «публіки на YouTube», а особисто до тебе. Дивлячись на маму, друга, партнера чи власне обличчя в дзеркалі, ти дивишся на те саме, просто в іншому контексті. Розділення між людьми немає.</p>
+    <p>Він порівнює це з фільмом «Я — легенда»: остання людина на Землі записувала відео, говорячи сама із собою, — раптом хтось колись знайде. Це відео, каже він, — те саме. Світ, про який ішлося, — «увесь у тебе в голові», і «це все був сон».</p>
+    <div class="soft">
+      <p><em>Тут — та сама ніжність, що й завжди.</em> «Ти говориш сама із собою» й «розділення немає» — не про холод і не про самотність. Це не означає, що мама, друг, партнер несправжні чи неважливі: у цій оптиці інший не менш реальний — він більше ти. Якщо ідея єдності віддаляє тебе від людей — вона зрозуміла неправильно. Пор. <a href="reality-onlyworld.html">«Світ, який ти бачиш — єдиний»</a>.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.7s">
+    <h2 class="section-title">Збіг — чи просто те, що є</h2>
+    <p>І назад до початку: з усіх можливих місць і часів ти народилася саме там, де народилася, і живеш саме в тій країні, де живеш зараз, дивлячись це. Збіг? Чи просто те, що є?</p>
+    <p>Автор просить не додавати до цього «шаленого вияву свідомості» зайвої структури й правил. Бо щойно ти повіриш, що система існує, — вона з'явиться. Саме тому, що стане контекстом, за який ти вчепишся.</p>
     <div class="final-quote">
-      <div class="final-text">Звільнена увага — це не порожнеча, а <strong>простір</strong>. Що менше дрібних "споживачів" тягнуть тебе врізнобіч, то більше тебе лишається на те, що справді твоє.</div>
+      <div class="final-text">Ти шукаєш, хто написав правила гри. <strong>А може, гра тільки й чекала, поки ти перестанеш шукати сценарій — і почнеш її грати.</strong></div>
     </div>
   </div>
 
