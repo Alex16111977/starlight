@@ -81,6 +81,28 @@ canvas{position:fixed;inset:0;z-index:0}
 .nebula::after{background:radial-gradient(ellipse,rgba(214,175,120,.12) 0%,transparent 60%)}
 .shoot{background:rgba(110,116,185,.85)}
 .shoot::after{background:linear-gradient(to left,rgba(110,116,185,.85),transparent)}
+
+/* sl-audio-v1 — кастомний аудіоплеєр */
+.audio-player{display:flex;align-items:center;gap:16px;max-width:460px;margin:0 auto 64px;padding:10px 22px 10px 10px;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.14);border-radius:100px;transition:border-color .4s,background .4s}
+.audio-player:hover{border-color:rgba(148,103,23,.35);background:rgba(52,58,94,.08)}
+.audio-btn{flex-shrink:0;width:40px;height:40px;border-radius:50%;border:none;cursor:pointer;background:linear-gradient(135deg,#5261c2,#7a5fbe,#a9772e);display:flex;align-items:center;justify-content:center;color:#fff;transition:transform .3s,box-shadow .3s;box-shadow:0 2px 10px rgba(82,97,194,.35)}
+.audio-btn:hover{transform:scale(1.07);box-shadow:0 4px 16px rgba(82,97,194,.5)}
+.audio-btn:active{transform:scale(.96)}
+.audio-btn .ic-play{margin-left:2px}
+.audio-btn .ic-load{animation:audioSpin .9s linear infinite}
+@keyframes audioSpin{to{transform:rotate(360deg)}}
+.audio-player.is-playing .audio-btn{box-shadow:0 0 0 5px rgba(122,95,190,.14),0 4px 16px rgba(82,97,194,.5)}
+.audio-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.audio-row{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.audio-label{font-size:9px;font-weight:300;letter-spacing:.28em;text-transform:uppercase;color:rgba(52,58,94,.45);white-space:nowrap}
+.audio-time{font-size:10px;font-weight:300;letter-spacing:.03em;color:rgba(52,58,94,.4);white-space:nowrap;font-variant-numeric:tabular-nums}
+.audio-seek{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:4px;background:rgba(52,58,94,.16);outline:none;cursor:pointer;margin:0;display:block}
+.audio-seek::-webkit-slider-runnable-track{height:4px;border-radius:4px;background:transparent}
+.audio-seek::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:#fff;border:2px solid #7a5fbe;margin-top:-4px;box-shadow:0 1px 4px rgba(52,58,94,.4);transition:transform .2s}
+.audio-seek:hover::-webkit-slider-thumb{transform:scale(1.25)}
+.audio-seek::-moz-range-track{height:4px;border-radius:4px;background:transparent}
+.audio-seek::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:#fff;border:2px solid #7a5fbe;box-shadow:0 1px 4px rgba(52,58,94,.4);transition:transform .2s}
+.audio-seek:hover::-moz-range-thumb{transform:scale(1.25)}
 </style>
 </head>
 <body>
@@ -96,8 +118,20 @@ canvas{position:fixed;inset:0;z-index:0}
   <h1 class="page-title">Ціль — це ти</h1>
   <p class="page-subtitle">Ти женешся не за річчю, а за відчуттям</p>
 
-  <div class="audio-player-wrap" style="display:flex;justify-content:center;margin-bottom:64px;opacity:0;animation:riseIn 1s .8s ease forwards">
-    <audio controls preload="none" style="width:100%;max-width:440px;height:36px;accent-color:#8ab0ff" src="audio/reality-goals.mp3"></audio>
+  <div class="audio-player" style="opacity:0;animation:riseIn 1s .8s ease forwards">
+    <button class="audio-btn" type="button" aria-label="Відтворити аудіоверсію">
+      <svg class="ic-play" viewBox="0 0 24 24" width="14" height="14"><path d="M6 4l14 8-14 8V4z" fill="currentColor"/></svg>
+      <svg class="ic-pause" viewBox="0 0 24 24" width="14" height="14" style="display:none"><path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" fill="currentColor"/></svg>
+      <svg class="ic-load" viewBox="0 0 24 24" width="16" height="16" style="display:none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="2" fill="none" opacity=".25"/><path d="M12 3.5a8.5 8.5 0 018.5 8.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+    </button>
+    <div class="audio-main">
+      <div class="audio-row">
+        <span class="audio-label">Аудіоверсія</span>
+        <span class="audio-time"><span class="audio-current">0:00</span> / <span class="audio-duration">–:–</span></span>
+      </div>
+      <input class="audio-seek" type="range" min="0" max="1000" value="0" step="1" aria-label="Перемотка аудіо">
+    </div>
+    <audio preload="none" src="audio/reality-goals.mp3"></audio>
   </div>
 
   <div class="section" style="animation-delay:.9s">
@@ -217,5 +251,42 @@ function shootStar(){const el=document.createElement('div');el.className='shoot'
 function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
 </script>
 <script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script>/*sl-audio-v1*/(function(){
+document.querySelectorAll('.audio-player').forEach(function(wrap){
+  var audio=wrap.querySelector('audio'),btn=wrap.querySelector('.audio-btn'),seek=wrap.querySelector('.audio-seek'),
+      cur=wrap.querySelector('.audio-current'),dur=wrap.querySelector('.audio-duration'),
+      icPlay=wrap.querySelector('.ic-play'),icPause=wrap.querySelector('.ic-pause'),icLoad=wrap.querySelector('.ic-load'),
+      seeking=false,wasPlaying=false;
+  function fmt(s){if(!isFinite(s)||s<0)s=0;var m=Math.floor(s/60),sc=Math.floor(s%60);return m+':'+(sc<10?'0':'')+sc}
+  function icon(state){icPlay.style.display=state==='play'?'block':'none';icPause.style.display=state==='pause'?'block':'none';icLoad.style.display=state==='load'?'block':'none'}
+  function fill(pct){seek.style.background='linear-gradient(90deg,#5261c2 '+pct+'%,rgba(52,58,94,.16) '+pct+'%)'}
+  icon('play');fill(0);
+  btn.addEventListener('click',function(){
+    if(audio.paused){if(audio.readyState<2)icon('load');audio.play().catch(function(){icon('play')})}
+    else audio.pause();
+  });
+  audio.addEventListener('waiting',function(){icon('load')});
+  audio.addEventListener('playing',function(){icon('pause');wrap.classList.add('is-playing')});
+  audio.addEventListener('pause',function(){icon('play');wrap.classList.remove('is-playing')});
+  audio.addEventListener('ended',function(){icon('play');wrap.classList.remove('is-playing');seek.value=0;fill(0);cur.textContent='0:00'});
+  audio.addEventListener('loadedmetadata',function(){dur.textContent=fmt(audio.duration)});
+  audio.addEventListener('timeupdate',function(){
+    if(seeking)return;
+    cur.textContent=fmt(audio.currentTime);
+    var pct=audio.duration?audio.currentTime/audio.duration*1000:0;
+    seek.value=pct;fill(pct/10);
+  });
+  seek.addEventListener('input',function(){
+    if(!seeking){wasPlaying=!audio.paused;seeking=true}
+    var pct=seek.value/10;fill(pct);
+    cur.textContent=fmt(audio.duration?seek.value/1000*audio.duration:0);
+  });
+  seek.addEventListener('change',function(){
+    if(audio.duration)audio.currentTime=seek.value/1000*audio.duration;
+    seeking=false;
+    if(wasPlaying)audio.play().catch(function(){});
+  });
+});
+})();</script>
 </body>
 </html>
