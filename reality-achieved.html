@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Starlight — Ті самі слова</title>
+<title>Starlight — Ти вже там, куди йдеш</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -19,7 +19,7 @@ canvas{position:fixed;inset:0;z-index:0}
 .back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(52,58,94,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
 .back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
 .page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
-.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(38px,7.2vw,64px);letter-spacing:.07em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
 .page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(52,58,94,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
 .divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
 .div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
@@ -29,49 +29,27 @@ canvas{position:fixed;inset:0;z-index:0}
 .section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
 .section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
 .section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:rgba(138,176,255,.9);text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#c8d8ff}
 .hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
 .hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
 .hero-quote::before{top:0}
 .hero-quote::after{bottom:0}
 .hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
 .hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(52,58,94,.4)}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
-.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
-.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
-.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
-.card:hover::before{opacity:1}
-.card-icon{font-size:28px;margin-bottom:14px;display:block}
-.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
-.card-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.92)}
-.tcard{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:26px 28px;margin-bottom:16px;transition:all .4s;position:relative;overflow:hidden}
-.tcard::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
-.tcard:hover{background:rgba(52,58,94,.09);border-color:rgba(52,58,94,.24);transform:translateY(-3px)}
-.tcard:hover::before{opacity:1}
-.tcard-q{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:20px;line-height:1.3;color:rgba(232,238,255,.98);margin-bottom:18px;letter-spacing:.02em}
-.reading{display:flex;gap:13px;align-items:flex-start;padding:12px 0}
-.reading+.reading{border-top:1px solid rgba(52,58,94,.08)}
-.reading-ico{font-size:14px;line-height:1.6;flex-shrink:0;width:20px;text-align:center}
-.reading-body{flex:1}
-.reading-tag{display:block;font-size:9.5px;font-weight:400;letter-spacing:.24em;text-transform:uppercase;margin-bottom:5px}
-.reading-text{font-size:14px;font-weight:300;line-height:1.72;color:rgba(36,40,68,.9)}
-.r-green .reading-tag{color:rgba(150,214,165,.95)}
-.r-red .reading-tag{color:rgba(232,142,150,.95)}
-.r-resp .reading-tag{color:rgba(212,175,110,.95)}
-.r-resp .reading-text{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;line-height:1.55;color:rgba(226,208,172,.95)}
 .highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(52,58,94,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
 .highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
 .highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
-.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
-.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
-.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
-.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
-.question-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(52,58,94,.35);margin-bottom:18px}
-.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,3.6vw,34px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.35}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:19px;color:rgba(226,190,128,1)}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(110,200,160,.45),transparent)}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(220,240,230,.92);margin:0}
+.soft em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:19px;color:rgba(158,235,196,1)}
 .final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
 .final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
 .final-quote::before{top:0}
 .final-quote::after{bottom:0}
-.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:640px;margin:0 auto}
 .final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
 @keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
 .shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
@@ -88,21 +66,10 @@ html{color:rgba(52,58,94,.9)!important}
 .section p a:hover{color:#5261c2!important}
 .highlight em,.final-text strong{color:#946717!important}
 .soft em{color:#1f7a4d!important}
-.warn em{color:#b23c2e!important}
-.warn p,.objection p{color:rgba(96,44,32,.92)!important}
-.tag.red{color:#b23c2e!important}.tag.gold{color:#946717!important}.tag.green{color:#1f7a4d!important}
-.legend-txt{color:rgba(52,58,94,.82)!important}.legend-txt b{color:#242844!important}
-.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
-.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
-.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
-.phrase-icon{color:#946717!important}
 .highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
 .highlight p{color:rgba(36,40,68,.9)!important}
 .soft{background:linear-gradient(135deg,rgba(31,122,77,.10),rgba(82,97,194,.05))!important;border-color:rgba(31,122,77,.28)!important}
 .soft p{color:rgba(30,60,46,.92)!important}
-.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
-.objection{background:linear-gradient(135deg,rgba(178,60,46,.09),rgba(200,150,60,.05))!important;border-color:rgba(178,60,46,.22)!important}
-.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
 .final-text{color:rgba(52,58,94,.9)!important}
 .nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
 .nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
@@ -133,17 +100,6 @@ html{color:rgba(52,58,94,.9)!important}
 .audio-seek::-moz-range-track{height:4px;border-radius:4px;background:transparent}
 .audio-seek::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:#fff;border:2px solid #7a5fbe;box-shadow:0 1px 4px rgba(52,58,94,.4);transition:transform .2s}
 .audio-seek:hover::-moz-range-thumb{transform:scale(1.25)}
-
-/* sl-light-v1-ext — компоненти Стосунки, яких не було в reality-* */
-.phrase-said,.tcard-q{color:#242844!important}
-.reply-text{color:rgba(36,40,68,.92)!important}
-.means-label,.marker,.list-num{color:#946717!important}
-.reply-label,.ctx-ok,.r-green .reading-tag{color:#1f7a4d!important}
-.ctx-bad,.r-red .reading-tag{color:#b23c2e!important}
-.r-resp .reading-tag{color:#946717!important}
-.r-resp .reading-text{color:rgba(36,40,68,.9)!important}
-.col-label{color:#242844!important}
-.emergency-label,.emergency-num{color:#b23c2e!important}
 </style>
 </head>
 <body>
@@ -152,12 +108,12 @@ html{color:rgba(52,58,94,.9)!important}
 
 <div class="content">
   <div class="header">
-    <a class="back" href="toxic.html">← Токсичні стосунки</a>
+    <a class="back" href="reality.html">← Рівні сприйняття</a>
     <span class="page-logo">Starlight</span>
   </div>
 
-  <h1 class="page-title">Ті самі слова</h1>
-  <p class="page-subtitle">Турбота чи контроль — вирішує не фраза</p>
+  <h1 class="page-title">Ти вже там, куди йдеш</h1>
+  <p class="page-subtitle">Життя — лише сегмент того, що вже відбулося</p>
 
   <div class="audio-player" style="opacity:0;animation:riseIn 1s .8s ease forwards">
     <button class="audio-btn" type="button" aria-label="Відтворити аудіоверсію">
@@ -172,120 +128,82 @@ html{color:rgba(52,58,94,.9)!important}
       </div>
       <input class="audio-seek" type="range" min="0" max="1000" value="0" step="1" aria-label="Перемотка аудіо">
     </div>
-    <audio preload="none" src="audio/care-or-control.mp3"></audio>
+    <audio preload="none" src="audio/reality-achieved.mp3"></audio>
   </div>
 
   <div class="section" style="animation-delay:.9s">
     <div class="hero-quote">
-      <div class="hero-text">"Ті самі слова бувають турботою — і бувають повідком. Річ не в питанні, а в тому, що стоїть за ним"</div>
-      <div class="hero-author">Чому однакові фрази читаються по-різному</div>
+      <div class="hero-text">"Та, що щойно це промовила, — уже не існує."</div>
+      <div class="hero-author">the you that's reading this right now, no longer exist</div>
     </div>
-    <p>Ці п'ять фраз легко назвати токсичними — і так само легко образитися на цей ярлик. Бо кожну з них хтось каже сто разів на день без жодного зла: із турботи, цікавості чи страху. Токсичною їх робить не словник, а контекст — навіщо це кажуть і що стається, коли ти не ведешся. Тож дивись не на фразу, а на два її прочитання — і на те, що можна відповісти.</p>
+    <p>Це стається постійно, щодня, з кожною — і водночас увага чіпляється за майбутнє й минуле, хоча жодне з них не існує. Життя опиняється зосередженим навколо того, чого немає, а стрічки соцмереж лише заглиблюють у цю «реальність» цілими днями.</p>
   </div>
 
   <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
 
   <div class="section" style="animation-delay:1.1s">
-    <h2 class="section-title">П'ять фраз із подвійним дном</h2>
-    <p>🟢 — коли це щира турбота. 🔴 — коли за тими самими словами ховається контроль. 💬 — що можна відповісти, якщо це друге.</p>
-
-    <div style="margin-top:20px">
-      <div class="tcard">
-        <div class="tcard-q">«А ти впевнений, що це хороша ідея?»</div>
-        <div class="reading r-green"><div class="reading-ico">🟢</div><div class="reading-body"><span class="reading-tag">Турбота</span><div class="reading-text">Щире занепокоєння: людина хоче, щоб ти зважив ризики, і прийме будь-яке твоє рішення.</div></div></div>
-        <div class="reading r-red"><div class="reading-ico">🔴</div><div class="reading-body"><span class="reading-tag">Контроль</span><div class="reading-text">Звучить на кожен твій крок і лишає тебе з сумнівом, а не з підтримкою. Мета — щоб ти не довіряв власному вибору.</div></div></div>
-        <div class="reading r-resp"><div class="reading-ico">💬</div><div class="reading-body"><span class="reading-tag">Що відповісти</span><div class="reading-text">«Дякую, що переживаєш. Я все зважив і вирішив так. Мені потрібна твоя підтримка, а не дозвіл.»</div></div></div>
-      </div>
-
-      <div class="tcard">
-        <div class="tcard-q">«Чому ти так реагуєш, я ж просто пожартував»</div>
-        <div class="reading r-green"><div class="reading-ico">🟢</div><div class="reading-body"><span class="reading-tag">Турбота</span><div class="reading-text">Жарт справді не зайшов — людина розгублена й готова вибачитись.</div></div></div>
-        <div class="reading r-red"><div class="reading-ico">🔴</div><div class="reading-body"><span class="reading-tag">Контроль</span><div class="reading-text">Прикриття для шпильки: спершу роблять боляче, а тоді твій біль стає твоєю ж проблемою («жартів не розумієш»).</div></div></div>
-        <div class="reading r-resp"><div class="reading-ico">💬</div><div class="reading-body"><span class="reading-tag">Що відповісти</span><div class="reading-text">«Мені не смішно, і справа не в почутті гумору. Якщо це образливо — я так і скажу.»</div></div></div>
-      </div>
-
-      <div class="tcard">
-        <div class="tcard-q">«А скільки ти за це заплатив?»</div>
-        <div class="reading r-green"><div class="reading-ico">🟢</div><div class="reading-body"><span class="reading-tag">Турбота</span><div class="reading-text">Звичайна цікавість чи бажання порівняти ціни — у багатьох сім'ях це просто манера спілкування.</div></div></div>
-        <div class="reading r-red"><div class="reading-ico">🔴</div><div class="reading-body"><span class="reading-tag">Контроль</span><div class="reading-text">За питанням завжди йде оцінка: «дорого / тебе надурили / нащо воно тобі». Це нагляд за твоїми грошима, а не інтерес.</div></div></div>
-        <div class="reading r-resp"><div class="reading-ico">💬</div><div class="reading-body"><span class="reading-tag">Що відповісти</span><div class="reading-text">«Мені це по кишені й воно мене тішить. Ціну лишу при собі.»</div></div></div>
-      </div>
-
-      <div class="tcard">
-        <div class="tcard-q">«А хто тобі сказав, що ти це можеш?»</div>
-        <div class="reading r-green"><div class="reading-ico">🟢</div><div class="reading-body"><span class="reading-tag">Турбота</span><div class="reading-text">Буквальне питання про джерело — хто доручив, звідки взяв. Нейтральне, хоч і рідко.</div></div></div>
-        <div class="reading r-red"><div class="reading-ico">🔴</div><div class="reading-body"><span class="reading-tag">Контроль</span><div class="reading-text">Підрізання крил: натяк, що ти не годен і мусиш у когось «випросити дозвіл» бути спроможним. З п'яти ця найближча до знецінення.</div></div></div>
-        <div class="reading r-resp"><div class="reading-ico">💬</div><div class="reading-body"><span class="reading-tag">Що відповісти</span><div class="reading-text">«Мені не потрібен чийсь дозвіл, щоб спробувати. Я сам вирішую, що мені під силу.»</div></div></div>
-      </div>
-
-      <div class="tcard">
-        <div class="tcard-q">«Ти ж мене не кинеш через це?»</div>
-        <div class="reading r-green"><div class="reading-ico">🟢</div><div class="reading-body"><span class="reading-tag">Турбота</span><div class="reading-text">Жива вразливість — людина боїться і просить підтримки, надто після власної помилки.</div></div></div>
-        <div class="reading r-red"><div class="reading-ico">🔴</div><div class="reading-body"><span class="reading-tag">Контроль</span><div class="reading-text">Затикання рота: твою справедливу претензію переводять на «то ти мене вже не любиш?», і ось ти вже втішаєш кривдника замість розмови по суті.</div></div></div>
-        <div class="reading r-resp"><div class="reading-ico">💬</div><div class="reading-body"><span class="reading-tag">Що відповісти</span><div class="reading-text">«Я нікуди не тікаю. Але й претензію не заберу — про неї ми зараз і поговоримо.»</div></div></div>
-      </div>
-    </div>
+    <h2 class="section-title">Справжній YouTube — це кімната навколо</h2>
+    <p>Прямо зараз ти в теперішньому моменті — але спрямованому не туди: у чужу реальність на екрані. Спробуй просто відвернути голову від телефону чи телевізора — і подивитись на кімнату навколо. Це і є «справжній ютуб», справжня гра — на противагу розважальному контенту.</p>
   </div>
 
   <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
 
   <div class="section" style="animation-delay:1.3s">
-    <h2 class="section-title">Три питання, що виявляють різницю</h2>
-    <p>Не треба вгадувати чужі наміри. Досить чесно відповісти собі на три речі.</p>
-
-    <div class="highlight">
-      <p><em>Це раз чи система? Це щоб зрозуміти тебе — чи щоб прогнути? І головне — що стається, коли ти не ведешся: від тебе відступають чи ображаються й перекручують?</em> Одна фраза не доводить нічого. Патерн доводить усе. Слова однакові — різниця в тому, залишаєшся ти собою поруч чи меншаєш.</p>
-    </div>
+    <h2 class="section-title">Doom-scrolling і чужі часові лінії</h2>
+    <p>Поглинутість скролінгом чи відео доходить до того, що власна фізична реальність починає здаватися «онімілою». Тяга до тіктоку й ютубу — це бажання «пограти» в чужі часові лінії, прожити чужі життя: звідси й феномен парасоціальних зв'язків, і коментарі під відео, де незнайомі люди діляться найособистішим із людиною на екрані, яка насправді не перебуває в їхній реальності — лише зображення, чий голос усе одно присутній, дивишся ти на екран чи вбік.</p>
   </div>
 
   <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
 
   <div class="section" style="animation-delay:1.5s">
-    <h2 class="section-title">Як відповідати — загальні правила</h2>
-    <p>Кілька принципів, які працюють для будь-якої з цих фраз, коли це таки контроль.</p>
-
-    <div class="cards">
-      <div class="card">
-        <span class="card-icon">🧊</span>
-        <div class="card-title">Не виправдовуйся</div>
-        <div class="card-text">Довгі пояснення = ти вже прийняв, що винен. Спокійно констатуй свою позицію, а не захищай її.</div>
-      </div>
-      <div class="card">
-        <span class="card-icon">📍</span>
-        <div class="card-title">Факт, а не діагноз</div>
-        <div class="card-text">Не «ти маніпулюєш», а «мені так некомфортно, і я так не хочу». Говори про себе, не чіпляй ярлик.</div>
-      </div>
-      <div class="card">
-        <span class="card-icon">🤝</span>
-        <div class="card-title">Тепло і межа разом</div>
-        <div class="card-text">Можна любити людину — і не пускати за межу. Одне іншому не заважає, це не «або-або».</div>
-      </div>
-      <div class="card">
-        <span class="card-icon">🔁</span>
-        <div class="card-title">Одна спроба — і досить</div>
-        <div class="card-text">Раз поясни спокійно. Не почули чи перекрутили — тему закрито. По колу ходити не обов'язково.</div>
-      </div>
+    <h2 class="section-title">Втечі не існує</h2>
+    <p>Прокручування стрічки відчувається як утеча від нудьги. Але втечі не існує — ти завжди присутня в теперішньому моменті, просто зміщена на «чужі» перспективи, які не відповідають твоїй власній суті: на думки й самовираження інших людей, що складаються в загальну картину сприйняття цієї миті.</p>
+    <div class="highlight">
+      <p><em>Єдиний справжній контроль, яким ти володієш, — це твоє сприйняття.</em> Не стрічка, не алгоритм, не те, що показують далі, — тільки те, куди звертаєш увагу.</p>
     </div>
   </div>
 
   <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
 
   <div class="section" style="animation-delay:1.7s">
-    <h2 class="section-title">Найпростіша перевірка</h2>
-    <p>Коли не знаєш, турбота це чи контроль, — спитай не про фразу, а про себе.</p>
+    <h2 class="section-title">Присутність — не одна крапка</h2>
+    <p>Присутність — не щось одиничне чи локалізоване, на кшталт «я тут одна, я саме тут». І до медитації, і після того, як розплющила очі, ти лишаєшся присутньою — присутність не прив'язана до конкретного стану чи практики. Ідеологію «стримування» себе в певних рамках варто називати просто его.</p>
+  </div>
 
-    <div class="question-card">
-      <div class="question-label">Запитай себе</div>
-      <div class="question-main">"Поруч із цією людиною я стаю впевненішим — чи все частіше сумніваюся в собі?"</div>
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Емоція — це ярлик, не рамка</h2>
+    <p>Ярлики на емоціях — гнів, депресія, збудження — створюють відчуття виходу за якісь «рамки», хоча по суті це лише позначки на пережитому відчутті. Єдине справжнє завдання — бути усвідомленою щодо того, що відбувається, замість додавати моменту контекст і перетворювати його на історію.</p>
+    <div class="soft">
+      <p><em>Не потрібно фіксуватись на кожній «миті» окремо,</em> ніби час цокає, як годинник: раз, два, три. Всесвіт так не влаштований — усе єдине. Увага повертається до присутності — і попередні миті просто йдуть з усвідомлення самі.</p>
     </div>
   </div>
 
   <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
 
-  <div class="section" style="animation-delay:1.85s">
-    <h2 class="section-title">Висновок</h2>
+  <div class="section" style="animation-delay:2.1s">
+    <h2 class="section-title">Клацання, якого вже нема</h2>
+    <p>Момент клацання пальцями перестає існувати вже до того, як про нього встигаєш сказати, — а виявляється, він не існував і до того, як стався. Тому й «майбутнього» у строгому сенсі немає, якщо все є неіснуючим. Той самий парадокс — докладніше в нарисах <a href="reality-freewill.html">«Автор власного сценарію»</a> та <a href="reality-onlyself.html">«Стосунків не існує»</a>. Перемотати відео назад теж не означає повернутись у минуле: це стається вже в новому теперішньому — про це і <a href="reality-socials.html">«Людина, якої вже немає»</a>.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.3s">
+    <h2 class="section-title">Смерть уже відбулася</h2>
+    <p>Старіння і смерть неминучі — але смерть тут описана просто як зміна фокусу усвідомленості, так само, як увага щойно змістилась від клацання до голосу, що говорить. Тілом — «мішком м'яса», що колись опиниться в землі, — ти ніколи й не була.</p>
+    <div class="highlight">
+      <p><em>Смерть — уже щось завершене,</em> подібно до клацання пальців, яке скінчилося й більше не має значення. У певному сенсі ти вже мертва — тому боятися смерті не варто. Досить жити в мирі.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.5s">
+    <h2 class="section-title">Цілі вже досягнуті</h2>
+    <p>Твої цілі вже досягнуті. Ти вже мільйонерка. Ти вже знайшла кохання всього життя. Твої діти вже виросли й досягли успіху. А теперішнє життя — лише один із сегментів переживання цього вже здійсненого досвіду.</p>
     <div class="final-quote">
-      <div class="final-text">Не поспішай навішувати ярлик — але й не давай переконати себе, що тобі здалося. <strong>Токсична не фраза, а те, що вона робить із тобою раз за разом.</strong> Ти маєш право і питати, і відповідати — і лишатися собою в обох випадках.</div>
+      <div class="final-text">Саме в цьому — краса існування: біль і краса разом є вираженням однієї й тієї самої свідомості. Немає ні потойбіччя, ні «часу до всього» — <strong>є лише вираження в кожній миті, і ти вже там, куди йдеш.</strong></div>
     </div>
   </div>
 
