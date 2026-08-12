@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Правильного рішення не існує</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(52,58,94,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(38px,7.4vw,66px);letter-spacing:.07em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(52,58,94,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:rgba(138,176,255,.9);text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#c8d8ff}
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(52,58,94,.4)}
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(52,58,94,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:19px;color:rgba(226,190,128,1)}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(110,200,160,.45),transparent)}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(220,240,230,.92);margin:0}
+.soft em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:19px;color:rgba(158,235,196,1)}
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(52,58,94,.35);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:640px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.75);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:rgba(245,225,180,1)}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#7a5fbe!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#5261c2!important}
+.highlight em,.final-text strong{color:#946717!important}
+.soft em{color:#1f7a4d!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.soft{background:linear-gradient(135deg,rgba(31,122,77,.10),rgba(82,97,194,.05))!important;border-color:rgba(31,122,77,.28)!important}
+.soft p{color:rgba(30,60,46,.92)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+
+/* sl-audio-v1 — кастомний аудіоплеєр */
+.audio-player{display:flex;align-items:center;gap:16px;max-width:460px;margin:0 auto 64px;padding:10px 22px 10px 10px;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.14);border-radius:100px;transition:border-color .4s,background .4s}
+.audio-player:hover{border-color:rgba(148,103,23,.35);background:rgba(52,58,94,.08)}
+.audio-btn{flex-shrink:0;width:40px;height:40px;border-radius:50%;border:none;cursor:pointer;background:linear-gradient(135deg,#5261c2,#7a5fbe,#a9772e);display:flex;align-items:center;justify-content:center;color:#fff;transition:transform .3s,box-shadow .3s;box-shadow:0 2px 10px rgba(82,97,194,.35)}
+.audio-btn:hover{transform:scale(1.07);box-shadow:0 4px 16px rgba(82,97,194,.5)}
+.audio-btn:active{transform:scale(.96)}
+.audio-btn .ic-play{margin-left:2px}
+.audio-btn .ic-load{animation:audioSpin .9s linear infinite}
+@keyframes audioSpin{to{transform:rotate(360deg)}}
+.audio-player.is-playing .audio-btn{box-shadow:0 0 0 5px rgba(122,95,190,.14),0 4px 16px rgba(82,97,194,.5)}
+.audio-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.audio-row{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.audio-label{font-size:9px;font-weight:300;letter-spacing:.28em;text-transform:uppercase;color:rgba(52,58,94,.45);white-space:nowrap}
+.audio-time{font-size:10px;font-weight:300;letter-spacing:.03em;color:rgba(52,58,94,.4);white-space:nowrap;font-variant-numeric:tabular-nums}
+.audio-seek{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:4px;background:rgba(52,58,94,.16);outline:none;cursor:pointer;margin:0;display:block}
+.audio-seek::-webkit-slider-runnable-track{height:4px;border-radius:4px;background:transparent}
+.audio-seek::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:#fff;border:2px solid #7a5fbe;margin-top:-4px;box-shadow:0 1px 4px rgba(52,58,94,.4);transition:transform .2s}
+.audio-seek:hover::-webkit-slider-thumb{transform:scale(1.25)}
+.audio-seek::-moz-range-track{height:4px;border-radius:4px;background:transparent}
+.audio-seek::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:#fff;border:2px solid #7a5fbe;box-shadow:0 1px 4px rgba(52,58,94,.4);transition:transform .2s}
+.audio-seek:hover::-moz-range-thumb{transform:scale(1.25)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="reality.html">← Рівні сприйняття</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+    <h1 class="page-title">Правильного рішення не існує</h1>
+  <p class="page-subtitle">Дверей нескінченно — тому жодні з них не хибні</p>
+
+  <div class="audio-player" style="opacity:0;animation:riseIn 1s .8s ease forwards">
+    <button class="audio-btn" type="button" aria-label="Відтворити аудіоверсію">
+      <svg class="ic-play" viewBox="0 0 24 24" width="14" height="14"><path d="M6 4l14 8-14 8V4z" fill="currentColor"/></svg>
+      <svg class="ic-pause" viewBox="0 0 24 24" width="14" height="14" style="display:none"><path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" fill="currentColor"/></svg>
+      <svg class="ic-load" viewBox="0 0 24 24" width="16" height="16" style="display:none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="2" fill="none" opacity=".25"/><path d="M12 3.5a8.5 8.5 0 018.5 8.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+    </button>
+    <div class="audio-main">
+      <div class="audio-row">
+        <span class="audio-label">Аудіоверсія</span>
+        <span class="audio-time"><span class="audio-current">0:00</span> / <span class="audio-duration">–:–</span></span>
+      </div>
+      <input class="audio-seek" type="range" min="0" max="1000" value="0" step="1" aria-label="Перемотка аудіо">
+    </div>
+    <audio preload="none" src="audio/reality-right.mp3"></audio>
+  </div>
+
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Якщо варіантів нескінченно багато — жоден із них не може бути тим самим."</div>
+      <div class="hero-author">It's Impossible To Make The Right Decision</div>
+    </div>
+    <p>Порахуй, скільки рішень доступно тобі просто зараз. Не три і не десять — їх стільки, скільки ти встигнеш вигадати, і ще стільки ж, скільки не встигнеш. У нескінченному наборі не буває одного «того самого». Правильність не міститься в самому рішенні — вона накладається зверху, і накладаєш її ти.</p>
+    <p>Тому питання «а раптом я оберу неправильно?» не має відповіді не тому, що вона складна, а тому, що питання побудоване з неіснуючої деталі.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Кожен момент — це двері</h2>
+    <p>Ти повернула голову — і вже інша гілка досвіду. Взяла зі столу ручку — і день пішов інакше, ніж якби не взяла: інша думка, інший рух, інша випадкова фраза через годину. Це не метафора великих життєвих поворотів, це буквальна механіка кожної секунди.</p>
+    <p>Життя не має однієї магістралі, з якої можна з'їхати. Воно розгортається через нескінченну кількість дрібних розгалужень, більшість із яких ти навіть не помічаєш. Ідея «я збилася зі свого шляху» вимагає, щоб десь існував один-єдиний правильний маршрут — а його немає, бо дверей забагато, щоб серед них була головна.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">«Правильно» — це прочитання</h2>
+    <p>Мозок працює як декодер: частоти, тиск, електричні сигнали перетворюються на те, що ти звеш світом. Він не приймає реальність готовою — він її розшифровує. І «правильне» чи «неправильне» народжується там само, на етапі розшифровки, а не в самій події.</p>
+    <p>У «Матриці» героєві пропонують вибір у сцені, де результат ніби вже відомий наперед, — і саме тому сцена запам'ятовується: вибір там справжній і водночас декоративний. Про цей парадокс — <a href="reality-choice.html">«Вибір без вибору»</a>; про мозок, що збирає картинку, — <a href="reality-body.html">«Тіло — сенсорна ілюзія»</a>.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Стратегія вирішує менше, ніж здається</h2>
+    <p>Про підприємців люблять писати, що вони одержимі пошуком правильних рішень. Але придивись до будь-якої історії успіху заднім числом: у ній завжди знаходиться момент, який тоді виглядав помилкою. Результат склався таким, яким склався, — і «правильність» дописали до нього потім, коли вже було відомо, чим усе закінчилось.</p>
+    <p>Тому в бізнесі — як і будь-де — вирішує не сама схема, а стан того, хто її виконує. Дві людини з однаковим планом отримають різне, бо план не робить нічого сам.</p>
+    <div class="highlight">
+      <p><em>Три риси, які визначають результат у будь-якій справі:</em> фокус — здатність довго дивитися в один бік; терпіння — готовність не бачити плодів і не кидати; і толерантність до фрустрації — уміння лишатися в справі саме тоді, коли вона дратує. Ніша, ринок і стратегія стоять після них, а не замість них.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Рішення заради того, як це виглядатиме</h2>
+    <p>Тепер найчастіша підміна. Люди рідше обирають те, що справді вважають вірним, і частіше — те, що добре виглядатиме збоку. Яка робота звучить пристойно. Що скажуть удома. Як це поясниш тим, хто спитає.</p>
+    <p>Це турбота про власний образ, а не про власне життя. І вона коштує рівно стільки: життя проживається одне, а образ обслуговується щодня. Про механіку цієї підміни — <a href="reality-image.html">«Ти ніколи не мала цілей»</a>.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Вибір уже стався у відчутті</h2>
+    <p>Обираєш між червоною й синьою машиною — і думаєш, що зважуєш. Насправді відповідь уже прозвучала всередині, ще до першого аргументу; далі розум просто добирає обґрунтування під те, що вже обрано. Свідомий контроль тут лише один: наскільки добре ти чуєш це відчуття крізь шум доводів.</p>
+    <p>Саме тому «зважити ще раз» майже ніколи не змінює рішення — воно змінює тільки те, наскільки впевнено ти його озвучиш. Докладніше про рішення, ухвалені раніше, ніж ти їх помітила, — <a href="reality-decision.html">«Рішення, яких не варто робити»</a>.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.1s">
+    <h2 class="section-title">Не тікай у чужу нішу</h2>
+    <p>Уяви людину, яка продає паперові вироби. Нудно, непривабливо, ніхто про це не знімає відео. І саме в цій справі вона могла б дійти до мільярдів — просто тому, що знає її глибше за всіх. А натомість кидає все й іде в трейдинг або дропшипінг, бо в когось на екрані там вийшло.</p>
+    <p>Чужий шлях виглядає легшим рівно тому, що ти бачиш його з кінця. Усі шляхи однаково важкі — просто важкість у кожному своя, і вона стає видимою лише зсередини.</p>
+    <div class="soft">
+      <p><em>Втеча від труднощів не працює як переміщення.</em> Ті самі труднощі чекають у новій справі, тільки з іншими назвами — і ти прийдеш до них уже без років, які вклала в попередню. Перевір себе чесно: ти йдеш до чогось — чи від чогось?</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.3s">
+    <h2 class="section-title">Ти — єдина опора, яка завжди в наявності</h2>
+    <p>Інтернет одночасно ресурс і найкраще у світі відволікання. Багато з тих, хто вчить заробляти онлайн, свій результат отримали, звернувшись усередину себе, — а транслюють назовні вже готову схему. Дивитися, як хтось слухає себе, — не те саме, що слухати себе.</p>
+    <p>Можна не мати нічого: ні грошей, ні зв'язків, ні плану. Але сама ти є завжди — це єдиний ресурс, який неможливо втратити й неможливо не мати з собою. Тому заглиблення у власний досвід практичніше за ще одне відео про чужий.</p>
+    <p>Звідси й неприємна, але чесна частина: значного не буває без роботи над собою. І чужий приклад тут не працює як аргумент — те, що хтось досяг успіху попри руйнівні звички, не є доказом, що вони нешкідливі. Це доказ лише того, що людина витягла результат усупереч, а не завдяки.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.5s">
+    <h2 class="section-title">Думки — святилище й лабораторія</h2>
+    <p>Твої думки — єдиний простір, куди фізично ніхто не може зайти. Це святилище: туди не входять без твого дозволу. І це ж лабораторія: саме там збирається все, що потім виявиться зовні у вигляді дій і результатів. Зовнішній крок — уже наслідок, чистовик того, що написалося всередині.</p>
+    <p>Внутрішнє відчуття веде як навігатор. Іноді маршрут виглядає нелогічним: об'їзд, гак, зупинка там, де хотілося їхати прямо. Ти можеш кожні п'ять хвилин перевіряти, чи правильно він веде, — і саме ця перевірка з'їдає дорогу. Довіра тут дешевша за контроль.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.7s">
+    <h2 class="section-title">Гора без вершини</h2>
+    <p>Той факт, що ти взагалі про це читаєш, уже дещо каже: твоя внутрішня система працює й веде тебе. Це не нова інструкція — радше нагадування про те, що вже й так відбувається.</p>
+    <p>А підйом не має вершини. Немає точки, після якої «все, дійшла» — і в цьому не трагедія, а суть: цінувати варто сам підйом, бо він тимчасовий. Так само й із питанням, що буде після смерті: цього не знає ніхто, і спроба «зрозуміти» тут — та сама гра в правильну відповідь, просто на найбільшій дистанції. Про неї — <a href="reality-birthdeath.html">«Народження і смерть»</a>.</p>
+    <p>Минуле теж не окрема лінія, куди можна повернутися по докази. Воно існує лише як думка, що виникає зараз, — і майбутнє так само. Обидва доступні тільки з однієї точки, і саме з неї ухвалюються всі рішення.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.9s">
+    <h2 class="section-title">Рішення живе в межах уваги</h2>
+    <p>Ти не бачиш того, що за твоєю головою. Для сприйняття цього просто немає — воно з'явиться рівно тоді, коли ти обернешся. Так само й уся решта: у твоїй реальності існує те, що потрапило в поле усвідомлення, і нічого поза ним. Про цю межу — <a href="reality-background.html">«Темрява за головою»</a>.</p>
+    <p>Периферійний зір показує це найточніше. Прямо зараз по краях твого поля зору є речі, які ти весь час «бачиш», але не помічаєш, — доки не переведеш на них увагу. Нічого нового при цьому не з'явилося. Змінилося лише те, куди спрямований фокус.</p>
+    <div class="highlight">
+      <p><em>Ось чим насправді є свідоме рішення.</em> Не створенням нового варіанта з нічого, а актом уваги — поворотом до того, що вже було в полі. Ти не вигадуєш двері. Ти помічаєш ті, повз які ходила.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:3.1s">
+    <h2 class="section-title">Близькість, а не натиск</h2>
+    <p>Найглибше творення в природі відбувається не через зусилля, а через близькість: нове життя народжується з інтимності, а не з наполегливості. З власною реальністю працює той самий закон. Уважна, тісна, чесна взаємодія з тим, що вже є в тебе, створює більше, ніж тиск на обставини.</p>
+    <p>І тоді ділити рішення на правильні й неправильні стає просто нецікаво. Ти завжди права — бо обране тобою і є те, що сталося. І завжди неправа — бо поруч лежала нескінченність інших дверей. Обидва твердження істинні, і жодне з них не потребує від тебе виправдань.</p>
+    <p>Тіло, до речі, взагалі не приймає рішень — воно діє й відчуває. Свідомість тимчасово вдягає його, як маску, щоб побути тут у формі; ти дивишся на цю сторінку з того самого місця, з якого вона писалася. Про це — <a href="reality-freewill.html">«Автор власного сценарію»</a>.</p>
+    <div class="final-quote">
+      <div class="final-text">Правильного рішення не існує — існує лише те, яке ти вже чуєш усередині. <strong>Єдиний доступний вибір — почути його чи ще трохи поперевіряти маршрут.</strong></div>
+    </div>
+    <div class="question-card">
+      <div class="question-label">Питання без відповіді</div>
+      <div class="question-main">Якби ніхто не міг оцінити твоє рішення — ні схвалити, ні засудити — ти б обрала те саме?</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script>/*sl-audio-v1*/(function(){
+document.querySelectorAll('.audio-player').forEach(function(wrap){
+  var audio=wrap.querySelector('audio'),btn=wrap.querySelector('.audio-btn'),seek=wrap.querySelector('.audio-seek'),
+      cur=wrap.querySelector('.audio-current'),dur=wrap.querySelector('.audio-duration'),
+      icPlay=wrap.querySelector('.ic-play'),icPause=wrap.querySelector('.ic-pause'),icLoad=wrap.querySelector('.ic-load'),
+      seeking=false,wasPlaying=false;
+  function fmt(s){if(!isFinite(s)||s<0)s=0;var m=Math.floor(s/60),sc=Math.floor(s%60);return m+':'+(sc<10?'0':'')+sc}
+  function icon(state){icPlay.style.display=state==='play'?'block':'none';icPause.style.display=state==='pause'?'block':'none';icLoad.style.display=state==='load'?'block':'none'}
+  function fill(pct){seek.style.background='linear-gradient(90deg,#5261c2 '+pct+'%,rgba(52,58,94,.16) '+pct+'%)'}
+  icon('play');fill(0);
+  btn.addEventListener('click',function(){
+    if(audio.paused){if(audio.readyState<2)icon('load');audio.play().catch(function(){icon('play')})}
+    else audio.pause();
+  });
+  audio.addEventListener('waiting',function(){icon('load')});
+  audio.addEventListener('playing',function(){icon('pause');wrap.classList.add('is-playing')});
+  audio.addEventListener('pause',function(){icon('play');wrap.classList.remove('is-playing')});
+  audio.addEventListener('ended',function(){icon('play');wrap.classList.remove('is-playing');seek.value=0;fill(0);cur.textContent='0:00'});
+  audio.addEventListener('loadedmetadata',function(){dur.textContent=fmt(audio.duration)});
+  audio.addEventListener('timeupdate',function(){
+    if(seeking)return;
+    cur.textContent=fmt(audio.currentTime);
+    var pct=audio.duration?audio.currentTime/audio.duration*1000:0;
+    seek.value=pct;fill(pct/10);
+  });
+  seek.addEventListener('input',function(){
+    if(!seeking){wasPlaying=!audio.paused;seeking=true}
+    var pct=seek.value/10;fill(pct);
+    cur.textContent=fmt(audio.duration?seek.value/1000*audio.duration:0);
+  });
+  seek.addEventListener('change',function(){
+    if(audio.duration)audio.currentTime=seek.value/1000*audio.duration;
+    seeking=false;
+    if(wasPlaying)audio.play().catch(function(){});
+  });
+});
+})();</script>
+</body>
+</html>
