@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Навчання в Кореї: стипендія AMA+</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,140,200,.20) 0%,rgba(140,80,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(52,58,94,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(52,58,94,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(52,58,94,.78);margin-bottom:16px}
+.section p a{color:rgba(138,176,255,.9);text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#c8d8ff}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(52,58,94,.4)}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:30px;flex-shrink:0;width:36px;text-align:center;color:rgba(212,175,110,.85);line-height:1.1}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:10px}
+.reply-text{font-size:13px;font-weight:200;line-height:1.85;color:rgba(52,58,94,.8)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.72)}
+
+.checklist{margin-top:20px;display:grid;grid-template-columns:1fr;gap:10px}
+.check{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.12);border-radius:12px;padding:16px 20px;transition:all .35s}
+.check:hover{background:rgba(52,58,94,.09);border-color:rgba(52,58,94,.22)}
+.check-mark{flex-shrink:0;font-size:13px;line-height:1.7;color:rgba(212,175,110,.9)}
+.check-text{font-size:13px;font-weight:200;line-height:1.75;color:rgba(52,58,94,.8)}
+.check-text b{font-weight:400;color:rgba(36,40,68,.95)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(52,58,94,.82);margin:0 0 12px}
+.highlight p:last-child{margin-bottom:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(110,200,160,.45),transparent)}
+.soft p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(30,60,46,.92);margin:0 0 12px}
+.soft p:last-child{margin-bottom:0}
+.soft em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:#1f7a4d}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:#b23c2e}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(178,60,46,.06);border-color:rgba(178,60,46,.20)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;margin-bottom:14px}
+.col-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:15px;line-height:1.6;color:rgba(36,40,68,.88)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.72);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(52,58,94,.35);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.75);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:rgba(245,225,180,1)}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#7a5fbe!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#5261c2!important}
+.highlight em,.final-text strong{color:#946717!important}
+.soft em{color:#1f7a4d!important}
+.warn em{color:#b23c2e!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase,.check{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover,.check:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.rule-num,.check-mark{color:#946717!important}
+.check-text{color:rgba(36,40,68,.9)!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.soft{background:linear-gradient(135deg,rgba(31,122,77,.10),rgba(82,97,194,.05))!important;border-color:rgba(31,122,77,.28)!important}
+.soft p{color:rgba(30,60,46,.92)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#b23c2e!important}
+.col.good .col-label{color:#1f7a4d!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Корея: стипендія AMA+</h1>
+  <p class="page-subtitle">Як вступити до університету мистецтв</p>
+
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Понад тисяча заявок. Приймають п'ятнадцятьох."</div>
+      <div class="hero-author">За розповіддю студентки K'ARTS · канал FARANGIS JAHONGIRI</div>
+    </div>
+    <p>Уявлення про навчання за кордоном зазвичай впирається в гроші: квиток, житло, оплата семестру. AMA+ — це той рідкісний випадок, коли покривають майже все, включно з квитком і щомісячними виплатами. Ціна інша: конкурс, мова і чотири роки повної залученості.</p>
+    <p>Це не GKS — не та державна стипендія, про яку найчастіше пишуть. AMA+ фінансується по лінії ODA, міжнародної допомоги на розвиток, і працює вужче: підтримує мистецтво в країнах, що розвиваються. Приймаючою стороною виступає Korea National University of Arts — K'ARTS.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Що таке K'ARTS</h2>
+    <p>Це головний мистецький університет країни — за статусом його порівнюють із Сеульським національним, тільки в іншій системі координат: не наука й економіка, а кіно, театр, музика, танець, візуальне мистецтво, дизайн, традиційні корейські жанри.</p>
+    <p>Практичний бік цього статусу простий: випускники K'ARTS стоять за помітною частиною того, що світ бачить як «корейське кіно» — над «Паразитами», наприклад, працювала ціла група вихованців цього університету. Тобто це не просто диплом за кордоном, а вхід у конкретну професійну мережу.</p>
+    <p>Уся офіційна інформація живе на сайті університету — розділ Foreign Admission, підрозділ AMA+ Program, англійською та корейською. Усе, що написано нижче, — це орієнтир, а не документ: умови переглядають щороку, і остання правда завжди в актуальних guidelines на сайті.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Що покриває стипендія</h2>
+    <p>Список щедрий настільки, що в нього важко повірити з першого разу. Ось із чого він складається.</p>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">✈️</span>
+        <div class="card-title">Дорога і перший тиждень</div>
+        <div class="card-text">Оплачений авіаквиток до Кореї та одноразова виплата 200 000 вон одразу після приїзду — на перші побутові витрати, поки нічого ще не налагоджено.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🏠</span>
+        <div class="card-title">Щомісячні 800 000 вон</div>
+        <div class="card-text">Основна сума на проживання. Це не розкіш, але це та сума, за якої не треба паралельно шукати підробіток — а він тут і не вийшов би за часом.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎓</span>
+        <div class="card-title">Безкоштовне навчання</div>
+        <div class="card-text">Тюїшн покривається повністю на всі чотири роки бакалаврату. Плюс медична страховка — у Кореї це не формальність, а те, без чого лікування коштує дорого.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🗣️</span>
+        <div class="card-title">Мовні курси</div>
+        <div class="card-text">Якщо в тебе немає шостого рівня TOPIK, тобі оплачують три або шість місяців інтенсиву корейської вже в Кореї — до початку основного навчання.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎬</span>
+        <div class="card-title">Дипломна робота</div>
+        <div class="card-text">На четвертому курсі — 1 000 000 вон на випускний проєкт. Для кіно чи вистави це критично: диплом тут не текст, а робота, яку треба зняти або поставити.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📈</span>
+        <div class="card-title">Бонус за мову</div>
+        <div class="card-text">Високий рівень корейської додає ще 100 000 вон щомісяця протягом року. Мова тут винагороджується не символічно, а грошима.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌍</span>
+        <div class="card-title">Семестр за обміном</div>
+        <div class="card-text">Університет співпрацює з мистецькими школами по всьому світу — для кінорежисури це може бути семестр-два в нью-йоркській кіноакадемії.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⏳</span>
+        <div class="card-title">Додатковий семестр</div>
+        <div class="card-text">Якщо не встигаєш закрити програму вчасно, можна взяти ще один семестр — і він теж оплачується. Запас на випадок, коли проєкт не встигає дозріти.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Кому можна подаватися</h2>
+    <p>Формальні умови вужчі, ніж хотілося б, і саме на них найчастіше все закінчується ще до портфоліо.</p>
+    <div class="checklist">
+      <div class="check"><span class="check-mark">◆</span><span class="check-text"><b>Громадянство країни зі списку.</b> Програма адресована країнам, що розвиваються; перелік публікують на сайті університету. Україна в ньому є — поруч із Молдовою, Казахстаном, Узбекистаном, Киргизстаном, Таджикистаном та іншими. Список щороку переглядають, тож перед подачею звіряйся з guidelines поточного року.</span></div>
+      <div class="check"><span class="check-mark">◆</span><span class="check-text"><b>Жодного корейського сліду в документах.</b> Подвійне громадянство, одне з яких корейське, закриває шлях. Так само як і батько чи мати — громадяни Кореї.</span></div>
+      <div class="check"><span class="check-mark">◆</span><span class="check-text"><b>Реальна база у своїй сфері.</b> Не можна прийти на балет, ніколи не займавшись балетом. Оцінюють не диплом, а те, що ти вже вмієш і показуєш у портфоліо.</span></div>
+      <div class="check"><span class="check-mark">◆</span><span class="check-text"><b>Вік не має значення.</b> Обмежень немає — на курсах є люди й після тридцяти, зокрема самі корейці.</span></div>
+      <div class="check"><span class="check-mark">◆</span><span class="check-text"><b>Рівень TOPIK, який вимагає саме твій факультет.</b> Для акторської майстерності — шостий, найвищий. Для кінорежисури буває достатньо третього. Дивитися треба вимоги конкретної спеціальності, а не програми загалом.</span></div>
+    </div>
+    <div class="soft">
+      <p><em>На чому найчастіше зрізаються ще до портфоліо — не на таланті, а на дрібницях.</em> Забутий пункт про батьків, невідповідний рівень TOPIK для конкретного факультету, неуважно прочитані вимоги «своєї» спеціальності. Це та частина, яку можна закрити просто уважністю.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Мова — не деталь, а фундамент</h2>
+    <p>Це пункт, на якому найбільше ілюзій. Заняття ведуться корейською. Не «переважно», не «частково» — виключно. Гарна англійська тут не рятує: вона не дає ні зрозуміти лекцію, ні захистити свою ідею на розборі, ні просто домовитися з групою на зйомках.</p>
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">Ілюзія</div>
+        <div class="col-text">«Вивчу мову на місці, там же занурення»</div>
+        <div class="col-note">Занурення працює, але воно триває місяці, а перший семестр починається за розкладом. Приїхати з нулем — це витратити рік на те, щоб просто розуміти, чого від тебе хочуть.</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">Робоча стратегія</div>
+        <div class="col-text">Подаватися з третім-четвертим рівнем і добирати на курсах</div>
+        <div class="col-note">Мінімальний прохідний рівень плюс оплачені три-шість місяців інтенсиву в Кореї — цього вистачає, щоб зайти в програму не глухою.</div>
+      </div>
+    </div>
+    <p style="margin-top:20px">Тобто підготовка мови починається не після вступу, а задовго до подачі документів. Про те, як узагалі братися за нову мову й не кинути на третьому тижні, — на сторінках <a href="language-start.html">«З чого почати мову»</a> та <a href="language-methods.html">«Методи вивчення»</a>.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Пакет документів</h2>
+    <p>Збирається у двох версіях: електронній — для онлайн-заявки, і паперовій — її надсилають поштою вже після проходження відбору.</p>
+    <div class="checklist">
+      <div class="check"><span class="check-mark">◆</span><span class="check-text">Закордонний паспорт</span></div>
+      <div class="check"><span class="check-mark">◆</span><span class="check-text">Паспорти батьків або опікунів</span></div>
+      <div class="check"><span class="check-mark">◆</span><span class="check-text">Свідоцтво про народження</span></div>
+      <div class="check"><span class="check-mark">◆</span><span class="check-text">Заповнений бланк заявки — завантажується з сайту університету</span></div>
+      <div class="check"><span class="check-mark">◆</span><span class="check-text">Атестат про повну середню освіту або диплом коледжу чи університету</span></div>
+      <div class="check"><span class="check-mark">◆</span><span class="check-text">Табель оцінок</span></div>
+      <div class="check"><span class="check-mark">◆</span><span class="check-text">Три рекомендаційні листи</span></div>
+      <div class="check"><span class="check-mark">◆</span><span class="check-text">Сертифікат TOPIK</span></div>
+      <div class="check"><span class="check-mark">◆</span><span class="check-text">Портфоліо за вимогами свого факультету</span></div>
+      <div class="check"><span class="check-mark">◆</span><span class="check-text">Есе про себе</span></div>
+      <div class="check"><span class="check-mark">◆</span><span class="check-text">Есе про план навчання</span></div>
+      <div class="check"><span class="check-mark">◆</span><span class="check-text">Додаткові сертифікати — за бажанням</span></div>
+    </div>
+    <div class="highlight">
+      <p><em>Усе, що не англійською і не корейською, потребує перекладу, нотаріального завірення й апостиля.</em> Це найдовша частина підготовки й найчастіша причина, чому людина не встигає в дедлайн: сам збір і легалізація займають тижні, а не вечір.</p>
+      <p>Практичний висновок один: починати з документів, а не з портфоліо. Портфоліо ти доробиш у будь-який момент, а апостиль ставиться в чужому темпі.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.1s">
+    <h2 class="section-title">Портфоліо</h2>
+    <p>Єдиних вимог не існує — у кожного факультету вони свої, і дивитися треба сторінку саме своєї спеціальності. Щоб було зрозуміло, який це рівень конкретики, ось як це виглядає для напряму «Кіно, ТБ і мультимедіа», режисура.</p>
+    <div class="phrases">
+      <div class="phrase">
+        <div class="rule-num">1</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Короткометражний фільм власного виробництва</div>
+          <div class="reply-text">До 25 хвилин. Жорсткого мінімуму немає — двох-трьох хвилин теж достатньо, якщо в них є режисура. Довжина тут не аргумент.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="rule-num">2</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Титри й чітко вказана твоя роль</div>
+          <div class="reply-text">Хто що робив. Якщо все робила сама — так і написати, це не мінус. Відсутність кредитів читається гірше, ніж скромний бюджет.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="rule-num">3</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Один сценарій, написаний самостійно</div>
+          <div class="reply-text">Корейською або англійською. Це окремий елемент від фільму: показує не картинку, а мислення й структуру.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="rule-num">4</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Субтитри, якщо фільм іншою мовою</div>
+          <div class="reply-text">Переклад корейською або англійською обов'язковий. Робота, яку комісія не розуміє, просто не оцінюється.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="rule-num">5</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Підтвердження авторства</div>
+          <div class="reply-text">Порівняно нова вимога: лист від викладача чи роботодавця, а якщо ти самоучка — фото зі зйомок, чернетки, будь-які сліди процесу.</div>
+        </div>
+      </div>
+    </div>
+    <div class="soft">
+      <p><em>Спеціального формату оформлення немає.</em> Головне — щоб під час подачі документів було посилання: YouTube для відео, Google Диск для текстів і файлів. Перевір доступ по посиланню з чужого акаунта, інакше комісія побачить порожню сторінку замість твоєї роботи.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.3s">
+    <h2 class="section-title">Як виглядає рік подачі</h2>
+    <p>Головне, що варто вкласти в голову з самого початку: документи подаються майже за рік до першого заняття. Навчальний рік у Кореї починається в березні й закінчується в грудні — тож заявка, подана взимку цього року, веде на курс, який стартує в березні наступного.</p>
+    <div class="phrases">
+      <div class="phrase">
+        <div class="rule-num">1</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Січень — березень: реєстрація</div>
+          <div class="reply-text">Заявка подається на порталі studyinKorea, у розділі Online Application, з вибором K'ARTS. Паралельно готується паперовий комплект.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="rule-num">2</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Приблизно через місяць: результати першого раунду</div>
+          <div class="reply-text">Оголошують на сайті й надсилають поштою. Це відбір за документами й портфоліо.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="rule-num">3</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Другий раунд: онлайн-тест з корейської</div>
+          <div class="reply-text">Обов'язковий для всіх, хто пройшов далі, незалежно від наявного рівня й сертифіката. Складається під дві камери — правила прокторингу тут суворі.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="rule-num">4</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Через півтора-два місяці: результати другого раунду</div>
+          <div class="reply-text">Для частини факультетів на цьому етап відбору не закінчується.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="rule-num">5</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Третій раунд: співбесіда</div>
+          <div class="reply-text">Не для всіх спеціальностей. Близько півгодини в Zoom, питання переважно про мотивацію: навіщо тобі саме це і як ти бачиш свій розвиток у творчості.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="rule-num">6</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Середина червня — липень: фінальний список</div>
+          <div class="reply-text">Оголошують зарахованих і одразу визначають, скільки місяців мовних курсів тобі призначено — три чи шість, залежно від рівня.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="rule-num">7</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Літо: папери, віза, збори</div>
+          <div class="reply-text">Фізичні документи йдуть поштою, оформлюється студентська віза. Тут знову виручає той, хто зробив апостилі заздалегідь.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="rule-num">8</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Вересень: виїзд на мовні курси</div>
+          <div class="reply-text">Кілька місяців інтенсиву в Кореї — а офіційне навчання за спеціальністю починається в березні наступного року.</div>
+        </div>
+      </div>
+    </div>
+    <p style="margin-top:20px">Про сам жанр співбесіди — як тримати себе, коли оцінюють, — на сторінці <a href="interview.html">«Співбесіда»</a>. Питання там інші, а механіка хвилювання та сама.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.5s">
+    <h2 class="section-title">Чесно про конкурс</h2>
+    <p>Цифри варто знати заздалегідь, щоб не будувати весь план життя на одній заявці. Щороку на програму беруть від дванадцяти до вісімнадцяти студентів на всі напрями разом. В один із років заявок було понад тисячу, а зарахували п'ятнадцятьох-шістнадцятьох.</p>
+    <p>Це не привід не подаватися — це привід подаватися з розумінням, що відмова буде найімовірнішим результатом і що вона не є вироком твоєму таланту. Багато хто подається двічі й тричі, доростивши мову й портфоліо між спробами.</p>
+    <div class="highlight">
+      <p><em>Ще одне, про що попереджають прямо: це програма не для того, щоб «пожити в Кореї».</em> Університет забирає час і енергію повністю — це не той формат, де можна вчитися впівсили, підробляти й паралельно подорожувати.</p>
+      <p>І перед вибором спеціальності варто зробити нудну роботу: відкрити на сайті опис факультету, склад викладачів і перелік предметів з першого по четвертий курс. Не «кіно взагалі», а конкретні дисципліни, які ти вчитимеш чотири роки корейською.</p>
+    </div>
+    <p style="margin-top:20px">Про те, як узагалі вибирати напрям, коли хочеться всього одразу, — на сторінці <a href="choose-career.html">«Як обрати професію»</a>. А про темп, у якому вчаться, не вигораючи, — <a href="learning.html">«Вчитися і не вигорати»</a>.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.7s">
+    <h2 class="section-title">З чого почати вже цього тижня</h2>
+    <p>Якщо ідея не відпускає, найгірше, що можна зробити, — це відкласти її до моменту, «коли буде мова». Мова не з'явиться сама, а решта кроків від неї не залежить.</p>
+    <div class="checklist">
+      <div class="check"><span class="check-mark">◆</span><span class="check-text"><b>Перевір список країн і дедлайни</b> в актуальних guidelines на karts.ac.kr — це питання п'ятнадцяти хвилин, і воно економить місяці.</span></div>
+      <div class="check"><span class="check-mark">◆</span><span class="check-text"><b>Знайди вимоги до портфоліо саме своєї спеціальності</b> й порівняй із тим, що в тебе вже є. Часто виявляється, що бракує не таланту, а сценарію на десять сторінок.</span></div>
+      <div class="check"><span class="check-mark">◆</span><span class="check-text"><b>Дізнайся дати найближчого TOPIK</b> і запишись — навіть якщо здаватимеш на нижчий рівень, ніж потрібно. Сертифікат на руках змінює розмову з собою.</span></div>
+      <div class="check"><span class="check-mark">◆</span><span class="check-text"><b>Запусти документи на переклад і апостиль</b> — свідоцтво про народження й атестат знадобляться в будь-якому сценарії, включно з іншими програмами.</span></div>
+      <div class="check"><span class="check-mark">◆</span><span class="check-text"><b>Напиши в приймальну комісію</b>, якщо щось незрозуміло. Англійською можна — це єдине місце, де вона працює.</span></div>
+    </div>
+    <div class="final-quote">
+      <div class="final-text">Між «я б хотіла вчитися в Кореї» і поданою заявкою немає таланту чи удачі. <strong>Там лежать переклад, апостиль і рівень мови — речі, які просто робляться по черзі.</strong></div>
+    </div>
+    <div class="question-card">
+      <div class="question-label">Питання без відповіді</div>
+      <div class="question-main">Що з цього списку ти могла б зробити вже завтра — і чому досі не зробила?</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+</body>
+</html>
