@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Навіщо це мені</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(52,58,94,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(52,58,94,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(52,58,94,.78);margin-bottom:16px}
+.section p a{color:rgba(138,176,255,.9);text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#c8d8ff}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(52,58,94,.4)}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:10px}
+.reply-text{font-size:13px;font-weight:200;line-height:1.85;color:rgba(52,58,94,.8)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.72)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(52,58,94,.82);margin:0 0 12px}
+.highlight p:last-child{margin-bottom:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(110,200,160,.45),transparent)}
+.soft p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(30,60,46,.92);margin:0 0 12px}
+.soft p:last-child{margin-bottom:0}
+.soft em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:#1f7a4d}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:#b23c2e}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(178,60,46,.06);border-color:rgba(178,60,46,.20)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;margin-bottom:14px}
+.col-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:15px;line-height:1.6;color:rgba(36,40,68,.88)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.72);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(52,58,94,.35);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.75);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:rgba(245,225,180,1)}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#7a5fbe!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#5261c2!important}
+.highlight em,.final-text strong{color:#946717!important}
+.soft em{color:#1f7a4d!important}
+.warn em{color:#b23c2e!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#946717!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.soft{background:linear-gradient(135deg,rgba(31,122,77,.10),rgba(82,97,194,.05))!important;border-color:rgba(31,122,77,.28)!important}
+.soft p{color:rgba(30,60,46,.92)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#b23c2e!important}
+.col.good .col-label{color:#1f7a4d!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+
+/* sl-audio-v1 — кастомний аудіоплеєр */
+.audio-player{display:flex;align-items:center;gap:16px;max-width:460px;margin:0 auto 64px;padding:10px 22px 10px 10px;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.14);border-radius:100px;transition:border-color .4s,background .4s}
+.audio-player:hover{border-color:rgba(148,103,23,.35);background:rgba(52,58,94,.08)}
+.audio-btn{flex-shrink:0;width:40px;height:40px;border-radius:50%;border:none;cursor:pointer;background:linear-gradient(135deg,#5261c2,#7a5fbe,#a9772e);display:flex;align-items:center;justify-content:center;color:#fff;transition:transform .3s,box-shadow .3s;box-shadow:0 2px 10px rgba(82,97,194,.35)}
+.audio-btn:hover{transform:scale(1.07);box-shadow:0 4px 16px rgba(82,97,194,.5)}
+.audio-btn:active{transform:scale(.96)}
+.audio-btn .ic-play{margin-left:2px}
+.audio-btn .ic-load{animation:audioSpin .9s linear infinite}
+@keyframes audioSpin{to{transform:rotate(360deg)}}
+.audio-player.is-playing .audio-btn{box-shadow:0 0 0 5px rgba(122,95,190,.14),0 4px 16px rgba(82,97,194,.5)}
+.audio-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px}
+.audio-row{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.audio-label{font-size:9px;font-weight:300;letter-spacing:.28em;text-transform:uppercase;color:rgba(52,58,94,.45);white-space:nowrap}
+.audio-time{font-size:10px;font-weight:300;letter-spacing:.03em;color:rgba(52,58,94,.4);white-space:nowrap;font-variant-numeric:tabular-nums}
+.audio-seek{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:4px;background:rgba(52,58,94,.16);outline:none;cursor:pointer;margin:0;display:block}
+.audio-seek::-webkit-slider-runnable-track{height:4px;border-radius:4px;background:transparent}
+.audio-seek::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:#fff;border:2px solid #7a5fbe;margin-top:-4px;box-shadow:0 1px 4px rgba(52,58,94,.4);transition:transform .2s}
+.audio-seek:hover::-webkit-slider-thumb{transform:scale(1.25)}
+.audio-seek::-moz-range-track{height:4px;border-radius:4px;background:transparent}
+.audio-seek::-moz-range-thumb{width:12px;height:12px;border-radius:50%;background:#fff;border:2px solid #7a5fbe;box-shadow:0 1px 4px rgba(52,58,94,.4);transition:transform .2s}
+.audio-seek:hover::-moz-range-thumb{transform:scale(1.25)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Навіщо це мені</h1>
+  <p class="page-subtitle">Чому психіка не дає енергії на навчання без мети</p>
+
+  <div class="audio-player" style="opacity:0;animation:riseIn 1s .8s ease forwards">
+    <button class="audio-btn" type="button" aria-label="Відтворити аудіоверсію">
+      <svg class="ic-play" viewBox="0 0 24 24" width="14" height="14"><path d="M6 4l14 8-14 8V4z" fill="currentColor"/></svg>
+      <svg class="ic-pause" viewBox="0 0 24 24" width="14" height="14" style="display:none"><path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" fill="currentColor"/></svg>
+      <svg class="ic-load" viewBox="0 0 24 24" width="16" height="16" style="display:none"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="2" fill="none" opacity=".25"/><path d="M12 3.5a8.5 8.5 0 018.5 8.5" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+    </button>
+    <div class="audio-main">
+      <div class="audio-row">
+        <span class="audio-label">Аудіоверсія</span>
+        <span class="audio-time"><span class="audio-current">0:00</span> / <span class="audio-duration">–:–</span></span>
+      </div>
+      <input class="audio-seek" type="range" min="0" max="1000" value="0" step="1" aria-label="Перемотка аудіо">
+    </div>
+    <audio preload="none" src="audio/learning-why.mp3"></audio>
+  </div>
+
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Психіка не дає енергії на те, у чому не бачить сенсу."</div>
+      <div class="hero-author">За матеріалом Максима Васильченка</div>
+    </div>
+    <p>Небажання сідати за навчання майже завжди читають як особистий недолік: лінь, слабка воля, «я просто несерйозна». Насправді це нормальна реакція, і в неї є проста логіка.</p>
+    <p>Одна з головних задач психіки — заощаджувати енергію. Коли ти відкриваєш предмет і не розумієш, навіщо він тобі, вмикається гальмо: немає видимого сенсу й немає нагороди — не виділяється ресурс. Це не поломка. Це саме те, для чого механізм існує.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Ніч перед іспитом — це не провал системи</h2>
+    <p>Улюблена сцена самозвинувачення: за семестр не відкрила, за ніч прочитала, зранку здала, за тиждень забула. Але подивись на це очима організму — це бездоганно раціональна стратегія. Мета зрозуміла, строк обмежений, нагорода конкретна. Енергія виділяється миттєво й рівно в потрібному обсязі.</p>
+    <p>Те саме пояснює й зворотне: чому за той самий предмет неможливо було сісти в жовтні. У жовтні не було ні мети, ні строку, ні нагороди — була тільки абстрактна користь колись потім. На абстрактну користь психіка ресурс не виділяє.</p>
+    <div class="highlight">
+      <p><em>Звідси перший практичний висновок.</em> Питання «як змусити себе вчитися» майже завжди безнадійне. Робоче питання інше: <strong>яку конкретну задачу я цим закриваю і коли</strong>. Щойно з'являється відповідь, зникає більша частина того, що ти називала прокрастинацією.</p>
+    </div>
+    <p>Про решту механіки відкладання — <a href="procrastination.html">«Прокрастинація»</a>, про режим і ритм навчання — <a href="learning.html">«Вчитися і не вигорати»</a>.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Дорослі вчаться тільки через задачі</h2>
+    <p>Це головна теза, і вона незручна для будь-якої програми навчання. Знання засвоюється тоді, коли ним щось розв'язують. Вивчити «про запас» — те, що знадобиться через три роки або не знадобиться взагалі, — якісно неможливо, скільки б часу на це не витратити.</p>
+    <p>Усе, що взагалі є в науці, з'явилося саме так: як відповідь на конкретну проблему, яку хтось не міг обійти.</p>
+    <div class="soft">
+      <p><em>Найкращий приклад — інтеграли.</em> У XVII столітті з розвитком корабле- і машинобудування постала цілком практична задача: як порахувати площу й об'єм деталей складної форми, до яких не підходить жодна шкільна формула.</p>
+      <p>Незалежно один від одного Ньютон і Лейбніц зайшли з одного боку: розбити фігуру на нескінченно вузькі смужки, майже прямокутники, і скласти їхні площі. Шлях до цієї ідеї — від давньогрецького методу вичерпування до її остаточного формулювання — зайняв близько двох тисяч років.</p>
+      <p>А в школі це подають за один урок. Без задачі, без корабля, без того, чому взагалі знадобилися ці смужки. І потім дивуються, що не запам'яталося.</p>
+    </div>
+    <p style="margin-top:20px">У цьому й полягає конструкторська помилка звичного навчання: людині намагаються вкласти в голову інформацію, значення якої стане зрозумілим років за п'ять. Психіка так не працює — і не через чиюсь недбалість, а тому, що вона взагалі влаштована інакше.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Реалістична мета: не запам'ятати, а знати, що це існує</h2>
+    <p>Якщо запам'ятати назавжди неможливо, то навіщо взагалі вчити? Відповідь скромніша й тому робоча: щоб мати загальне уявлення — така область знань існує, вона потрібна ось для таких задач, виглядає приблизно так.</p>
+    <p>Цього достатньо. Коли за три роки ти зіткнешся з реальною потребою, спрацює саме це: «стоп, це ж те саме, про що нам розповідали» — і далі ти цілеспрямовано знайдеш деталі, формулу, довідник, людину. Пам'ять тут працює не як сховище, а як покажчик.</p>
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">Нереально</div>
+        <div class="col-text">Запам'ятати все й назавжди</div>
+        <div class="col-note">Вимога, під яку не існує ані пам'яті, ані мотивації. Саме вона робить будь-який складний предмет нестерпним ще до початку.</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">Реально</div>
+        <div class="col-text">Знати, що це існує і для чого</div>
+        <div class="col-note">Достатньо, щоб у потрібний момент згадати й дійти до деталей самостійно. Вимагає в рази менше енергії — і тому взагалі виконується.</div>
+      </div>
+    </div>
+    <p style="margin-top:20px">Як улаштувати цей «покажчик» так, щоб він справді спрацював, — <a href="notes.html">«Конспектування»</a>.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Три типи предметів</h2>
+    <p>Далі все зводиться до одного: чесно розсортувати те, що перед тобою. Бо стратегія для трьох типів різна, а мучимося ми зазвичай тому, що застосовуємо одну на всі.</p>
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🧩</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Складний, але потрібний</div>
+          <div class="reply-text">Найчастіша причина ступору тут — колись загубилася логічна ланка, і предмет перетворився на суцільний текст без опор. Тому перший крок не «сісти й вчити», а відновити: навіщо це взагалі існує і де застосовується. Далі — спрощувати під себе, аж до побутових прикладів. І вчити на строк — на іспит, на задачу, — не вимагаючи від себе пам'ятати це все життя.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🗄️</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Марний</div>
+          <div class="reply-text">Іноді предмет здається марним, бо викладають застаріле — тоді в нього все одно варто вдивитися, хоча б щоб бачити, як це знання розвивалося й чому від нього відмовилися. А якщо він справді тобі не потрібен — можна свідомо дати йому мінімум: рівно стільки, щоб закрити й забути.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">✨</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Просто цікавий</div>
+          <div class="reply-text">Користь незрозуміла, а тягне. Прокрастинації тут зазвичай не буває взагалі — і це найцінніший сигнал з усіх трьох: так найчастіше проявляються схильності, про які ти ще не думала як про напрямок.</div>
+        </div>
+      </div>
+    </div>
+    <div class="highlight">
+      <p><em>Пастка всередині другого типу.</em> Свідомо дати предмету мінімум майже ніколи не виходить не через предмет, а через вимогу до себе: бути відмінницею, не осоромитися перед групою, не побачити розчарування у викладача. Тоді фокус мовчки з'їжджає з «мені це не потрібно» на «а що про мене подумають» — і ти вкладаєш повний ресурс у те, що сама вважаєш непотрібним.</p>
+      <p>Розслаблення приходить рівно в той момент, коли рішення сказане собі чесно: <strong>цей предмет мені не потрібен, мета — задовільна оцінка, після цього я про нього забуду.</strong></p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Спрощувати під себе — і перевіряти</h2>
+    <p>Найкорисніша дія зі складним предметом сьогодні — попросити пояснити його простіше. Не переказати параграф, а відповісти на два питання: <em>для яких практичних задач це знання взагалі виникло</em> і <em>як воно виглядає на побутовому прикладі</em>. Нейромережа тут добре працює саме як перекладач із академічної мови, і це найдешевший спосіб повернути втрачену логічну ланку.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.1s">
+    <h2 class="section-title">Коли тягне не туди, куди вступила</h2>
+    <p>Ось історія, за якою добре видно, як працює третій тип. Людина вчиться на інженера радіозв'язку у військовому училищі. Разом із технічними предметами там викладають філософію — і поки вся група відверто нудьгує, їй одній цікаво. Не тому, що корисно: незрозуміло навіть, куди це можна прикласти.</p>
+    <p>На третьому курсі вона забирає документи з інженерної освіти і вступає на психологічний факультет. Той самий предмет, який для інших був порожньою парою, виявився єдиним сигналом про власну схильність.</p>
+    <p>Висновок простий: навчання проти власних схильностей коштує в рази більше сил, ніж навчання вздовж них. І якщо якийсь предмет читається сам, без примусу, це варто помітити раніше, ніж на третьому курсі. Про те, як відрізнити свою ціль від чужої, — <a href="transerfing.html">«99 висновків»</a> і <a href="goals.html">«Цілі та прогрес»</a>.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.3s">
+    <h2 class="section-title">Що з цим робити</h2>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🧭</span>
+        <div class="card-title">Спочатку — навіщо</div>
+        <div class="card-text">Перед тим як відкрити предмет, дай собі відповідь: яку задачу він закриває і в який строк. Без цієї відповіді енергії не буде — і це не питання дисципліни.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🪓</span>
+        <div class="card-title">Розсортуй</div>
+        <div class="card-text">Потрібне, марне, цікаве. Різні типи — різна стратегія й різний обсяг вкладених сил. Одна стратегія на все й дає відчуття, що ти постійно не встигаєш.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔽</span>
+        <div class="card-title">Спрощуй</div>
+        <div class="card-text">Складне переклади собі побутовою мовою й доведи до прикладу, який можеш уявити. Те, що не уявляється, не запам'ятовується.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⏳</span>
+        <div class="card-title">Вчи на строк</div>
+        <div class="card-text">Не назавжди, а до іспиту чи до задачі. Знімаючи вимогу «запам'ятати на все життя», ти знімаєш і половину опору перед початком.</div>
+      </div>
+    </div>
+    <div class="final-quote">
+      <div class="final-text">Ти не лінива. <strong>Просто твоя психіка відмовляється платити за те, чому ти сама не змогла пояснити ціну.</strong></div>
+    </div>
+    <div class="question-card">
+      <div class="question-label">Питання без відповіді</div>
+      <div class="question-main">Який предмет ти тягнеш роками — і чи змогла б ти зараз назвати задачу, яку він закриває?</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script>/*sl-audio-v1*/(function(){
+document.querySelectorAll('.audio-player').forEach(function(wrap){
+  var audio=wrap.querySelector('audio'),btn=wrap.querySelector('.audio-btn'),seek=wrap.querySelector('.audio-seek'),
+      cur=wrap.querySelector('.audio-current'),dur=wrap.querySelector('.audio-duration'),
+      icPlay=wrap.querySelector('.ic-play'),icPause=wrap.querySelector('.ic-pause'),icLoad=wrap.querySelector('.ic-load'),
+      seeking=false,wasPlaying=false;
+  function fmt(s){if(!isFinite(s)||s<0)s=0;var m=Math.floor(s/60),sc=Math.floor(s%60);return m+':'+(sc<10?'0':'')+sc}
+  function icon(state){icPlay.style.display=state==='play'?'block':'none';icPause.style.display=state==='pause'?'block':'none';icLoad.style.display=state==='load'?'block':'none'}
+  function fill(pct){seek.style.background='linear-gradient(90deg,#5261c2 '+pct+'%,rgba(52,58,94,.16) '+pct+'%)'}
+  icon('play');fill(0);
+  btn.addEventListener('click',function(){
+    if(audio.paused){if(audio.readyState<2)icon('load');audio.play().catch(function(){icon('play')})}
+    else audio.pause();
+  });
+  audio.addEventListener('waiting',function(){icon('load')});
+  audio.addEventListener('playing',function(){icon('pause');wrap.classList.add('is-playing')});
+  audio.addEventListener('pause',function(){icon('play');wrap.classList.remove('is-playing')});
+  audio.addEventListener('ended',function(){icon('play');wrap.classList.remove('is-playing');seek.value=0;fill(0);cur.textContent='0:00'});
+  audio.addEventListener('loadedmetadata',function(){dur.textContent=fmt(audio.duration)});
+  audio.addEventListener('timeupdate',function(){
+    if(seeking)return;
+    cur.textContent=fmt(audio.currentTime);
+    var pct=audio.duration?audio.currentTime/audio.duration*1000:0;
+    seek.value=pct;fill(pct/10);
+  });
+  seek.addEventListener('input',function(){
+    if(!seeking){wasPlaying=!audio.paused;seeking=true}
+    var pct=seek.value/10;fill(pct);
+    cur.textContent=fmt(audio.duration?seek.value/1000*audio.duration:0);
+  });
+  seek.addEventListener('change',function(){
+    if(audio.duration)audio.currentTime=seek.value/1000*audio.duration;
+    seeking=false;
+    if(wasPlaying)audio.play().catch(function(){});
+  });
+});
+})();</script>
+</body>
+</html>
