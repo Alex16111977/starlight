@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Ключ до змін</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:300;letter-spacing:.4em;color:rgba(52,58,94,.7);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.95);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:11px;font-weight:300;letter-spacing:.4em;color:rgba(52,58,94,.7);text-transform:uppercase;margin-bottom:64px;line-height:2;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:clamp(26px,4vw,34px);letter-spacing:.06em;color:rgba(28,32,58,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15.5px;font-weight:300;line-height:1.92;color:#2b3050;margin-bottom:18px}
+.section p strong{font-weight:500;color:#1c203a}
+.section p a{color:rgba(138,176,255,.9);text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#c8d8ff}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:10px;font-weight:300;letter-spacing:.42em;text-transform:uppercase;color:rgba(52,58,94,.62)}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:19px;line-height:1.5;color:rgba(28,32,58,.98);margin-bottom:10px}
+.reply-text{font-size:14.5px;font-weight:300;line-height:1.88;color:#2b3050}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:20px;letter-spacing:.03em;color:rgba(28,32,58,1);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.85;color:#2b3050}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15.5px;font-weight:300;line-height:1.92;color:#262b4a;margin:0 0 12px}
+.highlight p:last-child{margin-bottom:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17.5px;color:rgba(212,175,110,.85)}
+
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(110,200,160,.45),transparent)}
+.soft p{font-size:15.5px;font-weight:300;line-height:1.92;color:#1c3a2c;margin:0 0 12px}
+.soft p:last-child{margin-bottom:0}
+.soft p strong{font-weight:500;color:#123023}
+.soft em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17.5px;color:#1f7a4d}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:26px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(178,60,46,.06);border-color:rgba(178,60,46,.20)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:10px;font-weight:400;letter-spacing:.42em;text-transform:uppercase;margin-bottom:14px}
+.col-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.55;color:rgba(28,32,58,.98)}
+.col-note{font-size:14px;font-weight:300;line-height:1.85;color:#2b3050;margin-top:12px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:10px;font-weight:300;letter-spacing:.42em;text-transform:uppercase;color:rgba(52,58,94,.55);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.35}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:clamp(19px,2.6vw,25px);line-height:1.6;color:rgba(40,45,74,.96);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.75);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:rgba(245,225,180,1)}
+
+.chain{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px 12px;margin:28px 0 8px}
+.chain span{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:17px;color:#1c203a;background:rgba(52,58,94,.07);border:1px solid rgba(52,58,94,.16);border-radius:100px;padding:9px 18px;white-space:nowrap}
+.chain i{font-style:normal;color:#8a5f10;font-size:15px}
+
+.dialog{margin:26px 0 8px;padding:4px 0 4px 24px;border-left:2px solid rgba(148,103,23,.35)}
+.dialog-q{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18.5px;line-height:1.5;color:#6b4708;margin:20px 0 8px}
+.dialog-q:first-child{margin-top:0}
+.dialog-a{font-size:15px;font-weight:300;line-height:1.85;color:#2b3050;margin:0}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#1c203a!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p{color:#2b3050!important}
+.section p strong{color:#1c203a!important}
+.section p a{color:#593f9e!important;border-bottom-color:rgba(89,63,158,.55)!important}
+.section p a:hover{color:#41328f!important}
+.highlight em,.final-text strong{color:#8a5f10!important}
+.soft em{color:#1a6b42!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#1c203a!important}.card-text{color:#2b3050!important}
+.phrase-icon{color:#946717!important}
+.phrase-said{color:#1c203a!important}
+.reply-text{color:#2b3050!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:#262b4a!important}
+.soft{background:linear-gradient(135deg,rgba(31,122,77,.10),rgba(82,97,194,.05))!important;border-color:rgba(31,122,77,.28)!important}
+.soft p{color:#1c3a2c!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#1c203a!important}
+.col.bad .col-label{color:#a8331f!important}
+.col.good .col-label{color:#1a6b42!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col-text{color:#1c203a!important}
+.col-note{color:#2b3050!important}
+.chain span{color:#1c203a!important}
+.dialog-q{color:#6b4708!important}
+.dialog-a{color:#2b3050!important}
+.chain i{color:#8a5f10!important}
+.final-text{color:rgba(40,45,74,.96)!important}
+.page-subtitle,.hero-author,.question-label{color:#4a5075!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Ключ до змін</h1>
+  <p class="page-subtitle">Усвідомлення переконань</p>
+
+  <div class="section" style="animation-delay:.8s">
+    <div class="hero-quote">
+      <div class="hero-text">"Переконання — це те, що ти дозволяєш собі помічати."</div>
+      <div class="hero-author">Визначення, з якого все починається</div>
+    </div>
+    <p>Особистість — це сукупність переконань. А переконання, своєю чергою, формують особистість. Звідси головна теза: щоб змінити життя, не потрібно змінювати дії в зовнішньому світі. Потрібно змінити переконання — і усвідомити, що сама особистість не є чимось фіксованим.</p>
+    <p>Ця сторінка з двох частин. Перша — про те, як переконання влаштовані й чому їх складно побачити. Друга — практична техніка чесного діалогу з собою, якою підсвідоме переконання витягують назовні.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Що таке переконання</h2>
+    <p>Ми помічаємо в реальності лише те, що є відображенням нашого внутрішнього стану.</p>
+    <p>Візьмімо переконання «всі чоловіки зраджують». Воно цілком може ґрунтуватися на реальному досвіді — власному або досвіді оточення. Тут немає вигадки з нічого: переконання формуються середовищем, у якому людина живе. Але є наслідок, від якого нікуди не подітися.</p>
+    <div class="highlight">
+      <p><em>Маючи негативне переконання, неможливо очікувати позитивного прояву в цій сфері життя.</em> Якщо покласти в блендер яблуко — вийде яблучний сік. Не апельсиновий.</p>
+    </div>
+    <p>Найбільша ілюзія — вважати, що в монети лише один бік. Сторони завжди дві: є чоловіки, які зраджують, і є чоловіки, які не зраджують. Обидві групи існують одночасно, і жодна з них не скасовує іншу.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Чому другий бік не видно</h2>
+    <p>Маючи негативне переконання, людина сама — часто несвідомо — спрямовує увагу саме на те, що це переконання підтверджує. Не тому, що протилежних прикладів не існує. А тому, що вона вже вирішила: бік лише один.</p>
+    <p>Причина проста й неприємна: людям подобається доводити собі власну правоту. Навіть коли ця правота їх руйнує. У хід ідуть навіть чужі історії — наприклад, історія знайомої, яка була впевнена, що вже з нею такого точно не станеться, і якій усе одно зрадили. Ще один доказ у власну колекцію.</p>
+    <div class="highlight">
+      <p><em>Але яка з цієї правоти користь?</em> Результат один — замкнене коло того самого досвіду. Як це коло виглядає зсередини — <a href="cycles.html">«Цикли поведінки»</a>.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Як переконання змінюють</h2>
+    <p>Спершу треба побачити: у переконання є сенс і власна історія походження. Воно виникло не на порожньому місці. Наступний крок — поставити собі запитання: <strong>а що я тепер збираюся з цим переконанням робити?</strong></p>
+    <p>Якщо хочеться іншого відображення реальності — доведеться думати по-іншому. І тут з'являється несподіване: попри те, що нове переконання об'єктивно корисніше і здатне зробити тебе щасливішою, спочатку буде внутрішній спротив. До старого ти вже звикла — як до давнього знайомого.</p>
+    <div class="soft">
+      <p><em>Тому крок, який пропускають.</em> Подякуй старому переконанню за те, що воно колись мало сенс і навіщось було потрібне. І свідомо визнай: я хочу дивитися на цю ситуацію інакше.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">Особистість не є чимось сталим</h2>
+    <p>Щоб змінити переконання, потрібно змінити особистість. А перший крок до цього — усвідомлення. Воно тут одночасно і початок, і кінець усієї роботи над собою.</p>
+    <p>Суть у тому, що особистість, яку ти роками вибудовувала про себе, і так постійно змінюється. І чим сильніше людина прив'язує себе до ярликів — «я така-то за професією, тому маю робити тільки це» — тим складніше їй згодом змінюватися. Альтернатива: діяти за внутрішнім імпульсом, а не підлаштовуватися під роль, яку тобі приписало оточення. Про сам вибір, ким бути — <a href="identity.html">«Ідентичність»</a>.</p>
+    <div class="highlight">
+      <p><em>Не змінюватися неможливо в принципі.</em> Усе постійно в русі: людина або розширюється, або звужується; або покращується, або деградує. Навіть фізично вона щомиті старіє.</p>
+      <p>Стагнація — це ілюзія, яку можна створити подумки, але якої не існує насправді. Усвідомлення того, що зміна є природним і неминучим станом, звільняє від прив'язки до застиглого образу себе.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Не «хто я», а «наскільки я чесна із собою»</h2>
+    <p>Другий крок — свідомо обрати особистість, якою хочеш бути. Не описувати ту, якою є зараз: вона й так постійно змінюється, поки ти її описуєш.</p>
+    <p>У психології цей процес описують так: спочатку людина обирає особистість, потім стабілізує її — і лише через це пізнає себе. Тому й запитання правильне інше.</p>
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">Питання без виходу</div>
+        <div class="col-text">«Хто я?»</div>
+        <div class="col-note">Відповіді не буде — особистість змінюється швидше, ніж ти встигаєш її описати. Питання можна ставити роками.</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">Питання, яке працює</div>
+        <div class="col-text">«Наскільки я чесна із собою?»</div>
+        <div class="col-note">Відповідь є завжди і одразу. І вона одразу показує, що робити далі.</div>
+      </div>
+    </div>
+    <p>Коли дії не відповідають внутрішньому відчуттю того, ким ти хочеш бути, виникає дисонанс: ти вже знаєш, ким хочеш стати, але продовжуєш діяти по-старому. Саме це — а не сама зміна — і є джерелом стресу й тривоги.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2s">
+    <h2 class="section-title">Змінюватися не складно</h2>
+    <p>Складно не змінюватися. Складно продовжувати жити всупереч собі — у постійному протиріччі між тим, чого хочеш, і тим, як дієш.</p>
+    <p>Коли усвідомлення вже сталося, лишається одне з двох: або діяти по-новому, або й далі повертатися до старих патернів. І саме повернення до старого — попри усвідомлене небажання цього — створює фізичний стрес і тривогу. Не спроба жити по-новому.</p>
+    <div class="final-quote">
+      <div class="final-text">Замість «хто я?» — <strong>чи роблю я те, що структурно відповідає тому, чого я насправді хочу?</strong></div>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.2s">
+    <h2 class="section-title">Як це виглядає на прикладі</h2>
+    <p>Візьмімо бажання схуднути. Перше — запитати себе, які саме переконання є щодо цієї теми.</p>
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">Переконання A</div>
+        <div class="col-text">«Щоб схуднути, треба мало їсти»</div>
+        <div class="col-note">Це знання, закріплене чиїмось особистим досвідом або прикладами інших людей. Такі приклади справді існують.</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">Переконання B</div>
+        <div class="col-text">«Худнуть, харчуючись повноцінно»</div>
+        <div class="col-note">Реальні приклади людей, які худнуть без обмежень, існують так само. Їх не менше.</div>
+      </div>
+    </div>
+    <p>Обидва типи прикладів існують одночасно. Питання тільки в тому, у яке з двох переконань ти вирішуєш вірити сильніше і на яких прикладах тримаєш увагу. Влаштовує старе — дій за ним. Не влаштовує — свідомо переключи увагу на приклади, що підтверджують нове, і повір у нього більше, ніж у старе. Про саму тему — <a href="weight-truth.html">«Правда про вагу»</a>.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.4s">
+    <h2 class="section-title">Як знайти переконання, якого не бачиш</h2>
+    <p>Коли переконання не усвідомлене, шукати його треба не в голові, а в результатах свого життя. Результат завжди чесніший за самоопис.</p>
+    <p>Наприклад, доходи низькі попри значні зусилля. Тоді запитання звучить так:</p>
+    <div class="question-card">
+      <div class="question-label">Інструмент</div>
+      <div class="question-main">У що я мала б вірити, щоб саме це проявилося в моєму житті?</div>
+    </div>
+    <p>У що я мала б вірити, щоб моєю реальністю була бідність? У що я мала б вірити, щоб моєю реальністю була самотність? Можливо, річ у переконанні про недостатню гідність любові чи недостатню привабливість. Це запитання варто виписати окремо — воно здатне суттєво зрушити все подальше.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.6s">
+    <h2 class="section-title">Частина друга: чесний діалог із собою</h2>
+    <p>Підсвідомі установки — це те, у що людина обирає вірити. На цій основі формується фільтр, крізь який вона дивиться на світ. Фільтр буває неефективним або розмитим, і поки його не усвідомити й не почистити, він заважає проживати бажану реальність.</p>
+    <div class="highlight">
+      <p><em>Просто усвідомити наявність установки — недостатньо.</em> Якщо після усвідомлення нічого не змінити у своїх діях, установка продовжує впливати рівно так само, як і раніше.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.8s">
+    <h2 class="section-title">Дискомфорт без причини</h2>
+    <p>Особистий приклад. У певний момент з'явилося внутрішнє відчуття дискомфорту без видимої причини. Зазвичай авторці легко вдавалося повертати себе у стан присутності й спокою навіть під час тривоги чи сумнівів — але цього разу повернення в «тут і зараз» не допомагало. Зникла здатність зосередитися навіть під час медитації, чого раніше не траплялося.</p>
+    <p>І замість того щоб одразу навісити на це відчуття негативний ярлик — «дискомфортно, отже погано» — вона обрала поставитися до нього як до цікавого сигналу. Такого, який варто дослідити, а не придушити.</p>
+    <div class="soft">
+      <p><em>Відповіді шукають через запитання до себе, а не через поради ззовні.</em> Інші люди можуть лише вказати напрямок. Пройти шлях і усвідомити щось можна тільки самостійно.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:3s">
+    <h2 class="section-title">Техніка: заглиблюйся кожним «чому»</h2>
+    <p>Починається все із запитання «що я зараз відчуваю?» — детально й конкретно. Перші відповіді завжди поверхові, тому потрібне терпіння до себе: далі йде «а чому я це відчуваю?».</p>
+    <div class="highlight">
+      <p><em>Часто перша реакція — «я не знаю».</em> Це відповідь его, яке не хоче знаходити справжню відповідь і прагне залишитися у звичному, знайомому, а тому комфортному стані — навіть якщо цей стан насправді неприємний. Невідомість здається его небезпечною для нервової системи, навіть коли вона потенційно корисна.</p>
+      <p>Тому невідомості не варто боятися. Пізнання себе через неї можна сприймати як щось цікаве й захопливе, а не загрозливе.</p>
+    </div>
+    <p>Друга умова — перестати засуджувати чи звинувачувати себе за будь-який прояв, яким би він не був. Це лише результат попереднього стану: ні позитивний, ні негативний сам по собі, а віддзеркалення, яке чітко показує, у чому саме ти зрадила собі.</p>
+    <p>Ось як виглядає сам процес:</p>
+    <div class="dialog">
+      <div class="dialog-a">Мені некомфортно.</div>
+      <div class="dialog-q">— Чому?</div>
+      <div class="dialog-a">Відчуваю, ніби зрадила собі.</div>
+      <div class="dialog-q">— У чому саме?</div>
+      <div class="dialog-a">Я втратила фокус.</div>
+      <div class="dialog-q">— Яким чином?</div>
+      <div class="dialog-a">Мій фокус змістився на людей.</div>
+      <div class="dialog-q">— Яким саме чином?</div>
+      <div class="dialog-a">Я почала думати про те, чого хочуть від мене люди і як я можу допомогти ще більшій кількості людей.</div>
+      <div class="dialog-q">— Але сенс проживання досвіду не в тому, щоб допомагати іншим чи бути доброю. Сенс — у самому досвіді. Тоді в чому цінність досвіду?</div>
+      <div class="dialog-a">Цінність втрачається, коли дивишся тільки на результат — і забуваєш, що результат приходить сам, якщо робиш те, що приносить задоволення й позитивні емоції в моменті.</div>
+    </div>
+    <p>Формулювати треба прямо, без прикрашених формулювань. Саме тому в діалозі звучить «зрадила собі», а не щось делікатніше.</p>
+    <p>Висновок цього конкретного ланцюжка: допомога іншим і добрі вчинки — це <strong>наслідок</strong> того, що людина насолоджується процесом і ділиться своїм талантом зі світом. А не мета сама по собі. Якщо комусь цього недостатньо — він отримає потрібне з іншого джерела. Кожна людина може дати рівно стільки, скільки може і хоче дати.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:3.2s">
+    <h2 class="section-title">Чому ми завжди повертаємося до себе</h2>
+    <p>У цьому прикладі зміщення фокусу на інших сталося не через бажання зрадити собі. Воно сталося через щире прагнення допомогти якомога більшій кількості людей — просто без усвідомлення того, що жертвувати собою для цього не потрібно.</p>
+    <p>А жертовність не приносить хороших результатів. Вона зрештою призводить до відчуття втрати себе — хоча насправді втратити себе неможливо. Можна лише створити ілюзію цього через негативні відчуття.</p>
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">↩️</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Людина завжди повертається до себе</div>
+          <div class="reply-text">Навіть якщо цього не хоче. Усі болісні досвіди повертають нас до себе — у цьому їхня функція.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🫂</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Люди навколо показують тебе саму</div>
+          <div class="reply-text">Усі, з ким відбувається щоденна взаємодія, показують нам нас самих.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🪞</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Партнер — дзеркало</div>
+          <div class="reply-text">Стосунки відображають, наскільки людина любить себе і чого очікує від життя.</div>
+        </div>
+      </div>
+    </div>
+    <div class="highlight">
+      <p><em>Тому болісний досвід — не щось погане.</em> Ситуація, у якій ти зрадила собі, — це можливість побачити, де саме сталася зрада, і усвідомлено обрати інакше.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:3.4s">
+    <h2 class="section-title">Тиск, який ти створюєш сама</h2>
+    <p>Інші люди насправді рідко вимагають від когось «більшого». Фрази на кшталт «дай мені більше, ти повинна» здебільшого просто не звучать від оточення в реальності.</p>
+    <p>Це внутрішній голос постійно каже, що зробленого недостатньо і треба намагатися ще сильніше. Увесь цей ментальний тиск людина створює собі сама.</p>
+    <div class="soft">
+      <p><em>А якщо ти сама себе туди помістила — ти можеш звідти вийти.</em> Зрозумій, чому ти опинилася в цьому некомфортному місці, і визнай: ключ від виходу завжди в тебе. Вийти можна будь-якої миті — щойно рішення ухвалено.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:3.6s">
+    <h2 class="section-title">Абсурдне переконання, знайдене цим способом</h2>
+    <p>Другий приклад, детальніший. Авторка помітила, що останнім часом тон у її відео став різкішим, агресивнішим. Їй самій це не подобалося — попри те, що жодних негативних коментарів від глядачів із цього приводу не було. Після одного конкретного відео внутрішнє незадоволення стало особливо сильним.</p>
+    <p>Запитання до себе звучало так: чому виникає відчуття, що потрібно кричати, аби до тебе прислухалися?</p>
+    <div class="dialog">
+      <div class="dialog-q">— Чому мені здається, що треба говорити голосніше?</div>
+      <div class="dialog-a">Підсвідомий страх, що мої слова не сприймуть серйозно, якщо не виражати їх агресивно чи голосно.</div>
+      <div class="dialog-q">— Тобто переконання звучить як?</div>
+      <div class="dialog-a">«Якщо я не буду говорити голосно — мене не почують».</div>
+    </div>
+    <p>Усвідомлення цього переконання одразу показало його хибність. Якщо людині справді потрібно почути якесь послання і вона готова змінитися — вона почує його <strong>навіть пошепки</strong>. Кричати для цього не обов'язково.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:3.8s">
+    <h2 class="section-title">Змінити можна лише ставлення</h2>
+    <p>Змінити вже випущений матеріал заднім числом неможливо. Але можна змінити своє ставлення до нього.</p>
+    <p>Той конкретний прояв — яким би він не був у моменті — вважається ідеальним. Бо саме таким він був потрібен тим людям, які його на той момент дивилися. Комусь резонує м'якша подача, комусь — пряміша, і для оцінки самого прояву як правильного чи неправильного це не має значення. Той самий механізм для минулого загалом — <a href="rewrite-past.html">«Переписати минуле»</a>.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:4s">
+    <h2 class="section-title">Звідки беруться такі переконання</h2>
+    <p>Більшість підсвідомих переконань формується в дитинстві — коли мислення ще не є логічним чи інтелектуально розвиненим.</p>
+    <p>Дитяча логіка працює приблизно так: <em>«якщо я не буду кричати — мама мене не почує»</em>. Саме такі прості, буквальні дитячі висновки нерідко залишаються з людиною на роки й продовжують керувати її поведінкою вже в дорослому житті. Доти, доки вона свідомо їх не помітить.</p>
+    <div class="final-quote">
+      <div class="final-text">Що більше людина обманює саму себе, то складнішим стає її внутрішній стан. <strong>Жити чесно із собою — це спосіб жити простіше і краще</strong>.</div>
+    </div>
+    <div class="question-card">
+      <div class="question-label">Питання без відповіді</div>
+      <div class="question-main">Яку свою правоту ти доводиш собі так довго, що вже не помічаєш ціни?</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+</body>
+</html>

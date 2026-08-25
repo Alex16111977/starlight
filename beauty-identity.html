@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Маніфестація зовнішності</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:300;letter-spacing:.4em;color:rgba(52,58,94,.7);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.95);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:11px;font-weight:300;letter-spacing:.4em;color:rgba(52,58,94,.7);text-transform:uppercase;margin-bottom:64px;line-height:2;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:clamp(26px,4vw,34px);letter-spacing:.06em;color:rgba(28,32,58,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15.5px;font-weight:300;line-height:1.92;color:#2b3050;margin-bottom:18px}
+.section p strong{font-weight:500;color:#1c203a}
+.section p a{color:rgba(138,176,255,.9);text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#c8d8ff}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:10px;font-weight:300;letter-spacing:.42em;text-transform:uppercase;color:rgba(52,58,94,.62)}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:19px;line-height:1.5;color:rgba(28,32,58,.98);margin-bottom:10px}
+.reply-text{font-size:14.5px;font-weight:300;line-height:1.88;color:#2b3050}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:20px;letter-spacing:.03em;color:rgba(28,32,58,1);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.85;color:#2b3050}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15.5px;font-weight:300;line-height:1.92;color:#262b4a;margin:0 0 12px}
+.highlight p:last-child{margin-bottom:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17.5px;color:rgba(212,175,110,.85)}
+
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(110,200,160,.45),transparent)}
+.soft p{font-size:15.5px;font-weight:300;line-height:1.92;color:#1c3a2c;margin:0 0 12px}
+.soft p:last-child{margin-bottom:0}
+.soft p strong{font-weight:500;color:#123023}
+.soft em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17.5px;color:#1f7a4d}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:26px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(178,60,46,.06);border-color:rgba(178,60,46,.20)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:10px;font-weight:400;letter-spacing:.42em;text-transform:uppercase;margin-bottom:14px}
+.col-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.55;color:rgba(28,32,58,.98)}
+.col-note{font-size:14px;font-weight:300;line-height:1.85;color:#2b3050;margin-top:12px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:10px;font-weight:300;letter-spacing:.42em;text-transform:uppercase;color:rgba(52,58,94,.55);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.35}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:clamp(19px,2.6vw,25px);line-height:1.6;color:rgba(40,45,74,.96);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.75);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:rgba(245,225,180,1)}
+
+.chain{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px 12px;margin:28px 0 8px}
+.chain span{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:17px;color:#1c203a;background:rgba(52,58,94,.07);border:1px solid rgba(52,58,94,.16);border-radius:100px;padding:9px 18px;white-space:nowrap}
+.chain i{font-style:normal;color:#8a5f10;font-size:15px}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#1c203a!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p{color:#2b3050!important}
+.section p strong{color:#1c203a!important}
+.section p a{color:#593f9e!important;border-bottom-color:rgba(89,63,158,.55)!important}
+.section p a:hover{color:#41328f!important}
+.highlight em,.final-text strong{color:#8a5f10!important}
+.soft em{color:#1a6b42!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#1c203a!important}.card-text{color:#2b3050!important}
+.phrase-icon{color:#946717!important}
+.phrase-said{color:#1c203a!important}
+.reply-text{color:#2b3050!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:#262b4a!important}
+.soft{background:linear-gradient(135deg,rgba(31,122,77,.10),rgba(82,97,194,.05))!important;border-color:rgba(31,122,77,.28)!important}
+.soft p{color:#1c3a2c!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#1c203a!important}
+.col.bad .col-label{color:#a8331f!important}
+.col.good .col-label{color:#1a6b42!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col-text{color:#1c203a!important}
+.col-note{color:#2b3050!important}
+.chain span{color:#1c203a!important}
+.chain i{color:#8a5f10!important}
+.final-text{color:rgba(40,45,74,.96)!important}
+.page-subtitle,.hero-author,.question-label{color:#4a5075!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Маніфестація зовнішності</h1>
+  <p class="page-subtitle">Не притягування — а відображення того, ким ти стала</p>
+
+  <div class="section" style="animation-delay:.8s">
+    <div class="hero-quote">
+      <div class="hero-text">"Маніфестація — це не притягування чогось ззовні. Це відображення: прояв назовні того, ким ти вже обрала бути."</div>
+      <div class="hero-author">Головна теза матеріалу</div>
+    </div>
+    <p>Найпоширеніша помилка в роботі із зовнішністю — намагатися «наманіфестувати» конкретну рису. Інший ніс. Інший колір очей. Іншу форму обличчя. Медитації на це не працюють — просто тому, що механізм влаштований інакше.</p>
+    <p>Краса не приходить як окремий об'єкт, який можна замовити. Вона приходить як <strong>наслідок</strong>. Спершу людина стає тією, чиє життя саме собою приводить її до певної зовнішності, — і лише потім зовнішність підтягується.</p>
+    <div class="highlight">
+      <p><em>Ідентичність — це те, ким ти обираєш бути.</em> Вона обирається. Вона не задана раз і назавжди, і саме тому з нею взагалі можна працювати.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Формула з трьох частин</h2>
+    <p>Щоб змінилося будь-що матеріальне — зовнішність у тому числі — потрібно змінити три речі. Не одну на вибір. Три:</p>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">👁️</span>
+        <div class="card-title">Сприйняття</div>
+        <div class="card-text">Куди спрямована увага. Бо саме увага керує тим, що ти взагалі бачиш.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🫀</span>
+        <div class="card-title">Нервова система</div>
+        <div class="card-text">Чи відчуває тіло безпеку в красі. Чи безпечно тобі бути красивою.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌱</span>
+        <div class="card-title">Ідентичність</div>
+        <div class="card-text">Який набір станів ти обираєш — і які дії з цього набору народжуються.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Сприйняття: куди дивиться увага</h2>
+    <p>Коли жінка вважає себе некрасивою, вона мимоволі фокусує погляд на тому, що вважає недоліком: на носі, на стані шкіри, на чомусь ще. Кожен такий погляд — ще один доказ у справі про власну «потворність». Переконання не просто зберігається. Воно щодня закріплюється — руками самої людини.</p>
+    <p>Розв'язання — не в тому, щоб штучно переконувати себе «я ідеальна». Такі слова не відгукуються зсередини, а тому й не працюють.</p>
+    <div class="soft">
+      <p><em>Практика з дзеркалом.</em> Дивись у дзеркало і свідомо переноси увагу на ті риси, які ти <strong>вже</strong> вважаєш у собі красивими. Не на ті, які «мала б» полюбити, — на ті, що подобаються по-справжньому.</p>
+      <p>Що більше уваги дістається саме їм, то сильніше вони розкриваються у твоєму сприйнятті. Практикувати кілька тижнів поспіль, не разово.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Нервова система: чи безпечно бути красивою</h2>
+    <p>Питання звучить дивно рівно доти, доки не поставиш його собі всерйоз. <strong>Чи безпечно тобі бути красивою?</strong></p>
+    <p>У книзі під назвою «Hunger» авторка описує власний досвід: після пережитого сексуального насильства вона почала різко набирати вагу. Пояснення, до якого вона приходить, — підсвідоме. Це був спосіб отримувати увагу, залишаючись у безпеці: стати великою, щоб бути поміченою, і водночас непривабливою за суспільними стандартами, щоб ніхто не чіпав.</p>
+    <div class="highlight">
+      <p>Це крайній випадок загального механізму. <em>Якщо в тілі записана програма «краса дорівнює небезпека», жодна робота над зовнішністю не дасть результату</em>, поки сама програма лишається на місці.</p>
+    </div>
+    <p>Змінюється така програма в чотири кроки:</p>
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🔦</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Спершу — усвідомити</div>
+          <div class="reply-text">Те, що не усвідомлюється, змінити неможливо. Програму треба спочатку назвати — прямо і вголос.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🧾</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Побачити, звідки вона</div>
+          <div class="reply-text">Будь-яке переконання або особисте, або родове, або суспільне. Третього немає. Ти або сама формуєш свою програму — або її формують за тебе.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">✍️</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Дати мозку контрприклад</div>
+          <div class="reply-text">Випиши кількох людей, чий досвід суперечить твоїй обмежувальній програмі. Наприклад — красивих без травматичного досвіду, який ніби «виправдовував» би цю красу. Опиши їхню ситуацію детально, невеликим текстом. Це допомагає мозку повірити, що така можливість узагалі існує.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🧘</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Прожити нове тілом</div>
+          <div class="reply-text">Візуалізація і медитація на стан, у якому краса й безпека є одночасно. Мозок не розрізняє уявний і реальний досвід — нервова система звикає до нового стану ще до того, як життя його підтвердить.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">Ідентичність: набір станів</h2>
+    <p>Справжні зміни відбуваються не на рівні цілей. Вони відбуваються на рівні особистості.</p>
+    <p>Ідентичність — це, по суті, вибір певного набору станів. Ідентичність жінки, яка любить і доглядає себе, задає одні емоційні стани. Ці стани породжують певні думки та імпульси. А імпульси ведуть до конкретних дій.</p>
+    <div class="chain">
+      <span>ідентичність</span><i>→</i><span>стани</span><i>→</i><span>думки</span><i>→</i><span>імпульси</span><i>→</i><span>дії</span><i>→</i><span>зовнішність</span>
+    </div>
+    <p>Тому змінювати треба початок ланцюга, а не його хвіст. Якщо ідентичність каже тобі, що ти неприваблива й нещаслива, ти просто не побачиш можливостей. Спорт, догляд, естетичні процедури — усе це може бути поруч і цілком доступне. Рука на це не підніметься, бо всередині немає тієї, хто це робить. Про сам вибір, ким бути — <a href="identity.html">«Ідентичність»</a>.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Як це виглядає зсередини</h2>
+    <p>Авторка розповідає власну історію. Раніше, у стані, який вона описує як <strong>виживання</strong>, вона важила значно більше — попри здорове харчування і регулярні фізичні навантаження. Формально робилося все «правильно». Результату не було.</p>
+    <p>Зміна зовнішності не була метою й не була проєктом. Вона дозволила собі більше. Стала щасливішою. Змінилася ідентичність — і зовнішність підтягнулася сама, як побічний ефект.</p>
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">Робота з хвостом</div>
+        <div class="col-text">«Схудну — і стану щасливою»</div>
+        <div class="col-note">Дії є, зусилля є, результату немає або він не тримається. Бо стан, з якого діють, лишився тим самим.</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">Робота з початком</div>
+        <div class="col-text">«Стану щасливою — і зовнішність підтягнеться»</div>
+        <div class="col-note">Змінюється стан — змінюються імпульси. Дії з'являються самі, і саме тому вони не потребують примусу.</div>
+      </div>
+    </div>
+    <p>Про те, чому вага рідко буває питанням самої лише дисципліни — <a href="weight-truth.html">«Правда про вагу»</a>.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2s">
+    <h2 class="section-title">Краса як енергія нервової системи</h2>
+    <p>Краса описується тут не як набір пропорцій, а як <strong>енергія нервової системи</strong>. За науковими даними, людей зі збалансованою нервовою системою оточення сприймає як більш привабливих.</p>
+    <p>Приклад: чоловіки в Кореї, описуючи ідеальний тип партнерки, часто називають жінку, яка виросла в любові. Не конкретні риси обличчя — конкретний внутрішній стан. Саме таких жінок сприймають як привабливіших. Про красу, яку не роблять руками — <a href="beauty.html">«Краса зсередини»</a>.</p>
+    <div class="final-quote">
+      <div class="final-text">Щаслива людина <strong>не може сприйматися як неприваблива</strong>.</div>
+    </div>
+    <div class="question-card">
+      <div class="question-label">Питання без відповіді</div>
+      <div class="question-main">Якби бути красивою було абсолютно безпечно — що б ти дозволила собі вже завтра?</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+</body>
+</html>

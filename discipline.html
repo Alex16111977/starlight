@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Starlight — Комплекси</title>
+<title>Starlight — Здорова дисципліна</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -11,7 +11,7 @@ html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans
 body{min-height:100vh;position:relative;overflow-x:hidden}
 canvas{position:fixed;inset:0;z-index:0}
 .nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
-.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,140,200,.20) 0%,rgba(140,80,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
 .nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
 @keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
 
@@ -47,7 +47,7 @@ canvas{position:fixed;inset:0;z-index:0}
 .phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
 .phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
 .phrase:hover::before{opacity:1}
-.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:30px;flex-shrink:0;width:36px;text-align:center;color:rgba(212,175,110,.85);line-height:1.1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
 .phrase-body{flex:1;min-width:0}
 .phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:10px}
 .reply-text{font-size:13px;font-weight:200;line-height:1.85;color:rgba(52,58,94,.8)}
@@ -72,12 +72,6 @@ canvas{position:fixed;inset:0;z-index:0}
 .soft p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(30,60,46,.92);margin:0 0 12px}
 .soft p:last-child{margin-bottom:0}
 .soft em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:#1f7a4d}
-
-.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
-.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
-.warn p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(96,44,32,.92);margin:0 0 12px}
-.warn p:last-child{margin-bottom:0}
-.warn em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:#b23c2e}
 
 .compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
 .col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
@@ -115,19 +109,16 @@ html{color:rgba(52,58,94,.9)!important}
 .section p a:hover{color:#5261c2!important}
 .highlight em,.final-text strong{color:#946717!important}
 .soft em{color:#1f7a4d!important}
-.warn em{color:#b23c2e!important}
-.warn p{color:rgba(96,44,32,.92)!important}
 .card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
 .card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
 .card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#946717!important}
 .phrase-said{color:#242844!important}
 .reply-text{color:rgba(36,40,68,.92)!important}
-.rule-num{color:#946717!important}
 .highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
 .highlight p{color:rgba(36,40,68,.9)!important}
 .soft{background:linear-gradient(135deg,rgba(31,122,77,.10),rgba(82,97,194,.05))!important;border-color:rgba(31,122,77,.28)!important}
 .soft p{color:rgba(30,60,46,.92)!important}
-.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
 .question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
 .col-label{color:#242844!important}
 .col.bad .col-label{color:#b23c2e!important}
@@ -177,8 +168,8 @@ html{color:rgba(52,58,94,.9)!important}
     <span class="page-logo">Starlight</span>
   </div>
 
-  <h1 class="page-title">Комплекси</h1>
-  <p class="page-subtitle">Не плаваюча самооцінка, а постійний стан</p>
+  <h1 class="page-title">Здорова дисципліна</h1>
+  <p class="page-subtitle">Шість кроків до самодисципліни без насильства над собою</p>
 
   <div class="audio-player" style="opacity:0;animation:riseIn 1s .8s ease forwards">
     <button class="audio-btn" type="button" aria-label="Відтворити аудіоверсію">
@@ -193,183 +184,190 @@ html{color:rgba(52,58,94,.9)!important}
       </div>
       <input class="audio-seek" type="range" min="0" max="1000" value="0" step="1" aria-label="Перемотка аудіо">
     </div>
-    <audio preload="none" src="audio/complexes.mp3"></audio>
+    <audio preload="none" src="audio/discipline.mp3"></audio>
   </div>
 
   <div class="section" style="animation-delay:.9s">
     <div class="hero-quote">
-      <div class="hero-text">"Не подобаєшся собі ні вранці, ні вдень, ні вночі."</div>
-      <div class="hero-author">За радіоефіром Михайла Лабковського</div>
+      <div class="hero-text">"Дисципліна — це не вміння себе змусити. Це навичка повертатися до розпочатого — знову і знову."</div>
+      <div class="hero-author">За матеріалом Максима Васильченка</div>
     </div>
-    <p>Слово «комплекс» уживають так широко, що воно майже втратило межі: комплексом називають і сором'язливість, і поганий настрій, і звичайне хвилювання перед виступом. Але якщо розрізняти точніше, стає зрозуміліше, з чим саме ти маєш справу — і чи потрібно з цим щось робити.</p>
+    <p>Сучасне уявлення про дисципліну зводиться до простої схеми: «треба зробити те, чого не хочеться, інакше покарають». Звідси нескінченний пошук інструментів самопримусу — жорсткіших розкладів, трекерів, штрафів самій собі. Але є альтернатива: дія без насильства над собою — коли ти робиш щось тому, що тобі самій цього хочеться.</p>
+    <p>Відкладання справ на останній момент — це не погана дисципліна. Це внутрішня боротьба, яка виникає щоразу, коли доводиться себе змушувати. Здорова дисципліна можлива лише за однієї умови: коли ти відчуваєш себе вільною. Тому ця сторінка — спершу про те, звідки взялася несвобода, і лише потім про кроки.</p>
   </div>
 
   <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
 
   <div class="section" style="animation-delay:1.1s">
-    <h2 class="section-title">Невпевненість чи комплекс</h2>
-    <p>Це різні речі, і різниця не в силі, а в стійкості. Невпевненість пливе: сьогодні ти на висоті, завтра розсипалась від одного погляду. Комплекс не пливе — він тримається рівно, незалежно від обставин.</p>
-    <div class="compare">
-      <div class="col good">
-        <div class="col-label">Невпевненість</div>
-        <div class="col-text">«Сьогодні я собі не подобаюсь»</div>
-        <div class="col-note">Самооцінка коливається залежно від ситуації, втоми, компанії. Добра новина є завжди: вона підіймається так само легко, як опускається.</div>
-      </div>
-      <div class="col bad">
-        <div class="col-label">Комплекс</div>
-        <div class="col-text">«Я собі не подобаюсь — і крапка»</div>
-        <div class="col-note">Стан не змінюється від успіху, компліменту чи вдалого дня. Це вже не оцінка ситуації, а фонове ставлення до себе загалом.</div>
-      </div>
+    <h2 class="section-title">Звідки взявся наглядач</h2>
+    <p>У первісному й аграрному світі проблеми продуктивності не існувало. Майстри й ремісники самі визначали, як працювати, скільки і в якому темпі, — і результат праці належав їм. Нікому не спадало на думку «попрацювати над своєю дисципліною».</p>
+    <p>Усе змінила індустріалізація кінця XIX століття. Людей масово залучили до заводської праці, яка вимагала не майстерності, а повторення однакових операцій. Інженер Фредерік Тейлор розклав дії робітника на найдрібніші рухи, розрахував «єдино правильний» спосіб виконання кожної операції, зафіксував нормативи секундоміром — і поставив наглядачів стежити за точним виконанням. Генрі Форд застосував той самий принцип на конвеєрі. Фізичне і психологічне благополуччя робітника в цій системі не важило нічого.</p>
+    <p>А потім настала постіндустріальна епоха: виробництво автоматизується, з'явилися можливості незалежної праці для невеликих груп людей. Об'єктивні умови для свободи повернулися. Але є нюанс.</p>
+    <div class="highlight">
+      <p><em>Наглядач із заводу переїхав у голову.</em> Ти продовжуєш жити в парадигмі самопримусу навіть там, де зовнішнього тиску вже немає. І більшість інструментів «боротьби з лінню» не розв'язують питання, чому зникло власне бажання діяти, — вони просто пропонують нові милиці замість заводського наглядача. Від чого лінь захищає насправді — <a href="unconditional.html" style="color:#7a5fbe">«Лінь навиворіт»</a>.</p>
     </div>
-    <p style="margin-top:20px">Про механіку самої самооцінки — з чого вона будується щодня і чому афірмації перед дзеркалом радше шкодять — на сторінці <a href="self-esteem.html">«Самооцінка»</a>. Тут — про її застиглу форму.</p>
   </div>
 
   <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
 
-
-  <div class="section" style="animation-delay:1.5s">
-    <h2 class="section-title">Як це виглядає зовні</h2>
-    <p>Комплекс рідко називає себе вголос. Він проявляється як звичка, ба навіть як риса характеру — і саме тому його так важко впізнати в собі.</p>
-    <div class="cards">
-      <div class="card">
-        <span class="card-icon">🤫</span>
-        <div class="card-title">Постійне мовчання</div>
-        <div class="card-text">Є що сказати — і не сказано. Не тому, що нема думки, а тому, що «кому вона цікава». Стратегія «краще тихо» здається безпечною, поки не з'ясується, що так минуло двадцять років.</div>
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Дві людини медитують</h2>
+    <p>Психологи Едвард Дессі та Річард Райан у теорії самодетермінації показали: люди продуктивніші, коли діють із внутрішнього вибору, а не зі страху покарання. Різницю добре видно на простому прикладі — двоє людей щоранку медитують:</p>
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">Дія зверху</div>
+        <div class="col-text">«Треба постійно себе покращувати»</div>
+        <div class="col-note">Практика тримається на повинності. Через якийсь час людина її закидає — і додає собі ще один доказ «поганої дисципліни».</div>
       </div>
-      <div class="card">
-        <span class="card-icon">🚶</span>
-        <div class="card-title">Не підійти й не заговорити</div>
-        <div class="card-text">«Хто я такий», «навіщо їй це». Знайомство відкладається на потім, потім — на роки, а потім думка про нього просто зникає, і це виглядає вже як власний вибір.</div>
-      </div>
-      <div class="card">
-        <span class="card-icon">💍</span>
-        <div class="card-title">Обручка про всяк випадок</div>
-        <div class="card-text">Каблучка, щоб не питали. Занижений вік у профілі. Дрібні щоденні маскування, які коштують більше, ніж здаються, — бо щоразу підтверджують, що зі справжньою тобою щось не так.</div>
-      </div>
-      <div class="card">
-        <span class="card-icon">🪞</span>
-        <div class="card-title">Претензії до тіла</div>
-        <div class="card-text">Груди, ноги, вага, зріст, вік. Список змінюється, а конструкція та сама: знайти в собі те, за що можна не любити себе сьогодні.</div>
+      <div class="col good">
+        <div class="col-label">Вільний вибір</div>
+        <div class="col-text">«Мені це приносить задоволення»</div>
+        <div class="col-note">Практика тримається сама собою. Роками. Без жодного трекера.</div>
       </div>
     </div>
-    <p style="margin-top:20px">Перший пункт має власну сторінку — про те, чому голос стихає й як його повертати: <a href="voice.html">«Голос»</a>.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Втеча від свободи</h2>
+    <p>Тут є пастка, яку описав Еріх Фромм у «Втечі від свободи»: чим більше в людини свободи, тим сильніша її тривога. Середньовічна людина мала обмежений вибір — чим займатися, у що вірити, де жити, з ким спілкуватися, — але відчувала приналежність і ясність життя. Фромм називає це первинними узами. Коли станові рамки зруйнувалися, разом зі свободою прийшли самотність і невизначеність: кожен вибір і вся відповідальність лягли особисто на людину, без зовнішніх орієнтирів. Це тягар свободи.</p>
+    <p>І психіка шукає, як цього тягаря позбутися, — неусвідомлено підшукуючи нового «господаря», який забере вибір і відповідальність собі:</p>
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🏢</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Підпорядкування й панування</div>
+          <div class="reply-text">Злитися з чимось більшим і значущим — корпорацією, державною структурою — і розчинити свій вибір у її волі.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">👥</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Конформізм</div>
+          <div class="reply-text">Відмовитися від індивідуальності й розчинитися в загальній масі: як усі, так і я.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🎮</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Відсторонення</div>
+          <div class="reply-text">Втекти від вибору в ігри, книги, культи — куди завгодно, де реальні рішення не потрібні.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">👑</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Нарцисизм</div>
+          <div class="reply-text">Роздути власне «я» настільки, що весь інший світ стає малим і не страшним.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">💥</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Руйнування</div>
+          <div class="reply-text">Ворожість до всіх, хто хоч трохи вирізняється чи відрізняється, — щоб не нагадували про можливість бути іншою.</div>
+        </div>
+      </div>
+    </div>
+    <div class="highlight">
+      <p>Найпоширеніший рецепт сучасності — суміш перших трьох: <em>«просто виконуй, що скажуть, вчасно закривай задачі, а якщо не виходить — попрацюй над своєю дисципліною і продуктивністю».</em> Впізнаєш?</p>
+    </div>
   </div>
 
   <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
 
   <div class="section" style="animation-delay:1.7s">
-    <h2 class="section-title">Звідки це береться</h2>
-    <p>Майже завжди — з дитинства, і майже завжди від дорослих, які самі себе не любили. Батько чи мати з власними комплексами рідко хвалять: вони помічають промахи, виправляють, порівнюють, іронізують. Не обов'язково зі зла — часто це просто єдина знайома їм форма розмови.</p>
-    <p>Перші почуті про себе слова стають фоном, на якому потім читається все інше. Дитина не вміє засумніватися в оцінці дорослого — вона приймає її як опис реальності. Як саме ці фрази осідають і стають власним внутрішнім голосом — на сторінці <a href="parental-scripts.html">«Батьківські сценарії»</a>.</p>
+    <h2 class="section-title">Головна підміна</h2>
+    <p>Звична логіка звучить так: «налагоджу дисципліну — стану хорошою для керівництва — тоді з'явиться вільний час, і все почне вдаватися». Але це не дисципліна. Це насильство над собою заради чужих інтересів — і саме тому організм чинить такий опір цим «змінам на краще». Він не проти порядку. Він проти того, щоб порядок обслуговував не тебе.</p>
   </div>
 
   <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
 
   <div class="section" style="animation-delay:1.9s">
-    <h2 class="section-title">Коли принижує той, хто поруч</h2>
-    <p>Часта історія: партнер регулярно проходиться по зовнішності — губи, форми, вага, — хоча сам має цілий список претензій до себе. Це не парадокс, а звичайний механізм: принижують зазвичай ті, у кого зі своєю самооцінкою погано. Чужа вада на мить робить власну меншою.</p>
-    <p>Друга причина холодніша. Занижена самооцінка партнерки зручна: якщо вона впевнена, що ніде краще не знайде, вона нікуди й не піде. Тоді критика — не про зовнішність узагалі, а спосіб утримати.</p>
+    <h2 class="section-title">«А в мене іпотека і дедлайни»</h2>
+    <p>Типове заперечення: «легко говорити про свободу, маючи фріланс, — а в мене найманка, іпотека, діти». Але подивись чесно: а чи був у житті момент справжньої свободи взагалі? Школа — обов'язок. Виш нерідко обирали батьки. Після вишу — необхідність одразу заробляти. Несвобода — це не поточна ситуація на роботі. Це стан, у якому ти перебувала все життя.</p>
+    <div class="highlight">
+      <p>Саме тому «підходящий момент для змін» не настане сам по собі — його нема звідки чекати. <em>Свободу не видає начальство. Її беруть самі — навіть у межах наявних обмежень.</em></p>
+    </div>
+    <div class="soft">
+      <p><em>Приклад із перших рук.</em> У дитинстві він бачив для себе один-єдиний варіант майбутнього — стати військовим, як батьки. Не тому, що інше забороняли, — інше неможливо було навіть уявити для себе. До двадцяти років — жодного самостійного рішення: військове училище, навчання на відмінно без крихти інтересу до спеціальності. Перелом стався не через впевненість у собі й не через гроші, а через книги й чужі історії — знайомство зі способом мислення вільніших людей поступово міняло картину світу. У двадцять один він ухвалив перше самостійне рішення: залишив училище і вступив на психфак.</p>
+    </div>
   </div>
 
   <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
 
   <div class="section" style="animation-delay:2.1s">
-    <h2 class="section-title">Шість правил</h2>
-    <p>Це найвідоміша частина підходу Лабковського — шість формулювань, які він повторює з ефіру в ефір. Вони виглядають простими до банальності, і в цьому їхня хитрість: кожне з них незручне рівно настільки, наскільки сильний комплекс.</p>
+    <h2 class="section-title">Шість кроків до внутрішньої свободи</h2>
+    <p>Свобода, з якої виростає здорова дисципліна, тренується щодня — на дрібницях:</p>
     <div class="phrases">
       <div class="phrase">
-        <div class="rule-num">1</div>
+        <div class="phrase-icon">🎯</div>
         <div class="phrase-body">
-          <div class="phrase-said">Робити те, що хочеться</div>
-          <div class="reply-text">Займатися тим, що подобається, а не тим, що годиться, зручно іншим або «має сенс». Найповільніше правило з усіх — і найважливіше.</div>
+          <div class="phrase-said">Тримай фокус на «Чого я хочу від життя?»</div>
+          <div class="reply-text">Постійно повертай собі це питання. Не бійся власних бажань і не поспішай діяти — просто звикай до них, деталізуючи бажаний спосіб життя, роботу, оточення, відпочинок. Як шукати відповідь глибше — <a href="purpose.html" style="color:#7a5fbe">«Призначення»</a>.</div>
         </div>
       </div>
       <div class="phrase">
-        <div class="rule-num">2</div>
+        <div class="phrase-icon">🗳️</div>
         <div class="phrase-body">
-          <div class="phrase-said">Не робити того, чого не хочеться</div>
-          <div class="reply-text">Не терпіти мовчки й не погоджуватися «щоб не сваритися». Кожне перетерплене «нічого страшного» — цегла в ту саму стіну.</div>
+          <div class="phrase-said">Повертай собі рішення</div>
+          <div class="reply-text">Помічай моменти, коли право вибору автоматично віддається партнеру, керівнику, колегам. І повертай собі протягом дня хоча б одне рішення — що з'їсти, куди піти, як провести півгодини. Це противага звичці уникати тривоги вибору.</div>
         </div>
       </div>
       <div class="phrase">
-        <div class="rule-num">3</div>
+        <div class="phrase-icon">🪑</div>
         <div class="phrase-body">
-          <div class="phrase-said">Одразу казати, що не подобається</div>
-          <div class="reply-text">Не збирати місяцями, щоб потім висловити все разом. Сказане вчасно й спокійно важить більше, ніж накопичене.</div>
+          <div class="phrase-said">Раз на тиждень — не так, як прийнято</div>
+          <div class="reply-text">Відмовся від якогось негласного правила оточення — наприклад, сядь на обіді окремо від колег. Тренується здатність відрізнятися від інших без внутрішнього руйнування.</div>
         </div>
       </div>
       <div class="phrase">
-        <div class="rule-num">4</div>
+        <div class="phrase-icon">📓</div>
         <div class="phrase-body">
-          <div class="phrase-said">Не відповідати, коли не питають</div>
-          <div class="reply-text">Не виправдовуватися й не пояснювати наперед те, про що ніхто не запитував. Виправдання без запиту — це сигнал, що ти сама сумніваєшся у своєму праві.</div>
+          <div class="phrase-said">Щовечора — нотатка про альтернативу</div>
+          <div class="reply-text">Запиши ситуацію дня, де можна було вчинити інакше: наприклад, відмовити колезі замість автоматичного «так, допоможу». Діяти інакше одразу не обов'язково — тренується сам пошук варіантів. Як звучить здорова відмова — <a href="boundaries-cases.html" style="color:#7a5fbe">«Скажи одразу і лише раз»</a>.</div>
         </div>
       </div>
       <div class="phrase">
-        <div class="rule-num">5</div>
+        <div class="phrase-icon">🎈</div>
         <div class="phrase-body">
-          <div class="phrase-said">Відповідати тільки на поставлене запитання</div>
-          <div class="reply-text">Не розгортати відповідь у виправдальну промову й не тікати від питання. Коротко — це не грубо.</div>
+          <div class="phrase-said">Раз на день — щось без користі</div>
+          <div class="reply-text">Дозволь собі відволіктися просто тому, що хочеться, — і отримай від цього задоволення без почуття провини. Це послаблює звичку безперервно оцінювати власну продуктивність.</div>
         </div>
       </div>
       <div class="phrase">
-        <div class="rule-num">6</div>
+        <div class="phrase-icon">🔗</div>
         <div class="phrase-body">
-          <div class="phrase-said">З'ясовуючи стосунки, говорити тільки про себе</div>
-          <div class="reply-text">Про власні відчуття, а не про чужі вади. Не «ти черствий», а «мені боляче, коли так виходить».</div>
+          <div class="phrase-said">Найважливіший: зусилля → значуща нагорода</div>
+          <div class="reply-text">Постійна енергія з'являється лише в циклі: доклала зусилля → отримала значущу нагороду → покращила своє життя, відчула комфорт і радість → отримала приплив енергії → знову спрямувала її на зусилля.</div>
         </div>
       </div>
     </div>
-    <p style="margin-top:20px">Це інший фреймворк, ніж сім практик Натаніеля Брандена на сторінці <a href="self-esteem.html">«Самооцінка»</a> — не суперечить їм, а працює з іншого боку: там про звички мислення, тут про мову й поведінку в конкретній розмові.</p>
   </div>
 
   <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
 
   <div class="section" style="animation-delay:2.3s">
-    <h2 class="section-title">Найважче правило — шосте</h2>
-    <p>Найчастіше питання до цих правил звучить так: а якщо в моїй сім'ї не заведено казати старшим, що тобі щось не подобається? Якщо кожне таке слово читається як зухвалість і закінчується сваркою?</p>
-    <p>Відповідь якраз у шостому правилі, і воно вужче, ніж здається. Говорити про те, що не подобається, — не означає давати оцінку людині. «Ти неуважний» — це діагноз, і на нього природно захищаються. «Мені прикро, коли мене перебивають» — це про тебе, і заперечити тут нічого: твої відчуття не предмет для суперечки.</p>
-    <div class="soft">
-      <p><em>Різниця в одному слові — з якого починається речення.</em> «Ти…» майже завжди веде до конфлікту. «Мені…» лишає розмову відкритою. Це не гарантія, що тебе почують, — але це прибирає привід не почути.</p>
+    <h2 class="section-title">Чому шостий крок — головний</h2>
+    <p>Найкраще це видно на складних фінансових обставинах. Людина з боргами й кредитами вирішує «розумно»: відмовляти собі в усьому заради виплат — аж до харчування на мінімальну суму в день. Через якийсь час трапляється зрив: імпульсна витрата на себе — і знову мінус.</p>
+    <p>Це не випадковість і не слабка воля. Якщо ти себе не винагороджуєш, психіка починає відчувати голод — і компенсує його зривами. Гірший сценарій: замість зриву психіка вмикає саботаж і повністю відмовляється генерувати енергію на дії, якщо зусилля не супроводжуються жодною радістю.</p>
+    <div class="highlight">
+      <p><em>Значуща нагорода — базовий фактор природного бажання діяти.</em> Без неї або вимикається активність, або слабшає контроль поведінки — і борги ростуть далі. Той самий механізм зсередини — навичка «переводь зусилля у власний комфорт» у <a href="unconditional.html" style="color:#7a5fbe">«Лінь навиворіт»</a>.</p>
     </div>
-    <p>Що робити, коли слова вже сказані, а поведінка не змінилася, — на сторінці <a href="boundaries-silent.html">«Межі без слів»</a>.</p>
   </div>
 
   <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
 
   <div class="section" style="animation-delay:2.5s">
-    <h2 class="section-title">Ззовні їх не видно</h2>
-    <p>Є спокуслива теорія, що комплекси — це про «тепличних» людей, а хто ріс просто й природно, той виріс вільним. Це не підтверджується нічим.</p>
-    <p>Найбрутальніший на вигляд чоловік може зіщулюватись від телефонного дзвінка матері. А людина без жодного лоску — говорити те, що думає, легко й без внутрішнього торгу. Комплекс не корелює ні з вихованням, ні з зовнішністю, ні з достатком; він корелює тільки з тим, як із людиною розмовляли, коли вона була маленькою.</p>
-  </div>
-
-  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
-
-  <div class="section" style="animation-delay:2.7s">
-    <h2 class="section-title">Про що соромно зізнатися</h2>
-    <p>Теми сорому розподілені за статтю напрочуд стабільно. Чоловікові найважче визнати відсутність грошей і роботи — це читається як провал у тому єдиному, за чим його нібито оцінюють. Жінці — самотність.</p>
-    <p>І тут суспільство поводиться відверто нечесно. Неодружений чоловік — «вільний», «ще не нагулявся», «не поспішає». Незаміжня жінка, особливо без дітей, майже автоматично отримує припущення, що з нею щось не так: не змогла, не втримала, щось у неї не те.</p>
-    <div class="highlight">
-      <p><em>Ця асиметрія не має під собою нічого, крім звички.</em> Значна частина шлюбів закінчується розлученням — тобто наявність або відсутність партнера просто не є показником якості людини. Наявність каблучки нічого не доводить, а її відсутність нічого не спростовує.</p>
-      <p>І ще: «розлучена» чи «незаміжня» — це опис обставини. «Нещаслива» — це вже чужий висновок, який тобі приписали, не спитавши.</p>
-    </div>
-  </div>
-
-  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
-
-  <div class="section" style="animation-delay:2.9s">
-    <h2 class="section-title">Заплющивши очі</h2>
-    <p>Комплекси тією чи іншою мірою є в кожного — питання лише в тому, скільки місця вони займають. І зменшуються вони не від роздумів про себе, а від конкретної дії, якої раніше не було.</p>
-    <p>Виступити, коли завжди мовчала. Підійти й заговорити. Запитати прямо те, що соромно запитати, — навіть таку дрібницю, як дата чийогось дня народження, яку ти забула й тепер боїшся видатися неуважною. Людина без комплексу просто питає. Людина з комплексом спершу програє в голові всі варіанти того, що про неї подумають, — і не питає взагалі.</p>
-    <div class="soft">
-      <p><em>Іноді єдиний спосіб — зробити це, заплющивши очі.</em> Не дочекавшись упевненості, не підготувавши ідеальне формулювання. Упевненість не приходить перед дією — вона з'являється після, як слід від неї. І часто одного разу достатньо, щоб конкретний страх перестав існувати.</p>
-    </div>
+    <h2 class="section-title">Що таке здорова дисципліна</h2>
+    <p>Здорова дисципліна — це навичка повертатися до розпочатого знову і знову. Стиль не важить: хтось працює послідовно й рівномірно, хтось рвучко, короткими проміжками з частими відволіканнями, — і те, і те нормально. Про м'яку роботу з відкладанням — <a href="procrastination.html">«Прокрастинація»</a>.</p>
     <div class="final-quote">
-      <div class="final-text">Комплекс тримається на впевненості, що тебе оцінюють щосекунди. <strong>Він слабшає щоразу, коли ти дієш так, ніби це не так.</strong></div>
+      <div class="final-text">Бути дисциплінованою — не означає стати роботом. Це означає <strong>просто повертатися після будь-якої перерви</strong>.</div>
     </div>
     <div class="question-card">
       <div class="question-label">Питання без відповіді</div>
-      <div class="question-main">Що ти не сказала за останній тиждень — не тому, що не мала думки, а тому, що вирішила, що вона нікому не цікава?</div>
+      <div class="question-main">Яке рішення ти сьогодні віддала комусь автоматично — і яке можеш повернути собі просто зараз?</div>
     </div>
   </div>
 

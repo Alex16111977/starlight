@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Переписати минуле</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:300;letter-spacing:.4em;color:rgba(52,58,94,.7);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.95);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:11px;font-weight:300;letter-spacing:.4em;color:rgba(52,58,94,.7);text-transform:uppercase;margin-bottom:64px;line-height:2;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:clamp(26px,4vw,34px);letter-spacing:.06em;color:rgba(28,32,58,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15.5px;font-weight:300;line-height:1.92;color:#2b3050;margin-bottom:18px}
+.section p strong{font-weight:500;color:#1c203a}
+.section p a{color:rgba(138,176,255,.9);text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#c8d8ff}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:10px;font-weight:300;letter-spacing:.42em;text-transform:uppercase;color:rgba(52,58,94,.62)}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:19px;line-height:1.5;color:rgba(28,32,58,.98);margin-bottom:10px}
+.reply-text{font-size:14.5px;font-weight:300;line-height:1.88;color:#2b3050}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:20px;letter-spacing:.03em;color:rgba(28,32,58,1);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.85;color:#2b3050}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15.5px;font-weight:300;line-height:1.92;color:#262b4a;margin:0 0 12px}
+.highlight p:last-child{margin-bottom:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17.5px;color:rgba(212,175,110,.85)}
+
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(110,200,160,.45),transparent)}
+.soft p{font-size:15.5px;font-weight:300;line-height:1.92;color:#1c3a2c;margin:0 0 12px}
+.soft p:last-child{margin-bottom:0}
+.soft p strong{font-weight:500;color:#123023}
+.soft em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17.5px;color:#1f7a4d}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:26px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(178,60,46,.06);border-color:rgba(178,60,46,.20)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:10px;font-weight:400;letter-spacing:.42em;text-transform:uppercase;margin-bottom:14px}
+.col-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.55;color:rgba(28,32,58,.98)}
+.col-note{font-size:14px;font-weight:300;line-height:1.85;color:#2b3050;margin-top:12px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:10px;font-weight:300;letter-spacing:.42em;text-transform:uppercase;color:rgba(52,58,94,.55);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.35}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:clamp(19px,2.6vw,25px);line-height:1.6;color:rgba(40,45,74,.96);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.75);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:rgba(245,225,180,1)}
+
+.chain{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px 12px;margin:28px 0 8px}
+.chain span{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:17px;color:#1c203a;background:rgba(52,58,94,.07);border:1px solid rgba(52,58,94,.16);border-radius:100px;padding:9px 18px;white-space:nowrap}
+.chain i{font-style:normal;color:#8a5f10;font-size:15px}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#1c203a!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p{color:#2b3050!important}
+.section p strong{color:#1c203a!important}
+.section p a{color:#593f9e!important;border-bottom-color:rgba(89,63,158,.55)!important}
+.section p a:hover{color:#41328f!important}
+.highlight em,.final-text strong{color:#8a5f10!important}
+.soft em{color:#1a6b42!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#1c203a!important}.card-text{color:#2b3050!important}
+.phrase-icon{color:#946717!important}
+.phrase-said{color:#1c203a!important}
+.reply-text{color:#2b3050!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:#262b4a!important}
+.soft{background:linear-gradient(135deg,rgba(31,122,77,.10),rgba(82,97,194,.05))!important;border-color:rgba(31,122,77,.28)!important}
+.soft p{color:#1c3a2c!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#1c203a!important}
+.col.bad .col-label{color:#a8331f!important}
+.col.good .col-label{color:#1a6b42!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col-text{color:#1c203a!important}
+.col-note{color:#2b3050!important}
+.chain span{color:#1c203a!important}
+.chain i{color:#8a5f10!important}
+.final-text{color:rgba(40,45,74,.96)!important}
+.page-subtitle,.hero-author,.question-label{color:#4a5075!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Переписати минуле</h1>
+  <p class="page-subtitle">Спогад залежить від того, як ти на нього дивишся</p>
+
+  <div class="section" style="animation-delay:.8s">
+    <div class="hero-quote">
+      <div class="hero-text">"Те, з чим ти борешся, лише посилюється. Єдиний спосіб відпустити — подивитися на це по-іншому."</div>
+      <div class="hero-author">Наскрізна теза</div>
+    </div>
+    <p>Це запис прямого ефіру у форматі «запитання — відповідь»: про безпеку, провину, пошук себе, природу часу і про те, чи можна переосмислити те, що вже сталося.</p>
+    <p>Наскрізна лінія одна: те, що виглядає як об'єктивний факт — відчуття безпеки, провина, сором, навіть сам спогад — насправді є <strong>інтерпретацією</strong>. А інтерпретацію обирає та, хто дивиться.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Яблуко і персик</h2>
+    <p>Уяви дерево, на якому одночасно росте і яблуко, і персик.</p>
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">Яблуко</div>
+        <div class="col-text">Біль</div>
+        <div class="col-note">Те, що ситуація в тебе забрала. Досі ти дивилася тільки сюди — і збирала тільки цей плід.</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">Персик</div>
+        <div class="col-text">Мудрість, урок, ріст</div>
+        <div class="col-note">Те, що та сама ситуація тобі дала. Він увесь цей час висів на тому самому дереві.</div>
+      </div>
+    </div>
+    <p>Щоб зібрати персик, потрібно свідомо перевести погляд на іншу частину тієї самої ситуації — і обрати дивитися саме туди. Той, хто дивиться, хто вирішує і хто зриває плід, — завжди ти сама.</p>
+    <div class="highlight">
+      <p><em>Якщо стомилася від болю — можна просто обрати дивитися на персик.</em> У будь-якій ситуації точно знайдеться щось корисне. Це не оптимізм, а питання того, куди наведена увага.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Минуле справді можна змінити</h2>
+    <p>Спогади не просто спотворюються з часом. Вони <strong>прямо залежать від того, як на них дивитися</strong> — а отже, минуле буквально можна переписати.</p>
+    <p>Приклад. У дитинстві мати різко накричала на дитину і назвала її товстою й негарною. Дитина зчитала це так: «мене, товсту, не люблять навіть рідні». На цьому ґрунті роками розвивався розлад харчової поведінки і жорсткий контроль над їжею.</p>
+    <p>Але та сама ситуація сформувала й дещо інше — організованість, цілеспрямованість. Вона дала не тільки біль. Вона дала й ріст. Персик висів там весь цей час.</p>
+    <div class="soft">
+      <p><em>Стара інтерпретація:</em> «мати мене не любила».</p>
+      <p><em>Інша інтерпретація тієї самої сцени:</em> мати саме так виражала любов. Є родини, де любов виражають через критику — бо бояться, що суспільство не прийме дитину такою, яка вона є, і критикою намагаються її захистити. За таким прочитанням мати любила настільки сильно, що не побоялася зіпсувати стосунки — заради того, щоб дитина почала дбати про себе й побачила, якою красивою може бути.</p>
+    </div>
+    <p>Дитина в момент травми не здатна запитати себе, що мати насправді хотіла передати. Вона чує сказане буквально і зчитує негативно. Але доросла людина — яка вже має мудрість, отриману завдяки цій самій травмі, — здатна переосмислити ситуацію заднім числом. Подивитися на неї не очима дитини, а очима дорослої себе. Звідки взагалі беруться такі сцени — <a href="childhood.html">«Як дитинство формує нас»</a>.</p>
+    <div class="highlight">
+      <p><em>Важливе уточнення.</em> Нова інтерпретація не робить переконання матері істиною. «Повних людей не люблять» — це її особисте переконання, а не універсальний факт. Переписується не реальність, а те, який плід ти з неї береш.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Чому в травмі здається безпечніше</h2>
+    <p>Знань доступно як ніколи багато — а люди почуваються загубленими як ніколи. Причина в тому, що людям буває <strong>добре</strong> у власних травмах: травма виглядає джерелом захисту й чогось цінного.</p>
+    <p>Насправді вона дає лише ілюзорне відчуття безпеки. Людина знає свою травму зсередини і знає в ній своє місце: тут безпечно, бо я знаю, де я. Саме тому нові, незнайомі ситуації лякають сильніше — там немає звичної опори у вигляді травми. Про те, як це замикається в коло — <a href="cycles.html">«Цикли поведінки»</a>.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">Чи існує відчуття безпеки саме по собі</h2>
+    <p>Ні. Об'єктивно його немає — людина сама створює це відчуття, коли сприймає якийсь досвід як безпечний.</p>
+    <p>Але якщо воно відчувається — воно є. Переживання реальні самі по собі, навіть якщо переконання, на якому вони стоять, ілюзорне. Після конфлікту з батьками виникає відчуття відкинутості, і воно справжнє — навіть якщо думка «мене не люблять» є лише інтерпретацією. Навіть у медитації, коли ззовні не відбувається нічого, почуття в моменті реальні: будь-який прожитий досвід викликає справжні почуття.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Провина і сором — різні почуття</h2>
+    <p>Перш ніж «позбуватися провини», варто перевірити, чи це взагалі провина:</p>
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">Сором</div>
+        <div class="col-text">За те, ким ти є</div>
+        <div class="col-note">Соромно проявлятися, показувати себе, говорити правду. Під ударом — сама особистість.</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">Провина</div>
+        <div class="col-text">За те, що ти зробила</div>
+        <div class="col-note">За вибори, які привели в момент, який тобі не подобається. Під ударом — дії, а не ти.</div>
+      </div>
+    </div>
+    <p>Визнач, який із двох сценаріїв ближчий до твоєї ситуації, і постав собі про це пряме запитання. Детальніше про другу половину — <a href="shame.html">«Податок на сором»</a>.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2s">
+    <h2 class="section-title">Правильне запитання — половина відповіді</h2>
+    <p>Аналогія з наукою: щоб щось довести, дослідникам потрібна правильно сформульована гіпотеза. Правильна постановка питання — це вже половина шляху до відповіді.</p>
+    <div class="highlight">
+      <p><em>Якщо те саме запитання ставиться знову і знову, а відповіді немає — воно сформульоване неправильно.</em> Переформулюй його.</p>
+      <p>І окремо: дехто насправді не хоче відповіді. Такі люди підсвідомо ставлять саме ті запитання, які відповіді дати не можуть. Це теж захисний механізм — просто добре замаскований під пошук.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.2s">
+    <h2 class="section-title">Чому минуле взагалі можна змінити</h2>
+    <p>Зустрічне запитання: а ти коли-небудь була деінде, крім теперішнього моменту? Буквально «бути в минулому» неможливо. На минуле можна дивитися тільки звідси, з «зараз».</p>
+    <p>Далі йде ідея, узята з прочитаної книги: щоб у минуле можна було повернутися, воно має існувати постійно — інакше повертатися просто нікуди. А отже, усі ймовірнісні гілки — минуле, теперішнє й майбутнє — існують одночасно, прямо зараз. А через момент «зараз» відбувається перехід між ними.</p>
+    <div class="soft">
+      <p><em>Метафора.</em> Є будинок, кафе й лікарня. Щоб ти могла прийти в кафе, воно має існувати постійно — як будівля, навіть коли там нікого немає.</p>
+      <p>Так само й минуле. Щоб у нього можна було повернутися — згадати, пережити заново, — воно має існувати одночасно з усіма іншими гілками. Фізично ти щомиті лише в одному місці, але всі три будівлі стоять одночасно. І з теперішнього моменту можна подивитися на будь-яку з них.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.4s">
+    <h2 class="section-title">Три коротких відповіді</h2>
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🎲</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Чи віриш ти в долю?</div>
+          <div class="reply-text">У нескінченну кількість імовірностей — а отже, у нескінченну кількість доль одночасно. Щомиті людину перекидає з однієї гілки на іншу, тобто вона сама обирає версію власної долі. Навіть ті вибори, які ззовні виглядають неправильними, мають для самої людини якусь причину чи користь. Тому засуджувати їх немає сенсу.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🕯️</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Я роками шукаю Бога і не знаю, куди йти</div>
+          <div class="reply-text">Бога не знайти «десь там» — він проявляється через саму людину. Та, хто дивиться, хто сприймає, хто інтерпретує, — це і є ти. Отже, у буквальному сенсі Бог проявляється в житті саме через тебе. Шукати зовні не треба — треба усвідомити, що він завжди був усередині. Відповідальність при цьому нікуди не зникає: ти є свідомістю, через яку Бог пізнає себе, тож усі твої вибори — теж один із проявів цього.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🐈‍⬛</div>
+        <div class="phrase-body">
+          <div class="phrase-said">А як щодо прикмет?</div>
+          <div class="reply-text">Прикмети придумали люди на основі власної системи переконань. Будь-яка віра чи переконання — це лише одна сторона медалі, одна з можливих інтерпретацій реальності. Вірити прикметам чи ні — питання твоїх особистих переконань, які в будь-якому разі часткові й не є абсолютною істиною.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.6s">
+    <h2 class="section-title">Скептицизм — це теж віра</h2>
+    <p>Запитання звучало так: як «відключити логіку», коли скептицизм заважає в це повірити. Відповідь будується на протиріччі всередині самого запитання.</p>
+    <p>Якщо ти кажеш, що розумієш ці ідеї, але щоб у них повірити, треба вимкнути логіку, — значить, насправді не розумієш. Справжнє розуміння автоматично означає здатність застосувати. Як зі шкільною арифметикою: розумієш формулу — отримуєш правильну відповідь. Не сходиться — формула насправді не зрозуміла.</p>
+    <p>Життя описується як справедливе й логічне. Тому логіку не вимикають — її вчаться використовувати правильно, на свою користь. Зокрема, ставлячи собі правильніші запитання.</p>
+    <div class="highlight">
+      <p><em>Скептицизм не дорівнює невірі.</em> Це така сама віра, тільки спрямована в протилежний бік: «я вірю, що це не працює».</p>
+      <p>А якщо вибір, у що вірити, абсолютний — постає незручне запитання. Чому свідомо обирається саме та віра, яка працює проти тебе, використовуючи твою ж логіку проти тебе самої?</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.8s">
+    <h2 class="section-title">Як почути себе</h2>
+    <p>Не існує людини, яка взагалі не чує себе або не розуміє, чого хоче в моменті. Є люди, які <strong>перестали</strong> себе чути — бо нічого не робили зі своїми імпульсами й бажаннями. Коли з відчуттями раз за разом нічого не роблять, тіло ніби здається: подавати сигнали немає сенсу, і внутрішній голос затихає.</p>
+    <p>Тому спершу треба поступово вчити себе чути імпульси знову — тоді вони з'являються частіше і стають конкретнішими.</p>
+    <p>Головне непорозуміння тут таке: більшість чекає, що внутрішній голос видасть розгорнуту довгострокову відповідь — який напрямок навчання, яка кар'єра на роки вперед. Так це не працює. Реальні підказки — це <strong>короткі імпульси в моменті</strong>:</p>
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">☕</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Піти випити кави. Поїсти. Відпочити</div>
+          <div class="reply-text">Найпростіші сигнали тіла — саме ті, які ігнорують першими.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">📖</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Прочитати ось цю конкретну книгу</div>
+          <div class="reply-text">Імпульс піти щось прочитати цілком може виявитися саме тією відповіддю, якої ти шукала місяцями.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">💬</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Поговорити з кимось. Познайомитися з випадковою людиною</div>
+          <div class="reply-text">Розмова зі старим знайомим може принести розуміння, до якого ти сама не дійшла б і за рік роздумів.</div>
+        </div>
+      </div>
+    </div>
+    <div class="highlight">
+      <p><em>Довгострокової й детальної відповіді наперед не буває.</em> Тільки короткі імпульси моменту — і саме через спроби йти за ними поступово стає ясно, чого ти насправді хочеш.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:3s">
+    <h2 class="section-title">Себе пізнають дією, а не роздумами</h2>
+    <p>Пізнати себе — означає йти, пробувати, діяти. І через це дізнаватися насамперед, чого ти <strong>не</strong> хочеш. Через послідовність «це не моє, це теж не моє» поступово прояснюється те, чого хочеш насправді.</p>
+    <div class="chain">
+      <span>спробувала</span><i>→</i><span>це не моє</span><i>→</i><span>і це не моє</span><i>→</i><span>а ось це — моє</span>
+    </div>
+    <p>Сидячи вдома й дуже сильно думаючи про те, ким ти є, відповіді не отримати — бо людина постійно змінюється, і все життя є досвідом і змінами. І особливо ясно стає через болісний досвід, коли ти зраджуєш сама собі: саме тоді зрозуміло, ким ти <em>не</em> є, — а через це і ким є. Про сам цей рух — <a href="self.html">«Розуміння себе»</a>.</p>
+    <p>Тому варто довіритися тому, що навіть якщо, рухаючись за імпульсом, щось втратиш, — воно того варте заради самого досвіду. Йти, дивитися, пізнавати, знайомитися. Не намагаючись прорахувати результат наперед.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:3.2s">
+    <h2 class="section-title">Як зробити правильний вибір</h2>
+    <p>Коли людина намагається забагато думати й логічно прорахувати «правильний» варіант, вона від надмірного тиску на себе часто зрештою обирає гірший.</p>
+    <p>Порада проста: обирай той варіант, який обирається легше й природніше в моменті. Особливо коли є дедлайн.</p>
+    <div class="highlight">
+      <p>Це в будь-якому разі буде правильним вибором. <em>Усвідомлення й мудрість приходять лише через досвід уже зробленого вибору</em> — зрозуміти, чи він був вірним, можливо тільки постфактум, а не заздалегідь. І навіть не найкращий результат не робить вибір неправильним.</p>
+    </div>
+    <p>До того ж людина, яка справді чує себе й свої імпульси, зазвичай узагалі не потрапляє в ситуацію «не можу обрати між варіантами». Вона просто знає, що їй потрібно, а що ні.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:3.4s">
+    <h2 class="section-title">Наповнює чи спустошує</h2>
+    <p>Фраза, яка сильно вплинула на авторку: у кожному моменті людина або живе, або помирає. Вибір є завжди.</p>
+    <p>Її власний приклад. У певний період вона стала брати проєкти, які спершу здавалися наповнювальними, а насправді робили її фізично втомленою і водночас абсолютно спустошеною — уся життєва енергія витрачалася в нікуди.</p>
+    <div class="compare">
+      <div class="col good">
+        <div class="col-label">Фізична втома</div>
+        <div class="col-text">Своє відео</div>
+        <div class="col-note">Теж часом виснажувало — через сам обсяг роботи. Але ніколи не викликало відчуття спустошеності.</div>
+      </div>
+      <div class="col bad">
+        <div class="col-label">Спустошеність</div>
+        <div class="col-text">Великі проєкти</div>
+        <div class="col-note">Багато вкладеного ресурсу — і відчуття порожнечі при нульовому наповненні. Що довше це тривало, то частіше виникало «а навіщо мені це».</div>
+      </div>
+    </div>
+    <p>Спершу вона перестала знімати відео — через завантаженість цими проєктами. А згодом свідомо відмовилася й від самих проєктів, зрозумівши, що вони її не наповнюють. Навіть попри те, що це означало втратити контакт із деякими людьми, яких вона цінувала.</p>
+    <div class="soft">
+      <p><em>Дізнатися можна лише спробувавши.</em> Щоб зрозуміти, «моє це чи не моє», не варто довго обдумувати. Є імпульс спробувати — іди й пробуй. Саме через спробу стає зрозуміло, наповнює справа чи забирає сили. Якщо після зробленого відчувається порожнеча і думка «навіщо мені це все» — значить, це не те, чого ти хочеш. Переключайся.</p>
+    </div>
+    <p>І окремо про те, що тримає. Люди чіпляються за вже зроблений вибір через вкладені час і гроші та через страх втратити тих, з ким це створювалося. Але люди приходять і йдуть, проєкти створюються і закриваються, гроші приходять і йдуть. Силувати себе робити те, чого не хочеться, сенсу не має.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:3.6s">
+    <h2 class="section-title">Пазл</h2>
+    <p>Кожна людина допомагає іншим просто тим, що щодня займається своєю справою. Купуючи собі каву, ти цим самим даєш комусь заробіток — а через це чиясь родина може дозволити собі їжу. Завдяки щоденним діям кожної окремої людини працюють цілі системи. Уся ця система крутиться хаотично — і при цьому ідеально.</p>
+    <div class="highlight">
+      <p><em>Кожна людина — елемент пазла зі своєю унікальною формою.</em> Коли елемент намагається стати іншою формою, ніж він є, загальна картина руйнується — бо кожен незамінний саме у своїй власній формі.</p>
+      <p>Саме тому важливо чути себе й свої бажання, а не намагатися бути іншою формою. Цінність людини не залежить від зовнішнього визнання чи популярності.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:3.8s">
+    <h2 class="section-title">Ще чотири запитання з ефіру</h2>
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">😬</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Боюся сказати щось неправильно чи невдало сформулювати</div>
+          <div class="reply-text">Помилятися нормально — так роблять усі. Сенс спілкування не в тому, щоб виглядати розумною чи говорити красиво, а в тому, щоб бути зрозумілою: якщо форма красива, але ніхто не розуміє сказаного, сенсу в такому спілкуванні немає. Якщо хтось виправив — подякуй і візьми до відома. І не намагайся спеціально говорити «структуровано»: орієнтуйся на мету донести зрозуміло, і структурність прийде сама.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🪟</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Як навчитися дивитися всередину себе?</div>
+          <div class="reply-text">Достатньо захотіти пізнати себе. Більше нічого спеціально робити не потрібно.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">💰</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Зрештою все впирається в гроші</div>
+          <div class="reply-text">Потрібні не гроші, а можливості. Гроші — це не автоматично можливості, а лише один із варіантів їх прояву. Якщо ти обрала бачити можливості виключно через гроші — це твій власний вибір фокусу, а не об'єктивна необхідність. А щоб збільшити фінансовий потік, треба нормалізувати для себе саму тему грошей і вважати себе гідною їх мати.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🔄</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Як змінити переконання — наприклад, щодо навчання?</div>
+          <div class="reply-text">Тим самим способом, що й будь-яке інше. Спершу усвідомити, яке саме переконання в тебе є — щодо навчання, любові, стосунків, батьків чи грошей, — а потім свідомо працювати з ним далі.</div>
+        </div>
+      </div>
+    </div>
+    <p>Було й запитання про те, чи можна вплинути на перебіг онкологічного захворювання. Відповідь дана обережно: авторка сама з цим ніколи не стикалася і не лікувала його власною свідомістю чи медитацією. Вона згадує, що, за словами лікаря-практика з цієї галузі, головною причиною часто називають стрес, а сам стрес пов'язують із переконанням у власній непотрібності. Далі — порада самостійно пошукати матеріали й задокументовані випадки, яких в інтернеті багато.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:4s">
+    <h2 class="section-title">Що з цього забрати</h2>
+    <div class="final-quote">
+      <div class="final-text">У кожній ситуації одночасно є і болісна, і мудра сторона. <strong>Те, що ти з неї візьмеш, залежить від обраної інтерпретації</strong>.</div>
+    </div>
+    <div class="question-card">
+      <div class="question-label">Питання без відповіді</div>
+      <div class="question-main">Яку сцену зі свого минулого ти досі переказуєш очима дитини — хоч давно вже маєш очі дорослої?</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+</body>
+</html>

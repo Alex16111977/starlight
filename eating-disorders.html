@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Харчова залежність</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400;500&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:300;letter-spacing:.4em;color:rgba(52,58,94,.7);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.95);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:11px;font-weight:300;letter-spacing:.4em;color:rgba(52,58,94,.7);text-transform:uppercase;margin-bottom:64px;line-height:2;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:clamp(26px,4vw,34px);letter-spacing:.06em;color:rgba(28,32,58,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15.5px;font-weight:300;line-height:1.92;color:#2b3050;margin-bottom:18px}
+.section p strong{font-weight:500;color:#1c203a}
+.section p a{color:rgba(138,176,255,.9);text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#c8d8ff}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:10px;font-weight:300;letter-spacing:.42em;text-transform:uppercase;color:rgba(52,58,94,.62)}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:19px;line-height:1.5;color:rgba(28,32,58,.98);margin-bottom:10px}
+.reply-text{font-size:14.5px;font-weight:300;line-height:1.88;color:#2b3050}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:20px;letter-spacing:.03em;color:rgba(28,32,58,1);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.85;color:#2b3050}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15.5px;font-weight:300;line-height:1.92;color:#262b4a;margin:0 0 12px}
+.highlight p:last-child{margin-bottom:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17.5px;color:rgba(212,175,110,.85)}
+
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(110,200,160,.45),transparent)}
+.soft p{font-size:15.5px;font-weight:300;line-height:1.92;color:#1c3a2c;margin:0 0 12px}
+.soft p:last-child{margin-bottom:0}
+.soft p strong{font-weight:500;color:#123023}
+.soft em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17.5px;color:#1f7a4d}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:26px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(178,60,46,.06);border-color:rgba(178,60,46,.20)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:10px;font-weight:400;letter-spacing:.42em;text-transform:uppercase;margin-bottom:14px}
+.col-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.55;color:rgba(28,32,58,.98)}
+.col-note{font-size:14px;font-weight:300;line-height:1.85;color:#2b3050;margin-top:12px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:10px;font-weight:300;letter-spacing:.42em;text-transform:uppercase;color:rgba(52,58,94,.55);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.35}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:clamp(19px,2.6vw,25px);line-height:1.6;color:rgba(40,45,74,.96);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.75);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:rgba(245,225,180,1)}
+
+.chain{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px 12px;margin:28px 0 8px}
+.chain span{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:17px;color:#1c203a;background:rgba(52,58,94,.07);border:1px solid rgba(52,58,94,.16);border-radius:100px;padding:9px 18px;white-space:nowrap}
+.chain i{font-style:normal;color:#8a5f10;font-size:15px}
+
+.dialog{margin:26px 0 8px;padding:4px 0 4px 24px;border-left:2px solid rgba(148,103,23,.35)}
+.dialog-q{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18.5px;line-height:1.5;color:#6b4708;margin:20px 0 8px}
+.dialog-q:first-child{margin-top:0}
+.dialog-a{font-size:15px;font-weight:300;line-height:1.85;color:#2b3050;margin:0}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#1c203a!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p{color:#2b3050!important}
+.section p strong{color:#1c203a!important}
+.section p a{color:#593f9e!important;border-bottom-color:rgba(89,63,158,.55)!important}
+.section p a:hover{color:#41328f!important}
+.highlight em,.final-text strong{color:#8a5f10!important}
+.soft em{color:#1a6b42!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#1c203a!important}.card-text{color:#2b3050!important}
+.phrase-icon{color:#946717!important}
+.phrase-said{color:#1c203a!important}
+.reply-text{color:#2b3050!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:#262b4a!important}
+.soft{background:linear-gradient(135deg,rgba(31,122,77,.10),rgba(82,97,194,.05))!important;border-color:rgba(31,122,77,.28)!important}
+.soft p{color:#1c3a2c!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#1c203a!important}
+.col.bad .col-label{color:#a8331f!important}
+.col.good .col-label{color:#1a6b42!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col-text{color:#1c203a!important}
+.col-note{color:#2b3050!important}
+.chain span{color:#1c203a!important}
+.dialog-q{color:#6b4708!important}
+.dialog-a{color:#2b3050!important}
+.chain i{color:#8a5f10!important}
+.final-text{color:rgba(40,45,74,.96)!important}
+.page-subtitle,.hero-author,.question-label{color:#4a5075!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Харчова залежність</h1>
+  <p class="page-subtitle">Анорексія, булімія, компульсивне переїдання</p>
+
+  <div class="section" style="animation-delay:.8s">
+    <div class="hero-quote">
+      <div class="hero-text">"Їжа перестає бути харчуванням у той момент, коли починає регулювати емоційний стан."</div>
+      <div class="hero-author">Розмова ендокринолога з психіатром-наркологом</div>
+    </div>
+    <p>Це конспект фахової розмови двох лікарів про розлади харчової поведінки: механізми, причини, діагностичні ознаки й підходи до лікування. Головна лінія — симптом майже ніколи не є проблемою сам по собі.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Коли дзеркало бреше</h2>
+    <p>Розлад харчової поведінки описують як фіксацію на зовнішності й вазі, яка може доходити до <strong>дисморфії</strong> — викривленого сприйняття власного тіла, коли людина бачить себе повною навіть за об'єктивного виснаження.</p>
+    <p>Ключове: таке сприйняття не піддається переконанню словами. За механізмом воно нагадує маячний стан, хоча й не є галюцинацією. Пов'язують це з порушенням у системі пам'яті за участю мигдалеподібного тіла — людина продовжує бачити себе такою, якою була раніше.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Анорексія: контроль замість емоцій</h2>
+    <p>Нервова анорексія описується як один із найважчих станів у цій групі: критики до хвороби немає, людину неможливо переконати, емоції ніби вимкнені, натомість присутній тотальний контроль розуму над тілом.</p>
+    <p>Нейрофізіологічно це виглядає так. Лобна кора відповідає за прогнозування й контроль поведінки. «Центр задоволення» пов'язаний з емоціями та імпульсивними рішеннями. І тут дві протилежні картини:</p>
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">Залежності й компульсії</div>
+        <div class="col-text">Дефіцит лобної кори</div>
+        <div class="col-note">Імпульс виникає — і людина діє швидко, не встигаючи його осмислити.</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">Нервова анорексія</div>
+        <div class="col-text">Надмірний контроль</div>
+        <div class="col-note">Емоції затиснуті настільки, що контроль у певний момент ламається — і розвиваються булімічні напади за принципом «якщо стриматися не вдається, тоді з'їм усе».</div>
+      </div>
+    </div>
+    <div class="highlight">
+      <p><em>Діагноз тут не статичний.</em> Значна частка випадків нервової анорексії з часом переходить у нервову булімію — стан може змінюватися протягом кількох років.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Гіперконтроль знаходить вихід</h2>
+    <p>Клінічний приклад. Людина з вираженим гіперконтролем в усіх сферах життя худне «через неможу», зривається, відчуває провину, заїдає цю провину — а потім знову різко намагається взяти себе в руки. За такою поведінкою нерідко стоїть саме психіатричний стан, а не проблема з харчуванням як така: у подібних випадках консультація ендокринолога закінчується направленням до психіатра.</p>
+    <p>Паралельний приклад із того самого ряду — людина з фобією польотів на тлі такого самого гіперконтролю в житті.</p>
+    <div class="highlight">
+      <p><em>Психіка не здатна утримувати настільки високий рівень контролю нескінченно.</em> І тоді конкретний симптом — переїдання чи фобія, байдуже який саме — стає єдиним доступним способом скинути внутрішнє напруження.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">Як виглядає напад переїдання</h2>
+    <p>Діагностичний критерій — це система, а не поодинокий випадок: епізод має повторюватися приблизно один-два рази на тиждень протягом трьох місяців.</p>
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🚪</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Наодинці й потайки</div>
+          <div class="reply-text">Людина їсть на самоті і приховує це — через сором. За з'їденим одразу йде провина.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">📏</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Надцінні ідеї щодо ваги</div>
+          <div class="reply-text">«На мене подивляться інакше». Сюди ж — ритуали на кшталт вимірювання обхвату зап'ястя як показника «норми».</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🌫️</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Стан «пелени»</div>
+          <div class="reply-text">Під час нападу людина здатна з'їсти буквально все, що є вдома — включно з тим, чого за звичайного апетиту не їла б узагалі. Тяга стає нездоланною, і за механізмом це схоже на хімічну залежність.</div>
+        </div>
+      </div>
+    </div>
+    <p>На тлі гіперконтролю потреба в їжі якийсь час придушується, а потім нерідко настає булімічна стадія — уже з фізичними наслідками, за якими лікар розпізнає стан: травми пальців і зубів.</p>
+    <div class="soft">
+      <p><em>Чому критика тут не працює.</em> Людям із зайвою вагою, анорексією чи компульсивним переїданням і без того властиве дуже сильне відчуття сорому й провини. Агресивна критика — зокрема в надто жорстких програмах схуднення — лише заганяє людину в ще більшу ізоляцію й сором. Після цього допомогти стає значно складніше. Про сам механізм сорому — <a href="shame.html">«Податок на сором»</a>.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Два типи тих, хто звертається</h2>
+    <div class="compare">
+      <div class="col good">
+        <div class="col-label">Перший тип</div>
+        <div class="col-text">Просто не знає</div>
+        <div class="col-note">Людина щиро не розуміє, що харчується неправильно. Тут допомагає інформація.</div>
+      </div>
+      <div class="col bad">
+        <div class="col-label">Другий тип</div>
+        <div class="col-text">Знає все — і все одно зривається</div>
+        <div class="col-note">Теоретично добре обізнана з принципами харчування, але не може їх дотримуватися через власний гіперконтроль: тримається якийсь час у надто жорстких рамках, психіка не витримує — і настає повний зрив.</div>
+      </div>
+    </div>
+    <p>Саме звідси висновок про необхідність психотерапії. Вона не завжди напряму веде до зниження ваги — але потрібна, щоб стабілізувати самі патологічні механізми: контроль, зрив, перфекціонізм.</p>
+    <div class="highlight">
+      <p><em>Перфекціонізм тут відіграє ключову роль.</em> Найменше відхилення від «ідеального» плану харчування нерідко призводить до повної відмови від нього. Про чорно-біле мислення в основі — <a href="beliefs.html">«Ключ до змін»</a>.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2s">
+    <h2 class="section-title">Продукти-тригери</h2>
+    <p>Практична техніка — виявити власні індивідуальні продукти-тригери зриву. Принцип знайомий: невелика частка продуктів дає непропорційно велику частку зайвих калорій і зривів.</p>
+    <p>І тут проводиться пряма паралель з алкогольною залежністю. Після зриву людина схильна раціоналізувати те, що сталося — «особливий привід», «настрій», «так вийшло» — замість того щоб визнати втрату контролю.</p>
+    <div class="soft">
+      <p><em>Робота з тригерами при харчовій залежності будується так само, як при алкогольній</em> — через уникнення конкретних ситуацій і місць, які запускають звичний патерн поведінки.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.2s">
+    <h2 class="section-title">Де в класифікації стоїть їжа</h2>
+    <p>Компульсивне переїдання за механізмами дуже схоже на класичну залежність. Загальна класифікація адикцій виглядає так:</p>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🧪</span>
+        <div class="card-title">Хімічні</div>
+        <div class="card-text">Алкоголь, наркотики, нікотин, кофеїн.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎰</span>
+        <div class="card-title">Нехімічні</div>
+        <div class="card-text">Шопінг, азартні ігри, сексуальна залежність, спорт як соціально прийнятна форма.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🍞</span>
+        <div class="card-title">Харчова — проміжна</div>
+        <div class="card-text">Від їжі неможливо повністю відмовитися, вона фізіологічно необхідна. Ознакою залежності стає інше: коли їжа використовується не для харчування, а для регулювання емоційного стану.</div>
+      </div>
+    </div>
+    <p>Приклад із групової терапії: людина з надточним ментальним підрахунком калорій, яка не лягала спати, доки не «спалить» усе з'їдене за день. Це ілюстрація мислення за принципом «усе або нічого» — і саме з ним у психотерапії працюють насамперед.</p>
+    <p>Критерії, спільні з класичною алкогольною залежністю:</p>
+    <div class="chain">
+      <span>втрата контролю</span><span>зростання толерантності</span><span>«піду відпрацюю з'їдене»</span>
+    </div>
+    <p>Зростання толерантності тут означає потребу з'їдати дедалі більше, щоб заспокоїтися. Загальний механізм адикцій — <a href="addiction.html">«Залежності»</a>.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.4s">
+    <h2 class="section-title">Коли спорт стає покаранням</h2>
+    <p>Спорт може виступати компенсаторною поведінкою при булімії. Відмінність «здорового» спорту від патологічного — не в навантаженні, а в мотивації.</p>
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">При булімії</div>
+        <div class="col-text">Тренування як покарання</div>
+        <div class="col-note">Ланцюжок завжди однаковий: провина за з'їдене → покарання фізичним навантаженням.</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">Без розладу</div>
+        <div class="col-text">Тренування як норма</div>
+        <div class="col-note">Спорт сприймається як звичайна частина турботи про здоров'я — без жодної прив'язки до провини за з'їдене.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.6s">
+    <h2 class="section-title">Звідки це береться</h2>
+    <p>Причини пояснюють через біопсихосоціальну модель — поєднання факторів, а не одну причину:</p>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🧬</span>
+        <div class="card-title">Біологічна</div>
+        <div class="card-text">Генетична схильність — за оцінками, до третини випадків.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📐</span>
+        <div class="card-title">Психологічна</div>
+        <div class="card-text">Перфекціонізм і подібні риси характеру.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">👗</span>
+        <div class="card-title">Соціальна</div>
+        <div class="card-text">Модні тенденції — і підтримка з боку оточення. Коли людину хвалять за надмірну худорлявість, це відображає радше сімейну чи соціальну проблему.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.8s">
+    <h2 class="section-title">Фасадна сім'я</h2>
+    <p>У терапії часто потрібна робота із сім'єю, бо в багатьох родинах діє негласна заборона на вираження емоцій. Таку сім'ю називають <strong>фасадною</strong>: зовні благополучна, зовні успішна — але без реального емоційного контакту з дитиною.</p>
+    <p>І тоді єдиним доступним дитині способом комунікації зі світом стає тіло. Або через соціальну переоцінку зовнішності, або через тіло як інструмент — «лише так ти станеш щасливою». А того, що справа не в тілі, а в емоційному балансі та здатності прийняти партнера, який не вимагатиме досконалості, дитину ніхто не вчить. Звідки ще ростуть такі сценарії — <a href="childhood.html">«Як дитинство формує нас»</a>.</p>
+    <div class="soft">
+      <p><em>Приклад із практики.</em> Людина фізично здригається від простої рекомендації їсти до відчуття ситості, а решту залишати. З'ясовується: у дитинстві її били по руках, якщо тарілка залишалася недоїденою.</p>
+    </div>
+    <div class="highlight">
+      <p><em>Загальний механізм залежності часто виглядає саме так.</em> Людина з якихось причин не задовольняє свої реальні потреби і змушує себе — наприклад, їсти, коли не хочеться. А згодом, коли доводиться щось терпіти, єдиним способом зняти напругу стає зрив: харчовий або алкогольний.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:3s">
+    <h2 class="section-title">Один інструмент замість багатьох</h2>
+    <p>Використовувати їжу як один зі способів упоратися зі стресом чи травмою саме по собі не є небезпечним. Проблема виникає тоді, коли їжа стає <strong>єдиним</strong> доступним інструментом.</p>
+    <p>Якщо способів багато — рух, спілкування, хобі — і людина користується ними по черзі, це нормально. Якщо ж один-єдиний спосіб застосовується на всі випадки життя, це веде до набору ваги.</p>
+    <div class="soft">
+      <p><em>Тому список альтернатив складають заздалегідь</em> — до того, як настане емоційний стан. Фізичні практики, рух тіла, інші джерела задоволення.</p>
+    </div>
+    <p>Відмовитися від звичного способу нагороджувати себе їжею складно. Проста заборона — «більше цього не їстиму» — зазвичай не працює. Ефективніше поступово шукати інші джерела задоволення, і головна перешкода тут внутрішня: їжа сприймається як <em>гарантований</em> спосіб покращити настрій, тоді як альтернативи вимагають зусиль без гарантованого результату.</p>
+    <p>Окремо згадується побутова деталь: постійне зважування вдома саме по собі підтримує нездорову фіксацію на вазі.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:3.2s">
+    <h2 class="section-title">Що робити з імпульсом</h2>
+    <p>Механізм імпульсивного бажання щось з'їсти пов'язаний із тим самим дефіцитом активності лобної кори: швидке рішення «тут і зараз» завжди простіше за все інше.</p>
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">⏸️</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Відкласти рішення</div>
+          <div class="reply-text">Універсальна порада, яку застосовують і при хімічних залежностях: не приймати рішення імпульсивно, а свідомо відкласти його на певний час — заповнивши паузу технікою зняття напруги. Холодна вода, фізичні вправи, дихальні техніки.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🎬</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Прокрутити ситуацію до кінця</div>
+          <div class="reply-text">Здається, що можна зупинитися на одному шматочку. На практиці зрив зазвичай малою порцією не обмежується. Тому варто заздалегідь чесно спрогнозувати наслідки — провину й жаль, які майже неминуче настануть.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🔍</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Назвати емоцію точно</div>
+          <div class="reply-text">Після прогнозування з'являється шанс звернутися до альтернативного способу задовольнити реальну потребу. В ідеалі — розібратися, яка саме емоція стоїть за бажанням їсти: сором, провина, тривога, образа. За загальним словом «тривога» часто ховається конкретніша емоція, і працювати треба саме з нею.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:3.4s">
+    <h2 class="section-title">Чи винен цукор</h2>
+    <p>Справа не в конкретній речовині, а у внутрішньому психічному дисбалансі. Залежною людина може стати практично від чого завгодно — зокрема від трудоголізму як соціально прийнятної форми залежності.</p>
+    <p>Еволюційний механізм пояснює багато: найкалорійніші продукти історично мали найсильніше підкріплення в мозку, бо були потрібні для виживання. Сучасні висококалорійні продукти — жирне й солодке — активують ту саму систему підкріплення, що й речовини, які викликають хімічну залежність.</p>
+    <div class="highlight">
+      <p><em>Але спрощення «цукор дорівнює наркотику» визнається неточним.</em> У формуванні залежності задіяний цілий каскад речовин — дофамін, серотонін, ендогенні опіоїди, — а не одна-єдина.</p>
+      <p>Окремо згадуються дослідження про зв'язок порушень серотонінової системи з нервовою анорексією та РХП загалом — саме через це ефективність антидепресантів у лікуванні цих станів оцінюється неоднозначно.</p>
+    </div>
+    <p>Підсумок частини: залежність теоретично може сформуватися від будь-якої їжі. Цукор просто сприймається як смачніший. Суть проблеми — у самому способі вирішувати емоційні труднощі через їжу, а не в конкретній речовині.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:3.6s">
+    <h2 class="section-title">Щури, клітка й середовище</h2>
+    <p>Відомий експеримент. Тварина у звичайній клітці з двома напувалками — звичайною і з наркотичною речовиною — обирала наркотик. Та сама тварина у збагаченому середовищі, де були інші щури, розваги й соціальне життя, наркотик уже не обирала, попри повну доступність.</p>
+    <p>Це, зокрема, пояснює, чому люди, які отримують знеболювальні на основі опіоїдів після травм у лікарні, зазвичай не стають залежними: за наявності підтримувального середовища ризик значно нижчий.</p>
+    <div class="highlight">
+      <p><em>У лікуванні залежностей це називають ресоціалізацією</em> — відновленням соціальних навичок, які людина втратила. Якщо ресоціалізації не відбувається, ризик зриву зростає: людина повертається до старого оточення або стикається з тиском близьких.</p>
+      <p>Той самий принцип переноситься на харчову поведінку: шукати джерела задоволення, не пов'язані з їжею, і формувати підтримувальне середовище з альтернативними способами проведення часу.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:3.8s">
+    <h2 class="section-title">Надцінна ідея працює в обидва боки</h2>
+    <p>Причина ніколи не зводиться до одного фактора. Важлива вся атмосфера навколо харчування в житті конкретної людини.</p>
+    <p>Ключова проблема — <strong>надцінна ідея</strong>, тобто поглинутість однією темою. Постійний страх «не дай боже цукор потрапить у їжу» формує залежне мислення так само надійно, як і сам зрив.</p>
+    <div class="soft">
+      <p><em>Дзеркальний приклад.</em> Люди, одержимі ідеєю «чистого харчування», які нав'язливо контролюють не лише себе, а й інших. За механізмами це працює точно так само, як компульсивне переїдання: цикл зриву, суворі обмеження «з понеділка», накопичення напруги — і новий зрив.</p>
+    </div>
+    <p>Протилежність цьому — розширення власного погляду на ситуацію без почуття провини за з'їдене. Сама по собі провина лише погіршує стан.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:4s">
+    <h2 class="section-title">Чи ведуть дієти до розладу</h2>
+    <p>Постійне дотримання суворих дієт практично неможливе й веде до хронічного відчуття провини.</p>
+    <p>З підрахунком калорій усе неоднозначно. Для одних людей структурований підхід працює без жодної шкоди. Для інших — за наявності психопатологічного компонента — той самий підхід навпаки провокує розлад харчової поведінки: через постійну невідповідність жорсткій системі.</p>
+    <div class="soft">
+      <p><em>Альтернатива — підхід через пропорції.</em> Так звана модель «гарвардської тарілки»: харчовий щоденник із фотофіксацією їжі й супровід фахівця, який враховує не лише харчовий баланс, а й психологічний стан людини навколо їжі — тривожність, нервозність.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:4.2s">
+    <h2 class="section-title">Кофеїн — окрема історія</h2>
+    <p>Каву й кофеїн виокремлюють із харчових залежностей: кофеїн класифікують як речовину, здатну викликати саме хімічну залежність — за наявності відповідних клінічних ознак, зокрема зростання толерантності.</p>
+    <p>Сам по собі цукор не є стимулятором у строгому значенні, хоча і цукор, і кофеїн активують дофамінову систему підкріплення — тож певне відчуття піднесення можливе від обох. Різниця в механізмі: цукор — це молекула, яка дає реальну фізичну енергію, тоді як механізм дії їжі загалом складніший і запускається ще <strong>до</strong> споживання — через смакові та нюхові рецептори, які сигналізують мозку про майбутню винагороду.</p>
+    <div class="highlight">
+      <p>Окремо згадуються енергетичні напої — поєднання великої кількості цукру, кофеїну й тауріну. <em>І типовий перехід людей, які раніше мали хімічну залежність, до надмірного вживання кофеїновмісних напоїв або дуже міцно завареного чаю на етапі відновлення</em> — фактично заміщення однієї залежності іншою, менш шкідливою.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:4.4s">
+    <h2 class="section-title">Лікування</h2>
+    <p>Починається все з точної діагностики стану — бо підходи для трьох розладів різні.</p>
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🏥</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Нервова анорексія</div>
+          <div class="reply-text">Визнається одним із найлетальніших психічних розладів — через виснаження організму або суїцидальний ризик. Починається з психіатричної допомоги, оцінки індексу маси тіла і за потреби — стаціонарного лікування з контролем харчування, бо такі пацієнти нерідко приховано уникають їжі навіть під наглядом. У важких випадках можливе примусове лікування на підставі загрози життю. Медикаментозних варіантів небагато: основна робота психотерапевтична, за підтримки фахівця з харчування. Спеціалізованих комплексних клінік відносно мало навіть у великих містах, а фахівцям без достатнього досвіду не рекомендується вести такі випадки амбулаторно через ризик для життя пацієнта.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🩺</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Нервова булімія</div>
+          <div class="reply-text">За певних умов може лікуватися амбулаторно.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🍽️</div>
+        <div class="phrase-body">
+          <div class="phrase-said">Компульсивне переїдання</div>
+          <div class="reply-text">Часто супроводжується ожирінням. Доказово ефективних препаратів небагато — основний метод лікування психотерапевтичний, медикаменти розглядаються як допоміжний варіант.</div>
+        </div>
+      </div>
+    </div>
+    <div class="highlight">
+      <p><em>Про сучасні препарати для зниження ваги на основі семаглутиду.</em> Вони дійсно дають ефект, поки застосовуються. Але результат оборотний: після відміни вага повертається, а самої причини компульсивного переїдання такі препарати не усувають.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:4.6s">
+    <h2 class="section-title">Ожиріння і баріатрія</h2>
+    <p>Для пацієнтів зі значним ступенем ожиріння перед початком роботи з харчуванням рекомендується попередня консультація психіатра: на практиці майже завжди виявляється психологічна складова, яку потрібно враховувати.</p>
+    <p>Критикується підхід, коли пацієнтів одразу направляють на баріатричну операцію, минаючи психологічну діагностику. Нерідко за рік-два після операції вага повертається — якщо емоційна складова проблеми лишилася непропрацьованою.</p>
+    <div class="soft">
+      <p><em>Загальна рекомендація серед фахівців у цій сфері:</em> баріатрична операція розглядається лише тоді, коли повноцінний курс психотерапії — за потреби в поєднанні з медикаментами — протягом кількох місяців не дав результату.</p>
+    </div>
+    <p>І навіть після операції механізм залежності нікуди не зникає. Нерідко він проявляється в іншій формі — наприклад через алкоголь чи трудоголізм, якщо емоційна причина не була опрацьована.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:4.8s">
+    <h2 class="section-title">Швидке схуднення: підводні камені</h2>
+    <p>Щодо історій про дуже швидке й значне зниження ваги за короткий термін висловлюється сумнів: навряд чи за кілька місяців можна повноцінно перебудувати психіку й харчову поведінку одночасно зі стрімким зниженням ваги.</p>
+    <p>Без точних клінічних даних неможливо стверджувати, чи йшлося в таких випадках про компульсивне переїдання, чи про «просте» ожиріння без вираженого психологічного компонента — а це принципово різні ситуації.</p>
+    <div class="highlight">
+      <p><em>Клінічні орієнтири виглядають несподівано скромно.</em> Навіть відсутність набору ваги протягом року вже вважається непоганим результатом для людини з ожирінням. Втрата 5–10 кг за рік — гарне досягнення.</p>
+      <p>Орієнтовна безпечна швидкість — приблизно 2–4 кг на місяць. Саме такий помірний темп дає поведінці й психіці змогу встигнути адаптуватися до змін. Зниження на кілька десятків кілограмів за лічені місяці викликає сумніви і щодо стійкості результату, і щодо впливу самого різкого стресу на психіку.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:5s">
+    <h2 class="section-title">Головне з розмови</h2>
+    <p>В основі багатьох розладів харчової поведінки лежить чорно-біле мислення й схильність до крайнощів. Саме з цим і важливо працювати: шукати баланс, залучати свідоме зважене мислення замість імпульсивних рішень і розбивати великі цілі на менші поступові кроки замість очікування швидкого результату.</p>
+    <div class="compare">
+      <div class="col good">
+        <div class="col-label">≈ 80% часу</div>
+        <div class="col-text">Збалансоване харчування</div>
+        <div class="col-note">Та сама модель через пропорції, що описана вище. Основа щоденного столу.</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">≈ 20% часу</div>
+        <div class="col-text">Улюблена їжа без провини</div>
+        <div class="col-note">Не «відпрацьовувати» з'їдене фізичним навантаженням і не картати себе за це.</div>
+      </div>
+    </div>
+    <div class="final-quote">
+      <div class="final-text">Незалежно від поточної ваги — <strong>ставитися до себе з прийняттям</strong>, водночас прагнучи до кращого стану.</div>
+    </div>
+    <div class="question-card">
+      <div class="question-label">Питання без відповіді</div>
+      <div class="question-main">Яку емоцію ти зазвичай називаєш голодом — і як вона звалася б, якби ти назвала її точно?</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+</body>
+</html>
