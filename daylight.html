@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daylight — Starlight</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:60vw;height:60vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:35vw;height:55vw;top:30%;left:65%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.12)}}
+
+.wrap{position:relative;z-index:10;max-width:620px;margin:0 auto;padding:48px 22px 100px}
+
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;opacity:0;animation:riseIn .8s .1s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(52,58,94,.5);text-transform:uppercase;text-decoration:none;transition:color .3s;padding-bottom:3px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:18px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text}
+
+.hero{text-align:center;margin-bottom:28px;opacity:0;animation:riseIn .9s .2s ease forwards}
+.hero-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(44px,10vw,66px);letter-spacing:.06em;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;line-height:1;margin-bottom:10px}
+.hero-tagline{font-size:10px;font-weight:200;letter-spacing:.5em;text-transform:uppercase;color:rgba(52,58,94,.5);margin-bottom:16px}
+.hero-desc{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:16px;color:rgba(36,40,68,.75);max-width:400px;margin:0 auto;line-height:1.6}
+
+.storage-warn{background:rgba(178,60,46,.08);border:1px solid rgba(178,60,46,.3);border-radius:14px;padding:12px 18px;font-size:11px;font-weight:300;line-height:1.7;color:#7a2418;margin-bottom:24px;text-align:center}
+
+.datebar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;opacity:0;animation:riseIn .8s .3s ease forwards}
+.date-arrow{width:36px;height:36px;border-radius:50%;border:1px solid rgba(52,58,94,.2);background:rgba(52,58,94,.05);color:rgba(52,58,94,.7);font-size:14px;font-family:inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .25s;flex-shrink:0}
+.date-arrow:hover{background:rgba(52,58,94,.12);border-color:rgba(52,58,94,.4)}
+.date-arrow:disabled{opacity:.22;cursor:default;pointer-events:none}
+.date-label{flex:1;text-align:center;font-size:12px;font-weight:300;letter-spacing:.06em;color:rgba(36,40,68,.85);text-transform:capitalize}
+.date-today-tag{display:inline-block;margin-left:8px;font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:#946717;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:2px 8px;vertical-align:middle}
+
+.statusbar{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:40px;opacity:0;animation:riseIn .8s .4s ease forwards}
+.streak-pill{font-size:10px;font-weight:300;letter-spacing:.08em;color:rgba(52,58,94,.6);background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.16);border-radius:100px;padding:5px 14px;white-space:nowrap}
+.save-indicator{font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:rgba(52,58,94,.4);white-space:nowrap;transition:color .3s}
+.save-indicator.show{color:#1f7a4d}
+.save-indicator.error{color:#b23c2e}
+
+.section{margin-bottom:22px;opacity:0;animation:riseIn .8s ease forwards}
+.card{background:rgba(52,58,94,.07);border:1px solid rgba(52,58,94,.16);border-radius:20px;padding:24px 24px 26px;box-shadow:0 4px 20px rgba(0,0,0,.05)}
+.card-title{display:flex;align-items:center;gap:10px;font-family:'Cormorant Garamond',serif;font-weight:400;font-size:19px;color:rgba(36,40,68,.92);margin-bottom:6px}
+.card-hint{font-size:11px;font-weight:200;color:rgba(52,58,94,.5);line-height:1.6;margin-bottom:16px}
+
+.sl-input,.sl-textarea{width:100%;padding:12px 16px;background:rgba(255,255,255,.55);border:1px solid rgba(52,58,94,.18);border-radius:12px;font-family:'Montserrat',sans-serif;font-weight:300;font-size:13px;color:rgba(36,40,68,.95);outline:none;transition:all .25s}
+.sl-input::placeholder,.sl-textarea::placeholder{color:rgba(52,58,94,.35)}
+.sl-input:focus,.sl-textarea:focus{background:#fff;border-color:rgba(122,95,190,.5);box-shadow:0 0 0 3px rgba(138,176,255,.1)}
+.sl-textarea{resize:vertical;min-height:72px;line-height:1.6;font-family:'Montserrat',sans-serif}
+
+.main-row{display:flex;align-items:center;gap:12px}
+.main-check{flex-shrink:0;width:26px;height:26px;border-radius:50%;border:2px solid rgba(148,103,23,.5);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;color:transparent;transition:all .25s;padding:0}
+.main-check.done{background:#946717;border-color:#946717;color:#fff}
+.main-input{font-size:15px}
+.main-input.done{text-decoration:line-through;color:rgba(52,58,94,.4)}
+
+.task-add{display:flex;gap:8px;margin-bottom:14px}
+.task-add-btn{flex-shrink:0;width:42px;border-radius:12px;border:1px solid rgba(122,95,190,.4);background:rgba(122,95,190,.12);color:#5261c2;font-size:18px;font-family:inherit;cursor:pointer;transition:all .25s}
+.task-add-btn:hover{background:rgba(122,95,190,.2)}
+.task-list{display:flex;flex-direction:column;gap:2px}
+.task-item{display:flex;align-items:center;gap:10px;padding:9px 4px;border-bottom:1px solid rgba(52,58,94,.08)}
+.task-item:last-child{border-bottom:none}
+.task-check{flex-shrink:0;width:20px;height:20px;border-radius:6px;border:2px solid rgba(82,97,194,.4);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;color:transparent;transition:all .2s;padding:0}
+.task-check.done{background:#5261c2;border-color:#5261c2;color:#fff}
+.task-text{flex:1;font-size:13px;font-weight:300;color:rgba(36,40,68,.9);word-break:break-word}
+.task-text.done{text-decoration:line-through;color:rgba(52,58,94,.4)}
+.task-del{flex-shrink:0;width:22px;height:22px;border:none;background:none;color:rgba(52,58,94,.3);font-size:16px;font-family:inherit;cursor:pointer;transition:color .2s}
+.task-del:hover{color:#b23c2e}
+.task-empty{font-size:11px;color:rgba(52,58,94,.35);text-align:center;padding:8px 0;font-style:italic}
+
+.grat-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.grat-row:last-child{margin-bottom:0}
+.grat-num{flex-shrink:0;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.18);color:#946717;font-size:10px;font-weight:600;display:flex;align-items:center;justify-content:center}
+
+.meal-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.meal-item label{display:flex;align-items:center;gap:6px;font-size:10px;font-weight:300;letter-spacing:.08em;text-transform:uppercase;color:rgba(52,58,94,.55);margin-bottom:6px}
+.meal-item .sl-input{font-size:12px;padding:10px 12px}
+@media(max-width:420px){.meal-grid{grid-template-columns:1fr}}
+
+.wb-row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 0;border-bottom:1px solid rgba(52,58,94,.08)}
+.wb-row:last-child{border-bottom:none}
+.wb-label{font-size:12px;font-weight:300;color:rgba(36,40,68,.8);white-space:nowrap}
+
+.mood-picker{display:flex;gap:4px}
+.mood-btn{width:32px;height:32px;border-radius:50%;border:1px solid transparent;background:rgba(52,58,94,.05);font-size:16px;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;padding:0;opacity:.5;filter:grayscale(.7)}
+.mood-btn:hover{opacity:.8}
+.mood-btn.active{background:rgba(122,95,190,.14);border-color:rgba(122,95,190,.4);opacity:1;filter:none;transform:scale(1.12)}
+
+.stepper{display:flex;align-items:center;gap:10px}
+.step-btn{width:26px;height:26px;border-radius:50%;border:1px solid rgba(52,58,94,.25);background:rgba(52,58,94,.05);color:rgba(52,58,94,.7);font-size:14px;font-family:inherit;cursor:pointer;transition:all .2s;padding:0;line-height:1}
+.step-btn:hover{background:rgba(52,58,94,.14)}
+.step-val{font-size:12px;font-weight:300;color:rgba(36,40,68,.9);min-width:46px;text-align:center}
+
+.water-drops{display:flex;gap:3px}
+.drop-btn{width:22px;height:22px;border:none;background:none;font-size:15px;cursor:pointer;opacity:.22;filter:grayscale(1);transition:all .2s;padding:0}
+.drop-btn:hover{opacity:.55}
+.drop-btn.filled{opacity:1;filter:none}
+
+.star-picker{display:flex;gap:2px}
+.star-btn{width:22px;height:24px;border:none;background:none;font-size:17px;color:rgba(52,58,94,.22);cursor:pointer;transition:all .2s;padding:0}
+.star-btn:hover{color:rgba(212,175,110,.6)}
+.star-btn.filled{color:#946717}
+
+.clear-day{display:block;margin:30px auto 0;background:none;border:none;font-size:10px;letter-spacing:.1em;color:rgba(52,58,94,.35);font-family:inherit;cursor:pointer;text-decoration:underline;text-underline-offset:3px;transition:color .2s}
+.clear-day:hover{color:#b23c2e}
+
+.foot-note{text-align:center;font-size:9px;letter-spacing:.08em;color:rgba(52,58,94,.32);margin-top:36px;line-height:1.8}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="wrap">
+  <div class="header">
+    <a class="back" href="index.html">← Головна</a>
+    <span class="logo">Starlight</span>
+  </div>
+
+  <div class="hero">
+    <h1 class="hero-title">Daylight</h1>
+    <p class="hero-tagline">where today gets done</p>
+    <p class="hero-desc">Щоденник справ, вдячності і маленьких перемог — усе на одній сторінці</p>
+  </div>
+
+  <div class="storage-warn" id="storageWarn" style="display:none">⚠️ Цей браузер блокує збереження на сторінці — записи не втримаються. Спробуй відкрити сторінку не в приватному вікні.</div>
+
+  <div class="datebar">
+    <button class="date-arrow" id="prevDay" aria-label="Попередній день">←</button>
+    <div class="date-label" id="dateLabel">…</div>
+    <button class="date-arrow" id="nextDay" aria-label="Наступний день">→</button>
+  </div>
+  <div class="statusbar">
+    <span class="streak-pill" id="streakPill">🔥 0 днів поспіль</span>
+    <span class="save-indicator" id="saveIndicator">Автозбереження</span>
+  </div>
+
+  <div class="section" style="animation-delay:.4s">
+    <div class="card">
+      <div class="card-title">🎯 Головне на сьогодні</div>
+      <p class="card-hint">Одна річ, яка справді має значення сьогодні — решта може почекати</p>
+      <div class="main-row">
+        <button class="main-check" id="mainCheck" type="button">✓</button>
+        <input class="sl-input main-input" id="mainInput" placeholder="Що сьогодні найважливіше?">
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:.44s">
+    <div class="card">
+      <div class="card-title">✅ Справи</div>
+      <p class="card-hint">Усе інше, що треба зробити — маленькими кроками</p>
+      <div class="task-add">
+        <input class="sl-input" id="taskInput" placeholder="Додати справу і натиснути Enter">
+        <button class="task-add-btn" id="taskAddBtn" type="button">+</button>
+      </div>
+      <div class="task-list" id="taskList"></div>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:.48s">
+    <div class="card">
+      <div class="card-title">🏆 Звички</div>
+      <p class="card-hint">Маленькі щоденні дії, які складаються у велике</p>
+      <div class="task-list" id="habitList"></div>
+      <div class="task-add" style="margin-top:12px;margin-bottom:0">
+        <input class="sl-input" id="habitInput" placeholder="Додати звичку і натиснути Enter">
+        <button class="task-add-btn" id="habitAddBtn" type="button">+</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:.52s">
+    <div class="card">
+      <div class="card-title">🙏 Вдячність дня</div>
+      <p class="card-hint">Три маленькі речі, які сьогодні тебе порадували</p>
+      <div class="grat-row"><span class="grat-num">1</span><input class="sl-input" id="grat0" placeholder="Щось маленьке, що сьогодні порадувало"></div>
+      <div class="grat-row"><span class="grat-num">2</span><input class="sl-input" id="grat1" placeholder="Людина, за яку ти вдячна"></div>
+      <div class="grat-row"><span class="grat-num">3</span><input class="sl-input" id="grat2" placeholder="Щось у собі, чим сьогодні можеш пишатись"></div>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:.56s">
+    <div class="card">
+      <div class="card-title">🍽️ Їжа</div>
+      <p class="card-hint">Коротко, без підрахунків — просто щоб бачити день цілим</p>
+      <div class="meal-grid">
+        <div class="meal-item"><label>🌅 Сніданок</label><input class="sl-input" id="mealB"></div>
+        <div class="meal-item"><label>☀️ Обід</label><input class="sl-input" id="mealL"></div>
+        <div class="meal-item"><label>🌙 Вечеря</label><input class="sl-input" id="mealD"></div>
+        <div class="meal-item"><label>🍎 Перекуси</label><input class="sl-input" id="mealS"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:.6s">
+    <div class="card">
+      <div class="card-title">🌈 Самопочуття</div>
+      <p class="card-hint">Швидкі відмітки — без набору тексту</p>
+      <div class="wb-row">
+        <span class="wb-label">😊 Настрій</span>
+        <div class="mood-picker" id="moodPicker">
+          <button class="mood-btn" data-v="1" type="button" title="Важко">😞</button>
+          <button class="mood-btn" data-v="2" type="button" title="Не дуже">😕</button>
+          <button class="mood-btn" data-v="3" type="button" title="Нормально">😐</button>
+          <button class="mood-btn" data-v="4" type="button" title="Добре">🙂</button>
+          <button class="mood-btn" data-v="5" type="button" title="Чудово">😄</button>
+        </div>
+      </div>
+      <div class="wb-row">
+        <span class="wb-label">😴 Сон, год</span>
+        <div class="stepper">
+          <button class="step-btn" id="sleepMinus" type="button">−</button>
+          <span class="step-val" id="sleepVal">—</span>
+          <button class="step-btn" id="sleepPlus" type="button">+</button>
+        </div>
+      </div>
+      <div class="wb-row">
+        <span class="wb-label">💧 Вода</span>
+        <div class="water-drops" id="waterDrops"></div>
+      </div>
+      <div class="wb-row">
+        <span class="wb-label">⭐ Оцінка дня</span>
+        <div class="star-picker" id="starPicker"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:.64s">
+    <div class="card">
+      <div class="card-title">🌅 План на завтра</div>
+      <p class="card-hint">Запиши — і сьогодні можна про це більше не думати</p>
+      <textarea class="sl-textarea" id="tomorrowInput" placeholder="Що перенести на завтра?"></textarea>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:.68s">
+    <div class="card">
+      <div class="card-title">💭 Нотатка дня</div>
+      <p class="card-hint">Будь-що інше — настрій, думки, ідеї</p>
+      <textarea class="sl-textarea" id="noteInput" placeholder="Що ще хочеться записати?"></textarea>
+    </div>
+  </div>
+
+  <button class="clear-day" id="clearDay" type="button">Очистити цей день</button>
+  <p class="foot-note">Записи зберігаються тільки в цьому браузері, на цьому пристрої</p>
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+</script>
+<script>
+(function(){
+function pad(n){return String(n).padStart(2,'0')}
+function fmt(d){return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())}
+function startOfDay(d){const x=new Date(d);x.setHours(0,0,0,0);return x}
+const today = startOfDay(new Date());
+let viewDate = startOfDay(new Date());
+
+function storageWorks(){
+  try{
+    const k='sl_daylight_probe';
+    localStorage.setItem(k,'1');
+    const ok = localStorage.getItem(k)==='1';
+    localStorage.removeItem(k);
+    return ok;
+  }catch(e){ return false; }
+}
+if(!storageWorks()){ document.getElementById('storageWarn').style.display='block'; }
+
+function emptyDay(){return {main:'',mainDone:false,tasks:[],gratitude:['','',''],meals:{b:'',l:'',d:'',s:''},tomorrow:'',note:'',mood:0,sleep:0,water:0,rating:0,habits:[]}}
+function dayKey(d){return 'sl_daylight_'+fmt(d)}
+function loadDay(d){
+  try{
+    const raw = localStorage.getItem(dayKey(d));
+    if(!raw) return emptyDay();
+    const parsed = JSON.parse(raw);
+    const base = emptyDay();
+    return Object.assign(base, parsed, {
+      gratitude: (Array.isArray(parsed.gratitude) && parsed.gratitude.length===3) ? parsed.gratitude : base.gratitude,
+      meals: Object.assign(base.meals, parsed.meals||{}),
+      tasks: Array.isArray(parsed.tasks) ? parsed.tasks : [],
+      habits: Array.isArray(parsed.habits) ? parsed.habits : []
+    });
+  }catch(e){return emptyDay()}
+}
+function saveDay(d, data){
+  try{ localStorage.setItem(dayKey(d), JSON.stringify(data)); return true; }
+  catch(e){ return false; }
+}
+function hasContent(day){
+  if(!day) return false;
+  if(day.main && day.main.trim()) return true;
+  if(day.tasks && day.tasks.length) return true;
+  if(day.gratitude && day.gratitude.some(g=>g && g.trim())) return true;
+  if(day.meals && Object.keys(day.meals).some(k=>day.meals[k] && day.meals[k].trim())) return true;
+  if(day.tomorrow && day.tomorrow.trim()) return true;
+  if(day.note && day.note.trim()) return true;
+  if(day.mood) return true;
+  if(day.sleep) return true;
+  if(day.water) return true;
+  if(day.rating) return true;
+  if(day.habits && day.habits.length) return true;
+  return false;
+}
+
+function loadHabits(){
+  try{
+    const raw = localStorage.getItem('sl_daylight_habits_v1');
+    if(raw) return JSON.parse(raw);
+  }catch(e){}
+  const seed = [{id:'seed1',name:'Зарядка'},{id:'seed2',name:'Читання'},{id:'seed3',name:'Лягти вчасно'}];
+  try{ localStorage.setItem('sl_daylight_habits_v1', JSON.stringify(seed)); }catch(e){}
+  return seed;
+}
+function saveHabits(){ try{ localStorage.setItem('sl_daylight_habits_v1', JSON.stringify(habits)); }catch(e){} }
+let habits = loadHabits();
+
+let state = loadDay(viewDate);
+let saveTimer = null;
+
+function flashSaved(ok){
+  const el = document.getElementById('saveIndicator');
+  if(ok){
+    el.textContent = '✓ Збережено · ' + pad(new Date().getHours()) + ':' + pad(new Date().getMinutes());
+    el.classList.remove('error');
+    el.classList.add('show');
+  } else {
+    el.textContent = '⚠️ Не вдалося зберегти';
+    el.classList.remove('show');
+    el.classList.add('error');
+  }
+}
+function resetSaveIndicator(){
+  const el = document.getElementById('saveIndicator');
+  el.textContent = 'Автозбереження';
+  el.classList.remove('show','error');
+}
+
+function flush(){
+  if(saveTimer){ clearTimeout(saveTimer); saveTimer=null; }
+  const ok = saveDay(viewDate, state);
+  flashSaved(ok);
+  return ok;
+}
+function scheduleSave(){
+  if(saveTimer) clearTimeout(saveTimer);
+  saveTimer = setTimeout(()=>{
+    saveTimer = null;
+    const ok = saveDay(viewDate, state);
+    flashSaved(ok);
+    updateStreak();
+  }, 500);
+}
+
+const mainInput=document.getElementById('mainInput');
+const mainCheck=document.getElementById('mainCheck');
+const taskInput=document.getElementById('taskInput');
+const taskAddBtn=document.getElementById('taskAddBtn');
+const taskList=document.getElementById('taskList');
+const habitList=document.getElementById('habitList');
+const habitInput=document.getElementById('habitInput');
+const habitAddBtn=document.getElementById('habitAddBtn');
+const grat=[document.getElementById('grat0'),document.getElementById('grat1'),document.getElementById('grat2')];
+const mealB=document.getElementById('mealB'),mealL=document.getElementById('mealL'),mealD=document.getElementById('mealD'),mealS=document.getElementById('mealS');
+const tomorrowInput=document.getElementById('tomorrowInput');
+const noteInput=document.getElementById('noteInput');
+const dateLabel=document.getElementById('dateLabel');
+const prevDay=document.getElementById('prevDay');
+const nextDay=document.getElementById('nextDay');
+const streakPill=document.getElementById('streakPill');
+const clearDayBtn=document.getElementById('clearDay');
+const moodPicker=document.getElementById('moodPicker');
+const sleepMinus=document.getElementById('sleepMinus');
+const sleepPlus=document.getElementById('sleepPlus');
+const sleepVal=document.getElementById('sleepVal');
+const waterDrops=document.getElementById('waterDrops');
+const starPicker=document.getElementById('starPicker');
+
+function escHtml(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]))}
+
+function renderTasks(){
+  if(!state.tasks.length){ taskList.innerHTML = '<div class="task-empty">Поки що порожньо</div>'; return; }
+  const sorted = state.tasks.map((t,i)=>({t,i})).sort((a,b)=>(a.t.done?1:0)-(b.t.done?1:0));
+  taskList.innerHTML = sorted.map(o=>
+    '<div class="task-item" data-i="'+o.i+'">'+
+      '<button class="task-check'+(o.t.done?' done':'')+'" type="button" data-act="toggle">✓</button>'+
+      '<span class="task-text'+(o.t.done?' done':'')+'">'+escHtml(o.t.text)+'</span>'+
+      '<button class="task-del" type="button" data-act="del">×</button>'+
+    '</div>'
+  ).join('');
+}
+
+function renderHabits(){
+  if(!habits.length){ habitList.innerHTML = '<div class="task-empty">Поки що немає звичок</div>'; return; }
+  habitList.innerHTML = habits.map(h=>{
+    const done = state.habits.includes(h.id);
+    return '<div class="task-item" data-id="'+h.id+'">'+
+      '<button class="task-check'+(done?' done':'')+'" type="button" data-act="toggle">✓</button>'+
+      '<span class="task-text'+(done?' done':'')+'">'+escHtml(h.name)+'</span>'+
+      '<button class="task-del" type="button" data-act="del">×</button>'+
+    '</div>';
+  }).join('');
+}
+
+function renderMood(){
+  moodPicker.querySelectorAll('.mood-btn').forEach(b=>{
+    b.classList.toggle('active', parseInt(b.dataset.v,10)===state.mood);
+  });
+}
+function updateSleepVal(){ sleepVal.textContent = state.sleep ? (state.sleep+' год') : '—'; }
+function renderWater(){
+  let html='';
+  for(let i=1;i<=8;i++) html += '<button class="drop-btn'+(i<=state.water?' filled':'')+'" type="button" data-v="'+i+'">💧</button>';
+  waterDrops.innerHTML = html;
+}
+function renderStars(){
+  let html='';
+  for(let i=1;i<=5;i++) html += '<button class="star-btn'+(i<=state.rating?' filled':'')+'" type="button" data-v="'+i+'">★</button>';
+  starPicker.innerHTML = html;
+}
+
+function updateDateUI(){
+  const label = viewDate.toLocaleDateString('uk-UA', {weekday:'long', day:'numeric', month:'long'});
+  const isToday = fmt(viewDate)===fmt(today);
+  dateLabel.innerHTML = label + (isToday ? '<span class="date-today-tag">Сьогодні</span>' : '');
+  nextDay.disabled = viewDate.getTime() >= today.getTime();
+}
+
+function dayWord(n){
+  const a = Math.abs(n)%100, b = a%10;
+  if(a>10 && a<20) return 'днів';
+  if(b===1) return 'день';
+  if(b>=2 && b<=4) return 'дні';
+  return 'днів';
+}
+function updateStreak(){
+  let n = 0;
+  const d = new Date(today);
+  for(let i=0;i<1000;i++){
+    const day = (fmt(d)===fmt(viewDate)) ? state : loadDay(d);
+    if(!hasContent(day)) break;
+    n++;
+    d.setDate(d.getDate()-1);
+  }
+  streakPill.textContent = '🔥 ' + n + ' ' + dayWord(n) + ' поспіль';
+}
+
+function populate(){
+  mainInput.value = state.main;
+  mainInput.classList.toggle('done', state.mainDone);
+  mainCheck.classList.toggle('done', state.mainDone);
+  grat[0].value = state.gratitude[0];
+  grat[1].value = state.gratitude[1];
+  grat[2].value = state.gratitude[2];
+  mealB.value = state.meals.b; mealL.value = state.meals.l; mealD.value = state.meals.d; mealS.value = state.meals.s;
+  tomorrowInput.value = state.tomorrow;
+  noteInput.value = state.note;
+  renderTasks();
+  renderHabits();
+  renderMood();
+  updateSleepVal();
+  renderWater();
+  renderStars();
+  updateDateUI();
+  updateStreak();
+  resetSaveIndicator();
+}
+
+mainInput.addEventListener('input', ()=>{ state.main = mainInput.value; scheduleSave(); });
+mainCheck.addEventListener('click', ()=>{
+  state.mainDone = !state.mainDone;
+  mainCheck.classList.toggle('done', state.mainDone);
+  mainInput.classList.toggle('done', state.mainDone);
+  flush(); updateStreak();
+});
+
+function addTask(){
+  const v = taskInput.value.trim();
+  if(!v) return;
+  state.tasks.push({text:v, done:false});
+  taskInput.value='';
+  renderTasks();
+  flush(); updateStreak();
+}
+taskAddBtn.addEventListener('click', addTask);
+taskInput.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); addTask(); } });
+taskList.addEventListener('click', e=>{
+  const btn = e.target.closest('button');
+  if(!btn) return;
+  const item = e.target.closest('.task-item');
+  const i = parseInt(item.getAttribute('data-i'),10);
+  if(btn.dataset.act==='toggle'){ state.tasks[i].done = !state.tasks[i].done; renderTasks(); flush(); updateStreak(); }
+  else if(btn.dataset.act==='del'){ state.tasks.splice(i,1); renderTasks(); flush(); updateStreak(); }
+});
+
+function addHabit(){
+  const v = habitInput.value.trim();
+  if(!v) return;
+  habits.push({id:'h'+Date.now()+Math.random().toString(36).slice(2,6), name:v});
+  saveHabits();
+  habitInput.value='';
+  renderHabits();
+}
+habitAddBtn.addEventListener('click', addHabit);
+habitInput.addEventListener('keydown', e=>{ if(e.key==='Enter'){ e.preventDefault(); addHabit(); } });
+habitList.addEventListener('click', e=>{
+  const btn = e.target.closest('button');
+  if(!btn) return;
+  const item = e.target.closest('.task-item');
+  const id = item.getAttribute('data-id');
+  if(btn.dataset.act==='toggle'){
+    const idx = state.habits.indexOf(id);
+    if(idx===-1) state.habits.push(id); else state.habits.splice(idx,1);
+    renderHabits(); flush(); updateStreak();
+  } else if(btn.dataset.act==='del'){
+    habits = habits.filter(h=>h.id!==id);
+    saveHabits();
+    const si = state.habits.indexOf(id);
+    if(si!==-1){ state.habits.splice(si,1); flush(); updateStreak(); }
+    renderHabits();
+  }
+});
+
+moodPicker.addEventListener('click', e=>{
+  const btn = e.target.closest('.mood-btn');
+  if(!btn) return;
+  const v = parseInt(btn.dataset.v,10);
+  state.mood = (state.mood===v) ? 0 : v;
+  renderMood(); flush(); updateStreak();
+});
+sleepMinus.addEventListener('click', ()=>{ state.sleep = Math.max(0, Math.round((state.sleep-0.5)*10)/10); updateSleepVal(); flush(); updateStreak(); });
+sleepPlus.addEventListener('click', ()=>{ state.sleep = Math.min(14, Math.round((state.sleep+0.5)*10)/10); updateSleepVal(); flush(); updateStreak(); });
+waterDrops.addEventListener('click', e=>{
+  const btn = e.target.closest('.drop-btn');
+  if(!btn) return;
+  const v = parseInt(btn.dataset.v,10);
+  state.water = (state.water===v) ? v-1 : v;
+  renderWater(); flush(); updateStreak();
+});
+starPicker.addEventListener('click', e=>{
+  const btn = e.target.closest('.star-btn');
+  if(!btn) return;
+  const v = parseInt(btn.dataset.v,10);
+  state.rating = (state.rating===v) ? v-1 : v;
+  renderStars(); flush(); updateStreak();
+});
+
+grat.forEach((inp, idx)=>{ inp.addEventListener('input', ()=>{ state.gratitude[idx] = inp.value; scheduleSave(); }); });
+[[mealB,'b'],[mealL,'l'],[mealD,'d'],[mealS,'s']].forEach(([el,k])=>{ el.addEventListener('input', ()=>{ state.meals[k] = el.value; scheduleSave(); }); });
+tomorrowInput.addEventListener('input', ()=>{ state.tomorrow = tomorrowInput.value; scheduleSave(); });
+noteInput.addEventListener('input', ()=>{ state.note = noteInput.value; scheduleSave(); });
+
+function switchDate(newDate){
+  flush();
+  viewDate = startOfDay(newDate);
+  state = loadDay(viewDate);
+  populate();
+}
+prevDay.addEventListener('click', ()=>{ const d=new Date(viewDate); d.setDate(d.getDate()-1); switchDate(d); });
+nextDay.addEventListener('click', ()=>{ if(viewDate.getTime()>=today.getTime()) return; const d=new Date(viewDate); d.setDate(d.getDate()+1); switchDate(d); });
+
+clearDayBtn.addEventListener('click', ()=>{
+  if(!confirm('Очистити всі записи за цей день?')) return;
+  state = emptyDay();
+  populate();
+  flush();
+});
+
+document.querySelector('.wrap').addEventListener('focusout', e=>{
+  if(e.target.matches('input, textarea')) flush();
+});
+document.addEventListener('visibilitychange', ()=>{ if(document.hidden) flush(); });
+window.addEventListener('pagehide', flush);
+window.addEventListener('beforeunload', flush);
+
+populate();
+})();
+</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>

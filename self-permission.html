@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Ти сама собі дозвіл</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(52,58,94,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.08em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(52,58,94,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:rgba(138,176,255,.9);text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#c8d8ff}
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(52,58,94,.4)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.92)}
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(52,58,94,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:19px;color:rgba(226,190,128,1)}
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(52,58,94,.35);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(26px,4vw,36px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:640px;margin:0 auto}
+.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.75);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:rgba(245,225,180,1)}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#7a5fbe!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#5261c2!important}
+.highlight em,.final-text strong{color:#946717!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#946717!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">← Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Ти сама собі дозвіл</h1>
+  <p class="page-subtitle">Що насправді заважає отримати бажане</p>
+
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Найкращий ретрит — подорож усередину себе, а тиша — найкращий друг людини"</div>
+      <div class="hero-author">За матеріалами розмови з Динарою Тиловою</div>
+    </div>
+    <p>Тобі не обов'язково їхати на ретрит чи записуватися на новий тренінг, щоб пізнати себе. Крім тебе самої, для цього більше нічого не потрібно — просто чесність і вміння лишатися наодинці з собою. Коли ти залишаєшся сама в тиші, внутрішній голос спочатку звучить гучно й тривожно. Але єдиний шлях пізнати себе — пройти крізь цей страх і зрозуміти: боятися насправді не було чого.</p>
+    <p>Це не про заперечення терапії чи практик — вони теж працюють, просто не є обов'язковими. Обов'язкова лише чесність із собою.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Страх — це передчуття, а не подія</h2>
+    <p>Страх з'являється заздалегідь — ти сприймаєш щось як страшне ще до того, як воно сталося. А коли момент настає, ти просто діятимеш, ніби вибору немає: зробиш те, що маєш зробити. Страшнішим завжди виявляється саме передчуття, а не сама подія.</p>
+    <p>Навіть втрата — це не «страшний» досвід, а досвід, який варто прийняти. Прийняте — відпускається. Страх втратити когось близького тримається на переконанні «без цієї людини я не впораюся» — але життя щоразу доводить: упоратися можна. Сам досвід і те, ким ти через нього стала, лишаються з тобою; важкі переживання можна відпустити.</p>
+    <p>При цьому емоції варто проживати, а не прикрашати — «я ж хороша, тому не маю злитися» тільки заганяє почуття всередину. Природний прояв у важкій ситуації — біль, а не страх: страх народжується з переконання, біль — це просто емоція, така сама природна, як радість.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Усе існує через тебе</h2>
+    <p>Суспільство вчить: світ не крутиться навколо тебе. Але насправді кожен досвід існує саме завдяки тобі й через тебе — і в цьому величезна свобода. Ти не пасажирка власного життя. Ти — його джерело, а отже, можеш обирати.</p>
+    <p>«Храм Божий — усередині тебе», а не на ретриті чи тренінгу. Зв'язок із чимось більшим за тебе підтверджується вже самим фактом, що ти жива й дихаєш — усі люди пов'язані однаково, просто дехто частіше прислухається до цього через себе.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.35s">
+    <h2 class="section-title">Не яка в тебе частота, а наскільки ти себе обмежуєш</h2>
+    <p>У всіх людей від народження високий внутрішній потенціал — та людина сама його знижує через власні програми: «мені це можна, а це — ні», «я не така», «мені сказали, що не вийде». Що більше таких обмежень, то нижче падає той самий потенціал.</p>
+    <p>Тож правильне запитання — не «як підвищити вібрації» (вони й так високі за замовчуванням), а що саме змушує тебе знижувати власний потенціал і які шари обмежень варто прибрати. Усе, що для цього треба, — чесність і правильні запитання до самої себе. <a href="transerfing.html">Трансерфінг</a> називає це трохи інакше — важливістю й маятниками, — але суть та сама: реальність відповідає не на бажання, а на твій внутрішній стан.</p>
+
+    <div class="question-card">
+      <div class="question-label">Запитай себе</div>
+      <div class="question-main">"Де я себе обмежую?"</div>
+    </div>
+
+    <p style="margin-top:24px">Перша відповідь, яка спадає на думку до будь-якого аналізу, — зазвичай найточніша. Часто це «всюди» — навіть якщо збоку твоє життя виглядає межею мрій для когось іншого. Причина здебільшого в установках, засвоєних змалку: «хтось може, а я — ні». Не зупиняйся на абстрактному «всюди» — назви конкретний момент, де ти сама собі не дозволяєш.</p>
+
+    <div class="highlight">
+      <p>Роками таке усвідомлення могло не приводити до дій — не тому, що ти цього не бачила, а тому, що жила за інерцією, не ставлячи собі правильних запитань. <em>Шари обмежень схожі один на одного:</em> знайшовши перший, інші почнуть проявлятися майже самі — якщо продовжувати питати чесно.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Маски</h2>
+    <p>Друге запитання схоже на перше: де я собі не дозволяю проявлятися? І відповідь знову звучить майже як «всюди» — це і є маски.</p>
+    <p>Одна з найпривабливіших — маска «я маю бути ідеальною»: набір якостей, яким ти вважаєш за обов'язок відповідати. У цій масці більше плюсів, ніж мінусів — вона відкриває двері, дає бажане, змінює те, як тебе сприймає оточення. Але вона ж створює постійне внутрішнє, часто тілесне, напруження.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🎭</span>
+        <div class="card-title">Що дає маска</div>
+        <div class="card-text">Оточення сприймає тебе певним чином — це відкриває двері, дає результат, компліменти й визнання. Маска — не лише в'язниця, вона ще й дає приємні відчуття, і саме тому так важко її зняти.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔓</span>
+        <div class="card-title">Що вона забирає</div>
+        <div class="card-text">Постійне напруження — тілесне й емоційне. Рівняння «розслабитися = перестати щось для себе робити» ніхто насправді не доводив; воно виникло тому, що ти звикла отримувати визнання саме за бездоганний вигляд.</div>
+      </div>
+    </div>
+
+    <p style="margin-top:26px">Іноді це геть побутові дрібниці: хочеться сісти невимушено, а здається — недоречно; хочеться одягнутися інакше, сказати прямо, показати роздратування, яке заслужене, — але замість цього «я маю бути вічно врівноваженою». Такими дрібницями ти сама себе й обмежуєш щодня. У момент дискомфорту спитай себе чесно: чи хочу я цього зараз? Якщо ні — не роби. Таких по-справжньому незручних миттєвостей насправді небагато — і саме в них варто дозволити собі бути собою.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.65s">
+    <h2 class="section-title">Ти — і все, і ніщо</h2>
+    <p>Коли роками живеш в образі, ти сильно з ним зростаєшся — здається, ніби ти і є цей образ. Прибереш його — і незрозуміло, чи лишається щось узагалі. Відповідь: і все, і ніщо одночасно.</p>
+    <p>Ти не дорівнюєш власним ярликам — імені, ролям, «я завжди поводжуся так». У кожен момент може виникнути імпульс, що не вписується в ярлик, — і саме ярлик тебе обмежує, а не сам імпульс. Страждання народжується не від «неправильного» бажання, а від того, що ти ототожнюєш себе з ярликом, хоча ти — не він. Ототожнюватися чи ні — завжди твій вибір.</p>
+
+    <div class="highlight">
+      <p><em>Це не означає робити все, що заманеться, не зважаючи ні на кого.</em> Стосунки — теж свого роду ярлик. Якщо раптове почуття до когось іншого йде від серця, а не від его (потяг до недосяжного часто маскує дитячу нестачу любові), чесність починається не з дії, а з розмови з тим, хто поруч зараз. А якщо ти любиш «однаково» двох людей одразу й не можеш обрати — це зазвичай ознака не багатства почуттів, а того, що ти ще не почула саму себе.</p>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Як почути себе</h2>
+    <p>Практика проста, хоч і незручна: побути на самоті в тиші — буквально зачинитися у ванній на кілька годин, без телефону й сторонніх звуків. Жодна терапія не замінить власних думок і внутрішнього голосу — вони найточніша карта самопізнання, яка в тебе є. Якщо не можеш визначитися між варіантами — це ознака того, що ти себе не чуєш, і тиша якраз для того, щоб це виправити.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:1.95s">
+    <h2 class="section-title">Побачити власні переконання самостійно</h2>
+    <p>Підсвідомі переконання не обов'язково розкривати з психотерапевтом — Юнг казав, що люди називають їх «долею», бо не бачать керуючих ними програм. Побачити можна й самій: життя — це результат усіх твоїх програм, а через результат можна знайти переконання, яке його спричинило.</p>
+    <p>Наприклад, страх близькості. Спершу — назви переконання: «я боюся близькості, тому дистанціююся». Тоді запитай — чому я цього боюся? (Відповідь часто: близькість робить вразливою, а вразливість асоціюється з болем, як у дитинстві.) І головне запитання: а чи правда це? Чи правда, що коли я буду щирою з іншою людиною, вона обов'язково завдасть мені болю? Однозначної відповіді зазвичай немає — хоча власний досвід ніби щоразу це «підтверджував».</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.1s">
+    <h2 class="section-title">Свобода — це усвідомлений вибір</h2>
+    <p>Усе твоє життя тримається на переконаннях, які ти сама собі щоразу «доводила». Побачити це — і є свобода: тепер можна свідомо доводити собі те, чого хочеш саме ти, а не те, на що тебе запрограмували.</p>
+    <p>Зміна відбувається через зупинку в моменті. Перед тим, як відкритися новій людині, зазвичай з'являється внутрішній клік — передчуття «зараз станеться щось погане». Ключ — перестати це очікувати, а перестати можна лише сфокусувавшись на тому, що відбувається просто зараз: коли в голові прокручується сценарій, ти вже не в моменті. Усі можливості для зміни існують тільки «зараз» — усвідомленою можна бути лише в теперішньому.</p>
+    <p>Після зупинки виникає порожнеча — стара програма тягне піти звичним шляхом (відступити, втекти), а ти більше її не годуєш. Заповни цю порожнечу простим «я зараз саме в цьому моменті» — і в моменті, як правило, усе добре: стосунки цілі, довіра є, ніхто поки не зраджував. А те, що ти оберешь своєю нормою — тобто те, чого постійно очікуєш, — рано чи пізно й станеться. Тому фокус на моменті — це не наївність, а спосіб перестати самій себе програмувати на погане.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.25s">
+    <h2 class="section-title">Твоя норма, а не твоє бажання</h2>
+    <p>Ти отримуєш не те, чого хочеш, а те, що є твоєю внутрішньою нормою. Перший фільтр на шляху до бажаного — сприйняття: чи вважаєш ти це можливим для себе. Різкий стрибок, що суперечить внутрішній нормі, тіло часто просто не витримує — тому люди, які раптово розбагатіли, нерідко так само раптово все втрачають, а ті, хто йшов поступово, можуть збанкрутувати й піднятися знову: успіх — їхня норма.</p>
+    <p>Щоб вийти з норми «любов дорівнює болю», потрібно свідомо шукати інший досвід — приклади людей, для кого це не так. Мозок фізично показує тобі варіанти, що відповідають заданій меті, свідомій чи ні: якщо підсвідома мета — отримувати біль, ти бачитимеш лише тих, хто здатен його завдати. Люди хочуть не стільки бути щасливими, скільки бути правими — знову й знову доводити собі те саме. Щоб отримати інше, треба бути готовою подивитися на інші приклади.</p>
+
+    <div class="highlight">
+      <p>Перший крок до зміни норми — прийняти момент таким, як він є, і подякувати за те, що вже є: невдоволення примножується так само легко, як і вдячність. <em>Біль не вічний, хоч і здається таким</em> — інакше ти зникала б щоразу, коли на зміну болю приходить радість. А ти лишаєшся — і в болю, і в радості. Обидва минають.</p>
+    </div>
+
+    <p style="margin-top:24px">Це про те, на якій вібрації ти перебуваєш. А про те, з чого конкретно почати зміну цієї вібрації — не з дії, а з того, що передує їй, — <a href="open-door.html">окрема розмова</a>.</p>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.4s">
+    <h2 class="section-title">Вправа з блокнотом</h2>
+    <p>Наприкінці — конкретна практика, щоб перевести усвідомлення в дію.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">1</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Тиша і папір</div>
+          <div class="card-text">Візьми аркуш паперу. Головна умова — тиша: сядь наодинці із собою і своїми бажаннями.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">2</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Щире бажання</div>
+          <div class="card-text">Усвідом щире бажання — конкретну мету чи подію, якої хочеш.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">3</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Впіймати его</div>
+          <div class="card-text">Одразу з'являться думки на кшталт «тобі бракує грошей», «ти недостатньо приваблива», «замало ресурсів». Здебільшого це уявні обмеження, які ти вигадала сама, щоб «заощадити енергію», — ніхто прямо цього не казав.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">4</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Дозволити собі</div>
+          <div class="card-text">Прибери обмеження, лиши тільки бажання. Для цього треба собі просто дозволити.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">5</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Одне бажання</div>
+          <div class="card-text">Запиши одне бажання, а не кілька одразу — кілька розпорошують увагу.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">6</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Без «не»</div>
+          <div class="card-text">Річ не в тому, що «всесвіт не чує заперечення», а в тому, куди спрямована твоя увага. Кажучи «не хочу Х», ти все одно думаєш про Х — розверни погляд у бік бажаного, а не просто прибери частку.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">7</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Теперішній час</div>
+          <div class="card-text">Пиши в теперішньому часі, як доконаний факт — «у мене це вже є», а не «я хочу це». Увійди в стан людини, яка вже це має.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">8</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Відпустити</div>
+          <div class="card-text">Людина, яка справді щось має, не повторює щодня «я багата, я багата» — вона просто багата. Найважче — відпустити надмірну важливість результату; діяти так, як діяла б та, для кого бажане вже сталося.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.55s">
+    <h2 class="section-title">Ключове питання</h2>
+    <p>Коли наступного разу зловиш себе на бажанні комусь щось довести, постав це питання.</p>
+
+    <div class="question-card">
+      <div class="question-label">Запитай себе</div>
+      <div class="question-main">"Чого я насправді прошу довести собі — знову й знову?"</div>
+    </div>
+  </div>
+
+  <div class="divider"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="section" style="animation-delay:2.7s">
+    <h2 class="section-title">Висновок</h2>
+    <div class="final-quote">
+      <div class="final-text">Тобі заважають не обставини — заважає власна норма, яку ти роками доводила собі бути правдою. <strong>Чесність, тиша й теперішній момент — усе, що для цього справді потрібно.</strong> Решта — просто дозвіл, який ти вже маєш право собі дати.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>

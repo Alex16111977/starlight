@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-html{width:100%;min-height:100%;background:#080b1a;font-family:'Montserrat',sans-serif;color:rgba(200,216,255,.85);scroll-behavior:smooth}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
 body{min-height:100vh;position:relative;overflow-x:hidden}
 canvas{position:fixed;inset:0;z-index:0}
 .nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
@@ -17,70 +17,82 @@ canvas{position:fixed;inset:0;z-index:0}
 
 .content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
 .header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
-.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(200,216,255,.55);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
-.back:hover{color:rgba(200,216,255,.9);border-bottom-color:rgba(200,216,255,.3)}
-.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(52,58,94,.65);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text}
 
-.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
-.page-subtitle{text-align:center;font-size:10px;font-weight:200;letter-spacing:.5em;color:rgba(200,216,255,.55);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:11px;font-weight:200;letter-spacing:.5em;color:rgba(52,58,94,.65);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
 
 .divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
-.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(200,216,255,.3)}
-.div-dot.big{width:5px;height:5px;background:rgba(200,216,255,.6);box-shadow:0 0 8px rgba(200,216,255,.3)}
-.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(200,216,255,.2),transparent)}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
 
 .section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
-.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(220,230,255,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
 .section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
-.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(220,230,255,.9);margin-bottom:16px}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section-lead{font-size:14.5px;font-weight:300;line-height:1.85;color:rgba(52,58,94,.82);margin-bottom:22px;padding-left:20px}
 
 .hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
 .hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
 .hero-quote::before{top:0}
 .hero-quote::after{bottom:0}
-.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
-.hero-author{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.4)}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:10px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(52,58,94,.58)}
 
 .phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
-.phrase{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
 .phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
-.phrase:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
 .phrase:hover::before{opacity:1}
 .phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
-.phrase-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(220,230,255,.92)}
+.phrase-text{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92)}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:19px;line-height:1.4;color:rgba(36,40,68,.97);margin-bottom:10px}
 
 .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
-.card{background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
 .card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
-.card:hover{background:rgba(200,216,255,.10);border-color:rgba(200,216,255,.25);transform:translateY(-4px)}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
 .card:hover::before{opacity:1}
 .card-icon{font-size:28px;margin-bottom:14px;display:block}
-.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(220,230,255,.95);margin-bottom:10px}
-.card-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:14px;font-weight:300;line-height:1.75;color:rgba(220,230,255,.92)}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.92)}
+.card.ok{border-color:rgba(150,214,165,.3)}
+.card.ok::before{background:linear-gradient(to right,transparent,rgba(150,214,165,.45),transparent)}
+.card.bad{border-color:rgba(224,150,150,.28)}
+.card.bad::before{background:linear-gradient(to right,transparent,rgba(224,150,150,.42),transparent)}
+.ctx-line{font-size:14.5px;font-weight:300;line-height:1.7;color:rgba(36,40,68,.9);margin-top:8px}
+.ctx-ok{color:#1f7a4d;font-weight:400}
+.ctx-bad{color:#b23c2e;font-weight:400}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(150,214,165,.24)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:9.5px;font-weight:400;letter-spacing:.3em;text-transform:uppercase;color:#1f7a4d;margin-bottom:8px}
+.reply-text{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16.5px;line-height:1.5;color:rgba(36,40,68,.92)}
 
-.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(200,216,255,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(52,58,94,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
 .highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
-.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(220,230,255,.92);margin:0}
-.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:rgba(212,175,110,.85)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:#946717}
 
-.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(200,216,255,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
 .question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
 .question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
-.question-label{font-size:9px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(200,216,255,.35);margin-bottom:18px}
-.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(26px,4vw,36px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+.question-label{font-size:10px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(52,58,94,.5);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(26px,4vw,36px);color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;line-height:1.3}
 
 .final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
 .final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
 .final-quote::before{top:0}
 .final-quote::after{bottom:0}
-.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(200,216,255,.88);max-width:620px;margin:0 auto}
-.final-text strong{font-weight:400;color:rgba(212,175,110,.9)}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#946717}
 
 @keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
-.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
-.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.shoot{position:fixed;width:2px;height:2px;background:#7a5fbe;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,#7a5fbe,transparent)}
 .nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
-.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(200,216,255,.06);border:1px solid rgba(200,216,255,.25);border-radius:100px;color:rgba(200,216,255,.75);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(220,230,255,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:rgba(245,225,180,1)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.75);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:#2c2c2c}.read-toggle.active{background:rgba(212,175,110,.16);border-color:rgba(212,175,110,.55);color:#7a5410}
 </style>
 </head>
 <body>
@@ -101,7 +113,7 @@ canvas{position:fixed;inset:0;z-index:0}
       <div class="hero-text">"Кожен дорослий несе в собі дитину, якою колись був"</div>
       <div class="hero-author">Карл Юнг</div>
     </div>
-    <p>Внутрішня дитина — це не метафора з езотеричних книжок. Це реальна частина твоєї психіки, яка зберігає те, що ти відчувала, коли була маленькою. Радість, біль, страх, цікавість, ніжність. І коли в тебе зараз раптом стискається горло "ні з того ні з сього" — часто це говорить вона.</p>
+    <p>Внутрішня дитина — це не метафора з езотеричних книжок. Це реальна частина твоєї психіки, яка зберігає те, що ти відчувала, коли була маленькою. Радість, біль, страх, цікавість, ніжність. І коли в тебе зараз раптом стискається горло "ні з того ні з сього" — часто це говорить вона. Але не кожен важкий момент дитинства перетворюється на рану в ній — багато залежить від того, чи повторювався він знову й знову, і чи знайшовся потім хтось, хто пригорнув і пояснив.</p>
   </div>
 
   <div class="divider">
@@ -110,7 +122,57 @@ canvas{position:fixed;inset:0;z-index:0}
     <div class="div-dot"></div>
   </div>
 
-  <div class="section" style="animation-delay:1.1s">
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">🟢 Не кожен спогад стає раною</h2>
+    <p class="section-lead">Дитинство без жодного важкого моменту — міф. Рана у внутрішній дитині утворюється не від самого болю, а від того, чи повторювався він знову й знову і чи лишалось після нього місце для винятку.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🔁</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:6px">Повторюваність</div>
+          <div class="ctx-line"><span class="ctx-ok">🟢 Спогад:</span> один важкий день чи період — батьки були виснажені, хворіли, переживали кризу.</div>
+          <div class="ctx-line"><span class="ctx-bad">🚩 Рана:</span> те саме повторювалось знову й знову, скільки себе пам'ятаєш.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🤲</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:6px">Що було після</div>
+          <div class="ctx-line"><span class="ctx-ok">🟢 Спогад:</span> згодом хтось підходив, обіймав, пояснював, що сталося.</div>
+          <div class="ctx-line"><span class="ctx-bad">🚩 Рана:</span> ніхто не підходив; заспокоюватись доводилось самій, у тиші.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🧩</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:6px">У чому дитина бачила причину</div>
+          <div class="ctx-line"><span class="ctx-ok">🟢 Спогад:</span> розуміла — це через обставини, дорослі втомились, це не через неї.</div>
+          <div class="ctx-line"><span class="ctx-bad">🚩 Рана:</span> вирішила: "це через мене, зі мною щось не так".</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">📍</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:6px">Як це відчувається зараз</div>
+          <div class="ctx-line"><span class="ctx-ok">🟢 Спогад:</span> прикра сторінка, про яку можна розповісти спокійно, без стиснутого горла.</div>
+          <div class="ctx-line"><span class="ctx-bad">🚩 Рана:</span> тіло й досі стискається, коли щось хоч трохи нагадує про те саме.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Мета цієї сторінки — не звинуватити минуле, а <em>розрізнити спогад і рану</em>. Раною стає лише те, що повторювалось без винятку і без підтримки після. Саме там і оселяється та поранена частина, про яку йдеться нижче.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1.2s">
     <h2 class="section-title">Що це насправді означає</h2>
     <p>Уяви: всередині тебе живе маленька дівчинка. Не дві, не три — а ти, у різні роки. Та, що боялась темряви. Та, що чекала маму з роботи. Та, що вперше відчула, що її не люблять. Усі ці шари нікуди не зникли — вони склались всередині, як кільця на дереві.</p>
     <p>"Робота з внутрішньою дитиною" — це не дивна психологічна вправа. Це просто навчитись чути ту частину себе, яка не виросла разом із тілом. Бо емоційно ми ростемо лише там, де нас почули. Там, де не почули — ми застрягли.</p>
@@ -140,7 +202,7 @@ canvas{position:fixed;inset:0;z-index:0}
     <div class="div-dot"></div>
   </div>
 
-  <div class="section" style="animation-delay:1.3s">
+  <div class="section" style="animation-delay:1.35s">
     <h2 class="section-title">Як зрозуміти, що говорить вона</h2>
     <p>Внутрішня дитина не вміє говорити словами. Вона говорить через тіло, реакції, дивні бажання. Ось як її розпізнати.</p>
 
@@ -150,6 +212,7 @@ canvas{position:fixed;inset:0;z-index:0}
         <div class="phrase-text">
           <div class="card-title" style="margin-bottom:8px">Реакція "не за віком"</div>
           <div class="card-text">Дрібниця — а ти ридаєш як п'ятирічна. Тебе не покликали — а ти відчуваєш себе викинутою на смітник. Це не "психіка". Це маленька ти прокинулась і їй боляче.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Я не перебільшую. Моїй маленькій частині зараз справді боляче — і вона має на це право, навіть коли привід здається дрібним.»</div></div>
         </div>
       </div>
       <div class="phrase">
@@ -157,6 +220,7 @@ canvas{position:fixed;inset:0;z-index:0}
         <div class="phrase-text">
           <div class="card-title" style="margin-bottom:8px">Раптові "дитячі" бажання</div>
           <div class="card-text">Раптом хочеться солодкого, обіймів, мультиків, заритись під ковдру. Не соромся — це здорове прохання тієї частини, що втомилась бути дорослою.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Хотіти обійми, солодке чи сховатись під ковдру — не соромно. Я можу подбати про себе так, як мені зараз треба.»</div></div>
         </div>
       </div>
       <div class="phrase">
@@ -164,6 +228,7 @@ canvas{position:fixed;inset:0;z-index:0}
         <div class="phrase-text">
           <div class="card-title" style="margin-bottom:8px">Втрата інтересу до всього</div>
           <div class="card-text">Коли все стало "сіре" — це часто внутрішня дитина зачинилась. Її довго не питали "що ти хочеш?" — і вона перестала хотіти. Не хотіти безпечніше, ніж розчаровуватись.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Мені можна знову захотіти чогось малого. Я питаю себе "чого я хочу?" — і чекаю відповіді, навіть тихої.»</div></div>
         </div>
       </div>
       <div class="phrase">
@@ -171,6 +236,7 @@ canvas{position:fixed;inset:0;z-index:0}
         <div class="phrase-text">
           <div class="card-title" style="margin-bottom:8px">Відчуття "я фейк"</div>
           <div class="card-text">Здається, що ти граєш доросле життя, а всередині — порожньо. Це не про тебе як особистість. Це про те, що жива дитяча частина закрита, а функціонує лише "робот".</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Я не фальшива. Просто одна моя частина ще ховається за роллю "дорослої" — і їй можна дозволити з'явитися.»</div></div>
         </div>
       </div>
     </div>
@@ -198,7 +264,7 @@ canvas{position:fixed;inset:0;z-index:0}
     <div class="div-dot"></div>
   </div>
 
-  <div class="section" style="animation-delay:1.7s">
+  <div class="section" style="animation-delay:1.65s">
     <h2 class="section-title">Ключове питання</h2>
     <p>Коли тебе наступного разу накриє — постав одне просте питання. І послухай не головою, а серцем.</p>
 
@@ -219,6 +285,65 @@ canvas{position:fixed;inset:0;z-index:0}
   </div>
 
   <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">🪞 Якщо ти сама її не почула</h2>
+    <p class="section-lead">Буває, що найгучніший голос, який заглушує внутрішню дитину сьогодні, — вже не батьківський. Це твій власний, дорослий, поспішний голос. Але «вона» і «ти» — не дві мешканки одного тіла. Це один і той самий океан: маленька хвиля тоді, доросла хвиля тепер.</p>
+
+    <div class="cards">
+      <div class="card ok">
+        <span class="card-icon">🫧</span>
+        <div class="card-title">Помітити — вже інакше</div>
+        <div class="card-text">Те, що ти впіймала себе на "зараз не час" чи "це дрібниці" — уже означає, що якась частина тебе почула маленьку. Раніше цього взагалі ніхто не помічав.</div>
+      </div>
+      <div class="card ok">
+        <span class="card-icon">↩️</span>
+        <div class="card-title">Повернутися можна за хвилину</div>
+        <div class="card-text">"Вибач, я тебе зараз не почула, розкажи ще раз" — цих слів їй колись бракувало ззовні. Сказати їх собі можна будь-якої миті, навіть за годину.</div>
+      </div>
+      <div class="card ok">
+        <span class="card-icon">🕊️</span>
+        <div class="card-title">Один пропущений сигнал — не провал</div>
+        <div class="card-text">Важить не одна мовчазна мить, а те, чи ти зрештою повертаєшся. Повернулась, вислухала, дала те, чого бракувало, — і це вже зовсім інша історія, ніж була в дитинстві.</div>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top:24px">
+      <p>Немає дорослої, яка нахиляється до малої, що чекає внизу. <em>Ти — океан і човен одночасно</em> — та сама вода, що колись була тихим човном серед чужих голосів, і та, що тепер вирішує, почути їх чи ні. Коли ти зупиняєшся й відповідаєш собі, це не одна частина рятує іншу. Це океан на мить перестає забувати, що він цілий.</p>
+    </div>
+
+    <p style="margin-top:26px">А замість звичного дорослого окрику — спробуй сказати те, чого їй бракує саме зараз:</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🌊</div>
+        <div class="phrase-text">
+          <div class="phrase-said">"Не будь дитиною, візьми себе в руки"</div>
+          <div class="reply"><div class="reply-label">🟢 Скажи натомість</div><div class="reply-text">«Тобі зараз справді боляче. Я поруч, і нікуди не поспішаю.»</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🍬</div>
+        <div class="phrase-text">
+          <div class="phrase-said">"Зараз не час на дурниці, працюй"</div>
+          <div class="reply"><div class="reply-label">🟢 Скажи натомість</div><div class="reply-text">«Можна п'ять хвилин на те, чого хочеться. Це не зрада справам.»</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">😴</div>
+        <div class="phrase-text">
+          <div class="phrase-said">"Мені однаково має бути байдуже"</div>
+          <div class="reply"><div class="reply-label">🟢 Скажи натомість</div><div class="reply-text">«Спробую спитати себе: а чого б я хотіла, якби дозволила собі хотіти?»</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1.95s">
     <h2 class="section-title">З чого почати діалог</h2>
     <p>Це не складно. Не треба сідати в позу лотоса. Потрібна тиша, чесність і трохи часу.</p>
 
@@ -267,7 +392,7 @@ canvas{position:fixed;inset:0;z-index:0}
     <div class="div-dot"></div>
   </div>
 
-  <div class="section" style="animation-delay:1.9s">
+  <div class="section" style="animation-delay:2.1s">
     <h2 class="section-title">Висновок</h2>
     <div class="final-quote">
       <div class="final-text">У тобі живе дівчинка, яка все ще чекає, коли її нарешті помітять. Не треба чекати, щоб хтось зробив це за тебе. <strong>Стань для неї тією, кого вона не дочекалась</strong>. Це і є дорослішання — не коли ти жорсткішаєш, а коли вчишся бути собі мамою, якої не було.</div>
@@ -282,7 +407,7 @@ let W,H,stars=[],mx=0,my=0;
 function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
 resize();window.addEventListener('resize',()=>{resize();build()});
 function rand(a,b){return a+Math.random()*(b-a)}
-function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#d4c8ff':Math.random()<.1?'#ffd4b0':'#c8d8ff',px:rand(.01,.06)})}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
 build();
 document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
 let t=0;
@@ -291,5 +416,6 @@ function shootStar(){const el=document.createElement('div');el.className='shoot'
 function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
 </script>
 <script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
 </body>
 </html>
