@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Уся філософія</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,140,80,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(52,58,94,.65);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:11px;font-weight:200;letter-spacing:.5em;color:rgba(52,58,94,.65);text-transform:uppercase;margin-bottom:12px;opacity:0;animation:riseIn 1s .7s ease forwards}
+.page-years{text-align:center;font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:18px;color:#7a5410;margin-bottom:64px;opacity:0;animation:riseIn 1s .8s ease forwards;letter-spacing:.1em}
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:18px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#5261c2;box-shadow:0 0 12px rgba(82,97,194,.6)}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#7a5fbe;text-decoration:none;border-bottom:1px solid rgba(122,95,190,.45);transition:border-color .3s}
+.section p a:hover{border-bottom-color:rgba(122,95,190,.9)}
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:10px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(52,58,94,.58)}
+.timeline{position:relative;padding-left:24px;margin-top:20px}
+.timeline::before{content:'';position:absolute;left:6px;top:8px;bottom:8px;width:1px;background:linear-gradient(to bottom,rgba(82,97,194,.45),rgba(148,103,23,.3),rgba(122,95,190,.15))}
+.tline{position:relative;margin-bottom:28px;padding-left:20px}
+.tline::before{content:'';position:absolute;left:-22px;top:6px;width:11px;height:11px;border-radius:50%;background:#5261c2;box-shadow:0 0 12px rgba(82,97,194,.5)}
+.tyear{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:#3f4a9e;letter-spacing:.06em;margin-bottom:6px}
+.tevent{font-size:13.5px;font-weight:300;line-height:1.8;color:rgba(36,40,68,.86)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(82,97,194,.35),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+.card.ok{border-color:rgba(150,214,165,.35)}
+.card.ok::before{background:linear-gradient(to right,transparent,rgba(150,214,165,.5),transparent)}
+.card.bad{border-color:rgba(224,150,150,.32)}
+.card.bad::before{background:linear-gradient(to right,transparent,rgba(224,150,150,.45),transparent)}
+.card-label{font-size:9.5px;font-weight:400;letter-spacing:.3em;text-transform:uppercase;margin-bottom:10px;display:block}
+.card.ok .card-label{color:#1f7a4d}
+.card.bad .card-label{color:#b23c2e}
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:26px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(82,97,194,.35),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:26px;flex-shrink:0;width:34px;text-align:center}
+.phrase-word{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:19px;line-height:1.4;color:rgba(36,40,68,.97);margin-bottom:8px}
+.phrase-text{font-family:'Montserrat',sans-serif;font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.88)}
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(52,58,94,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:#946717}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.quote-block .qa{font-size:10px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;color:#7a5410}
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:10px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(52,58,94,.5);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,34px);color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:640px;margin:0 auto}
+.final-text strong{font-weight:400;color:#946717}
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:#7a5fbe;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,#7a5fbe,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.75);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:#2c2c2c}
+.read-toggle.active{background:rgba(212,175,110,.16);border-color:rgba(212,175,110,.55);color:#7a5410}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Уся філософія</h1>
+  <p class="page-subtitle">Від Фалеса до Леніна</p>
+  <div class="page-years">VI ст. до н.е. — XX ст.</div>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Філософія — це не набір відповідей. Це історія того, як людство переставало вірити попередній відповіді"</div>
+    </div>
+    <p>Двадцять шість століть думки на одній сторінці. Не для того, щоб вивчити напам'ять імена, — а щоб побачити сюжет: як питання «з чого зроблений світ» перетворилося на питання «як влаштована людина», потім на «як влаштоване пізнання», а потім на «хто керує історією». Кожна відповідь тримається доти, доки хтось не помічає в ній дірку — і саме на цих дірках усе рухається далі.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Маршрут -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Маршрут</h2>
+    <div class="timeline">
+      <div class="tline">
+        <div class="tyear">VI ст. до н.е. — V ст. н.е. · Античність</div>
+        <div class="tevent">Спочатку питання про космос, потім Сократ розвертає філософію до людини, Платон вигадує світ ідей, Аристотель повертає все на землю. Наприкінці — школи про те, як прожити життя.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">V — XIV ст. · Середньовіччя</div>
+        <div class="tevent">Філософія стає служницею богослов'я. Спершу отці церкви пояснюють віру, потім схоласти намагаються довести її логікою — і мимохідь створюють університет як інституцію.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">XV — XVI ст. · Ренесанс</div>
+        <div class="tevent">У центр повертається людина. Друкарський верстат, вільні міста, перші парламенти — і перші люди, які заплатили життям за те, що подивилися на небо інакше.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">XVII ст. · Новий час</div>
+        <div class="tevent">Головне питання змінюється: не «що є світ», а «звідки я взагалі можу це знати». Розкол на емпіриків (знання з досвіду) і раціоналістів (знання з розуму).</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">XVIII ст. · Просвітництво</div>
+        <div class="tevent">Розум береться перебудувати суспільство: поділ влади, суспільний договір, свобода совісті, ринок. Філософія вперше масово виходить із кабінету в політику.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">Кінець XVIII — перша половина XIX ст. · Німецька класика</div>
+        <div class="tevent">Кант мирить емпіриків із раціоналістами і ставить межу пізнанню. Фіхте й Гегель будують на цьому системи, у яких світом рухає дух.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">XIX ст. · Спуск на землю</div>
+        <div class="tevent">Фейєрбах повертає філософію до живої людини, Шопенгауер і Ніцше — до волі й тіла, Маркс — до економіки. Дух виявляється не причиною, а наслідком.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Чому греки -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Чому відлік ведуть від греків</h2>
+    <p>Думати про світ люди почали задовго до Греції. У Єгипті й Вавилоні складні уявлення про походження всього існували ще за три тисячі років до нашої ери. А приблизно між 700 і 500 роками до нашої ери сталася дивна річ: майже одночасно й без зв'язку між собою потужна думка спалахнула одразу в трьох місцях — в Індії, у Китаї та в Греції.</p>
+    <p>Різниця не в глибині, а в способі. Індійська й вавилонська думка залишалася вплетеною в релігію. Конфуцій у Китаї богами майже не цікавився, але думав про державу, ритуал і правила поведінки — про те, як людям жити разом. І тільки греки почали пояснювати світ так, ніби боги тут ні до чого: з причин, які можна назвати, перевірити й оскаржити.</p>
+    <p>Це і є момент народження філософії як окремої справи. Не «так сказали жерці», а «ось моя версія, спробуй її спростувати». Про світ, у якому це сталося, — <a href="ancients-greece.html">Стародавня Греція</a>.</p>
+  </div>
+
+  <!-- Натурфілософи -->
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">З чого зроблений світ</h2>
+    <p>Перше покоління філософів шукало першооснову — те єдине, з чого складається все інше. Питання здається наївним, поки не помічаєш, що це те саме питання, на яке відповідає таблиця Менделєєва.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">💧</span>
+        <div class="card-title">Фалес Мілетський</div>
+        <div class="card-text">Перший, кого називають філософом. Знатний рід, освіта, торгівля, політика, подорожі — і відповідь: усе є вода. Земля, за ним, — плоский диск, що плаває на воді. Йому ж приписують перше передбачення сонячного затемнення й перші геометричні теореми, доведені, а не просто помічені.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">∞</span>
+        <div class="card-title">Анаксимандр</div>
+        <div class="card-text">Заперечив учителю: якщо основа світу — вода, звідки тоді вогонь? Отже, першооснова не може бути жодною зі стихій. Він назвав її апейрон — безмежне й невизначене начало у вічному русі. Перше по-справжньому абстрактне поняття в історії думки.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌬️</span>
+        <div class="card-title">Анаксимен</div>
+        <div class="card-text">Повернувся до стихії, але додав механізм: усе є повітря, а речі виникають через його згущення і розрідження. Розріджене повітря — вогонь, згущене — вода, потім земля, потім камінь. Уперше з'явилася ідея, що якість — це наслідок кількості.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔢</span>
+        <div class="card-title">Піфагор</div>
+        <div class="card-text">Основа світу — не речовина, а число. Пропорції звучних струн, орбіти, форми — усе підпорядковане числовій гармонії, і пізнати світ означає пізнати числа, які ним керують. Ідея, з якої за два тисячоліття виросте вся математична фізика.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚛️</span>
+        <div class="card-title">Левкіпп і Демокрит</div>
+        <div class="card-text">Матерія складається з найдрібніших неподільних часток — атомів, розділених порожнечею. Побачити їх неможливо, до них можна дійти лише думкою. Стикаючись і зчіплюючись, вони утворюють усі речі. Найточніша здогадка античності — зроблена без жодного приладу.</div>
+      </div>
+    </div>
+    <p style="margin-top:22px">Ці люди заодно заклали основи астрономії, географії, біології й математики. Поділу на «науку» і «філософію» тоді просто не існувало: це була одна справа — пояснювати.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Сократ -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Сократ: поворот усередину</h2>
+    <p>Античну філософію ділять на дві частини — до Сократа і після. До нього питали про космос. Він почав питати про людину.</p>
+    <p>Щоб оцінити масштаб, треба уявити тогочасний спосіб думати. Людина не вважала свої вчинки своїми: розгнівався — бог наслав гнів, закохався — богиня втрутилася, злякався в бою — це паніка від Пана. Причина будь-чого була зовні.</p>
+    <p>Сократ розвернув цю стрілку на сто вісімдесят градусів. Не питай, який бог тебе штовхнув, — питай себе, чого ти хотів, що вважав добрим і чи можеш це пояснити. Пізнай самого себе. Істина не приходить згори, вона видобувається з розмови — своєї з іншими або своєї з собою.</p>
+    <p>Він не написав жодного рядка. Вважав, що записана думка вмирає: вона не може відповісти на заперечення, не бачить, з ким говорить, і перетворює живе розуміння на завчений текст. Усе, що ми про нього знаємо, — переказ учнів. Найвпливовіший філософ Заходу дійшов до нас у чужому переказі, і це, мабуть, найкраща ілюстрація його ж думки.</p>
+    <p>Думки, які століттями ходять під його іменем, — розібрані по темах на окремій сторінці: <a href="socrates.html">Сократ</a>.</p>
+
+    <div class="highlight">
+      <p><em>Цей крок називають антропологічним переворотом.</em> Після нього головним предметом філософії стала не будова космосу, а людина: що вона може знати, як мусить чинити і на що має право сподіватися. Ті самі три питання через двадцять два століття сформулює Кант — уже як програму всієї своєї роботи.</p>
+    </div>
+  </div>
+
+  <!-- Платон -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Платон: справжнє — не тут</h2>
+    <p>Учень Сократа заснував школу в гаю на околиці Афін, названому на честь героя Академа. Звідси й слово «академія» — у всіх мовах світу.</p>
+    <p>Його головна ідея звучить дивно рівно доти, доки не спробуєш її спростувати. Ти бачила тисячі котів, і всі різні. Але звідки ти знаєш, що кожен із них — кіт? Значить, десь є «кіт як такий» — не пухнастий і не смугастий, а ідея кота. Платон стверджував: ці ідеальні форми існують по-справжньому, в окремому світі, а речі навколо — лише їхні тіні й копії, недосконалі й тимчасові.</p>
+    <p>Звідси все інше. Тіло — тягар, що заважає душі бачити справжнє; смерть — звільнення. Знання — не набуття нового, а пригадування того, що душа бачила до народження. І доступ до істини має не той, хто більше спостерігає, а той, хто вміє мислити.</p>
+    <p>З цього виростає і його держава. Справедлива та, у якій кожен на своєму місці. Три стани — правителі, стражі й ті, хто працює, — але не за народженням: дитина ремісника з видатними здібностями має піднятися нагору, і навпаки. Правителям і стражам заборонена приватна власність, бо власність народжує нерівність і чвари. А правити мають філософи — ті, хто стоїть найближче до істини.</p>
+    <p>Це перша утопія в історії. І перший проєкт, у якому заради справедливості пропонується скасувати приватне життя.</p>
+  </div>
+
+  <!-- Аристотель -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Аристотель: справжнє — саме тут</h2>
+    <p>Двадцять років у Платоновій академії — і повна незгода з учителем у головному. Ніякого окремого світу ідей не існує. Реально існує тільки ця конкретна кішка. «Кіт узагалі» — не окрема сутність, а форма, яка живе в самих речах і ніде більше; наш розум її звідти видобуває.</p>
+    <p>Ця суперечка про універсалії — чи існує загальне окремо від одиничного — потім розколе все середньовіччя й дійде до сьогоднішніх сперечань про те, чи існують математичні об'єкти.</p>
+    <p>Популярності за життя він не мав: непоказний, різкий, з нищівною іронією в суперечці — його побоювалися, а не любили. Але зробив він більше за будь-кого до себе. Поділив науки на теоретичні (знання заради знання — фізика, математика), практичні (етика, політика) і творчі (риторика, поетика). Написав першу логіку. Описав понад п'ятсот видів тварин.</p>
+    <p>Людину він вважав високоорганізованою твариною, яка відрізняється розумом і вродженим потягом жити спільно, — звідси його формула про людину як істоту політичну. Душу не відділяв від тіла й ділив на три рівні: рослинна (живлення й ріст), тваринна (відчуття й рух) і розумна (мислення) — власне людське надбудовується над тваринним, а не замінює його.</p>
+    <p>І на відміну від учителя, приватну власність вважав природною: спільне майно, казав він, ніхто не доглядає так, як своє.</p>
+
+    <div class="quote-block">
+      <p>Десять категорій Аристотеля — сітка, крізь яку європейська думка дивилася на світ дві тисячі років: сутність, кількість, якість, відношення, місце, час, положення, стан, дія і страждання. Будь-що, що можна сказати про будь-що, лягає в одну з цих десяти клітинок.</p>
+      <div class="qa">Категорії, IV ст. до н.е.</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Пізня античність -->
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">Школи про те, як жити</h2>
+    <p>Коли великі системи вже побудовані, а поліси втратили незалежність, філософія перестає питати про будову світу й береться за практичне: як прожити своє життя й менше страждати. Це перша в історії масова психотерапія.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🍇</span>
+        <div class="card-title">Епікурейці</div>
+        <div class="card-text">Мета життя — задоволення, але не будь-яке. Розумна насолода означає розібратися у власних бажаннях і відсіяти ті, що приносять більше тривоги, ніж радості. Головне надбання — спокій і відсутність страху.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🛢️</span>
+        <div class="card-title">Кініки</div>
+        <div class="card-text">Радикальна свобода через відмову. Ні майна, ні репутації, ні пристойності — щастя не залежить від того, чого в тебе немає. Діоген жив у глиняній бочці й на пропозицію Александра Македонського просити чого завгодно попросив відійти й не затуляти сонце.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🤔</span>
+        <div class="card-title">Скептики</div>
+        <div class="card-text">Будь-якому твердженню можна протиставити рівносильне протилежне. Отже, розумно утриматися від категоричних суджень — і саме звідси, а не з упевненості, приходить душевний спокій. Всієї правди ми не дізнаємося, і це не трагедія.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🏛️</span>
+        <div class="card-title">Стоїки</div>
+        <div class="card-text">Найвпливовіша з цих шкіл: розрізняй те, що в твоїй владі, і те, що ні, і вкладайся тільки в перше. Від рабa Епіктета до імператора Марка Аврелія — і далі просто в сучасну когнітивну терапію. Окремо про них: <a href="stoicism.html">Стоїцизм</a>.</div>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <p><em>Найвідоміший аргумент цієї епохи — епікурівський, про смерть.</em> Смерть і життя ніколи не зустрічаються: поки ти є, її немає; коли вона є, тебе вже немає. Боятися того, чого ти за визначенням ніколи не переживеш, — це боятися нічого. Логічно бездоганно і майже нікому не допомагає, але спроба зроблена першою.</p>
+    </div>
+  </div>
+
+  <!-- Неоплатонізм -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Неоплатонізм: міст до релігії</h2>
+    <p>У III столітті нашої ери Плотін збудував останню велику систему античності — і водночас двері, крізь які філософія вийшла до християнства.</p>
+    <p>Усе походить з Єдиного — джерела вищого навіть за платонівський світ ідей. Воно не творить світ так, як майстер робить річ; воно переповнюється й виливається назовні, як світло від джерела. Це називається еманацією: з Єдиного витікає розум, з розуму — душа, з душі — матеріальний світ, і що далі від джерела, то тьмяніше.</p>
+    <p>Шлях назад — той самий, тільки вгору: очистити душу від прив'язаностей і піднятися до Єдиного. Але дійти туди міркуванням не можна. Плотін описував це як екстаз — стан, у якому душа полишає все матеріальне й зливається з джерелом; за словами учня, з ним таке сталося кілька разів за життя.</p>
+    <p>Це поворотний момент: у Платона істина здобувалася розумом, тут — містичним переживанням. Далі ця лінія перетече в середньовічну теологію майже без швів.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Патристика -->
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Патристика: коли віру треба пояснити</h2>
+    <p>Нова релігія розповсюджувалася швидше, ніж встигала домовитися сама з собою. Ким саме був Христос — Богом, людиною, обома одночасно? Що робити з тими, хто відрікся під тортурами? Як жити по-християнськи там, де все влаштовано не по-християнськи?</p>
+    <p>Відповідали на це отці церкви — і їхні тексти, патристика, стали фундаментом того, що згодом оформилося в офіційне вчення. Це вже не пошук істини з нуля: істина вважається даною, а працює думка над тим, як її правильно зрозуміти й захистити від хибних тлумачень.</p>
+  </div>
+
+  <!-- Августин -->
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Августин: два міста</h2>
+    <p>Народився 354 року в Тагасті, на території нинішнього Алжиру, у небогатій провінційній родині. До навернення прожив бурхливу молодість, яку сам потім описав з такою відвертістю, що «Сповідь» вважають першою автобіографією в європейській літературі.</p>
+    <p>Його світ влаштовано так. Бог створив усе з нічого — не з готового матеріалу, а буквально з відсутності: це догмат творіння, і він назавжди відрізнить християнську картину світу від грецької, де матерія існувала завжди. Створив за зразками, що були в божественному розумі, — платонівські ідеї переселилися до Бога в голову.</p>
+    <p>Чуттям Августин не довіряв: вони дають знання про явища, а не про самі речі. Шукати треба всередині, розумом. Але й розум сам по собі не витягне — істинне пізнання можливе тільки через Одкровення, тобто через Біблію, і дається не всім.</p>
+    <p>А головний його образ — два гради. Град Божий і град земний, і живуть вони перемішано, всередині тих самих міст і тих самих людей. Земне життя при цьому — мить і підготовка; справжнє почнеться потім. Ця конструкція визначить світовідчуття Європи на тисячу років уперед.</p>
+  </div>
+
+  <!-- Схоластика -->
+  <div class="section" style="animation-delay:2s">
+    <h2 class="section-title">Схоластика: довести те, у що й так віриш</h2>
+    <p>Рано чи пізно віри перестало вистачати. Якщо християнство істинне, міркували середньовічні мислителі, воно має витримувати перевірку розумом — інакше з чим виходити до освіченого опонента.</p>
+    <p>Так з'явилася схоластика: систематизація віровчення й пошук раціональних доказів, з опорою одночасно на Біблію, на отців церкви та на античних філософів — насамперед на Аристотеля, чиї тексти повернулися до Європи через арабських перекладачів і коментаторів. Заодно ця робота породила побічний продукт, який пережив саму схоластику: університет з диспутами, ступенями й обов'язком захищати свою позицію публічно.</p>
+    <p>Фома Аквінський розв'язав головну напругу епохи просто: віра й розум не суперечать одне одному, бо джерело в них одне. Розум дає зрозуміти світ, віра — те, до чого розум не дотягується. Конфлікту між ними не буває; буває помилка в міркуванні.</p>
+    <p>Найвідоміше, що він залишив, — п'ять шляхів довести існування Бога.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">🎯</span>
+        <div>
+          <div class="phrase-word">Від руху</div>
+          <div class="phrase-text">Усе, що рухається, рухає щось інше. Ланцюг не може тягнутися назад нескінченно — отже, є першодвигун, який рухає, сам залишаючись нерухомим.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🔗</span>
+        <div>
+          <div class="phrase-word">Від першопричини</div>
+          <div class="phrase-text">Усе має причину, а причина — свою причину. Якщо ряд нескінченний, то нічого й не почалося б. Отже, є перша причина, яка не має причини.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🕯️</span>
+        <div>
+          <div class="phrase-word">Від необхідності</div>
+          <div class="phrase-text">Усе у світі може бути, а може й не бути. Якби все було випадковим, колись не було б нічого — і нізвідки було б узятися теперішньому. Отже, є те, що не може не існувати.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">📈</span>
+        <div>
+          <div class="phrase-word">Від ступенів досконалості</div>
+          <div class="phrase-text">Кажучи «краще», «добріше», «істинніше», ти мовчки міряєш це чимось. Порівняння вимагає зразка — отже, існує абсолютна міра, до якої все інше наближається.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🐝</span>
+        <div>
+          <div class="phrase-word">Від задуму</div>
+          <div class="phrase-text">Бджоли будують правильні соти, планети йдуть точними орбітами — те, що не має розуму, поводиться доцільно. Значить, ціль йому задав хтось, хто розум має.</div>
+        </div>
+      </div>
+    </div>
+    <p style="margin-top:22px">Ці п'ять аргументів досі перевидають, розбирають і спростовують — а перший і другий у переробленому вигляді дожили до сучасних суперечок про початок Всесвіту.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Ренесанс -->
+  <div class="section" style="animation-delay:2.1s">
+    <h2 class="section-title">Ренесанс: людина повертається в центр</h2>
+    <p>Перелом стався не через те, що хтось передумав, а через кілька дуже матеріальних речей. Друкований верстат зробив книжку дешевою — і монополія на знання розсипалася. Міста розбагатіли настільки, що перестали залежати від феодала й від єпископа. З'явилися перші парламенти й перші зафіксовані свободи.</p>
+    <p>І тон думки змінюється: замість зосередженості на Богові — цікавість до людини, до її тіла, здібностей і земного життя. Замість «мить перед вічністю» — «варте того, щоб проживати».</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🌀</span>
+        <div class="card-title">Микола Кузанський</div>
+        <div class="card-text">Бог — усе і ніщо водночас, у ньому збігаються протилежності: початок і кінець, добро і зло, максимум і мінімум. Людський розум обмежений і Бога до кінця не осягне — найрозумніше, що з ним може статися, він назвав «вченим незнанням». Світ безмежний і центру не має. Це сказано за століття до телескопа.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">☀️</span>
+        <div class="card-title">Коперник</div>
+        <div class="card-text">Те, що Кузанський припускав, він порахував. Земля не центр — вона обертається навколо Сонця. Головне тут не сам висновок, а метод: він не звірявся з Аристотелем, а перевіряв математикою й спостереженням. Книгу він видав 1543 року, вже вмираючи.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔥</span>
+        <div class="card-title">Джордано Бруно</div>
+        <div class="card-text">Пішов далі за всіх: Всесвіт нескінченний, центру немає взагалі, зорі — це далекі сонця, і навколо них теж обертаються планети, можливо, населені. Бог у нього не поза світом, а розлитий у ньому — це пантеїзм. Спалений у Римі 1600 року; судили його передусім за богословські єресі, космологія була лише частиною обвинувачення.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Новий час -->
+  <div class="section" style="animation-delay:2.2s">
+    <h2 class="section-title">Новий час: питання змінюється</h2>
+    <p>З XVII століття філософія перестає питати передусім «що є світ» і починає питати «звідки я взагалі можу щось про нього знати». Бог із центру картини зміщується вбік — не заперечується, але й не пояснює більше нічого конкретного.</p>
+    <p>І тут думка розколюється надвоє. Одні кажуть: усе знання приходить із досвіду, з того, що ти побачила й помацала. Інші: досвід обманює, надійне тільки те, що виводиться розумом. Емпірики й раціоналісти сперечатимуться сто п'ятдесят років, поки не з'явиться Кант.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🔬</span>
+        <div class="card-title">Френсіс Бекон</div>
+        <div class="card-text">Батько емпіризму й людина, яка перевела науку з режиму «зрозуміти» в режим «зробити». Знання має приносити користь, а здобувається спостереженням і експериментом — не читанням авторитетів. Бога не заперечував, але вимагав, щоб віра й наука не лізли в роботу одна одної.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">👑</span>
+        <div class="card-title">Томас Гоббс</div>
+        <div class="card-text">Людина від природи егоїстична й небезпечна для інших; природний стан — війна всіх проти всіх. Щоб не загинути, люди укладають суспільний договір і передають владу державі — «Левіафану», біблійному чудовиську. Так народилася політична філософія Нового часу: держава тут не від Бога, а від розрахунку.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧠</span>
+        <div class="card-title">Рене Декарт</div>
+        <div class="card-text">Засумнівався в усьому, що можна взяти під сумнів, — і наштовхнувся на одне, чого не виходить: якщо я сумніваюся, значить, є хтось, хто сумнівається. Мислю, отже, існую. Світ поділив на дві субстанції: мислячу (свідомість) і протяжну (матерія, що живе за механічними законами), а зв'язок між ними поклав на Бога.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🕸️</span>
+        <div class="card-title">Бенедикт Спіноза</div>
+        <div class="card-text">Двох субстанцій не буває, є одна — і вона ж Бог, вона ж природа. Мислення і матерія — просто два її боки, доступні нам; насправді їх безліч. Випадковостей не існує: усе випливає з природи цієї єдиної субстанції. А свобода — не вибір, а розуміння необхідності: вільна та, хто знає причини власних дій.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📄</span>
+        <div class="card-title">Джон Локк</div>
+        <div class="card-text">Розум при народженні — чистий аркуш, вроджених ідей немає. Усе приходить із двох джерел: відчуття (зовнішній досвід) і рефлексія (спостереження за роботою власного розуму). Знання буває інтуїтивним, доказовим і чуттєвим — за спаданням надійності. Він же — засновник лібералізму: влада законна лише доти, доки захищає життя, свободу і власність.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎲</span>
+        <div class="card-title">Девід Юм</div>
+        <div class="card-text">Довів емпіризм до межі — і зламав його. Ми ніде не спостерігаємо «причину»: ми бачимо, що одне регулярно йде за іншим, і звичка домальовує зв'язок. Виходить, навіть закони природи — не знання, а звичка очікування. Саме цей висновок, за власним зізнанням Канта, розбудив його від догматичної дрімоти.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔮</span>
+        <div class="card-title">Готфрід Лейбніц</div>
+        <div class="card-text">Світ складається з монад — неподільних духовних одиниць, які не взаємодіють, а лише розгортають те, що в них закладено. Розрізняються рівнем свідомості: «голі» (нежива природа), «душі» (тварини), «духи» (люди), найвища — Бог, що заздалегідь узгодив усе з усім. Він же розділив істини розуму (2+2=4) й істини факту (сонце зійде) — обидві сторони суперечки виявилися праві щодо різних речей.</div>
+      </div>
+    </div>
+
+    <p style="margin-top:22px">Окремо варто знати чотири беконівські «ідоли» — перелік того, що псує мислення. Він старший за будь-яку книжку з когнітивних викривлень на чотириста років і працює не гірше.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">🧬</span>
+        <div>
+          <div class="phrase-word">Ідоли роду</div>
+          <div class="phrase-text">Викривлення, вбудовані в саму людську природу: ми бачимо порядок там, де його немає, віримо в дива й підганяємо факти під очікування.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🕳️</span>
+        <div>
+          <div class="phrase-word">Ідоли печери</div>
+          <div class="phrase-text">Особисті упередження: виховання, освіта, звички, улюблені ідеї. Кожен дивиться зі своєї печери й вважає її вікном.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🗣️</span>
+        <div>
+          <div class="phrase-word">Ідоли ринку</div>
+          <div class="phrase-text">Плутанина через слова. Люди вживають той самий термін у різних значеннях, домовляються про слова замість речей — і сперечаються ні про що.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🎭</span>
+        <div>
+          <div class="phrase-word">Ідоли театру</div>
+          <div class="phrase-text">Сліпа віра в авторитети — філософські системи, традиції, «так завжди вважалося». Чужа побудована декорація, у якій ти живеш, не помічаючи стін.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Просвітництво -->
+  <div class="section" style="animation-delay:2.3s">
+    <h2 class="section-title">Просвітництво: розум береться за суспільство</h2>
+    <p>У XVIII столітті філософія вперше масово виходить із кабінету. Тепер це не опис світу, а проєкт його перебудови — і майже все, чим ти щодня користуєшся в державному устрої, придумано в цьому столітті.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">✒️</span>
+        <div class="card-title">Вольтер</div>
+        <div class="card-text">Корінь суспільного зла — забобон, з якого виростає фанатизм. Ліки — розум і освіта. Бога він не заперечував, але пропонував деїзм: вища сила є, а от виконувати вимоги організованої релігії людина нікому не зобов'язана.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌱</span>
+        <div class="card-title">Жан-Жак Руссо</div>
+        <div class="card-text">Прямо навпаки до Гоббса: людина від природи добра, псує її суспільство. Нерівність почалася тоді, коли перший обгородив ділянку і сказав «це моє», — а всі повірили. Джерело влади — народ, і тільки він; ані церква, ані армія законності не дають.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚖️</span>
+        <div class="card-title">Шарль Монтеск'є</div>
+        <div class="card-text">Придумав те, на чому стоїть будь-яка сучасна конституція: влада ділиться на законодавчу, виконавчу й судову, і кожна незалежна від решти — інакше неминучий деспотизм. Свобода в нього визначена точно: право робити все, що дозволено законом.</div>
+      </div>
+    </div>
+
+    <p style="margin-top:22px">У Монтеск'є була й друга теорія — що форму правління визначає клімат: спекотні країни нібито схильні до деспотії, помірні — до республік. Ця половина його вчення не пережила XIX століття, зате перша половина пережила всі революції.</p>
+  </div>
+
+  <!-- Економісти -->
+  <div class="section" style="animation-delay:2.4s">
+    <h2 class="section-title">Коли філософія почала рахувати</h2>
+    <p>З того самого просвітницького кореня виростає ще одна гілка — думка про те, звідки береться багатство. Її автори вважали себе філософами моралі, а не економістами; окремої науки ще не було.</p>
+    <p><strong>Адам Сміт</strong> помітив дві речі. Перша: поділ праці творить дива — там, де одна людина робить виріб від початку до кінця, десять людей, розділивши операції, зроблять у сотні разів більше. Друга: коли кожен переслідує власну вигоду, ринок сам собою вирівнюється, ніби ним керує невидима рука. Держава при цьому не зникає — Сміт залишав їй суд, оборону, дороги й освіту; але керувати цінами й виробництвом їй нічого.</p>
+    <p><strong>Давід Рікардо</strong> довів до кінця думку Сміта про те, що вартість товару створює вкладена в нього праця, — і саме цю формулу через півстоліття візьме на озброєння Маркс, хоча сам Рікардо був переконаним капіталістом. Друга його ідея жива й сьогодні: теорія порівняльних переваг. Країні вигідно виробляти те, що дається їй відносно дешевше, і міняти це на решту — навіть якщо сусід робить краще геть усе. Це і є аргумент проти протекціонізму, який досі переказують у кожному підручнику торгівлі.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Кант -->
+  <div class="section" style="animation-delay:2.5s">
+    <h2 class="section-title">Кант: межа, за яку не пройти</h2>
+    <p>Перед тим як зрозуміти Канта, варто розвести два табори, які сперечалися до нього. Матеріалізм: спочатку була матерія, свідомість з'явилася потім. Ідеалізм: спочатку була ідея, дух чи Бог, а матеріальний світ — похідне. Кант не став ані там, ані там — він переставив саме питання.</p>
+    <p>Його хід такий. Ми ніколи не маємо справи зі світом як таким. Ми маємо справу зі світом, який уже пройшов крізь наше сприйняття. Річ, якою вона є сама по собі, — ноумен — недосяжна назавжди. Те, що ми бачимо, — феномен, річ для нас.</p>
+    <p>І далі найнеприємніше: простір і час — не властивості світу, а форми нашого сприйняття. Не годинник у Всесвіті, а окуляри на нас, які ми не можемо зняти.</p>
+    <p>Емпіриків і раціоналістів він примирив однією фразою: знання — це досвід плюс розум. Без чуттів поняття порожні, без понять враження сліпі. Досвід дає матеріал, розум — форму; окремо не працює ні те, ні те.</p>
+    <p>В етиці він шукав правило, яке не залежить від обставин, вигоди й почуттів, — і знайшов категоричний імператив: чини лише за тим правилом, про яке ти водночас можеш побажати, щоб воно стало загальним законом. Перевірка проста. Збираєшся пообіцяти й не виконати? Уяви світ, де так роблять усі. У такому світі обіцянок просто не існує — правило знищує саме себе, отже, воно негідне.</p>
+    <p>Свобода в Канта — не «роблю що хочу», а здатність чинити за обов'язком усупереч бажанню. І Бог, душа й свобода в нього не доводяться наукою взагалі; вони потрібні не для знання, а для моралі — без них вона розсипається.</p>
+  </div>
+
+  <!-- Німецький ідеалізм -->
+  <div class="section" style="animation-delay:2.6s">
+    <h2 class="section-title">Фіхте і Гегель: світом рухає дух</h2>
+    <p>Якщо світ ми знаємо тільки таким, яким його будує наша свідомість, — навіщо взагалі припускати щось за нею? <strong>Йоганн Фіхте</strong> зробив саме цей крок. Первинне — «Я», свідомість, яка сама себе породжує. Матеріальний світ, «не-Я», виникає як необхідна протилежність: щоб «Я» могло себе проявити, потрібен опір. Інша людина, гора, яку треба обійти, обставина, яка не пускає, — усе це матеріал, на якому «Я» стає собою. Свобода тут не дана, вона добувається в боротьбі.</p>
+    <p><strong>Гегель</strong> зробив із цього систему, більшу за все, що будували до нього. Світом рухає абсолютний дух — не Бог у релігійному сенсі, а логіка всього, що відбувається. Історія не випадковий набір подій, а рух до мети, і мета ця — свобода: від східних деспотій, де вільний один, через античність, де вільні деякі, до сучасної держави, де вільні всі.</p>
+    <p>Кожен народ у нього має власний дух — сукупність культури, релігії, законів і звичаїв — і свою роль у загальному сюжеті. Великі особистості на кшталт Александра чи Наполеона переконані, що діють самі; насправді вони виконують те, що потрібно духу на цьому кроці.</p>
+    <p>Механізм руху — діалектика, яку зазвичай переказують формулою «теза — антитеза — синтез» (сам Гегель так її не називав, це закріпили популяризатори). Теза: влада належить королю. Антитеза: влада належить народу. Синтез: конституційна монархія, де є і те, й те, але вже на іншому рівні. Головний висновок звідси: конфлікт не ламає розвиток, конфлікт і є розвиток.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Фейєрбах -->
+  <div class="section" style="animation-delay:2.7s">
+    <h2 class="section-title">Фейєрбах: Бог як автопортрет</h2>
+    <p>Після Гегеля філософія опинилася в дивному місці: усе рухається духом, історія запрограмована, а жива людина в цій системі — епізод. Людвіг Фейєрбах розвернув її назад до людини.</p>
+    <p>Його теза коротка й вибухова: не Бог створив людину, а людина створила Бога. Ми беремо власні найкращі якості — розум, любов, справедливість, силу, — очищаємо їх від слабкостей, збільшуємо до нескінченності й виносимо назовні. Виходить ідеальний образ, у який залишається тільки повірити. Релігія в нього — не обман, а відчуження: людина віддає своє власне багатство вигаданій істоті й потім почувається порожньою поруч із нею.</p>
+    <p>Звідси й переворот у головному питанні: не свідомість визначає буття, а буття — свідомість. Ця фраза через кілька років стане фундаментом марксизму.</p>
+  </div>
+
+  <!-- Шопенгауер і Ніцше -->
+  <div class="section" style="animation-delay:2.8s">
+    <h2 class="section-title">Шопенгауер і Ніцше: воля замість розуму</h2>
+    <p><strong>Артур Шопенгауер</strong> подивився на все це й сказав: жодного розумного духу немає, є сліпа воля, яка жене все живе вперед без будь-якої мети. Тому світ — це страждання. Механізм видно на побутовому рівні: хочеш машину, отримуєш машину, радієш два тижні — і вже хочеш квартиру. Задоволення тільки коротка пауза між двома бажаннями, і пауза стає дедалі коротшою.</p>
+    <p>Виходи він бачив два, і обидва не остаточні. Мистецтво, найбільше музика, — воно на час виводить із гонитви й дає подивитися на світ без хотіння. І аскеза з співчуттям — свідома відмова від нескінченного бажання, приблизно те саме, що роблять буддійські ченці.</p>
+    <p><strong>Фрідріх Ніцше</strong> взяв у нього поняття волі й перевернув знак. Світом рухає не страждання, а воля до влади — і це не про політику. Це про художника, який працює по десять годин, щоб стати великим; про підприємця, який будує імперію; про будь-кого, хто хоче більше, ніж має. Життя не терпить рівноваги, воно хоче зростання.</p>
+    <p>Звідси його вирок релігії. Бог помер — не «його не існує», а «ми перестали в нього по-справжньому вірити й ще не помітили наслідків». Християнство він називав мораллю рабів: терпіння, смирення й покірність оголошуються чеснотами тими, хто не має сили на інше. Ідеал натомість — надлюдина: та, хто створює власні цінності, а не чекає, поки їх видадуть; хто приймає страждання як частину життя і живе так, щоб погодитися прожити це саме життя знову й знову, нескінченну кількість разів.</p>
+    <p>Ця думка стане одним із джерел екзистенціалізму — про нього окремо: <a href="existential.html">Екзистенціалізм</a>. А те, що Ніцше зробив із мораллю, за півстоліття зробить із психікою <a href="freud.html">Фрейд</a>: обидва стверджували, що людиною керує не те, що вона про себе думає.</p>
+  </div>
+
+  <!-- Маркс -->
+  <div class="section" style="animation-delay:2.9s">
+    <h2 class="section-title">Маркс, Енгельс, Ленін: філософія бере владу</h2>
+    <p>Карл Маркс узяв гегелівський рух історії, викинув із нього дух і поставив на його місце економіку. Уся історія людства — боротьба класів; рушій не ідеї, а те, кому належать засоби виробництва.</p>
+    <p>Капіталізм у нього несправедливий не через жадібність окремих людей, а за будовою. Робітник створює продукт, що коштує більше, ніж йому заплатили; різниця — додаткова вартість — залишається власнику. Це не крадіжка, це правило гри, і всередині гри його не скасувати.</p>
+    <p>Висновок: пролетаріат має повалити буржуазію, встановити власну диктатуру на перехідний період, а далі держава як апарат примусу поступово відімре — настане суспільство без класів, грошей і експлуатації.</p>
+    <p><strong>Володимир Ленін</strong> додав до цього те, чого в Маркса не було, — інженерію захоплення влади. Революцію, за ним, роблять не маси: маси стихійні. Її робить жорстко організована партія професійних революціонерів, побудована на дисципліні й підпорядкуванні. Саме на цьому питанні — хто може бути членом партії — він і розійшовся з Мартовим, і саме звідси пішов поділ на більшовиків і меншовиків. Другий його внесок — теорія імперіалізму як вищої стадії капіталізму: багаті країни вижили тому, що перенесли експлуатацію назовні, на колонії й периферію. І третій: соціалізм не втримається в одній країні, потрібна світова революція.</p>
+    <p>Що з цього вийшло на практиці й чим соціалізм відрізняється від соціал-демократії — у <a href="ideas.html">Великих ідеях</a>.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Наскрізна лінія -->
+  <div class="section" style="animation-delay:3s">
+    <h2 class="section-title">Чотири суперечки, які так і не закінчилися</h2>
+    <p>Імена змінюються, а сперечаються весь час приблизно про те саме. Якщо тримати ці чотири осі в голові, будь-який філософ читається за п'ять хвилин: досить зрозуміти, де він стоїть на кожній.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🌍</span>
+        <div class="card-title">Що є насправді</div>
+        <div class="card-text">Платон: справжні тільки ідеї, речі — тіні. Аристотель: справжні тільки речі, ідеї живуть у них. Далі це стане суперечкою реалістів і номіналістів у середньовіччі, ідеалістів і матеріалістів у XIX столітті — і не закінчиться досі.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔍</span>
+        <div class="card-title">Звідки знання</div>
+        <div class="card-text">З досвіду (Бекон, Локк, Юм) чи з розуму (Декарт, Спіноза, Лейбніц). Кант відповів «з обох», але додав межу: сам світ, яким він є без нас, недосяжний. Це питання переїхало в сучасну науку майже без змін.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⛓️</span>
+        <div class="card-title">Чи є свобода</div>
+        <div class="card-text">Спіноза: свободи волі немає, є розуміння необхідності. Кант: свобода є, але вона в обов'язку, а не в бажанні. Гегель: ти вільна рівно настільки, наскільки збігаєшся з ходом історії. Ніцше: свобода — створити власні цінності.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🏛️</span>
+        <div class="card-title">Звідки влада</div>
+        <div class="card-text">Платон: від найкращих. Августин і схоласти: від Бога. Гоббс: від страху. Локк і Руссо: від згоди людей. Маркс: від того, кому належать заводи. Кожна відповідь досі має мільйони прихильників.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:3.05s">
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Ти справді дійшла до своїх поглядів сама — чи просто живеш усередині чиєїсь відповіді, поставленої кілька століть тому?</div>
+    </div>
+  </div>
+
+  <!-- Фінал -->
+  <div class="section" style="animation-delay:3.1s">
+    <h2 class="section-title">Що з цим робити</h2>
+    <p>Ця сторінка — карта, а не територія. Кожне ім'я тут — окрема книжка, а деякі — окреме життя. Але маршрут видно: від питання про воду до питання про заводи людство весь час робило одне й те саме — знімало з реальності черговий шар само собою зрозумілого.</p>
+    <p>Спочатку виявилося, що світ пояснюється без богів. Потім — що людина цікавіша за космос. Потім — що ми бачимо не світ, а свою версію світу. Потім — що Бог схожий на нас, бо ми його й склали. Потім — що нами рухає не розум, а воля, а нашими ідеями — наш гаманець.</p>
+    <p>Продовження цієї лінії — у <a href="ideas.html">Великих ідеях</a>, у <a href="stoicism.html">Стоїцизмі</a> і в <a href="existential.html">Екзистенціалізмі</a>. А чим усе це закінчилося для уявлення людини про саму себе — у <a href="freud.html">Фрейді</a> і в <a href="shadow.html">Тіні</a> Юнга.</p>
+
+    <div class="final-quote">
+      <div class="final-text">Жоден із них не мав рації повністю. <strong>Але кожен побачив те, чого не бачив попередній</strong> — і саме тому ти сьогодні думаєш складніше, ніж думали найрозумніші люди двадцять шість століть тому. Не тому, що розумніша. Тому, що стоїш вище.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>

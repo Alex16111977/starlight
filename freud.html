@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Зигмунд Фрейд</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,140,80,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(52,58,94,.65);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:11px;font-weight:200;letter-spacing:.5em;color:rgba(52,58,94,.65);text-transform:uppercase;margin-bottom:12px;opacity:0;animation:riseIn 1s .7s ease forwards}
+.page-years{text-align:center;font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:18px;color:#7a5410;margin-bottom:64px;opacity:0;animation:riseIn 1s .8s ease forwards;letter-spacing:.1em}
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:18px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#5261c2;box-shadow:0 0 12px rgba(82,97,194,.6)}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#7a5fbe;text-decoration:none;border-bottom:1px solid rgba(122,95,190,.45);transition:border-color .3s}
+.section p a:hover{border-bottom-color:rgba(122,95,190,.9)}
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:10px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(52,58,94,.58)}
+.timeline{position:relative;padding-left:24px;margin-top:20px}
+.timeline::before{content:'';position:absolute;left:6px;top:8px;bottom:8px;width:1px;background:linear-gradient(to bottom,rgba(82,97,194,.45),rgba(148,103,23,.3),rgba(122,95,190,.15))}
+.tline{position:relative;margin-bottom:28px;padding-left:20px}
+.tline::before{content:'';position:absolute;left:-22px;top:6px;width:11px;height:11px;border-radius:50%;background:#5261c2;box-shadow:0 0 12px rgba(82,97,194,.5)}
+.tyear{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:#3f4a9e;letter-spacing:.06em;margin-bottom:6px}
+.tevent{font-size:13.5px;font-weight:300;line-height:1.8;color:rgba(36,40,68,.86)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(82,97,194,.35),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+.card.ok{border-color:rgba(150,214,165,.35)}
+.card.ok::before{background:linear-gradient(to right,transparent,rgba(150,214,165,.5),transparent)}
+.card.bad{border-color:rgba(224,150,150,.32)}
+.card.bad::before{background:linear-gradient(to right,transparent,rgba(224,150,150,.45),transparent)}
+.card-label{font-size:9.5px;font-weight:400;letter-spacing:.3em;text-transform:uppercase;margin-bottom:10px;display:block}
+.card.ok .card-label{color:#1f7a4d}
+.card.bad .card-label{color:#b23c2e}
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:26px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(82,97,194,.35),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:26px;flex-shrink:0;width:34px;text-align:center}
+.phrase-word{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:19px;line-height:1.4;color:rgba(36,40,68,.97);margin-bottom:8px}
+.phrase-text{font-family:'Montserrat',sans-serif;font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.88)}
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(52,58,94,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:#946717}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.quote-block .qa{font-size:10px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;color:#7a5410}
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:10px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(52,58,94,.5);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,34px);color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:640px;margin:0 auto}
+.final-text strong{font-weight:400;color:#946717}
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:#7a5fbe;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,#7a5fbe,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.75);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:#2c2c2c}
+.read-toggle.active{background:rgba(212,175,110,.16);border-color:rgba(212,175,110,.55);color:#7a5410}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="portraits.html">← Постаті</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Зигмунд Фрейд</h1>
+  <p class="page-subtitle">Той, хто спустився в підвал</p>
+  <div class="page-years">1856 — 1939</div>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Тлумачення сновидінь — королівська дорога до несвідомого"</div>
+      <div class="hero-author">Зигмунд Фрейд</div>
+    </div>
+    <p>Про нього майже неможливо говорити спокійно. Одні бачать генія, який відкрив людині її власне дно. Інші — шарлатана, що збудував теорію зі своїх фантазій і нав'язав її пацієнтам. Обидва табори мають чим козиряти, і саме тому його біографія цікавіша за його теорію: у ній видно, як народжується велика ідея — разом із помилками, впертістю, честолюбством і болем, з яких вона зроблена.</p>
+    <p>Це історія людини, яка прожила 79 років у Відні, втекла з нього за півтора року до смерті, пережила рак щелепи і десятки операцій, посварилася майже з усіма своїми учнями — і залишила по собі слова, якими ти користуєшся щодня, навіть не помічаючи цього.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Хронологія -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Життя в датах</h2>
+
+    <div class="timeline">
+      <div class="tline">
+        <div class="tyear">1856 · Фрайберг, Моравія</div>
+        <div class="tevent">Народжується в родині торговця шерстю Якоба Фройда. Батькові за сорок, він одружений втретє. Матері Амалії — двадцять із невеликим. У домі повний хаос ролей: старші зведені брати вже дорослі, а племінник Джон — на рік старший за власного дядька.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1859–1860 · Переїзд до Відня</div>
+        <div class="tevent">Батькова справа розсипається. Родина осідає у Відні в тісній квартирі. Грошей мало, дітей багато, і мати вкладає всі надії в одного — старшого сина. «Золотий Зиґі» отримує єдину кімнату з лампою; сестрі забирають фортепіано, щоб не заважало йому вчитися.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1873 · Медичний факультет</div>
+        <div class="tevent">Вагається між правом, природничими науками й медициною. Обирає медицину — не з покликання лікувати, а з цікавості до того, як влаштована людина. В університеті вперше відчуває себе чужим: там від нього чекають, що він соромитиметься свого походження.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1884–1887 · Кокаїн</div>
+        <div class="tevent">Береться досліджувати щойно синтезований алкалоїд, випробовує на собі, радить друзям і нареченій. Слава приходить не до нього, а біда — до найближчого друга.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1885–1886 · Париж, Шарко</div>
+        <div class="tevent">Стажування в Сальпетрієрі у Жана-Мартена Шарко, який показує істерію під гіпнозом. Фрейд повертається з думкою, що деякі хвороби живуть не в нервах, а в історії людини.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1886 · Практика і шлюб</div>
+        <div class="tevent">Відкриває приватний кабінет у Відні й нарешті одружується з Мартою Бернайс після чотирьох років заручин і сотень листів.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1895 · «Дослідження істерії»</div>
+        <div class="tevent">Книжка у співавторстві з Йозефом Брейєром. Усередині — випадок Анни О. і перша формула: симптом тримається на спогаді, який не дали прожити. Метод ще називається катарсисом.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1899 · «Тлумачення сновидінь»</div>
+        <div class="tevent">Головна книга його життя, датована видавцем 1900-м роком заради символіки століття. Перший наклад — шістсот примірників — розходився роками.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1902 · Професор</div>
+        <div class="tevent">Звання екстраординарного професора Віденського університету, якого він чекав багато років. Навколо нього збирається гурток, що збиратиметься по середах у його ж вітальні.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1911 і 1913 · Розриви</div>
+        <div class="tevent">Спершу йде Альфред Адлер, потім Карл Ґустав Юнг — той, кого Фрейд називав спадкоємцем. Обидва відмовляються ставити сексуальність у центр. Обидва стають для нього відступниками.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1914–1918 · Війна</div>
+        <div class="tevent">Троє синів в армії, пацієнтів майже немає, заощадження з'їдає інфляція, родина голодує. І саме тоді психоаналіз стає модним.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1920 · Смерть Софі</div>
+        <div class="tevent">Дочка помирає від «іспанки», залишивши двох маленьких синів. Того ж року виходить «По той бік принципу задоволення» — книга, у якій уперше з'являється потяг до смерті.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1923 · Рак</div>
+        <div class="tevent">Пухлина на піднебінні. Перша операція — і початок шістнадцяти років болю, протезів і повернень до роботи.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1930 · Премія Ґете</div>
+        <div class="tevent">Нобеля він так і не отримає — натомість дістає найпрестижнішу літературну відзнаку Німеччини. Через три роки в тій самій Німеччині його книги палитимуть.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1938 · Аншлюс і втеча</div>
+        <div class="tevent">У щоденнику — два слова: «Finis Austriae». Гестапо в його квартирі, допити дітей, викуп за право виїхати. У червні поїзд везе його до Лондона.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">23 вересня 1939 · Лондон</div>
+        <div class="tevent">Через три тижні після початку Другої світової. За власним проханням і за домовленістю, укладеною багато років тому.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Дитинство -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Дім, у якому все переплуталося</h2>
+    <p>Родина, у якій він народився, була влаштована так, що дитині просто не було з чого скласти нормальну схему. Батько старший за матір щонайменше на двадцять років. Зведені брати — ровесники матері. Племінник Джон старший за нього самого й водночас нижчий за рангом у сімейній ієрархії: партнер в іграх, суперник, перший, з ким він бився й мирився.</p>
+    <p>Маленький хлопчик, який намагається зрозуміти, хто кому ким доводиться, — і не може. Пізніше ці самі фігури повернуться до нього як матеріал: чоловік, який тлумачить чужі сни, усе життя тлумачив насамперед свої.</p>
+    <p>Коли йому не було й двох, помер молодший брат Юлій. Через сорок років Фрейд напише другові, що досі носить у собі провину за те, що радів братовому зникненню. Не факт із чужої історії хвороби — власний спогад, який він потім поставив у фундамент теорії про дитячу ревність.</p>
+
+    <div class="highlight">
+      <p><em>Мати була впевнена в ньому абсолютно.</em> Амалія називала його «золотим Зиґі» й розповідала, що при народженні стара селянка провістила: цей хлопчик стане великою людиною. Він сам згодом назве це найкращим стартовим капіталом, який може отримати чоловік: той, хто був беззаперечним улюбленцем матері, усе життя носить у собі відчуття переможця, і це відчуття часто справді робить його переможцем.</p>
+    </div>
+  </div>
+
+  <!-- Юність -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Відмінник, який відчув себе чужим</h2>
+    <p>У гімназії він роками був першим у класі. Читав жадібно — літературу, історію, мови; латину й грецьку знав так, як їх уже майже ніхто не знає. Одне літо шістнадцятирічний Зигмунд закохався в Ґізелу Флюс, дівчину з родини знайомих, не сказав їй ані слова й натомість розібрав власне почуття в листах до друга. Спосіб реагувати на життя вже склався: не проживати, а розбирати.</p>
+    <p>Медицину він обрав радше як інструмент. Йому потрібен був доступ до людини — і фах, який давав хліб, бо на юридичну чи академічну кар'єру для єврея з бідної родини у Відні шансів було небагато.</p>
+    <p>В університеті він уперше зіткнувся з антисемітизмом упритул. Від нього чекали, що він почуватиметься гіршим. Він відмовився — і потім казав, що саме тоді навчився обходитися без згоди більшості. Це вміння виявиться центральним: усе, що він зробить далі, буде зроблено проти думки колег.</p>
+    <p>Там же він знайшов старшого друга — фізіолога й практикуючого лікаря Йозефа Брейєра, який позичав йому гроші, коли не було чим платити за житло, і який приніс йому історію, з якої почався психоаналіз.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Кокаїн -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Кокаїн: перша ідея — і перша катастрофа</h2>
+    <p>Молодому лікарю потрібне було відкриття. У 1884-му він узявся за речовину, яку щойно навчилися виділяти з листя коки, і вирішив, що знайшов диво: кокаїн знімав утому, піднімав настрій, притуплював біль. Він пробував його на собі, надсилав нареченій, радив друзям і написав захоплену статтю «Про коку».</p>
+    <p>Слави вона йому не принесла. Поки Фрейд поїхав до Марти, його колега Карл Коллер узяв ту саму ідею й довів її до кінця там, де вона справді працювала: кокаїн як місцевий анестетик в очній хірургії. Лаври дісталися Коллеру.</p>
+    <p>А другові Фрейда — Ернсту фон Флейшлю-Марксову, блискучому фізіологу, який після ампутації жив на морфії, — Фрейд порадив кокаїн як засіб позбутися залежності. Флейшль позбувся морфію, отримав натомість кокаїнову залежність у найважчій формі, промучився кілька років і помер у сорок п'ять.</p>
+    <div class="quote-block">
+      <p>Перша велика ідея Фрейда була помилкою, за яку заплатила інша людина. Він більше ніколи не писав про кокаїн і майже не згадував цю історію — але вона лишилася в його біографії як точний масштаб того, чим він готовий був ризикувати заради здогадки.</p>
+      <div class="qa">1884 — 1891</div>
+    </div>
+  </div>
+
+  <!-- Шарко -->
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">Париж: театр, у якому симптом слухався ідеї</h2>
+    <p>Восени 1885-го він поїхав на стажування до Парижа, у клініку Сальпетрієр, де царював Жан-Мартен Шарко — найвідоміший невролог Європи. Раз на тиждень Шарко влаштовував публічні демонстрації: пацієнтку вводили в гіпноз, і на очах у переповненої зали симптоми істерії з'являлися й зникали за словом лікаря.</p>
+    <p>Для медицини того часу це було майже непристойно. Але Фрейд помітив у цьому головне: істеричний параліч не збігається з анатомією. Рука німіє не по ходу нерва, а рівно так, як людина уявляє собі «руку» — від кисті до плеча, як рукавичка. Отже, тілом командує не пошкодження, а уявлення.</p>
+    <p>Він привіз цю думку до Відня, доповів її колегам — і колеги ввічливо дали зрозуміти, що це не наука. Ще й тому, що Шарко показував істерію в чоловіків, а сама назва хвороби походила від слова «матка».</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Анна О -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Розмовне лікування</h2>
+    <p>Історія, яку розповів йому Брейєр, стосувалася двадцятиоднорічної пацієнтки, відомої як Анна О. Її справжнє ім'я — Берта Паппенгейм. Доглядаючи вмираючого батька, вона захворіла сама: параліч, розлад мовлення, роздвоєння свідомості, періоди, коли вона не могла пити воду й місяцями жила самими фруктами.</p>
+    <p>Брейєр виявив дивну річ. Коли пацієнтка під гіпнозом докладно згадувала обставини, за яких симптом з'явився вперше, симптом зникав. Наприклад, спрага пішла після того, як вона згадала й проговорила огиду, яку колись відчула, побачивши, як собака компаньйонки п'є зі склянки, — і промовчала з ввічливості.</p>
+    <p>Назву методу вигадала сама пацієнтка. Вона називала це <em>talking cure</em> — лікування розмовою, і ще жартома «прочищенням димаря». Дві найважливіші метафори психотерапії придумала не людина з дипломом, а жінка, яка лежала в ліжку.</p>
+    <p>Ця сама Берта Паппенгейм потім одужала, поїхала з Відня, стала однією з провідних постатей німецько-єврейської соціальної роботи, боролася з торгівлею жінками й заснувала організацію, яку очолювала двадцять років. Її ім'я стоїть у підручниках двічі: як перша пацієнтка психоаналізу і як людина, яка не залишилася нею.</p>
+    <p>Далі Фрейд напрацьовував метод уже на власних пацієнтках — Анні фон Лібен, Фанні Мозер, Елізабет фон Р., Люсі Р. Поступово він відмовився від гіпнозу: виявилося, що можна просто попросити людину говорити все, що спадає на думку, не відсіюючи безглузде й соромне. Так з'явилося вільне асоціювання — і разом із ним ідея, що частину власних спогадів людина активно не пускає до себе. Витіснення.</p>
+
+    <div class="highlight">
+      <p><em>Був іще один поштовх — випадковий.</em> Віденський гінеколог Рудольф Хробак, передаючи Фрейду пацієнтку з нескінченними нервовими скаргами, напівжартома сказав, що єдині ліки в таких випадках медицині відомі, але виписати їх не можна: нормальне статеве життя. Фрейд запам'ятав цю фразу назавжди — і згодом побудував на здогадці, що сховане під нею, половину своєї теорії.</p>
+    </div>
+  </div>
+
+  <!-- Теорія спокуси -->
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Поворот, за який його не пробачили</h2>
+    <p>У 1896-му він оголосив колегам «теорію спокуси»: в основі кожного випадку істерії лежить реальне сексуальне насильство, пережите в дитинстві. Аудиторія прийняла це крижано.</p>
+    <p>Через кілька років він від цієї теорії відмовився. Пояснення, яке він дав, звучало так: не всі ці історії були реальними подіями; частина з них — дитячі фантазії й бажання. А для психіки, сказав він, фантазія має свою власну реальність — вона діє так само, як подія.</p>
+    <p>Це найспірніше рішення в його біографії. Одні вважають, що він злякався й пожертвував правдою про насильство над дітьми заради спокійної кар'єри. Інші — що саме тут він перестав бути ще одним неврологом і винайшов психоаналіз: із того моменту предметом стала не подія, а те, що людина з нею зробила всередині себе.</p>
+  </div>
+
+  <!-- Сни -->
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Книга, яку він любив найбільше</h2>
+    <p>«Тлумачення сновидінь» він вважав головним, що написав, — і казав, що таке осяяння випадає людині раз у житті. Ідея була проста й нахабна: сон не сміття й не пророцтво, а виконане бажання, тільки перевдягнене так, щоб ти його не впізнала. Явний зміст — це те, що ти пам'ятаєш зранку. Прихований — те, заради чого сон узагалі відбувся.</p>
+    <p>Шістсот примірників першого накладу продавалися роками. Рецензій майже не було, у наукових колах книжку сприйняли як дивацтво. Сьогодні це один із текстів, без яких не існувало б ані сучасної психотерапії, ані половини кінематографу. Про те, що з його теорії снів витримало перевірку, а що ні, — на сторінці <a href="dreams.html">Сни</a>.</p>
+  </div>
+
+  <!-- Дора -->
+  <div class="section" style="animation-delay:2s">
+    <h2 class="section-title">Дора: як метод показав свою силу і свою ваду</h2>
+    <p>Вісімнадцятирічну дівчину привів до нього батько — з проханням «привести до тями». Ситуація в родині була така: батько мав роман із заміжньою пані К., а чоловік пані К. упадав за дочкою свого приятеля, тобто за Дорою. Дівчина скаржилася на кашель, втрату голосу, депресію — і на те, що її фактично пропонують як плату за батьків роман.</p>
+    <p>Фрейд побачив у цьому блискучу конструкцію: прихований потяг до пана К., ревнощі до батька, витіснене бажання. І почав наполягати на своєму прочитанні. Дора не погоджувалася. Через одинадцять тижнів вона прийшла й оголосила, що більше не прийде — так, як звільняють прислугу.</p>
+    <p>Він опублікував випадок як демонстрацію методу. Читається він сьогодні інакше: дівчина досить точно описувала, що з нею роблять дорослі, а лікар пояснював їй, що насправді вона цього хоче. Найгостріший інструмент психоаналізу — вміння чути те, чого людина не сказала, — тут спрацював проти того, що вона казала прямо.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Учні -->
+  <div class="section" style="animation-delay:2.1s">
+    <h2 class="section-title">Учні, які пішли</h2>
+    <p>Спочатку їх було четверо — гурток, що збирався щосереди в його квартирі на Берґґассе, 19. За десять років це вже був міжнародний рух із товариствами, з'їздами й журналами. І майже кожен, кого Фрейд наближав до себе, зрештою йшов.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">⬆️</span>
+        <div class="card-title">Альфред Адлер</div>
+        <div class="card-text">Пішов у 1911-му. Вважав, що людину рухає не сексуальність, а відчуття власної меншовартості й спроба його компенсувати. Слова «комплекс неповноцінності» — його, не Фрейдові. Побудував власну школу, у якій головним стало прагнення до переваги й почуття спільності.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🜃</span>
+        <div class="card-title">Карл Ґустав Юнг</div>
+        <div class="card-text">Швейцарець, не єврей, перший президент міжнародної асоціації — і, за задумом Фрейда, спадкоємець усього руху. Розійшлися в 1912–1913-му: Юнг не приймав сексуальність як єдине джерело енергії й пішов у бік колективного несвідомого, архетипів і Тіні. Про цю частину його спадку — <a href="shadow.html">Твоя Тінь</a>.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🇬🇧</span>
+        <div class="card-title">Ернест Джонс</div>
+        <div class="card-text">Валлієць, який лишився. Переніс психоаналіз в англомовний світ, тримав рух разом у роки розколів, а в 1938-му допоміг витягти Фрейда з окупованого Відня. Потім написав його тритомну біографію — доброзичливу настільки, що з неї довелося вичищати легенди наступним поколінням.</div>
+      </div>
+    </div>
+    <p style="margin-top:22px">У цих розривах видно те, чого сам Фрейд у собі не аналізував: йому потрібні були спадкоємці, і він не витримував, коли спадкоємці починали думати. Незгода читалася ним не як інша гіпотеза, а як опір — тобто як симптом того, хто не згоден.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Війна -->
+  <div class="section" style="animation-delay:2.2s">
+    <h2 class="section-title">Війна: людина, яка вивчала масові пориви, піддалася масовому пориву</h2>
+    <p>Звістка про війну застала його на курорті. Йому було п'ятдесят вісім, він був найнезалежнішим розумом Європи — і перші тижні писав листи про гордість за австрійську армію і про очікування славних перемог. «Уся моя лібідо віддана Австро-Угорщині», — з цієї фрази біографи досі не знають, що робити.</p>
+    <p>Пояснення просте й невтішне: так поводилася майже вся інтелектуальна еліта воюючих країн. Незалежність його мислення працювала в одній-єдиній зоні — тій, що стала справою життя. За її межами він був звичайним віденським буржуа свого кола, зі смаком до комфорту, статків і порядку.</p>
+    <p>Запал минув швидко. Троє синів пішли в армію. Пацієнти зникли. Інфляція знецінила гонорари. Восени 1914-го він написав «Сучасний погляд на війну і смерть» — текст, у якому вперше сформульовано те, що потім цитуватимуть найчастіше.</p>
+
+    <div class="quote-block">
+      <p>Культура — тонкий шар, і він злітає з людини швидше, ніж їй хочеться вірити. А головне: ніхто по-справжньому не вірить у власну смерть. У несвідомому кожен із нас переконаний у своєму безсмерті — тому люди й здатні вітати війну, яка може їх убити.</p>
+      <div class="qa">Zeitgemässes über Krieg und Tod, 1915</div>
+    </div>
+
+    <p>Далі були роки, коли родина голодувала, а єдиним, що приносило задоволення, лишалося писання книг. У травні 1916-го його шістдесятиріччя відзначали привітаннями з усієї Європи — і це вперше дало йому впевненість, що він залишиться в пам'яті людства. Влітку 1917-го на фронті загинув його небіж.</p>
+    <p>З фінансової ями його витягнув Антон фон Фройнд — заможний угорський броварник, який прийшов у психоаналіз як пацієнт, а лишився як друг. Його пожертва створила видавництво, що випустило понад сотню книжок із психоаналізу, зібрання творів Фрейда і п'ять журналів.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🎭</span>
+        <div class="card-title">Чому саме війна зробила його модним</div>
+        <div class="card-text">Чотири роки окопів переконали Європу в тому, що первинні потяги сильніші за виховання й культуру. Люди, які раніше сміялися з теорії потягів, побачили її підтвердження на власні очі.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎖️</span>
+        <div class="card-title">І чому його почали слухати військові лікарі</div>
+        <div class="card-text">Тисячі солдатів поверталися з фронту з паралічами, німотою і тремтінням без жодного поранення. Ідея «втечі у хворобу» раптом виявилася єдиним поясненням, яке працювало, — і психоаналіз уперше запросили туди, де досі не пускали на поріг.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Втрати -->
+  <div class="section" style="animation-delay:2.3s">
+    <h2 class="section-title">Двадцяті: рахунки і втрати</h2>
+    <p>Після перемир'я середній клас Відня лишився без заощаджень, а пацієнти — без грошей. Найцінніші клієнти приїжджали зі Штатів і платили твердою валютою — десять доларів за сеанс. Масового напливу не було: до нього їхали найсміливіші й найексцентричніші, часто радше з цікавості, ніж по допомогу.</p>
+    <p>У січні 1920-го від «іспанки» померла дочка Софі, залишивши двох маленьких синів. Через три роки помер від туберкульозу молодший із них, чотирирічний Гайнерле, — улюблений онук. Люди, які знали Фрейда десятиліттями, писали, що вперше в житті бачили, як він плаче й не може зупинитися. Він казав потім, що після цієї смерті вже нічого не любив по-справжньому.</p>
+    <p>Грошей бракувало постійно, і він відверто мріяв про Нобелівську премію — насамперед заради суми. Але коли гроші пропонували за те, щоб перетворити психоаналіз на шоу, він відмовлявся: газеті, яка хотіла отримати від нього аналіз двох студентів-убивць, що вважали себе надлюдьми, і глянцевому журналу, який замовляв статтю про «психічне місце дружини в домі».</p>
+  </div>
+
+  <!-- Фрінк -->
+  <div class="section" style="animation-delay:2.4s">
+    <h2 class="section-title">Справа Фрінка</h2>
+    <p>Найтемніша професійна історія його життя почалася як успіх. Горацій Фрінк, американський психіатр, приїхав до Відня в аналіз — і Фрейд бачив у ньому майбутнє американського психоаналізу. Було й міркування, яке він не приховував: Фрінк не був євреєм, і це допомагало відбити закид, що психоаналіз — «єврейська забава».</p>
+    <p>В аналізі Фрінк розповів про платонічну дружбу із заміжньою пацієнткою Анжелікою Біжур. Фрейд визначив причину неврозу як придушений потяг — і порадив довести справу до кінця: розлучення, шлюб. Він переконував і саму Анжеліку, натякнувши, що інакше вона не повернеться до норми, а Фрінк ризикує стати «латентним гомосексуалом».</p>
+    <p>Чоловік Анжеліки написав Фрейду листа, якого так і не відправив, із питанням, яке відтоді цитують усі критики психоаналізу.</p>
+
+    <div class="quote-block">
+      <p>«Ви вчений чи шарлатан?»</p>
+      <div class="qa">Ейб Біжур, лист, який не був надісланий</div>
+    </div>
+
+    <p>Далі — по спадній. Пан Біжур раптово захворів і помер. Фрінк став президентом нью-йоркського психоаналітичного товариства й одружився з Анжелікою. Через рік він уже не міг виконувати обов'язки президента, шлюб розпався, а сам він опинився в лікарні після спроби самогубства. Двоє людей зруйнували своє життя за прямою порадою аналітика, який жодного разу не бачив жодного з них поза кабінетом.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Рак -->
+  <div class="section" style="animation-delay:2.5s">
+    <h2 class="section-title">Шістнадцять років із раком</h2>
+    <p>У лютому 1923-го він намацав у себе на піднебінні виразку, яка боліла під натиском. Він викурював по двадцять сигар на день сорок років поспіль; лікарі тоді вже знали, що рак ротової порожнини — хвороба затятих курців, і навіть називали його «раком багатіїв», бо сигари були задоволенням не для всіх.</p>
+    <p>Лікар, до якого він звернувся, не мав сумнівів у діагнозі — і не наважився сказати пацієнту. Замість цього наполіг на терміновій операції, запевняючи, що новоутворення доброякісне.</p>
+    <p>20 квітня 1923 року Фрейд, нікому вдома не сказавши, ліг під місцевим наркозом, розраховуючи повернутися до вечері. Відкрилася кровотеча. Дружина й дочка Анна знайшли його на стільці в передпокої, в одязі, залитому кров'ю.</p>
+    <p>Правду йому не сказали й після аналізу тканин: лікар зібрав його учнів і повідомив діагноз їм. Другу операцію доручили Гансу Піхлеру — одному з найкращих щелепних хірургів Європи. Він оперував у два етапи й видалив праву частину верхньої щелепи та піднебіння. Для 1923 року це була вершина хірургії; місце видаленого зайняв протез — величезна конструкція, яку в родині називали «монстром». Вона мала одночасно розділяти рот і носову порожнину, натирала, не трималася і при кожній зміні тканин потребувала переробки.</p>
+    <p>До роботи він повернувся менш ніж за два місяці. І знову почав курити — розчіплюючи щелепи спеціальною защіпкою, щоб просунути сигару. Робота й сигари були єдиним, що глушило біль, і від жодного з двох він не відмовився.</p>
+
+    <div class="highlight">
+      <p><em>Далі було шістнадцять років.</em> Десятки процедур, опромінення, нові протези, операції, після яких він щоразу повертався до пацієнтів. У ці роки написані «Майбутнє однієї ілюзії», «Невдоволення культурою» і «Мойсей і монотеїзм». Місто дало йому звання почесного громадянина, у Німеччині вручили премію Ґете, почало виходити академічне зібрання творів. Він старів помітно: рідше писав, важче ходив, дратувався через дрібниці — і сам би назвав це симптомами нав'язливого неврозу.</p>
+    </div>
+  </div>
+
+  <!-- Ейнштейн -->
+  <div class="section" style="animation-delay:2.6s">
+    <h2 class="section-title">Лист Ейнштейна</h2>
+    <p>У 1932 році інститут при Лізі Націй запропонував Альберту Ейнштейну обрати співрозмовника для відкритого листування на будь-яку тему. Ейнштейн обрав Фрейда й поставив одне питання: чи є спосіб звільнити людей від приреченості на війну.</p>
+    <p>Фрейд писав відповідь майже місяць. Вона вийшла настільки ж чесною, наскільки й нерадісною: агресія — не збій виховання, а самостійний потяг, і скасувати його не можна. Можна тільки зв'язувати — усім, що створює між людьми прив'язаність, і повільною роботою культури, яка з покоління в покоління робить людей фізично нездатними терпіти війну. На цьому одному реченні надії й тримається весь текст.</p>
+    <p>Листування вийшло під назвою «Чому війна?» у 1933-му. Того ж року в Німеччині палили книжки — зокрема й ці.</p>
+  </div>
+
+  <!-- Нацисти -->
+  <div class="section" style="animation-delay:2.7s">
+    <h2 class="section-title">Нацисти</h2>
+    <p>У Берліні його книги кидали у вогонь із формулюванням: проти примату інстинктів, за утвердження порядку і звичаю. Реакція Фрейда стала однією з найвідоміших його фраз.</p>
+
+    <div class="quote-block">
+      <p>«Якого прогресу ми досягли. У середньовіччі спалили б мене — тепер задовольняються тим, що палять мої книги».</p>
+      <div class="qa">Зигмунд Фрейд, 1933</div>
+    </div>
+
+    <p>Того ж 1933-го фрейдівський психоаналіз у Німеччині фактично заборонили, а міжнародне товариство психотерапії, перебудоване під новий режим, очолив Карл Ґустав Юнг — і кілька років редагував його журнал. Давня суперечка двох людей про природу несвідомого несподівано отримала друге дно.</p>
+    <p>Фрейд, як і більшість, вірив, що Австрію обійде. Навесні 1933-го він писав, що особливі закони проти євреїв тут неможливі: мирні договори гарантують права меншин, Ліга Націй втрутиться, Франція ніколи не дозволить приєднання Австрії до Німеччини, а сама Австрія не заражена німецькою жорстокістю. І що виїжджати він у жодному разі не збирається.</p>
+    <p>11 березня 1938 року стався аншлюс. У щоденнику Фрейда з'явився запис «Finis Austriae».</p>
+    <p>Через день нацисти прийшли до психоаналітичного видавництва, забрали касу й заарештували його сина Мартіна. Потім прийшли додому. Марта спокійно виклала на стіл гроші, відкладені на господарство, і провела гостей до сейфа, де лежало шість тисяч шилінгів. Пограбування могло тривати далі, але в дверях з'явився сам Фрейд — вісімдесятидворічний, після десятків операцій — і подивився на них мовчки. Вони пішли.</p>
+    <p>Найважчим був день, коли Анну забрали в гестапо й тримали добу. Батько ходив по квартирі й курив сигару за сигарою. Він тоді не знав, що лікар Макс Шур уже видав їй і Мартінові смертельну дозу вероналу — на випадок тортур. Анну відпустили після втручання американського дипломата.</p>
+    <p>Виїзд вибивали втрьох: Ернест Джонс — візи, американський посол — тиск, принцеса Марі Бонапарт — гроші. Вона оплатила «податок на втечу з рейху» і таємно перевела його заощадження до Англії. Переказують, що документ, у якому Фрейд мав засвідчити, що з ним поводилися коректно, він попросив доповнити рядком: «Я можу щиро рекомендувати гестапо кожному».</p>
+    <p>На вокзалі він попрощався з чотирма сестрами. Вивезти їх не вдалося; він залишив їм сто шістдесят тисяч шилінгів — за його розрахунками, надовго. Він не вірив, що німці здатні на тотальне знищення: «нація, яка народила Ґете, не може зіпсуватися». Усі чотири загинули в таборах.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Лондон -->
+  <div class="section" style="animation-delay:2.8s">
+    <h2 class="section-title">Лондон: останній рік</h2>
+    <p>Перші місяці в Англії були майже щасливими. Його зустрічали як великого вченого, кабінет на Мересфілд-Ґарденс відтворили точно таким, яким він був на Берґґассе, разом із кушеткою й колекцією античних статуеток. До нього приходив Хаїм Вейцман, майбутній перший президент Ізраїлю. Приходив і молодий Сальвадор Далі — малював його потайки на аркуші й пізніше отримав від Фрейда несподіване визнання: доти той вважав сюрреалістів стовідсотковими диваками, а після цієї зустрічі змінив думку. Про рух, який виріс просто з його теорії снів, — <a href="surrealism.html">Сюрреалізм</a>.</p>
+    <p>Через півтора року Шур виявив нову пухлину — біля очної западини, там, де оперувати вже не можна було. Консиліум найкращих хірургів Англії та Франції підтвердив: залишається тільки опромінення. Далі почався некроз щоки. Запах став таким, що жодна гігієна не допомагала; над ліжком повісили москітну сітку від мух, а улюблений чау-чау, який роками лежав у кабінеті під час сеансів, перестав підходити до господаря й тиснувся в куток.</p>
+    <p>Він не міг ані читати, ані спати, ані їсти без болю. У вересні почалася Друга світова. Наприкінці місяця він узяв Шура за руку.</p>
+
+    <div class="quote-block">
+      <p>«Мій дорогий Шур, ви пам'ятаєте нашу першу розмову. Ви обіцяли не залишити мене, коли прийде час. Тепер це лише тортури, і сенсу в цьому більше немає».</p>
+      <div class="qa">Зигмунд Фрейд, вересень 1939</div>
+    </div>
+
+    <p>Шур сказав про це Анні. Потім зробив ін'єкцію морфію, а через кілька годин ще одну. Фрейд заснув і не прокинувся. 23 вересня 1939 року.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що лишилося -->
+  <div class="section" style="animation-delay:2.9s">
+    <h2 class="section-title">Що з нього залишилося</h2>
+    <p>Через вісімдесят років від його теорії вціліло менше, ніж хотілося б його прихильникам, і значно більше, ніж визнають його критики. Розділити варто чесно.</p>
+
+    <div class="cards">
+      <div class="card ok">
+        <span class="card-label">Стоїть досі</span>
+        <div class="card-title">Що працює</div>
+        <div class="card-text">Більша частина психічного життя відбувається поза свідомістю. Дитячий досвід формує дорослі реакції. Психіка захищається — запереченням, проєкцією, раціоналізацією. У стосунки з іншими ти приносиш старі стосунки (перенесення). І головне: проговорювання справді лікує — на цьому стоїть уся сучасна психотерапія, навіть та, що з Фрейдом не погоджується ні в чому.</div>
+      </div>
+      <div class="card bad">
+        <span class="card-label">Не витримало</span>
+        <div class="card-title">Що відпало</div>
+        <div class="card-text">Едипів комплекс як універсальний закон розвитку. Заздрість до пеніса. Сексуальність як єдине джерело психічної енергії. Сон як шифр, який можна розкласти за таблицею символів. Істерія як діагноз. І сама впевненість, що одна теорія пояснює людину повністю.</div>
+      </div>
+    </div>
+
+    <p style="margin-top:24px">Але найбільший його слід не в теорії, а в мові. Десяток його понять ти вживаєш, навіть не думаючи, звідки вони.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">🕳️</span>
+        <div>
+          <div class="phrase-word">Несвідоме</div>
+          <div class="phrase-text">Ідея, що в тобі є частина, яка ухвалює рішення без твого дозволу й не звітує. До Фрейда про неї здогадувалися філософи; після нього вона стала робочим припущенням, із яким можна щось робити.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🚪</span>
+        <div>
+          <div class="phrase-word">Витіснення</div>
+          <div class="phrase-text">Не «забула» — виштовхнула. Спогад чи бажання нікуди не зникають, вони просто перестають бути доступними — і починають діяти обхідними шляхами: через тіло, настрій, дивні реакції на дрібниці.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">💬</span>
+        <div>
+          <div class="phrase-word">Обмовка</div>
+          <div class="phrase-text">«Обмовка по Фрейду» — те, як він змусив ціле століття прислухатися до власних помилок мовлення, забутих імен і загублених ключів. Дрібниця, у якій прохоплюється те, чого ти собі не дозволяєш сказати.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🪞</span>
+        <div>
+          <div class="phrase-word">Проєкція</div>
+          <div class="phrase-text">Те, що найбільше дратує тебе в іншій людині, часто твоє власне, винесене назовні. Юнг розгорне це в поняття Тіні, а сьогодні фраза «це його проєкція» звучить у побутових сварках.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🎭</span>
+        <div>
+          <div class="phrase-word">Захисні механізми</div>
+          <div class="phrase-text">Заперечення, раціоналізація, витіснення, сублімація. Систематизувала й описала їх його дочка Анна — і саме в її редакції вони увійшли в підручники й у звичайну мову.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🔁</span>
+        <div>
+          <div class="phrase-word">Перенесення</div>
+          <div class="phrase-text">Ти реагуєш на нову людину так, ніби це хтось зі старої історії. Фрейд помітив це на собі — коли пацієнти закохувалися в нього, — і зробив із перешкоди головний інструмент.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🌿</span>
+        <div>
+          <div class="phrase-word">Сублімація і нарцисизм</div>
+          <div class="phrase-text">Перше — про те, що енергію, яку нікуди подіти, можна вкласти у творчість чи роботу. Друге — термін, який він увів у 1914-му й який тепер живе окремим життям: <a href="narcissist.html">Нарцис</a>.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:3s">
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Скільки з того, що ти вважаєш своїм вибором, ухвалили за тебе там, куди ти не заглядаєш?</div>
+    </div>
+  </div>
+
+  <!-- Фінал -->
+  <div class="section" style="animation-delay:3.1s">
+    <h2 class="section-title">Свічка в підвалі</h2>
+    <p>Він сам любив описувати себе як завойовника — або, чесніше, як допитливого студента, який лізе туди, куди його не просять.</p>
+    <p>Він не відкрив несвідоме: про те, що під людською свідомістю є величезний підвал, здогадувалися задовго до нього. Він був першим, хто взяв свічку, спустився туди й розповів, що бачив. Розгледів він небагато і половину переплутав, бо тлумачив побачене на основі власного досвіду, власної родини й власних фантазій. Коли пізніше в той самий підвал спустилися інші — уже з прожекторами — вони побачили, що він оглянув лише один куток.</p>
+    <p>Але спустився він першим. І цього в нього не відніме ніхто.</p>
+
+    <div class="final-quote">
+      <div class="final-text">Він хотів бути вченим, а став чимось іншим — <strong>людиною, яка навчила ціле століття питати себе, чого воно насправді хоче</strong>. Відповіді він давав неточні. Питання поставив назавжди.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>

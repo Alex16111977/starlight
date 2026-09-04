@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Сократ</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,140,80,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(52,58,94,.65);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:11px;font-weight:200;letter-spacing:.5em;color:rgba(52,58,94,.65);text-transform:uppercase;margin-bottom:12px;opacity:0;animation:riseIn 1s .7s ease forwards}
+.page-years{text-align:center;font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:18px;color:#7a5410;margin-bottom:64px;opacity:0;animation:riseIn 1s .8s ease forwards;letter-spacing:.1em}
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:18px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#5261c2;box-shadow:0 0 12px rgba(82,97,194,.6)}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#7a5fbe;text-decoration:none;border-bottom:1px solid rgba(122,95,190,.45);transition:border-color .3s}
+.section p a:hover{border-bottom-color:rgba(122,95,190,.9)}
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:10px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(52,58,94,.58)}
+.timeline{position:relative;padding-left:24px;margin-top:20px}
+.timeline::before{content:'';position:absolute;left:6px;top:8px;bottom:8px;width:1px;background:linear-gradient(to bottom,rgba(82,97,194,.45),rgba(148,103,23,.3),rgba(122,95,190,.15))}
+.tline{position:relative;margin-bottom:28px;padding-left:20px}
+.tline::before{content:'';position:absolute;left:-22px;top:6px;width:11px;height:11px;border-radius:50%;background:#5261c2;box-shadow:0 0 12px rgba(82,97,194,.5)}
+.tyear{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:#3f4a9e;letter-spacing:.06em;margin-bottom:6px}
+.tevent{font-size:13.5px;font-weight:300;line-height:1.8;color:rgba(36,40,68,.86)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(82,97,194,.35),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+.card.ok{border-color:rgba(150,214,165,.35)}
+.card.ok::before{background:linear-gradient(to right,transparent,rgba(150,214,165,.5),transparent)}
+.card.bad{border-color:rgba(224,150,150,.32)}
+.card.bad::before{background:linear-gradient(to right,transparent,rgba(224,150,150,.45),transparent)}
+.card-label{font-size:9.5px;font-weight:400;letter-spacing:.3em;text-transform:uppercase;margin-bottom:10px;display:block}
+.card.ok .card-label{color:#1f7a4d}
+.card.bad .card-label{color:#b23c2e}
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:26px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(82,97,194,.35),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:26px;flex-shrink:0;width:34px;text-align:center}
+.phrase-word{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:19px;line-height:1.4;color:rgba(36,40,68,.97);margin-bottom:8px}
+.phrase-text{font-family:'Montserrat',sans-serif;font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.88)}
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(52,58,94,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:#946717}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.quote-block .qa{font-size:10px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;color:#7a5410}
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:10px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(52,58,94,.5);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,34px);color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:640px;margin:0 auto}
+.final-text strong{font-weight:400;color:#946717}
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:#7a5fbe;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,#7a5fbe,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.75);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:#2c2c2c}
+.read-toggle.active{background:rgba(212,175,110,.16);border-color:rgba(212,175,110,.55);color:#7a5410}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="philosophy.html">← Уся філософія</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Сократ</h1>
+  <p class="page-subtitle">Заговори, щоб я тебе побачив</p>
+  <div class="page-years">470 — 399 до н.е.</div>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Я знаю тільки те, що нічого не знаю"</div>
+      <div class="hero-author">Сократ</div>
+    </div>
+    <p>Він не написав жодного рядка. Ходив босий по афінському ринку, чіплявся до людей із питаннями і доводив співрозмовника до місця, де той розумів, що не знає того, у чому був упевнений усе життя. За це його врешті й засудили до смерті — офіційно за розбещення молоді й неповагу до богів, фактично за те, що надто багатьом показав межі їхнього розуміння.</p>
+    <p>Усе, що ми маємо, — переказ учнів, насамперед Платона й Ксенофонта. Тому «Сократ сказав» майже завжди означає «так це запам'ятали». Нижче — думки, які століттями ходять під його іменем, розкладені за темами. Наприкінці — кілька, які насправді належать іншим людям.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Незнання -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Про те, що ти нічого не знаєш</h2>
+    <p>Головна його думка й найчастіше перекручена. Це не кокетство і не скепсис. Це робочий інструмент: поки ти впевнена, що вже знаєш, ти нічого не спитаєш — а отже, нічого й не побачиш.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">🕯️</span>
+        <div>
+          <div class="phrase-word">«Я знаю тільки те, що нічого не знаю, але інші не знають навіть цього»</div>
+          <div class="phrase-text">Оракул назвав його наймудрішим з афінян. Він пішов перевіряти — і виявив, що всі, кого він розпитував, знали не більше за нього, але були в цьому впевнені. Уся його перевага полягала в одному: він помічав власне незнання.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🌊</span>
+        <div>
+          <div class="phrase-word">«Те, що ми знаємо, обмежене, а те, чого не знаємо, — безмежне»</div>
+          <div class="phrase-text">Чим більше ти вивчаєш будь-що, тим більшою стає межа зіткнення з незрозумілим. Тому люди, які знають найбільше, зазвичай говорять найобережніше — і це не скромність, а точність.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">📐</span>
+        <div>
+          <div class="phrase-word">«Мудрість — це знати, наскільки мало ми знаємо»</div>
+          <div class="phrase-text">Найкорисніша навичка не в тому, щоб мати відповідь, а в тому, щоб чесно відрізняти, де в тебе знання, а де здогадка, яку ти повторювала так довго, що вона стала схожа на факт.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🧩</span>
+        <div>
+          <div class="phrase-word">«Знання — це не розум»</div>
+          <div class="phrase-text">Можна пам'ятати тисячу фактів і не вміти нічого з ними зробити. Начитаність — це склад; розум — це вміння вибрати з нього потрібне саме зараз і скласти по-новому.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Знання і чеснота -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Про добро як різновид знання</h2>
+    <p>Найсуперечливіша його ідея: ніхто не робить зла добровільно. Людина чинить погано тому, що помиляється щодо того, що для неї добре. Отже, зло — це різновид невігластва, а виправляється воно розумінням, а не покаранням.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">💎</span>
+        <div>
+          <div class="phrase-word">«Є лише одне благо — знання, і лише одне зло — невігластво»</div>
+          <div class="phrase-text">З цього виростає вся європейська освіта: якщо зло від нерозуміння, то вчити людей — не розкіш, а спосіб зробити їх кращими.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">⚖️</span>
+        <div>
+          <div class="phrase-word">«Найвища мудрість — розрізняти добро і зло»</div>
+          <div class="phrase-text">Не знати правила, а бачити, у чому саме тут добро — коли ситуація нова, правил на неї ще ніхто не написав, а вирішувати треба сьогодні.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🌿</span>
+        <div>
+          <div class="phrase-word">«Той, хто мудрий, той і добрий»</div>
+          <div class="phrase-text">Для нього це було не побажанням, а рівністю: справжнє розуміння того, що добре, автоматично тягне за собою вчинок. Якщо людина розуміє й усе одно робить інакше — значить, розуміє не до кінця.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">❓</span>
+        <div>
+          <div class="phrase-word">«Чому люди, знаючи, як треба чинити добре, все ж чинять погано?»</div>
+          <div class="phrase-text">Питання, на якому його теорія тріщить, — і він це знав. Уся подальша етика, від Аристотеля до сьогодні, по суті намагається відповісти саме на нього.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">📚</span>
+        <div>
+          <div class="phrase-word">«Надаю перевагу знанням перед багатством, бо одне минуще, а інше вічне»</div>
+          <div class="phrase-text">Він жив у бідності демонстративно й не брав грошей за навчання — на відміну від софістів, які брали, і чималі. Це була не поза, а аргумент: за плату ти скажеш те, що замовили.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🛡️</span>
+        <div>
+          <div class="phrase-word">«Ніщо не здатне зашкодити добрій людині ні в житті, ні після смерті»</div>
+          <div class="phrase-text">Сказано перед стратою людиною, яку щойно засудили до смерті. Її аргумент: зашкодити можна тілу, майну й репутації, але не тому, ким ти є, — а це єдине, що по-справжньому твоє.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Про себе -->
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Про роботу над собою</h2>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">☀️</span>
+        <div>
+          <div class="phrase-word">«У кожній людині є сонце, тільки дайте йому світити»</div>
+          <div class="phrase-text">Його метод так і працював: він не вкладав знання в людину, а витягав із неї те, що вона й так знала, але не наважувалася сформулювати. Себе він називав повитухою при чужій думці.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🌍</span>
+        <div>
+          <div class="phrase-word">«Хто хоче зрушити світ, нехай зрушить себе»</div>
+          <div class="phrase-text">Найкоротша відповідь усім, хто чекає, поки зміняться обставини, партнер, начальник і країна. Це єдина точка, до якої в тебе є прямий доступ.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">📈</span>
+        <div>
+          <div class="phrase-word">«Неможливо жити краще, ніж проводячи життя у прагненні стати досконалішим»</div>
+          <div class="phrase-text">Ціль тут не в тому, щоб дійти. Сенс у самому русі: людина, яка щодня трохи розуміє більше, живе інакше, ніж та, що вже все про себе вирішила.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🎭</span>
+        <div>
+          <div class="phrase-word">«Будь таким, яким хочеш здаватися»</div>
+          <div class="phrase-text">Найпростіший спосіб позбутися страху викриття — не мати чого викривати. Побудова образу коштує дорожче, ніж побудова себе, і тримається гірше.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🔭</span>
+        <div>
+          <div class="phrase-word">«У сонця є один недолік — воно не може бачити самого себе»</div>
+          <div class="phrase-text">Своє обличчя ти бачиш тільки у відображенні. Тому «пізнай себе» в нього завжди відбувалося в діалозі: інша людина — це дзеркало, якого в тебе всередині немає.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🛤️</span>
+        <div>
+          <div class="phrase-word">«Той, хто йде второваним шляхом, відвикає творити»</div>
+          <div class="phrase-text">Готова стежка економить сили — і рівно на цю саму величину знижує потребу думати. Через десять років економії з'ясовується, що навичка прокладати свою дорогу зникла.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🔍</span>
+        <div>
+          <div class="phrase-word">«Якщо ти будеш допитливим, то будеш багато знаючим»</div>
+          <div class="phrase-text">Не здібності вирішують, а кількість поставлених питань. Люди, які знають багато, майже завжди просто дозволяли собі питати «а чому?» довше, ніж це вважається пристойним.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">⛰️</span>
+        <div>
+          <div class="phrase-word">«Життя без випробувань — це не життя»</div>
+          <div class="phrase-text">У Платона ця думка звучить точніше: неперевірене життя не варте того, щоб його прожити. Йдеться не про страждання, а про перевірку — про життя, у якому ти хоч раз спитала себе, навіщо робиш те, що робиш.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🌱</span>
+        <div>
+          <div class="phrase-word">«Гарний початок — не дрібниця, хоча й починається з дрібниці»</div>
+          <div class="phrase-text">Перший крок майже завжди виглядає непереконливо порівняно з задумом. Але масштаб задуму нічого не важить, поки не зроблено саме цю непереконливу дрібницю.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Бажання -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Про бажання і достатність</h2>
+    <p>Він ходив базаром не купувати, а дивитися — і казав, що приходить сюди дізнатися, скільки на світі речей, які йому не потрібні.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">🏺</span>
+        <div>
+          <div class="phrase-word">«Скільки ж є речей, без яких можна жити»</div>
+          <div class="phrase-text">Перевірка проста: згадай п'ять покупок, яких ти чекала найбільше за останні три роки. Скільки з них ти взагалі помічаєш зараз?</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🕊️</span>
+        <div>
+          <div class="phrase-word">«Чим менше в мене бажань, тим ближче я до богів»</div>
+          <div class="phrase-text">Боги в грецькому розумінні нічого не потребують — саме тому вони вільні. Кожне зайве «мені треба» — це ще одна нитка, за яку тебе можна тримати.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🔁</span>
+        <div>
+          <div class="phrase-word">«Той, хто не задоволений тим, що має, не задовольниться і тим, що хотів би мати»</div>
+          <div class="phrase-text">Незадоволеність — не про кількість, а про налаштування. Якщо воно не змінюється, наступний рівень достатку просто підніме планку, з якої знову буде мало.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🍽️</span>
+        <div>
+          <div class="phrase-word">«Я їм, щоб жити, а дехто живе, щоб їсти»</div>
+          <div class="phrase-text">Перевірка для будь-чого, не тільки для їжі: це засіб чи вже мета? Робота, гроші, порядок у домі, навіть турбота про інших — усе легко перетворюється з інструмента на господаря.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🥖</span>
+        <div>
+          <div class="phrase-word">«Голод — найкраща приправа до їжі»</div>
+          <div class="phrase-text">Задоволення живе не в речі, а в проміжку перед нею. Той, хто ніколи не чекає, перестає відчувати смак — і це стосується не тільки обіду.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">💭</span>
+        <div>
+          <div class="phrase-word">«Бідна людина не та, у якої немає ні гроша в кишені, а та, у якої немає мрії»</div>
+          <div class="phrase-text">Порожній гаманець — стан, який змінюється. Порожнє «навіщо» не змінюється саме собою й не залежить від суми на рахунку.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">⚙️</span>
+        <div>
+          <div class="phrase-word">«Краще працювати без певної мети, ніж нічого не робити»</div>
+          <div class="phrase-text">Рух дає інформацію, нерухомість не дає нічого. Ясність частіше приходить у процесі, ніж до нього, — і чекати її, сидячи, зазвичай означає чекати вічно.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Мова -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Про мову і мовчання</h2>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">👁️</span>
+        <div>
+          <div class="phrase-word">«Заговори, щоб я тебе побачив»</div>
+          <div class="phrase-text">Найточніше, що про людину сказано за двадцять п'ять століть. Зовнішність, одяг, посада не кажуть майже нічого; перші дві хвилини мови кажуть майже все — що людина помічає, чого боїться, кого зневажає.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">👂</span>
+        <div>
+          <div class="phrase-word">«Природа наділила нас двома очима, двома вухами, але лише одним язиком, аби ми дивилися і слухали більше, ніж говорили»</div>
+          <div class="phrase-text">Пропорція два до одного, вбудована в конструкцію. Її майже ніхто не дотримується — і саме тому людина, яка вміє слухати, здається оточенню незвично розумною, нічого при цьому не сказавши.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🔥</span>
+        <div>
+          <div class="phrase-word">«Людям легше тримати на язиці гаряче вугілля, ніж таємницю»</div>
+          <div class="phrase-text">Чужий секрет тисне зсередини й шукає виходу — не через злий намір, а через потребу поділитися вагою. Тому найнадійніший спосіб зберегти таємницю досі той самий: нікому її не розповідати.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🤫</span>
+        <div>
+          <div class="phrase-word">«Якщо тобі відповіли мовчанням, це ще не означає, що тобі не відповіли»</div>
+          <div class="phrase-text">Мовчання — повноцінна відповідь, і зазвичай доволі однозначна. Проблема не в тому, що її не дали, а в тому, що її не хочеться визнавати відповіддю.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">💗</span>
+        <div>
+          <div class="phrase-word">«Завойовую собі друзів не порожніми лестощами, а щирими словами любові»</div>
+          <div class="phrase-text">Лестощі приємні рівно доти, доки людина не помітить, що ти кажеш це всім. Щире слово незручніше сказати — і воно єдине залишає слід.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Люди -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Про людей поруч</h2>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">🐑</span>
+        <div>
+          <div class="phrase-word">«Будь-яка людина без труднощів скаже, скільки в неї овець, але не кожен назве, скільки в нього друзів — настільки вони не в ціні»</div>
+          <div class="phrase-text">Ми ведемо облік того, що вважаємо майном. Дружба в цей облік не потрапляє — а потім з'ясовується, що це єдине, чого не можна ані купити, ані швидко відновити.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🤲</span>
+        <div>
+          <div class="phrase-word">«У справжній дружбі немає жодної різниці між давати і брати»</div>
+          <div class="phrase-text">Щойно з'являється рахунок — хто кому скільки винен, хто останній писав, хто більше вклався — дружба вже перетворилася на щось інше й просто ще не змінила назву.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🎓</span>
+        <div>
+          <div class="phrase-word">«Ніхто не може нічому навчитися у людини, яка не подобається»</div>
+          <div class="phrase-text">Через це рушиться половина шкільної програми й більшість корисних порад від рідні. Спочатку довіра — потім зміст; у зворотному порядку не працює.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🧭</span>
+        <div>
+          <div class="phrase-word">«Хороший радник кращий за будь-яке багатство»</div>
+          <div class="phrase-text">Гроші вирішують задачі, які ти вже вмієш ставити. Людина, яка бачить твою ситуацію збоку, вирішує ту, яку ти поставила неправильно.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🩸</span>
+        <div>
+          <div class="phrase-word">«Заздрість — це виразка душі»</div>
+          <div class="phrase-text">Єдина з пристрастей, яка не дає навіть короткого задоволення. Вона нічого не приносить тому, хто заздрить, і нічого не забирає в того, кому заздрять, — працює тільки на знищення зсередини.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🕳️</span>
+        <div>
+          <div class="phrase-word">«Зла людина шкодить іншим без жодної вигоди для себе»</div>
+          <div class="phrase-text">Найкорисніше спостереження для тих, хто звик шукати логіку в чужій жорстокості. Вигоди часто немає взагалі — і саме тому пояснити її собі не вдається.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🍷</span>
+        <div>
+          <div class="phrase-word">«Пияцтво не породжує вад, воно їх викриває; щастя не змінює звичаїв, воно їх підкреслює»</div>
+          <div class="phrase-text">Ні алкоголь, ні влада, ні гроші нічого в людині не створюють. Вони знімають гальма — і показують те, що трималося на самоконтролі, а не на характері.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Тіло, шлюб -->
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">Про тіло, шлюб і решту життя</h2>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">🫀</span>
+        <div>
+          <div class="phrase-word">«Не можна лікувати тіло, не вилікувавши душу»</div>
+          <div class="phrase-text">Сказано за дві з половиною тисячі років до того, як медицина визнала це офіційно. У Платона він додає: саме тому грецькі лікарі й не вміють багато чого — вони лікують частину, забувши про ціле.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🏋️</span>
+        <div>
+          <div class="phrase-word">«Люди, від природи слабкі тілом, завдяки вправам стають міцнішими за силачів»</div>
+          <div class="phrase-text">Він сам був воїном і витримував походи краще за молодших. Дані на старті вирішують менше, ніж здається; вирішує те, що з ними робили щодня протягом років.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">👑</span>
+        <div>
+          <div class="phrase-word">«Краса — це королева, яка править дуже недовго»</div>
+          <div class="phrase-text">Сказано найнепривабливішим чоловіком Афін — кирпатим, лисим, з очима навикате, — довкола якого при цьому збиралася найкрасивіша молодь міста.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">💍</span>
+        <div>
+          <div class="phrase-word">«Одружуйся, попри все: якщо трапиться хороша дружина — будеш щасливим, а якщо погана — станеш філософом»</div>
+          <div class="phrase-text">Найвідоміший жарт античності, і майже напевно — про власний шлюб. Його дружина Ксантиппа увійшла в історію як зразок сварливості, здебільшого стараннями тих, хто переказував це після нього.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🌬️</span>
+        <div>
+          <div class="phrase-word">«Розпалюється полум'я вітром, а потяг — близькістю»</div>
+          <div class="phrase-text">Почуття тримається не на думках про людину, а на кількості часу поруч. Це працює в обидві сторони: і коли хочеш, щоб розгорілося, і коли хочеш, щоб згасло.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Не його -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">А це — не його</h2>
+    <p>Сократ — найзручніша підпис-етикетка в історії: він нічого не писав, тож перевірити нічим, а ім'я додає ваги будь-якій фразі. Кілька популярних «сократівських» цитат насправді належать зовсім іншим людям.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">📏</span>
+        <div class="card-title">«Людина є мірою всіх речей»</div>
+        <div class="card-text">Це <strong>Протагор</strong> — софіст, сучасник Сократа. І Сократ із цією тезою все життя сперечався: якщо кожен сам собі міра, то істини немає взагалі, а на цьому не побудуєш ані права, ані моралі. Платон присвятив спростуванню цієї фрази цілий діалог.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🩺</span>
+        <div class="card-title">«Здоров'я не все, але все без здоров'я — ніщо»</div>
+        <div class="card-text">Це <strong>Артур Шопенгауер</strong>, XIX століття, «Афоризми життєвої мудрості». У нього це частина довгого міркування про те, що дев'ять десятих щастя залежать від здоров'я.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🗣️</span>
+        <div class="card-title">«Сильні уми обговорюють ідеї, посередні — події, слабкі — людей»</div>
+        <div class="card-text">З'явилося у XX столітті. Найчастіше вішають на <strong>Елеонору Рузвельт</strong> — теж помилково: у її текстах цього немає. Автор невідомий.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧱</span>
+        <div class="card-title">«Іноді ви зводите стіни не для стримування людей, а щоб побачити, хто наважиться їх зруйнувати»</div>
+        <div class="card-text">Інтернет-афоризм XXI століття. В античних текстах немає ані цієї думки, ані такого способу її формулювати.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎯</span>
+        <div class="card-title">«Хто хоче — шукає можливості, хто не хоче — шукає причини»</div>
+        <div class="card-text">Сучасне прислів'я, яке приписують по черзі Сократу, Конфуцію і Джеку Ма — залежно від того, у якій добірці воно трапиться.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🪞</span>
+        <div class="card-title">«Все, що людина каже не з власного досвіду, не варте довіри, навіть якщо вона цитує мене»</div>
+        <div class="card-text">Теж вигадка — і найкраща з можливих. Фраза, у якій «Сократ» попереджає не вірити цитатам із Сократа, сама виявилася підробленою цитатою з Сократа.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:1.75s">
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">У чому ти зараз абсолютно впевнена — і коли востаннє перевіряла, звідки ця впевненість узялася?</div>
+    </div>
+  </div>
+
+  <!-- Фінал -->
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Замість висновку</h2>
+    <p>Він мав шанс утекти з в'язниці — учні все підготували й підкупили варту. Він відмовився: усе життя доводив, що законам треба підкорятися, і не збирався робити виняток тоді, коли закон обернувся проти нього. Випив цикуту, попросив друга не забути повернути сусідові півня — і на цьому все.</p>
+    <p>Він не залишив ані школи, ані вчення, ані книжки. Залишив метод: питати доти, доки не стане видно, що ти насправді думаєш. Що з цього виросло далі — Платон, Аристотель і решта двох тисяч років — у <a href="philosophy.html">Усій філософії</a>. Про світ, у якому він ходив босим, — <a href="ancients-greece.html">Стародавня Греція</a>.</p>
+
+    <div class="final-quote">
+      <div class="final-text">Найрозумніший з афінян не знав жодної відповіді. <strong>Уся його перевага була в тому, що він це помічав</strong> — і не давав спокою тим, хто не помічав за собою того самого.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
