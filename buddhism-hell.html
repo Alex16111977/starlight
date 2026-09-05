@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Пекло, яке закінчиться</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,140,80,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(52,58,94,.65);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:11px;font-weight:200;letter-spacing:.5em;color:rgba(52,58,94,.65);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:18px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#5261c2;box-shadow:0 0 12px rgba(82,97,194,.6)}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#7a5fbe;text-decoration:none;border-bottom:1px solid rgba(122,95,190,.45);transition:border-color .3s}
+.section p a:hover{border-bottom-color:rgba(122,95,190,.9)}
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:10px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(52,58,94,.58)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(82,97,194,.35),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:26px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(82,97,194,.35),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:26px;flex-shrink:0;width:34px;text-align:center}
+.phrase-word{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:19px;line-height:1.4;color:rgba(36,40,68,.97);margin-bottom:8px}
+.phrase-text{font-family:'Montserrat',sans-serif;font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.88)}
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(52,58,94,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:#946717}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.quote-block .qa{font-size:10px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;color:#7a5410}
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:10px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(52,58,94,.5);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,34px);color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:640px;margin:0 auto}
+.final-text strong{font-weight:400;color:#946717}
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:#7a5fbe;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,#7a5fbe,transparent)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.75);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:#2c2c2c}
+.read-toggle.active{background:rgba(212,175,110,.16);border-color:rgba(212,175,110,.55);color:#7a5410}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Пекло, яке закінчиться</h1>
+  <p class="page-subtitle">Буддизм без Бога і сатани</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"У буддизмі шістнадцять пекел. Немає лише судді, який туди відправляє, — і жодне з них не назавжди"</div>
+      <div class="hero-author">За матеріалом Івана Негреєва · PunkMonk</div>
+    </div>
+    <p>Про буддизм важко говорити звично, бо розповідь весь час іде про дві речі водночас: про те, що в ньому є, і про те, чого в ньому принципово немає. Наприкінці двадцятого століття всерйоз сперечалися, чим він узагалі є — релігією, філософією чи психологією. І для цієї суперечки були підстави.</p>
+    <p>Нечиста сила буддизм цікавить мало. Сатани в ньому немає зовсім. Є персонаж, якого за звичкою з ним зіставляють, — Мара. Але що ближче придивляєшся, то очевидніше: це щось геть інше. Буддійський світогляд побудований на інших осях, ніж біблійний, — і найшвидший спосіб це побачити лежить, хоч як дивно, через пекло.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 16 пекел -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Шістнадцять поверхів униз</h2>
+    <p>Пекло в буддизмі є, і не одне. Вісім холодних і вісім гарячих, а деякі школи додають ще два «пекла болю». Космологія розташовує їх пірамідками вниз: чим нижче — тим гірше і тим довше там сидять.</p>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">❄️</span>
+        <div class="card-title">Вісім холодних</div>
+        <div class="card-text">Замерзають внутрішні органи, відмирає шкіра, цокотять зуби. Що глибше — то лютіший холод і довший строк.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔥</span>
+        <div class="card-title">Вісім гарячих</div>
+        <div class="card-text">Смажать, варять, колють, спалюють. Описано з деталізацією, яка нічим не поступається Данте.</div>
+      </div>
+    </div>
+    <p style="margin-top:22px">Уся ця яскрава іконографія — пізня, середньовічна: саме тоді в буддизмі з'являються детальні описи мук. Але за знайомою картинкою ховаються три відмінності, які міняють усе.</p>
+  </div>
+
+  <!-- Три відмінності -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Три речі, яких тут немає</h2>
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">😈</span>
+        <div>
+          <div class="phrase-word">Немає сатани</div>
+          <div class="phrase-text">Немає духа-противника, весь сенс існування якого — відвертати людей від Бога. Причина проста: немає Бога, тож і протистояти нікому.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">⚖️</span>
+        <div>
+          <div class="phrase-word">Немає абсолютних добра і зла</div>
+          <div class="phrase-text">Немає полюса світла і полюса темряви, між якими триває битва за душі. Добро і зло визначаються інакше — і це визначення суто прагматичне.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">⏳</span>
+        <div>
+          <div class="phrase-word">Немає вічного вироку</div>
+          <div class="phrase-text">Ні вічної кари, ні вічної винагороди — ні для людей, ні для духів. Усе, що почалося, закінчиться.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Карма -->
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Карма замість теодицеї</h2>
+    <p>Буддизм виріс з індуїзму — багато в чому як його антипод, але колесо він забрав із собою: карму, сансару, перевтілення. І в цього колеса є функція, яку рідко помічають.</p>
+    <p>У релігіях із всемогутнім благим Богом неминуче постає болісне питання: якщо Бог благий — звідки зло? Це називається проблемою теодицеї, і богослов'я століттями шукає на неї відповідь. Південна Азія відповіла інакше: зло не продиктоване Богом. Воно — наслідок твоїх власних дій у минулих життях. Причини своїх бід тут шукають не на небі, а в собі й у своєму минулому.</p>
+    <div class="highlight">
+      <p><em>З цього випливає вся картина посмертя.</em> За тимчасові вчинки — хоч добрі, хоч злі — може бути лише тимчасовий результат. Скінченна дія не має нескінченного наслідку. У цьому вся логіка системи: вічне пекло тут неможливе не з милосердя, а з арифметики.</p>
+    </div>
+  </div>
+
+  <!-- Лінія і колесо -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Пряма лінія і колесо</h2>
+    <p>Християнська конструкція інша: час лінійний і має кінець. За тимчасові гріхи — вічна кара; занепалі ангели на чолі з денницею прокляті назавжди, і покаяння для них неможливе; людський шлях завершується або вічною карою, або вічною винагородою.</p>
+    <p>У Південній Азії ця модель не приживається — не тому, що хтось когось переспорив, а тому, що час там не лінія, а колесо. Перероджуються люди. Перероджуються духи. Перероджуються боги. Перероджуються навіть всесвіти. У круговороті, де все виникає і зникає, вічній карі просто нема на чому триматися.</p>
+  </div>
+
+  <!-- Добро і зло -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Добро — це те, що покращує карму</h2>
+    <p>В авраамічних релігіях — юдаїзмі, християнстві, ісламі — критерій зрозумілий: те, що від Бога, — добро; те, що поза ним або проти нього, — зло.</p>
+    <p>Буддизм лишився без цього компаса: немає Бога — немає абсолютного добра; немає сатани — немає абсолютного зла. Добро і зло стають двома умовностями життя, і визначаються вони практично: добро — те, що покращує твою карму. Зло — те, що її погіршує. Не битва світла з темрявою, а гігієна власних дій.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Мара -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Мара: спокуса, що приходить зсередини</h2>
+    <p>Тепер про того, кого весь час хочеться назвати сатаною. Мара — слово з прадавнього кореня, пов'язаного зі смертю і мороком; від нього ж, імовірно, наші «мара» і «примара» — і «кошмар». Але в буддійських текстах Мара — не рогата сутність із того боку світу. Це персоніфіковане невігластво. Радше внутрішній голос, ніж зовнішній ворог.</p>
+    <p>Життєписів Будди, написаних за його життя, не існує — усі створені щонайменше через чотириста років, тож це радше житія, ніж біографії. І класичний епізод у них такий: Будда сідає під деревом бодгі, занурюється в медитацію — і Мара береться його спокушати.</p>
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">🌪️</span>
+        <div>
+          <div class="phrase-word">Страх</div>
+          <div class="phrase-text">Урагани, шторми, землетруси — усе, що будить тваринний жах і мусить зірвати медитацію.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">💃</span>
+        <div>
+          <div class="phrase-word">Бажання</div>
+          <div class="phrase-text">Три доньки Мари приходять спокушати Будду. За однією з сутр, вони пішли на це самі — після того, як батько зазнав поразки.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">👑</span>
+        <div>
+          <div class="phrase-word">Гордість</div>
+          <div class="phrase-text">Найтонша спокуса: Мара приходить у власній подобі й визнає себе переможеним. Повірити в це — значить повірити, що ти здолав самого сатану. А для цього потрібна неабияка самозакоханість. У ній і пастка.</div>
+        </div>
+      </div>
+    </div>
+    <p style="margin-top:22px">Розв'язка відома кожному, хто бачив статуї Будди: він виходить із медитації і торкається рукою землі. Земля свідчить, що він гідний. Посоромлений Мара відходить.</p>
+  </div>
+
+  <!-- Ваджіра -->
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">«Ти Мара»</h2>
+    <p>Є й інший епізод. До монахині Ваджіри Мара приходить не з ураганами, а з богословськими питаннями: хто створив світ? як він виник? як зникне?</p>
+    <div class="quote-block">
+      <p>Віриш, що світ існує, — ти Мара. Віриш, що є той, хто його виготовив, — і це теж Мара. Бо немає ні творця, ні самого світу як реально існуючого.</p>
+      <div class="qa">Відповідь Ваджіри</div>
+    </div>
+    <p>Для Мари це нищівна відповідь: він живиться не страхом і не бажанням, а самою вірою в реальність декорацій. І тут час пояснити, що буддизм узагалі вважає реальним.</p>
+  </div>
+
+  <!-- Потік -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Потік замість творця</h2>
+    <p>Бога-творця в буддизмі немає — але богів багато. Замість творця — потік дхарм: безперервний потік психофізичних станів. Іноді його описують через умовні «частинки», але це не атоми — це саме потік, який ні на мить не спиняється.</p>
+    <p>Проповідники двадцятого століття пояснювали це через телевізор. Ти дивишся драму і плачеш над героєм — хоч актор живий і здоровий, просто між тобою і зображенням встановився емоційний зв'язок, який видає картинку за реальність. Єдина ж реальність екрана — пікселі, що мерехтять швидше, ніж свідомість здатна зафіксувати.</p>
+    <p>Друга метафора ще точніша. Чи існує смерч? І так, і ні. Якщо тебе в нього закрутило — заперечувати важко. Але постійного «смерчика» ніде немає: є лише зіткнення повітряних потоків через різницю тиску й температури. Він виникає — і зникає.</p>
+    <div class="highlight">
+      <p><em>Так буддизм дивиться на всі живі істоти.</em> Один смерч живе хвилину, інший — десять років. Людина живе сто років, бог — мільярди. Принципово це нічого не змінює: і людина, і бог, і демон — завихрення в одному потоці, які відрізняються лише стійкістю.</p>
+    </div>
+  </div>
+
+  <!-- Боги -->
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Як народжуються боги</h2>
+    <p>Звідки ж тоді відчуття, що боги є? Зав'язується всесвіт. У ньому з'являється перша істота. Вона роззирається, бачить, що вона перша, і думає: «Я великий Бог». Наступні істоти приходять у світ, де хтось уже був до них, — і роблять природний висновок: ось він, великий Бог, першопочаток усього.</p>
+    <p>Так запускається кожен всесвіт. Через те, що будь-яка істота народжується у вже наявний світ, здається, ніби був початок і був той, хто все почав. Але, за буддизмом, його не було. Бог такого всесвіту — той самий вихор, лише давніший і стійкіший за інші. Він сильний, але він не по той бік світу — він цілком у нього включений. І саме тому в нього немає антипода: він цього світу не творив.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Демонологія -->
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Демонологія: народна і філософська</h2>
+    <p>Там, де є народ, є й демонологія. З індуїзму буддизм успадкував цілий поверх нижчих духів: претів і пішачів — частина з них неупокоєні мерці, — зміїних духів нагів, войовничих асурів. Вони насилають хвороби, зводять з розуму, гублять худобу.</p>
+    <p>Буддизм із їхнім існуванням не сперечається. Якщо свідомість активна — вона конструює світ, а в сконструйованому світі є і злі духи, тож до певної міри вони існують. Приходячи в Тибет, Монголію, Бурятію, буддизм не викорчовував місцевих вірувань — він надбудовувався над ними і пояснював їх. Тому старі шаманські практики — стрічки, шанування духів, «годування» — спокійно живуть поруч. Позиція буддизму щодо них майже поблажлива: цим жити не треба, бо всі ці духи — ілюзії. А якщо поки не можеш інакше — нехай буде.</p>
+    <p>Філософський поверх глибший. Демони тут — внутрішні пристрасті і страхи. В історії людства демони здебільшого і були втіленнями страху перед хворобою й бідою, а вигнання їх — спробою одужати чи відвести лихо. Буддизм робить наступний крок: не існує світу, окремого від спостерігача. Світ пов'язаний зі свідомістю і є її продуктом. Те, що є у свідомості, є і в світі — тому сильний страх чи пристрасть отримує умовне, але власне буття.</p>
+    <p>Чи існують демони об'єктивно? Як об'єктивна реальність — ні. Але людина й не живе в об'єктивній реальності: вона живе у психічній, яка постає на стику й у консенсусі свідомостей. І на цьому рівні демони цілком реальні.</p>
+  </div>
+
+  <!-- Колесо -->
+  <div class="section" style="animation-delay:2s">
+    <h2 class="section-title">Істота, що тримає колесо</h2>
+    <p>На буддійських зображеннях трисвіту колесо сансари з дванадцятьма ланками тримає ікласта істота, що впилася в нього зубами й кігтями. Це і є умовний «сатана» буддизму — і показово, що в нього навіть немає сталого імені: в одних джерелах це Мара, в інших — Яма, бог смерті.</p>
+    <p>Бо йдеться не про особу. Ікласта істота на колесі — це тотальне невігластво, яке утримує всіх у круговороті. Не хтось, хто тебе тримає, а те, що ти не бачиш, як усе влаштовано.</p>
+  </div>
+
+  <!-- Народження -->
+  <div class="section" style="animation-delay:2.1s">
+    <h2 class="section-title">Чому людське народження — найкраще</h2>
+    <p>У цьому колесі можна народитися людиною, демоном або богом. І буддійська відповідь на питання «ким краще» несподівана.</p>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">☁️</span>
+        <div class="card-title">Богом — не варто</div>
+        <div class="card-text">Таке народження надто щасливе. Його проживають довго — і сліпо: суцільне блаженство не дає жодного приводу прокинутися.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔥</span>
+        <div class="card-title">У пеклі — тим більше</div>
+        <div class="card-text">Страждання настільки сильні, що зрозуміти щось неможливо. Відстраждавши свої мільйони років, істота однаково народиться людиною — тільки нічого не взявши з собою.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧍</span>
+        <div class="card-title">Людиною — саме те</div>
+        <div class="card-text">Щастя і нещастя тут приблизно врівноважені. Цей баланс дає тверезість — єдиний стан, з якого видно все колесо.</div>
+      </div>
+    </div>
+    <p style="margin-top:22px">Той, хто народився золотою молоддю в палаці, знає лише один бік життя. Той, хто все життя вмирає в лікарні, — теж лише один. Ані цілком щасливе, ані цілком нещасливе народження тверезості не дає. Людське — дає.</p>
+  </div>
+
+  <!-- Мука з терміном -->
+  <div class="section" style="animation-delay:2.2s">
+    <h2 class="section-title">Мука, що має термін</h2>
+    <p>Погана карма справді може привести в одне з пекел — і на строк, який вимірюється мільйонами років. Але хоч би скільки тривала мука, вона завершиться, і істота знову народиться людиною. Так само і з небесними народженнями: хоч би скільки тривала насолода, колесо крутитиметься далі.</p>
+    <p>Тож у цій системі немає ні остаточного прокляття, ні остаточного порятунку — вгорі і внизу лише довші й коротші оберти. Єдиний справжній вихід — не вгору і не вниз, а вбік: у просвітлення, в нірвану.</p>
+  </div>
+
+  <!-- Кшитігарбга -->
+  <div class="section" style="animation-delay:2.3s">
+    <h2 class="section-title">Той, хто спускається в пекло сам</h2>
+    <p>І в цій картині є несподівано ніжний персонаж. Бодгісатви — просвітлені істоти, які дали обітницю не йти в нірвану, доки залишається хоч одна страждальна істота; вони існують у духовній формі, допомагають людям і чують їхні прохання.</p>
+    <p>Кшитігарбга — особливо шанований бодгісатва в Китаї та Японії. За однією з сутр, це була дівчина з брахманської родини: коли померла її мати, вона так побивалася, що Будда показав їй — своїми сльозами вона вже звільнила матір з пекла. Але, побачивши, скільки істот там лишається, дівчина пообіцяла не йти в нірвану, доки в пеклі страждає бодай хтось. За іншими сутрами, ту саму обітницю дав буддійський монах.</p>
+    <p>У Японії та Китаї до Кшитігарбги звертаються насамперед по допомогу дітям — тим, що померли рано, від хвороб чи не встигнувши народитися. Це образ милосердя, яке не судить згори, а спускається вниз: затулити собою всі пекла, щоб ніхто не мучився.</p>
+  </div>
+
+  <div class="section" style="animation-delay:2.4s">
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Якби жоден вирок не був вічним — ні винесений тобі, ні той, що ти винесла собі сама, — кого б ти відпустила першою?</div>
+    </div>
+  </div>
+
+  <!-- Фінал -->
+  <div class="section" style="animation-delay:2.5s">
+    <h2 class="section-title">Що з цим взяти</h2>
+    <p>Можна не вірити ні в перевтілення, ні в шістнадцять поверхів — і все одно забрати звідси головне. Пекло, у якому немає судді, — це стан, а не місце. Демон, який існує рівно доти, доки ти його годуєш, — це страх. А мука, яка здається вічною, має термін — просто зсередини його не видно.</p>
+    <p>Практика, якою буддизм вчить дивитися на власний потік думок, — у <a href="vipassana.html">Віпассані</a>. Про страх, що стоїть за всіма пеклами одразу, — у <a href="mortality.html">Страху смерті</a>. А як ту саму роботу — пояснити світ без готових відповідей — робила європейська думка, — в <a href="philosophy.html">Усій філософії</a>.</p>
+    <div class="final-quote">
+      <div class="final-text">У буддизмі шістнадцять пекел, і в кожному хтось сидить. <strong>Але жодні двері там не замкнені назавжди — вони просто дуже довго відчиняються.</strong> А істота, що тримає колесо, слабшає щоразу, коли ти впізнаєш у ній власне невігластво.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
