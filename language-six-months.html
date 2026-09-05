@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Мова за шість місяців</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,140,80,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(52,58,94,.65);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:11px;font-weight:200;letter-spacing:.5em;color:rgba(52,58,94,.65);text-transform:uppercase;margin-bottom:12px;opacity:0;animation:riseIn 1s .7s ease forwards}
+.page-years{text-align:center;font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:18px;color:#7a5410;margin-bottom:64px;opacity:0;animation:riseIn 1s .8s ease forwards;letter-spacing:.1em}
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:18px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#5261c2;box-shadow:0 0 12px rgba(82,97,194,.6)}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#7a5fbe;text-decoration:none;border-bottom:1px solid rgba(122,95,190,.45);transition:border-color .3s}
+.section p a:hover{border-bottom-color:rgba(122,95,190,.9)}
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:10px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(52,58,94,.58)}
+.timeline{position:relative;padding-left:24px;margin-top:20px}
+.timeline::before{content:'';position:absolute;left:6px;top:8px;bottom:8px;width:1px;background:linear-gradient(to bottom,rgba(82,97,194,.45),rgba(148,103,23,.3),rgba(122,95,190,.15))}
+.tline{position:relative;margin-bottom:28px;padding-left:20px}
+.tline::before{content:'';position:absolute;left:-22px;top:6px;width:11px;height:11px;border-radius:50%;background:#5261c2;box-shadow:0 0 12px rgba(82,97,194,.5)}
+.tyear{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:#3f4a9e;letter-spacing:.06em;margin-bottom:6px}
+.tevent{font-size:13.5px;font-weight:300;line-height:1.8;color:rgba(36,40,68,.86)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(82,97,194,.35),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+.card.ok{border-color:rgba(150,214,165,.35)}
+.card.ok::before{background:linear-gradient(to right,transparent,rgba(150,214,165,.5),transparent)}
+.card.bad{border-color:rgba(224,150,150,.32)}
+.card.bad::before{background:linear-gradient(to right,transparent,rgba(224,150,150,.45),transparent)}
+.card-label{font-size:9.5px;font-weight:400;letter-spacing:.3em;text-transform:uppercase;margin-bottom:10px;display:block}
+.card.ok .card-label{color:#1f7a4d}
+.card.bad .card-label{color:#b23c2e}
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:26px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(82,97,194,.35),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:26px;flex-shrink:0;width:34px;text-align:center}
+.phrase-word{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:19px;line-height:1.4;color:rgba(36,40,68,.97);margin-bottom:8px}
+.phrase-text{font-family:'Montserrat',sans-serif;font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.88)}
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(52,58,94,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:#946717}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.quote-block .qa{font-size:10px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;color:#7a5410}
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:10px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(52,58,94,.5);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,34px);color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:640px;margin:0 auto}
+.final-text strong{font-weight:400;color:#946717}
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:#7a5fbe;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,#7a5fbe,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.75);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:#2c2c2c}
+.read-toggle.active{background:rgba(212,175,110,.16);border-color:rgba(212,175,110,.55);color:#7a5410}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="language.html">← Вивчення мови</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Мова за шість місяців</h1>
+  <p class="page-subtitle">П'ять принципів і сім дій</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Занурення саме по собі не працює. Інакше кожен, хто десять років прожив за кордоном, говорив би вільно"</div>
+    </div>
+    <p>Психолог, який приїхав до Китаю 1981 року, коли вважалося, що європейцеві потрібно років десять, щоб сяк-так заговорити китайською. Через шість місяців він говорив вільно. Далі він двадцять років спостерігав за тими, у кого виходить, і за тими, у кого ні, — і зібрав із цього п'ять принципів і сім конкретних дій.</p>
+    <p>Головне в цій системі не швидкість, а те, що вона пояснює найпоширенішу поразку: чому людина, яка роками живе в мовному середовищі або роками ходить на курси, так і не починає говорити.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Два міфи -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Два міфи, які треба зняти першими</h2>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🧬</span>
+        <div class="card-title">«Потрібні здібності до мов»</div>
+        <div class="card-text">Історія жінки, яка приїхала з Австралії до Нідерландів і роками не могла подужати нідерландську. Оточення пояснювало це просто: немає таланту, кинь. Потім вона переїхала до Бразилії, спробувала інакше — і за шість місяців заговорила португальською. Змінилися не здібності. Змінився спосіб.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌍</span>
+        <div class="card-title">«Достатньо потрапити в середовище»</div>
+        <div class="card-text">Найпоширеніша ілюзія. Іноземці, які прожили в Гонконзі десять років і не говорять китайською. Люди, які по двадцять років живуть у США чи Канаді й не говорять англійською. Занурення в потік, якого ти не розумієш, — це просто шум. Мозок не витягує структуру з того, у чому не бачить змісту.</div>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <p><em>І одразу про чесний масштаб задачі.</em> Шість місяців — це не «між справами». Це щоденна робота по кілька годин: американський Інститут дипломатичної служби рахує від приблизно 600–750 годин занять для близьких мов на кшталт іспанської чи французької до 2200 годин для китайської, японської чи арабської. Розділи будь-яке з цих чисел на шість місяців — і побачиш, у чому насправді полягає метод. Він не скорочує кілометраж. Він прибирає з нього все, що не працює.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- П'ять принципів -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">П'ять принципів</h2>
+    <p>Принципи — це те, чому щось працює. Дії — те, що робити руками. Спершу принципи, бо без них дії перетворюються на набір порад із інтернету.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">🎯</span>
+        <div>
+          <div class="phrase-word">1 · Зосереджуйся на тому, що доречне саме тобі</div>
+          <div class="phrase-text">Увага йде туди, де є особистий сенс, а пам'ять тримає те, на що була увага. Тому мова, потрібна тобі для конкретного життя — роботи, спілкування, переїзду, — вчиться в рази швидше за абстрактну «англійську взагалі». Показова історія: людина дев'ять місяців двічі на тиждень училася швидко набирати текст китайською і не навчилася — а коли з'явилася робоча необхідність, освоїла це за дві доби.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🔨</span>
+        <div>
+          <div class="phrase-word">2 · Використовуй мову як інструмент із першого дня</div>
+          <div class="phrase-text">Не «спочатку вивчу, потім говоритиму», а навпаки. Автор методу провів вісім годин у вагоні-ресторані, спілкуючись із провідником малюнками, жестами й мімікою, не знаючи жодного китайського слова. Через два тижні почав розуміти шматки чужих розмов навколо, не роблячи для цього нічого спеціального.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🧠</span>
+        <div>
+          <div class="phrase-word">3 · Коли розумієш зміст — засвоюєш мову несвідомо</div>
+          <div class="phrase-text">Це не метафора, а те, що в лінгвістиці називають зрозумілим вхідним матеріалом (comprehensible input) і досліджують уже кілька десятиліть — насамперед у роботах Стівена Крашена. Суть: мова засвоюється не тоді, коли ти вивчаєш правила, а тоді, коли розумієш повідомлення, трохи складніші за твій поточний рівень. Тести після такого навчання виходять кращими, ніж після граматичних курсів. Вивчення мови — це не про обсяг знань, а про кількість зрозумілого.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">👂</span>
+        <div>
+          <div class="phrase-word">4 · Це фізіологічне тренування, а не тільки розумове</div>
+          <div class="phrase-text">Жінка з Тайваню мала відмінні оцінки з англійської в школі й коледжі, а приїхавши до США, не розбирала усного мовлення настільки, що її питали, чи вона не глуха. Вона й була глуха до англійської: мозок відфільтровує звуки, яких немає в рідній мові, і того, чого ти не чуєш, ти не можеш вивчити. Друга половина — рот: у мовленні задіяно понад чотири десятки лицевих м'язів, і їх треба скоординувати заново. Якщо після кількох днів практики болить обличчя — це нормально, це те саме, що м'язовий біль після тренування.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🌤️</span>
+        <div>
+          <div class="phrase-word">5 · Стан вирішує швидкість</div>
+          <div class="phrase-text">У роздратуванні, тривозі, злості чи соромі навчання практично зупиняється. У спокої, цікавості й розслабленості йде в рази швидше. Найпрактичніший наслідок: навчися спокійно витримувати неповне розуміння. Той, кому психологічно необхідно розуміти сто відсотків, живе в постійному відчутті провалу. Той, хто тримається за зрозумілі двадцять відсотків, розслабляється — і завтра розуміє тридцять.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Сім дій -->
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Сім дій</h2>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">🎧</span>
+        <div>
+          <div class="phrase-word">1 · Багато слухай — «просочування мозку»</div>
+          <div class="phrase-text">Оточи себе мовою незалежно від того, розумієш ти її чи ні. Мета на цьому етапі не зміст, а форма: ритм, мелодія, довжина фраз, звороти, які повторюються постійно. Мозок збирає структуру задовго до того, як ти навчишся розбирати слова.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🖐️</span>
+        <div>
+          <div class="phrase-word">2 · Спершу лови зміст, а не слова</div>
+          <div class="phrase-text">Розуміння приходить раніше за словниковий запас — через жести, міміку, ситуацію, інтонацію. Тіло говорить величезну частину того, що людина хоче сказати. Зрозуміла ситуація без жодного зрозумілого слова — це вже той самий «зрозумілий вхід», з якого мова й будується.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🧱</span>
+        <div>
+          <div class="phrase-word">3 · Починай складати слова якнайраніше</div>
+          <div class="phrase-text">Десять дієслів, десять іменників і десять прикметників дають тисячу можливих комбінацій. Мова — це не список готових фраз, це конструктор. Маленькі діти говорять «мені», «ванна», «зараз» — і їх чудово розуміють. Мета на старті не правильність, а працездатність.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🎛️</span>
+        <div>
+          <div class="phrase-word">4 · Бери ядро мови, а не всю мову</div>
+          <div class="phrase-text">Тисяча найуживаніших слів покриває близько 85% побутового спілкування, три тисячі — близько 98%. Три тисячі слів — це вже «я говорю цією мовою»; усе решта надбудовується потім і саме собою.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">👨‍👩‍👧</span>
+        <div>
+          <div class="phrase-word">5 · Знайди собі «мовних батьків»</div>
+          <div class="phrase-text">Не вчителя й не співрозмовника, а людину, яка поводиться з тобою так, як батьки з дитиною, що вчиться говорити. Це окрема роль із чіткими правилами — вони нижче.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">👄</span>
+        <div>
+          <div class="phrase-word">6 · Копіюй обличчя</div>
+          <div class="phrase-text">Дивись, як рухається обличчя носія, коли він говорить, і давай тілу повторювати це без аналізу. Це замикає петлю між тим, що ти чуєш, і тим, що робить твій рот. Якщо живого носія поруч немає — годяться відео з великим планом обличчя й тренування на групах схожих звуків.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🔌</span>
+        <div>
+          <div class="phrase-word">7 · Підключай слова напряму до образів</div>
+          <div class="phrase-text">Не «fire = вогонь», а fire — і одразу запах диму, тріск, тепло, картинка полум'я. Переклад ставить між тобою і словом зайвий крок, який доводиться проходити щоразу. Пряме підключення веде до тієї самої «шухляди» в пам'яті, тільки іншою дорогою — і з практикою ця дорога стає миттєвою.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Мовні батьки -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Хто такі «мовні батьки»</h2>
+    <p>Найнедооціненіша частина методу. Мовний батько — це не той, хто добре знає мову, а той, хто вміє поводитися певним чином. Чотири правила:</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🧩</span>
+        <div class="card-title">Старатися зрозуміти</div>
+        <div class="card-text">Докладати справжніх зусиль, щоб уловити, що ти хотіла сказати, навіть коли сказано криво. Не «не розумію» — а спроба здогадатися.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🚫</span>
+        <div class="card-title">Не виправляти</div>
+        <div class="card-text">Жодних поправок посеред фрази. Виправлення зупиняє мовлення й вмикає сором — а разом із ним той самий стан, у якому навчання не йде.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔁</span>
+        <div class="card-title">Переказувати правильно</div>
+        <div class="card-text">Замість виправлення — переформулювати почуте вголос своїми словами, і саме тими, які ти вже знаєш. Так ти чуєш правильний варіант і можеш на нього відповісти.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🪞</span>
+        <div class="card-title">Давати дивитися на обличчя</div>
+        <div class="card-text">Говорити повернувшись до тебе, не поспішаючи, дозволяючи копіювати артикуляцію. Це та сама шоста дія, тільки з іншого боку.</div>
+      </div>
+    </div>
+
+    <p style="margin-top:24px">І одне попередження з практики: партнер або чоловік на цю роль підходить погано. Занадто близька дистанція, занадто багато історії, занадто велика спокуса виправити або пожартувати.</p>
+  </div>
+
+  <!-- План -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Перший місяць по тижнях</h2>
+    <p>Конкретний порядок, у якому набирається стартовий набір інструментів.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">1️⃣</span>
+        <div>
+          <div class="phrase-word">Тиждень 1 · Фрази, які тримають розмову</div>
+          <div class="phrase-text">«Як це сказати?», «я не розумію», «повторіть, будь ласка», «повільніше», «що це означає?». Це не ввічливість — це інструменти, які дозволяють залишатися в розмові, коли ти ще нічого не знаєш. Без них будь-яка розмова обривається на першому незрозумілому слові.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">2️⃣</span>
+        <div>
+          <div class="phrase-word">Тиждень 2 · Мова дворічної дитини</div>
+          <div class="phrase-text">Найпростіші займенники, іменники, дієслова, прикметники: я, ти, це, хотіти, іти, мати, гарячий, великий, зараз. Тридцять-сорок слів, з яких уже складаються сотні працездатних фраз.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">3️⃣</span>
+        <div>
+          <div class="phrase-word">Тижні 3–4 · Зв'язки між думками</div>
+          <div class="phrase-text">Але, тому що, хоча, отже, якщо, замість того щоб. Саме сполучники перетворюють набір коротких реплік на складну думку — і саме тут із «дитячого» мовлення раптом виходить доросле, ще на дуже маленькому словнику.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що це змінює -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Що з цього випливає на практиці</h2>
+    <p>Метод легше зрозуміти через те, що він скасовує.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">📕</span>
+        <div class="card-title">Граматика на старті — не потрібна</div>
+        <div class="card-text">Не «шкідлива», а передчасна. Правила добре лягають на мову, яку ти вже чуєш і відчуваєш, і майже не лягають на порожнє місце. Спершу зрозумілий матеріал, потім упорядкування.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🃏</span>
+        <div class="card-title">Списки слів із перекладом — слабкий інструмент</div>
+        <div class="card-text">Вони будують зв'язок «слово — слово» замість «слово — образ». Той самий час, витрачений на слухання й на живі ситуації, дає більше.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🕰️</span>
+        <div class="card-title">Двічі на тиждень по годині — не працює</div>
+        <div class="card-text">Не тому, що мало часу взагалі, а тому, що між заняттями все встигає вивітритися. Щоденний контакт із мовою за той самий тижневий обсяг дає принципово інший результат.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">😳</span>
+        <div class="card-title">Сором — головна технічна перешкода</div>
+        <div class="card-text">Це не питання характеру. Стан, у якому ти боїшся звучати смішно, фізіологічно блокує засвоєння — той самий п'ятий принцип. Тому «мовні батьки», які не виправляють, важливіші за хорошого викладача.</div>
+      </div>
+    </div>
+
+    <p style="margin-top:24px">Решта родини матеріалів про мову: <a href="language-start.html">З чого почати</a>, <a href="language-brain.html">Як мозок вчить мови</a>, <a href="language-methods.html">Методи, які працюють</a>, <a href="language-mistakes.html">Типові помилки</a> і <a href="language-motivation.html">Мотивація і прогрес</a>.</p>
+  </div>
+
+  <div class="section" style="animation-delay:1.55s">
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Ти вчиш мову — чи готуєшся її вчити?</div>
+    </div>
+  </div>
+
+  <!-- Фінал -->
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">Замість висновку</h2>
+    <p>У цій системі немає жодної таємної техніки. Є перестановка порядку: спершу зміст, потім слова; спершу говорити, потім правильно; спершу вуха й обличчя, потім підручник; спершу те, що потрібно тобі, потім усе інше.</p>
+    <p>І є одна річ, яку легко пропустити за списками й тижнями. Усе тут будується навколо стану, у якому ти не боїшся бути незрозумілою. Людина, яка спокійно каже «я не зрозуміла, повтори», вчиться швидше за ту, яка знає більше слів і мовчить.</p>
+
+    <div class="final-quote">
+      <div class="final-text">Мова вивчається не тоді, коли ти запам'ятовуєш, — <strong>а тоді, коли ти щось зрозуміла</strong>. Тому головне питання щодня одне: скільки сьогодні було зрозумілого?</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
