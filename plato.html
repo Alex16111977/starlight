@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Платон</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,140,80,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(52,58,94,.65);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:11px;font-weight:200;letter-spacing:.5em;color:rgba(52,58,94,.65);text-transform:uppercase;margin-bottom:12px;opacity:0;animation:riseIn 1s .7s ease forwards}
+.page-years{text-align:center;font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:18px;color:#7a5410;margin-bottom:64px;opacity:0;animation:riseIn 1s .8s ease forwards;letter-spacing:.1em}
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:18px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#5261c2;box-shadow:0 0 12px rgba(82,97,194,.6)}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a,.card-text a,.phrase-text a{color:#7a5fbe;text-decoration:none;border-bottom:1px solid rgba(122,95,190,.45);transition:border-color .3s}
+.section p a:hover,.card-text a:hover,.phrase-text a:hover{border-bottom-color:rgba(122,95,190,.9)}
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:10px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(52,58,94,.58)}
+.timeline{position:relative;padding-left:24px;margin-top:20px}
+.timeline::before{content:'';position:absolute;left:6px;top:8px;bottom:8px;width:1px;background:linear-gradient(to bottom,rgba(82,97,194,.45),rgba(148,103,23,.3),rgba(122,95,190,.15))}
+.tline{position:relative;margin-bottom:28px;padding-left:20px}
+.tline::before{content:'';position:absolute;left:-22px;top:6px;width:11px;height:11px;border-radius:50%;background:#5261c2;box-shadow:0 0 12px rgba(82,97,194,.5)}
+.tyear{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:#3f4a9e;letter-spacing:.06em;margin-bottom:6px}
+.tevent{font-size:13.5px;font-weight:300;line-height:1.8;color:rgba(36,40,68,.86)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(82,97,194,.35),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:26px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(82,97,194,.35),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:26px;flex-shrink:0;width:34px;text-align:center}
+.phrase-word{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:19px;line-height:1.4;color:rgba(36,40,68,.97);margin-bottom:8px}
+.phrase-text{font-family:'Montserrat',sans-serif;font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.88)}
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(52,58,94,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:#946717}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.quote-block .qa{font-size:10px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;color:#7a5410}
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:10px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(52,58,94,.5);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,34px);color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:640px;margin:0 auto}
+.final-text strong{font-weight:400;color:#946717}
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:#7a5fbe;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,#7a5fbe,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.75);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:#2c2c2c}
+.read-toggle.active{background:rgba(212,175,110,.16);border-color:rgba(212,175,110,.55);color:#7a5410}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="philosophy.html">← Уся філософія</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Платон</h1>
+  <p class="page-subtitle">Драматургія думки</p>
+  <div class="page-years">428/427 — 348/347 до н.е.</div>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Він міг залишити по собі догму. Натомість залишив запитання, які досі не дають спокою"</div>
+      <div class="hero-author">За лекцією Микити Добрякова</div>
+    </div>
+    <p>Платона прийнято переказувати як список тез: є світ ідей, є світ речей, перший справжній, другий — лише тінь. Зручно для підручника — і майже нічого не каже про самого Платона. Жодних «двох світів» у нього насправді немає: це один цілісний космос, як і весь давньогрецький космос загалом.</p>
+    <p>Платон не намагався залишити по собі догму. Він сам був категорично проти перетворення філософії на набір готових тез. Якби хотів — написав би трактат. Натомість — нескінченні діалоги, які часто нікуди не приводять, і роздуми, що обриваються на півслові. Це не недолік викладу. Це і є його відповідь на питання, чим філософія є насправді: не змістом, а шляхом.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Витоки -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Три голоси до нього</h2>
+    <p>Революція можлива лише на плечах традиції — спершу її треба зрозуміти, а вже потім перевернути. Платон полемізує одразу з кількома попередниками і кожного водночас спростовує й привласнює. Троє дали найбільше.</p>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🌊</span>
+        <div class="card-title">Геракліт</div>
+        <div class="card-text">Усе тече, усе змінюється: чуттєвий світ — нескінченний потік становлення, який ніколи не застигає в остаточній формі. Тятива й держак бойового лука тягнуть у різні боки, борються — і саме ця боротьба тримає лук цілим. Платон бере звідси образ фізичної реальності: плинної, мінливої, несамостійної.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚖️</span>
+        <div class="card-title">Парменід</div>
+        <div class="card-text">Розрізнення між тим, що існує по-справжньому, і тим, що лише здається, не несучи за собою істинного буття. Це розрізнення ляже в основу всієї онтології Платона: є справжнє буття — і є лише його видимість.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔢</span>
+        <div class="card-title">Піфагор</div>
+        <div class="card-text">Найбільший вплив із трьох. Спочатку існують числа, з чисел проявляються фігури, з фігур — сама чуттєва річ: щоб побачити предмет прямокутним, потрібне поняття «чотирикутності», а йому передує число чотири. Звідси й упевненість, що існують позачасові істини — абстрактному трикутнику відповідають тисячі конкретних, а абстрактній красі чи справедливості — безліч чуттєвих проявів.</div>
+      </div>
+    </div>
+    <div class="highlight">
+      <p><em>Побічний штрих про грецьку культуру.</em> У гармонійному космосі, де кожній речі визначене своє місце, людина власного місця часто не знає — і легко посідає чуже або не знаходить свого за все життя. Звідси й сократівський заклик «пізнай самого себе»: не заклик до самоаналізу в сучасному сенсі, а вказівка шукати своє місце в порядку речей.</p>
+    </div>
+  </div>
+
+  <!-- Софісти й Сократ -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Софісти й Сократ: точка відштовхування</h2>
+    <p>Софісти — платні вчителі риторики, головного мистецтва тогочасних Афін, де навіть суд вирішувався змаганням двох аргументованих позицій. Їхня філософська основа: абсолюту не існує, будь-яка думка істинна настільки, наскільки вона аргументована, — «людина є мірою всіх речей». Платон усе життя веде діалог саме із софістами, хоча водночас визнає їх «першими просвітителями», що зробили знання доступним для дорослих людей.</p>
+    <p>У Сократа він бере метод, а не готові висновки. Головне відкриття Сократа — не теза, а прийом: знайти людину, впевнену, що вона щось знає, і запитаннями підвести її до зіткнення з власним незнанням. Себе він порівнював із повитухою — вона допомагає народити думку, але сама її не народжує. Про сам метод і думки, які під його іменем ходять досі, — окрема сторінка: <a href="socrates.html">Сократ</a>.</p>
+    <p>Ключове тут слово — доброчесність, і в давнього грека воно означає геть не те, що в нас. Не «бути хорошим» в етичному сенсі, а бути тим, ким тобі призначено бути за власною природою, — «добротність» речі щодо її призначення. Сократ вірив, що абсолютна доброчесність існує і до неї можна рухатися, хоча сам ніколи не міг сформулювати її остаточно. Саме цей вектор — рух від незнання до знання, віру в існування абсолютної істини — Платон і перейме, перетворивши на цілісну систему.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Три періоди -->
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Три періоди — і як їх читати</h2>
+    <p>Платон — один із небагатьох давньогрецьких філософів, чий корпус текстів дійшов до нас майже повністю. Щоб не загубитися в ньому, зручно тримати в голові просту схему.</p>
+    <div class="timeline">
+      <div class="tline">
+        <div class="tyear">Ранні діалоги · «Апологія Сократа», «Критон», «Евтифрон»</div>
+        <div class="tevent">Сократ знаходить співрозмовника, ставить питання, спростовує визначення — і найчастіше діалог нікуди не приводить, обривається без позитивного висновку. Це не недолік: сам рух думки й розвінчання ілюзії знання цінні самі по собі. Ці тексти тісно пов'язані з роздумами про останні дні й страту самого Сократа.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">Зрілий період · «Пір», «Держава», «Федр», «Федон», «Теетет»</div>
+        <div class="tevent">Вершина творчості: філігранна композиція, витончена побудова «народження думки» — і вже не лише спростування, а й змістовні висновки про структуру пізнання.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">Пізні діалоги · «Тімей», «Софіст», «Політик», «Закони», «Парменід»</div>
+        <div class="tevent">Теоретичного змісту більше, живої драматургії менше — тексти наближаються до трактатів. У пізньому «Парменіді» Платон сам жорстко критикує власну теорію ідей: не відмова від поглядів, а спосіб перевірити власну філософію на міцність найжорсткішою критикою з можливих.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Чому діалог -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Чому діалог, а не трактат</h2>
+    <p>Уся попередня традиція — епос, трагедія, натурфілософські поеми — або описувала реальність, або прямо, монологічно транслювала погляд автора на світ. У Платона немає жодного прямого викладу на кшталт «ось так я бачу справедливість». Натомість — ретельно виписана мізансцена: хто, звідки, з ким зустрівся. А самі персонажі найчастіше не говорять тут-і-зараз, а пригадують розмову з минулого, у якій хтось згадує ще давнішу розмову. Виникає своєрідна матрьошка опосередкувань.</p>
+    <div class="highlight">
+      <p><em>Це не стилістична примха.</em> За Платоном, істину неможливо промовити напряму — вона завжди дається опосередковано, так само, як сутності речей ніколи не дані нам напряму в чуттєвому світі. Людина за визначенням перебуває в ситуації опосередкованості стосовно істини. А щойно індивідуальний досвід пізнання намагаються передати словами, він неминуче перетворюється на щось загальне — тому проста монологічна заява не працює. Працює лише жива розмова, суперечка, спільний пошук.</p>
+    </div>
+    <p style="margin-top:22px">Є й другий шар сенсу. Діалогічна форма показує, що думка — це рух, а не стан. Справжній філософ ніколи не осідає на здобутому знанні, а весь час рухається — до ідей і назад, ніколи не володіючи істиною остаточно. А той, хто перестає рухатися й просто носить свої старі ідеї, як речі під час переїзду, — втрачає критичну рефлексію і перестає бути філософом.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Печера -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Міф про печеру</h2>
+    <p>Платон загалом ставиться до міфу насторожено — він прагне замінити міфологічну картину світу раціональним, діалектичним міркуванням. І все ж вдається до міфу як до інструмента ілюстрації, і найвідоміший такий інструмент лежить у самому серці «Держави».</p>
+    <p>У великій печері до стіни від дитинства до старості прикуті люди — дивитися вони можуть лише на протилежну стіну. Позаду них проходить дорога, якою рухаються носії табличок — силуетів предметів, а ще далі горить багаття. Світло багаття відкидає на стіну лише тіні від табличок, і в'язні, ніколи не бачивши нічого іншого, вважають ці тіні єдиною реальністю.</p>
+    <p>Один із в'язнів звільняється. Бачить усю структуру печери — інших прикутих, носіїв табличок, вогонь, — а тоді виходить назовні, де світить сонце. Шлях цей поступовий: спершу очі здатні дивитися лише на відображення, наприклад у воді, і тільки згодом — прямо на сонце, тобто на саму істину.</p>
+    <div class="quote-block">
+      <p>Досягнувши світла, людина обов'язково повертається назад у печеру — пояснити іншим, що те, що вони бачать, лише тіні.</p>
+      <div class="qa">За мотивами «Держави», книга VII</div>
+    </div>
+    <p>Платон розуміє, чим це загрожує: того, хто повернувся, зустрінуть із презирством і назвуть його слова безумством. До того ж очі, які звикли до сонця, тимчасово гірше розрізняють тіні в темряві — тому філософ виглядає безпорадним у буденних речах. Але з часом, коли зір знову адаптується, він бачить ті самі тіні вже зовсім інакше.</p>
+    <div class="highlight">
+      <p><em>Міф працює одразу на двох рівнях.</em> Це візуалізація онтології: світ чуттєвих речей і світ сутностей, де перший лише тінню відображає другий. І водночас метафора самого філософського шляху: звільнення від ілюзорності чуттів, сходження до істини — і обов'язкове, онтологічно необхідне повернення, щоб спробувати передати побачене іншим.</p>
+    </div>
+  </div>
+
+  <!-- Пригадування -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Пригадування замість навчання</h2>
+    <p>Проблема, яку розв'язує Платон, успадкована від Геракліта: з хаотичного потоку чуттєвих змін неможливо вивести жодної безумовної істини — є лише ситуативна, контекстуальна «правильність». Платон вибудовує драбину пізнання: унизу — чуттєвий світ і думка (сюди ж потрапляє мистецтво — воно, на його думку, лише подвоює тіні, не сягаючи самої сутності); вище — математика, яка вже вимагає абстрагування; на вершині — ідеї, сутнісні першооснови реальності.</p>
+    <p>Проблема ілюструється просто. Досліджуючи безліч добрих учинків, ти бачиш лише варіанти прояву — а щоб оцінити, чи вчинок добрий, потрібно вже знати сам критерій добра. Вивести цей критерій із самої чуттєвості неможливо. Так само не можна зрозуміти, що таке чашка взагалі, просто порівнюючи тисячі конкретних чашок, — потрібно вже осягати те єдине, що передує їм усім.</p>
+    <p>Звідки ж тоді це знання, якщо не з досвіду? У діалозі «Менон» Сократ проводить із хлопчиком-рабом, який ніколи не вчив геометрії, уявний експеримент із квадратом — і хлопчик самостійно доходить правильного висновку, щойно починає міркувати про квадрат як абстрактну сутність, а не намальовану фігуру. Звідси висновок: істина вже присутня в людині, у потенційному стані, — її потрібно не здобути, а пригадати. Усі люди причетні до істини, інакше взагалі не могли б розуміти одне одного, — просто забули про це.</p>
+    <div class="highlight">
+      <p><em>Це теорія пригадування, анамнезис.</em> Душа, спочатку володіючи повнотою істини, народжуючись у тілі, забуває все, що знала, — і завдання людини впродовж життя пригадати це знання. З цього прямо випливає необхідність безсмертя душі: якщо душа не безсмертна, уся конструкція втрачає підстави — зникає сама причина вважати, що ми хоч якось причетні до істини.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Репетиція смерті -->
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">Філософія як репетиція смерті</h2>
+    <p>У «Федоні» Платон описує філософію як постійну підготовку до смерті: філософ прагне подолати власну тілесність заради інтелектуального споглядання того, що не стає, а є. Звідси логічний наслідок — коли тіло вмирає, душа повертається до безпосереднього сприйняття істини: смерть виявляється звільненням із печери, а не її протилежністю.</p>
+    <p>При цьому Платон рішуче проти самогубства. Завдання філософа — долати тілесність процесуально, крок за кроком, усе життя, а не обірвати шлях одним актом. Філософ ніби весь час репетирує смерть, наближаючись до неї, — але остаточне подолання тілесності настає лише в самій смерті.</p>
+  </div>
+
+  <!-- Ерос -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Ерос: сходження любові</h2>
+    <p>У «Бенкеті» ту саму ідею — рух, а не володіння — Платон розкриває через образ Ероса. Учасники бенкету по черзі виголошують промови про кохання, і кульмінацією стає промова Сократа: Ерос — не той, хто володіє прекрасним, а той, хто до нього прагне. Прагнення за визначенням означає відсутність володіння метою прагнення. Звідси й сама назва «філософія» — любов до мудрості, тобто прагнення, а не володіння нею.</p>
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">💫</span>
+        <div>
+          <div class="phrase-word">Тіло однієї людини</div>
+          <div class="phrase-text">Перший щабель: пристрасть до конкретної краси — найчуттєвіший і найменш стійкий різновид любові.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🌐</span>
+        <div>
+          <div class="phrase-word">Тілесність узагалі</div>
+          <div class="phrase-text">Друга сходинка: помітити, що краса одного тіла — лише окремий прояв краси як такої, спільної для багатьох.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🫂</span>
+        <div>
+          <div class="phrase-word">Душа людини</div>
+          <div class="phrase-text">Третя: краса вчинку чи характеру важить більше за красу форми — і триває довше за неї.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">✨</span>
+        <div>
+          <div class="phrase-word">Духовність як така</div>
+          <div class="phrase-text">Вершина: любов до самої ідеї прекрасного, уже не прив'язана до жодної конкретної людини.</div>
+        </div>
+      </div>
+    </div>
+    <p style="margin-top:22px">У тому ж діалозі — три щаблі безсмертя, до якого прагне людина: біологічне (діти), соціальне (закони, спільноти, ідеї) і найвище — філософське споглядання ідей.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Душа -->
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Душа: три частини</h2>
+    <p>Ідея — вічна й незмінна, вона пізнається. Душа, навпаки, сама є тим, що пізнає, — енергія, рух, а не спокійна сутність (у пізнього Платона з'являється навіть світова душа, яка приводить у рух усю фізичну реальність). Людська душа складається з трьох частин: мислячої, емоційно-чуттєвої та афективної, «яростної». Безсмертна, найімовірніше, лише розумна частина — саме вона здатна торкатися світу ідей і зберігати те, що належить пригадати. Жагуча, тілесна частина проявляється лише в межах чуттєвого світу і разом із тілом зникає.</p>
+  </div>
+
+  <!-- Ідея блага -->
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Ідея блага: сонце, яке не видно</h2>
+    <p>Драбина Платона не закінчується на ідеях — постає питання, чому самі ідеї взагалі причетні до буття. Відповідь — ідея блага, яку Платон найчастіше порівнює із сонцем: подібно до того, як спалахнуле в темній кімнаті світло вперше дає побачити предмети такими, якими вони є, ідея блага є першоосновою, завдяки якій усі інші ідеї можуть узагалі існувати.</p>
+    <p>Благо, немов сонце, вивільняє окремі ідеї, які, своєю чергою, проявляють себе у фізичному світі. Завдання філософа — рухатися цим шляхом в обидва боки: і споглядаючи чуттєві прояви, і прагнучи через інтелектуальне споглядання дійти до самої ідеї блага.</p>
+    <div class="highlight">
+      <p><em>Ідея тут — не людське узагальнення чи поняття в голові</em>, а щось, що існує онтологічно, незалежно від людської свідомості й до самого чуттєвого світу: без ідей чуттєвий світ узагалі не міг би існувати. Кожна ідея виконує одразу три функції — вона причина буття речі, зразок, за яким річ проявляється, і мета, до якої річ прагне, ніколи не досягаючи її повністю, бо річ завжди лише тінь. Матерія — протилежність ідеї: сама можливість просторового відокремлення речей одна від одної, безформна сама собою. Є ідея ліжка — інтелектуальне визначення того, для чого воно призначене, — і є ремісник, який, навіть не рефлексуючи цю сутність свідомо, наближає конкретний виріб до цього ідеалу.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Держава -->
+  <div class="section" style="animation-delay:2s">
+    <h2 class="section-title">Держава: справедливість дорівнює щастю</h2>
+    <p>«Держава» — квінтесенція всієї філософії Платона: тут сходяться і міф про печеру, і теорія ідей. Формально йдеться про пошук визначення справедливості. Але Платона цікавить не абстрактна дефініція сама собою, а зв'язок справедливості зі щастям — хто живе щасливіше, справедлива людина чи несправедлива. Коли перші спроби визначити справедливість напряму провалюються, Сократ пропонує пошукати її прояв у чомусь більшому — у справедливій державі. (Як саме влаштована ця держава — три стани, філософи-правителі без приватної власності — уже в <a href="philosophy.html">Усій філософії</a>.)</p>
+    <p>Висновок діалогу: справедлива людина — щаслива людина, а найсправедливіша й найщасливіша з усіх — філософ. Не тому, що йому щастить, а тому, що він не підкоряється суперечливій логіці чуттєвості: приборкує свою бажаючу природу і піднімається до споглядання ідей, яке одне й дає душі рівновагу.</p>
+  </div>
+
+  <div class="section" style="animation-delay:2.1s">
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Скільки з твоїх переконань ти дійсно перевіряла — а скільки просто носиш зі собою, як речі під час переїзду, тому що звикла, а не тому що засвідчила?</div>
+    </div>
+  </div>
+
+  <!-- Фінал -->
+  <div class="section" style="animation-delay:2.2s">
+    <h2 class="section-title">Що з цього лишається</h2>
+    <p>Можна не поділяти жодної з цих тез — ні безсмертя душі, ні світу ідей — і все одно забрати найважливіше. Філософія в Платона — не назва для запам'ятованих відповідей, а слово для процесу: рухатися до світла, знаючи, що ніколи не досягнеш його остаточно, і все одно повертатися розповісти іншим, що бачив дорогою.</p>
+    <p>Про те, з чого це виросло і куди пішло далі — від Фалеса до Леніна, — в <a href="philosophy.html">Усій філософії</a>. Про людину, чий голос Платон позичив для більшості своїх діалогів, — <a href="socrates.html">Сократ</a>.</p>
+    <div class="final-quote">
+      <div class="final-text">Він написав тисячі сторінок — і жодної від першої особи. <strong>Може, це і є найточніша відповідь на питання, чим є істина: тим, що ніколи не говориться напряму.</strong></div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
