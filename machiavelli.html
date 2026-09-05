@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Макіавеллі</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,140,80,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(52,58,94,.65);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:11px;font-weight:200;letter-spacing:.5em;color:rgba(52,58,94,.65);text-transform:uppercase;margin-bottom:12px;opacity:0;animation:riseIn 1s .7s ease forwards}
+.page-years{text-align:center;font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:18px;color:#7a5410;margin-bottom:64px;opacity:0;animation:riseIn 1s .8s ease forwards;letter-spacing:.1em}
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:18px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#5261c2;box-shadow:0 0 12px rgba(82,97,194,.6)}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a,.card-text a,.phrase-text a{color:#7a5fbe;text-decoration:none;border-bottom:1px solid rgba(122,95,190,.45);transition:border-color .3s}
+.section p a:hover,.card-text a:hover,.phrase-text a:hover{border-bottom-color:rgba(122,95,190,.9)}
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:10px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(52,58,94,.58)}
+.timeline{position:relative;padding-left:24px;margin-top:20px}
+.timeline::before{content:'';position:absolute;left:6px;top:8px;bottom:8px;width:1px;background:linear-gradient(to bottom,rgba(82,97,194,.45),rgba(148,103,23,.3),rgba(122,95,190,.15))}
+.tline{position:relative;margin-bottom:28px;padding-left:20px}
+.tline::before{content:'';position:absolute;left:-22px;top:6px;width:11px;height:11px;border-radius:50%;background:#5261c2;box-shadow:0 0 12px rgba(82,97,194,.5)}
+.tyear{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:#3f4a9e;letter-spacing:.06em;margin-bottom:6px}
+.tevent{font-size:13.5px;font-weight:300;line-height:1.8;color:rgba(36,40,68,.86)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(82,97,194,.35),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+.card.ok{border-color:rgba(150,214,165,.35)}
+.card.ok::before{background:linear-gradient(to right,transparent,rgba(150,214,165,.5),transparent)}
+.card.bad{border-color:rgba(224,150,150,.32)}
+.card.bad::before{background:linear-gradient(to right,transparent,rgba(224,150,150,.45),transparent)}
+.card-label{font-size:9.5px;font-weight:400;letter-spacing:.3em;text-transform:uppercase;margin-bottom:10px;display:block}
+.card.ok .card-label{color:#1f7a4d}
+.card.bad .card-label{color:#b23c2e}
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:26px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(82,97,194,.35),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:26px;flex-shrink:0;width:34px;text-align:center}
+.phrase-word{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:19px;line-height:1.4;color:rgba(36,40,68,.97);margin-bottom:8px}
+.phrase-text{font-family:'Montserrat',sans-serif;font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.88)}
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(52,58,94,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;color:#946717}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.quote-block .qa{font-size:10px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;color:#7a5410}
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:10px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(52,58,94,.5);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,34px);color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:640px;margin:0 auto}
+.final-text strong{font-weight:400;color:#946717}
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:#7a5fbe;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,#7a5fbe,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.75);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:#2c2c2c}
+.read-toggle.active{background:rgba(212,175,110,.16);border-color:rgba(212,175,110,.55);color:#7a5410}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="philosophy.html">← Уся філософія</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Макіавеллі</h1>
+  <p class="page-subtitle">Верту, фортуна і необхідність</p>
+  <div class="page-years">1469 — 1527</div>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Кожен бачить, яким ти здаєшся, але мало хто відчуває, який ти насправді"</div>
+      <div class="hero-author">Державець, розділ XVIII</div>
+    </div>
+    <p>Його прізвище стало лайкою ще за століття після смерті. «Макіавеллізм» — синонім підступності; в Англії диявола почали називати Old Nick, натякаючи на Нікколо; 1559 року «Державця» внесли до церковного списку заборонених книг. Усе це сталося з людиною, яка все життя була республіканцем, чотирнадцять років чесно служила флорентійській державі й померла бідною.</p>
+    <p>Він не вигадував, як стати негідником. Він першим написав, як влада працює насправді, — замість того, як їй належить працювати. За це і не пробачили.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Лист -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Лист від 10 грудня 1513 року</h2>
+    <p>Йому сорок чотири. Він живе в Сант-Андреа-ін-Перкуссіна, за годину ходу від Флоренції, на родинній фермі, яка ледве годує. Рік тому він був другою людиною у флорентійській канцелярії: вів переговори з французьким королем, із папою, з імператором, створив міське ополчення замість найманців. Потім повернулися Медічі, його звільнили, а через кілька місяців заарештували — його ім'я знайшли в списку змовників, до яких він не мав стосунку.</p>
+    <p>Його допитували під strappado: руки зв'язують за спиною, підвішують за зап'ястки й кидають. Плечі виходять із суглобів. За переказом, це зробили шість разів. Він не зізнався, бо зізнаватися не було в чому. Вийшов за амністією, коли флорентієць Джованні Медічі став папою Левом X, — і поїхав на село.</p>
+    <p>Звідти він пише другові Франческо Веторі, послу у Римі, лист, який сьогодні читають більше, ніж половину його трактатів. Ранок — торг із лісорубами за копійки. День — таверна, карти з м'ясником, мельником і двома пічниками, лайка через мідяки, «щоб не запліснявіти мізкам». А потім настає вечір.</p>
+
+    <div class="quote-block">
+      <p>«Настає вечір, я повертаюся додому і входжу до свого кабінету. На порозі скидаю з себе буденне вбрання, вкрите брудом і болотом, і надягаю одяг царський і придворний. Пристойно вбраний, я входжу до стародавніх покоїв стародавніх мужів, де, прийнятий ними з любов'ю, живлюся тією їжею, яка одна тільки мені призначена і для якої я народжений».</p>
+      <div class="qa">Лист до Франческо Веторі</div>
+    </div>
+
+    <p>Далі в тому самому листі — коротка згадка про те, що з цих вечірніх розмов він склав невеликий твір «Про державства». Так світ дізнався про «Державця»: між скаргою на ціни на дрова і проханням переказати вітання.</p>
+    <p>Тут і перший урок, який не треба формулювати окремо: людина, у якої відібрали все, щовечора перевдягалася до вечері з мертвими. Не тому, що хтось бачив. Тому, що інакше він перестав би бути собою.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Хронологія -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Життя в датах</h2>
+    <div class="timeline">
+      <div class="tline">
+        <div class="tyear">1469 · Флоренція</div>
+        <div class="tevent">Народжується в родині небагатого юриста. Батько не мав грошей на книжки, зате мав доступ до чужих бібліотек — і син виріс на Тіті Лівії, якого потім розбиратиме все життя.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1494 · Медічі падають за ніч</div>
+        <div class="tevent">Йому двадцять п'ять. Карл VIII входить в Італію з величезною армією, П'єро Медічі без бою здає флорентійські фортеці, місто повстає за кілька годин, палац грабують, родину виганяють. Шістдесят років правління зникають за добу. Цього він не забуде ніколи.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1498 · Канцелярія</div>
+        <div class="tevent">Через кілька тижнів після страти Савонароли двадцятидев'ятирічний Макіавеллі стає секретарем Другої канцелярії Флорентійської республіки. Далі — чотирнадцять років дипломатії.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1502 · Чезаре Борджіа</div>
+        <div class="tevent">Кілька місяців при дворі Борджіа як посланець Флоренції. Він бачить зблизька, як той заманює й за одну ніч знищує своїх колишніх спільників у Сенігаллії. Приголомшений — і не осудом, а точністю виконання. Борджіа стане головним живим прикладом «Державця».</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1506 · Ополчення</div>
+        <div class="tevent">Його улюблений проєкт: замінити найманців власним військом із флорентійських селян. Найманці, доводив він, б'ються за гроші й тікають першими. Ополчення створили — і воно розбіглося під Прато в 1512-му.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1512–1513 · Падіння</div>
+        <div class="tevent">Іспанці беруть Прато, республіка падає, Медічі повертаються. Звільнення, заборона залишати територію Флоренції, штраф. У лютому — арешт, тортури, тюрма. Навесні — амністія і вигнання на ферму.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1513 · «Державець»</div>
+        <div class="tevent">Написаний за кілька місяців того ж року. Невеликий текст, задуманий як подарунок новій владі — фактично як заявка на роботу. Її не прочитали. Посади він так і не отримав.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1515–1519 · Сади Оричеллярі</div>
+        <div class="tevent">Його починають кликати на зібрання молодих флорентійських інтелектуалів у садах родини Ручеллаї. Там він читає й обговорює «Роздуми про першу декаду Тіта Лівія» — свою справжню, велику й відверто республіканську книгу.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1518 · «Мандрагора»</div>
+        <div class="tevent">Пише комедію про те, як спритний хлопець за допомогою підробленого лікаря й продажного ченця затягує до ліжка чужу дружину. Її ставлять по всій Італії; це найуспішніша його річ за життя.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1520 · Медічі дають роботу</div>
+        <div class="tevent">Нарешті замовлення — написати історію Флоренції. Платять мало, але це визнання. Він пише вісім книг про місто для родини, чиї предки в цій історії виглядають не найкраще.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1527 · Остання іронія</div>
+        <div class="tevent">Рим розграбовано, Медічі знову вигнано, у Флоренції відновлено республіку — та сама, якій він служив чотирнадцять років. Він подає на свою стару посаду. Йому відмовляють: тепер він для них людина Медічі. Через кілька тижнів, 21 червня, він помирає.</div>
+      </div>
+      <div class="tline">
+        <div class="tyear">1531–1532 · Книги виходять</div>
+        <div class="tevent">«Роздуми» друкують через чотири роки після його смерті, «Державця» — через п'ять. Ще за двадцять сім років обидві книги внесуть до Індексу заборонених.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Верту і фортуна -->
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Дві сили: верту і фортуна</h2>
+    <p>Уся його картина світу тримається на двох словах, і обидва в перекладі втратили сенс.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🗡️</span>
+        <div class="card-title">Верту</div>
+        <div class="card-text">Українською зазвичай пишуть «доброчесність» — і це найгірший можливий переклад. У Макіавеллі <em>virtù</em> не має стосунку до моралі. Це діяльна сила: майстерність, рішучість, витримка, розрахунок, здатність нав'язати обставинам свою волю. Латинське <em>virtus</em> походить від <em>vir</em>, «муж», — тобто це радше «дієздатність», ніж «чеснота». Верту не в тому, щоб бути хорошим. Верту в тому, щоб бути здатним.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌊</span>
+        <div class="card-title">Фортуна</div>
+        <div class="card-text">Не удача в сучасному сенсі, а весь потік того, чого ти не обирала: хвороба, війна, у якій родині народитися, обвал ринку, зрада, можливість, що прийшла на десять років пізніше, ніж була потрібна. Байдужа сила, яка не має до тебе особистих претензій.</div>
+      </div>
+    </div>
+
+    <div class="quote-block">
+      <p>«Я порівнюю фортуну з однією з тих буйних рік, які, розлютившись, затоплюють рівнини, валять дерева й будівлі. Але це не означає, що люди не можуть, поки річка спокійна, вжити заходів — насипати греблі й загати».</p>
+      <div class="qa">Державець, розділ XXV</div>
+    </div>
+
+    <p>Пропорцію він назвав прямо: фортуна розпоряджається приблизно половиною наших справ, іншу половину залишає нам. Не «все залежить від тебе» і не «від тебе не залежить нічого» — рівно навпіл. І весь сенс у тому, що греблі будують не тоді, коли вода вже піднялася. Тоді вже пізно; тоді залишається тільки стояти й просити річку бути доброю.</p>
+    <p>Друга частина його поради на цю тему звучить не так обережно: у сумніві він радив діяти рвучко, а не обачно, бо фортуна швидше піддається тим, хто наступає, ніж тим, хто вичікує. Це прямо протилежне стоїчному ставленню до долі — там працюють з тим, що не в твоїй владі, приймаючи його; тут — намагаються звузити цю зону силою. Про інший підхід: <a href="stoicism.html">Стоїцизм</a>.</p>
+  </div>
+
+  <!-- Необхідність -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Необхідність як скульптор</h2>
+    <p>Третє його ключове слово — <em>necessità</em>. Він повертається до нього постійно, і думка щоразу та сама: людина не робить нічого доброго без примусу обставин.</p>
+    <p>Це звучить цинічно, поки не приміряти на себе. Поки все влаштовує, від тебе нічого не потрібно — і тому нічого не видно: ні характеру, ні меж, ні того, на що ти насправді здатна. Необхідність не додає людині якостей. Вона забирає варіанти — і те, що залишається, і є людина.</p>
+    <p>Звідси його зауваження про засновників держав: усі вони починали в скруті, а не в достатку. І звідси ж — його порада тим, хто сидить у слабкій позиції.</p>
+
+    <div class="highlight">
+      <p><em>«Про необхідність час від часу вдавати із себе дурня»</em> — так називається один із розділів «Роздумів». Приклад у нього — Юній Брут, який роками грав недоумкуватого при тирані, доки не настав момент повалити його. Логіка не в тому, що дурість корисна. Вона в тому, що недооцінка знімає з тебе тиск чужих очікувань — і дає найдефіцитніший ресурс: час готуватися, поки на тебе не дивляться.</p>
+    </div>
+
+    <p>Сам він прожив саме так чотирнадцять років. Писав у порожнечу, без замовлення, без гонорару й без жодних підстав вважати, що це колись прочитають. «Державця» надрукували через п'ять років після його похорону.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Люди -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">«Усі люди злі»</h2>
+    <p>Фраза з «Роздумів», яку цитують найчастіше і розуміють найгірше. Повністю вона звучить так: хто засновує державу й дає їй закони, мусить виходити з того, що всі люди злі й покажуть свою злобу щоразу, коли їм трапиться вільна нагода.</p>
+    <p>Це не про людство, це про проєктування. Він не каже, що твої близькі — негідники. Він каже, що систему не можна будувати з розрахунку на чиюсь доброчесність, бо доброчесність — змінна величина, а конструкція має триматися й тоді, коли вона просяде. Приблизно так інженер рахує міст: не на середню людину, а на найгірший вітер.</p>
+    <p>Джерело цього переконання видно в його біографії. У двадцять п'ять він бачив, як шістдесят років любові до Медічі випарувалися за одну ніч, щойно з'явилася армія і зникла вигода. Ті самі громадяни, які вихваляли їх за свята й покровительство мистецтву, розграбували палац. Ніхто не згадав ані про свята, ані про мистецтво.</p>
+    <p>Практичний висновок звідси не «нікому не вір», а тонший: вірність майже завжди прив'язана до умов, за яких вона зручна. Питання не в тому, добра людина чи ні, а в тому, що станеться з її вибором, коли умови зміняться. Стосунки, які ніколи не перевірялися, — це не міцні стосунки, а неперевірені.</p>
+  </div>
+
+  <!-- Маска -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Здаватися і бути</h2>
+    <p>У вісімнадцятому розділі «Державця» він пише те, за що його ненавидять найбільше: правителеві не обов'язково мати всі хороші якості, але вкрай необхідно здаватися таким, що їх має. Кожен бачить, яким ти здаєшся, мало хто відчуває, який ти насправді, — а ті нечисленні не наважуються заперечити думці більшості.</p>
+    <p>Це опис, а не рекомендація. Люди читають поверхню, бо глибина їм недоступна: вони судять за тоном, поставою, послідовністю вчинків і за тим, що про тебе кажуть, коли тебе немає в кімнаті. Можна вважати це несправедливим — це нічого не змінить.</p>
+    <p>Але в тій самій книзі є й межа цієї логіки, і про неї згадують рідко. У восьмому розділі він розбирає Агафокла Сіракузького — сина гончаря, який вирізав сенат і став тираном одного з найбагатших міст античності, правив довго й помер при владі. І Макіавеллі каже: усе це не можна назвати верту. Влада є, результат є, а верту немає, бо слава так не здобувається.</p>
+
+    <div class="highlight">
+      <p><em>Ось де він відрізняється від того, у чому його звинувачують.</em> Він ніде не пише, що мета виправдовує будь-які засоби — цієї фрази в нього взагалі немає. Він пише, що жорстокість буває «добре вжитою» і «погано вжитою»: добре вжита — коротка, одноразова, спрямована на безпеку і потім припинена; погано вжита — та, що з часом наростає. Друга завжди закінчується однаково, і тримати її доводиться до кінця життя.</p>
+    </div>
+
+    <p>З цього виходить порада, яка не потребує цинізму: найдешевший спосіб добре виглядати — справді бути компетентною, бо підтримання розриву між поверхнею і глибиною коштує щодня, а компетентність коштує один раз. Про механіку самих сигналів окремо: <a href="manipulation.html">Маніпуляція</a> і <a href="power-propaganda.html">Пропаганда</a>.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Цикл -->
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">Цикл: чому комфорт — початок кінця</h2>
+    <p>У першій книзі «Роздумів» він переказує ідею грецького історика Полібія про кругообіг державних форм і додає до неї те, чого там бракувало, — двигун. Двигун — людська природа: те саме честолюбство, яке будує, згодом і роз'їдає.</p>
+    <p>Схема проста настільки, що впізнається не тільки в державах: сила дає порядок, порядок дає достаток, достаток дає комфорт, комфорт дає розслаблення, розслаблення дає падіння — і все починається спочатку, уже з уламків. Так він читав історію Риму: республіку зруйнували не варвари, а зникнення тієї дисципліни, на якій вона трималася. Те саме він бачив у Флоренції, Венеції, Мілані й Неаполі за своє життя.</p>
+    <p>А далі йде його найнесподіваніша теза, через яку «Роздуми» варто читати навіть тим, кому байдужа політика.</p>
+
+    <div class="quote-block">
+      <p>Постійні чвари між сенатом і плебсом, які всі вважали хворобою Римської республіки, були насправді джерелом її сили. Саме ця напруга тримала систему живою й не давала їй загнити.</p>
+      <div class="qa">Роздуми, книга I, розділ 4</div>
+    </div>
+
+    <p>Тобто здорова система — не та, у якій немає конфлікту, а та, у якій конфлікт має куди подітися. Тиша всередині означає не злагоду, а те, що одна сторона вже перемогла й перестала слухати. У приватному житті це читається так само: розмова, якої уникають роками, зазвичай і є та, яка тримала б стосунки живими.</p>
+  </div>
+
+  <!-- Що таке Державець -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Що таке «Державець» насправді</h2>
+    <p>Кілька речей, які майже завжди губляться, коли з нього роблять посібник для хижаків.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">📜</span>
+        <div class="card-title">Це заявка на роботу</div>
+        <div class="card-text">Тонка книжка, написана за кілька місяців безробітним чиновником і присвячена Лоренцо Медічі — тим самим, хто його вигнав і катував. Мета була проста: показати, що він корисний, і повернутися на службу. Не спрацювало.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🏛️</span>
+        <div class="card-title">Його головна книга — інша</div>
+        <div class="card-text">«Роздуми про першу декаду Тіта Лівія» — утричі більші, писалися роками й доводять протилежне тому, що приписують «Державцеві»: найкраща форма правління — республіка, народ загалом розумніший і надійніший за правителя, а свобода тримається на законах і на здатності громадян тиснути на владу.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🇮🇹</span>
+        <div class="card-title">Остання глава — не про цинізм</div>
+        <div class="card-text">«Державець» закінчується емоційним закликом звільнити Італію від чужоземців, які роздирали її все його життя. Там же — рядок про те, що Бог не хоче робити все сам, аби не позбавляти нас свободи волі й частки належної нам слави.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🚫</span>
+        <div class="card-title">«Мета виправдовує засоби» — не його</div>
+        <div class="card-text">Цієї фрази в його текстах немає. Найближче — зауваження, що у справах держави дивляться на результат; але поряд стоїть жорстке розрізнення жорстокості, вжитої добре й погано, і твердження, що правитель, якого ненавидять, приречений.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Практика -->
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Що з цього забрати</h2>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">🧱</span>
+        <div>
+          <div class="phrase-word">Греблі будують у суху погоду</div>
+          <div class="phrase-text">Навички, гроші на чорний день, друга професія, перевірені стосунки — усе це має сенс рівно доти, доки не знадобилося. Коли вода вже піднялася, готуватися пізно, залишається тільки терпіти.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">⚖️</span>
+        <div>
+          <div class="phrase-word">Половина — не твоя</div>
+          <div class="phrase-text">Здорова пропорція між «я все контролюю» і «від мене нічого не залежить». Провал не завжди означає, що ти щось зробила не так, а успіх не завжди означає, що ти геніальна. Обидві помилки коштують дорого.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🔎</span>
+        <div>
+          <div class="phrase-word">Дивись на вчинки при зміні умов</div>
+          <div class="phrase-text">Люди показують себе не тоді, коли їм зручно, а коли вигода зникає. Це не привід перестати довіряти — це привід розуміти, на чому саме тримається довіра в кожному конкретному випадку.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🎭</span>
+        <div>
+          <div class="phrase-word">Поверхню читають, і це не скасувати</div>
+          <div class="phrase-text">Обурюватися тим, що тебе оцінюють за сигналами, — марна витрата сил. Дешевший шлях: зробити так, щоб поверхня точно відповідала тому, що під нею, і перестати пояснювати себе.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🔥</span>
+        <div>
+          <div class="phrase-word">Конфлікт — не поламка</div>
+          <div class="phrase-text">Ані в державі, ані в родині, ані в голові. Там, де напруга не має виходу, вона нікуди не зникає — просто перестає бути видимою до моменту обвалу.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🕯️</span>
+        <div>
+          <div class="phrase-word">Роби, коли ніхто не дивиться</div>
+          <div class="phrase-text">Найважливіше, що він написав, писалося без замовника, без гонорару і без надії на публікацію. Робота, яку робиш тільки за оплески, закінчується разом з оплесками.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:1.85s">
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Яку греблю ти вже кілька років збираєшся насипати — і чекаєш, поки вода почне підніматися?</div>
+    </div>
+  </div>
+
+  <!-- Фінал -->
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Замість висновку</h2>
+    <p>Він програв усе, чого хотів. Не повернувся на службу ні до Медічі, ні до республіки. Помер бідним, у боргах, за кілька тижнів після останньої відмови. Найбільший успіх за життя мала його комедія, а не книги, через які його ім'я знає тепер кожен.</p>
+    <p>І в цьому головна перевірка його ж теорії. Верту не гарантує результату — фортуна забрала свою половину повністю. Але половина, що належала йому, збереглася: вечірня кімната, перевдягання, розмова з мертвими, текст, який не було кому читати. Через п'ятсот років саме ця половина й залишилася.</p>
+    <p>Куди він вписується у велику картину — <a href="philosophy.html">Уся філософія</a>.</p>
+
+    <div class="final-quote">
+      <div class="final-text">Він не вчив, як стати сильною. <strong>Він показав, що світ не має до тебе жодних претензій — і жодних зобов'язань теж</strong>. Далі — питання лише в тому, що ти встигнеш побудувати на своїй половині.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
