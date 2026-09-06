@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Зрізав</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(52,58,94,.78);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:13px;font-weight:200;line-height:1.85;color:rgba(52,58,94,.8)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(52,58,94,.82);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Зрізав</h1>
+  <p class="page-subtitle">Як розпізнати гру, у якій тебе хочуть переграти</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Хто кидає рукавичку — хоче бути зрізаним. Хто піднімає — обирає бути ображеним"</div>
+    </div>
+    <p>У 1970 році Василь Шукшин написав коротке оповідання про сільського чоловіка, який приходить до столу поговорити з приїжджим кандидатом наук — і за двадцять хвилин змушує освічену людину замовкнути перед власними сусідами. Оповідання називається «Зрізав». Це не історія про розум проти дурості. Це точний опис механізму, з яким рано чи пізно стикається кожна компетентна людина.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Дві реальності -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Дві реальності</h2>
+    <p>У театрі герой стріляє в героя, серце глядача частішає — і все ж він не схоплюється рятувати нікого. Пам'ять тримає межу: це гра, не моє життя. Це другорядна реальність — та, у яку занурюєшся емоційно, хоч вона й не є тим, що відбувається насправді. Генеральна реальність — те, що фізично відчувається, те, чим справді є твоє життя.</p>
+    <p>Небезпека починається там, де межа стирається — коли чужа провокація, чужа оцінка, чужа гра починають визначати твій стан так, ніби це і є твоє справжнє життя. У такий момент людина бовтається на нитках лялькаря, навіть не помічаючи цього. Завдання одне: знайти в собі сили ці нитки обрізати.</p>
+  </div>
+
+  <!-- Право на незнання -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Право на незнання</h2>
+    <p>Перш ніж розбирати, як не потрапити в гру, варто визнати те, що легко пропустити: не варто силою витягувати іншу людину з простору ілюзій, у якому вона живе комфортно. Якщо вирвати людину з її звичного пояснення світу без попередження, вона може просто не впоратися з реальністю, зіткнувшись із нею віч-на-віч.</p>
+
+    <div class="soft">
+      <p>Дай людині можливість бути незадоволеною й звинувачувати інших у власних бідах — інакше вона ризикує «висохнути, як дощовий черв'як під палючим сонцем». Це не виправдання чужої деструктивної поведінки. Це причина не лізти в чужі справи із силовим «добром», якого ніхто не просив.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Гліб -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Хто такий Гліб і що означає «зрізати»</h2>
+    <p>Гліб Капустін — місцевий «шаман», людина начитана й уїдлива. Начитаність тут не інструмент турботи про інших — це зброя, якою він щоразу утверджує одну й ту саму позицію: я кращий за тебе. «Зрізати» означає знецінити настільки, щоб компетентна людина сама засумнівалася у власній компетентності — образно кажучи, перетворити валета на сімку в очах усіх присутніх.</p>
+    <p>Робиться це не заради істини й не заради перемоги в суперечці. Це спосіб заспокоїти власний біль людини, яка не поважає себе, знає, що вона не на своєму місці, — і тому намагається применшити тих, хто на своєму опинився.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🌱</span>
+        <div class="card-title">~10% — тягнуться до знань</div>
+        <div class="card-text">Ті, хто справді хоче розвиватися й вчиться навіть на чужому прикладі.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">👥</span>
+        <div class="card-title">~80% — глядачі</div>
+        <div class="card-text">Пливуть за течією, приєднуються до того, хто голосніше й упевненіше говорить у моменті.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🕷️</span>
+        <div class="card-title">~10% — свідомі шкідники</div>
+        <div class="card-text">Такі, як Гліб. Їхня мета — утримувати глядачів на своєму боці, а не з'ясовувати істину.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Чому мужики слухають -->
+  <div class="section" style="animation-delay:1.15s">
+    <h2 class="section-title">Чому мужики збираються слухати Гліба</h2>
+    <p>Боляче бачити, що хтось живе краще й упорядкованіше за тебе. Це народжує незручне питання: а може, я живу неправильно? Щоб заглушити цей внутрішній голос, мужики йдуть до Гліба, який знову й знову накладає знайоме заклинання: не бачиш, не чуєш, не відчуваєш. Він для них — як анестезія: замість того, щоб перетворити внутрішній дискомфорт на власне зростання, вони йдуть дивитися виставу, у якій знатного гостя принизять, і на цьому заспокоюються.</p>
+
+    <div class="highlight">
+      <p><em>Ця звичка ампутує здатність до зростання — і передається дітям.</em> Метафора карт пояснює механізм точно: щоразу, коли «сімка» бачить «валета», у неї виникає страх і трепет. Є довгий шлях — визнати перевагу валета і вчитися в нього. І є короткий шлях — знайти щось погане у валеті, щоб не відчувати болю визнання. Гліб і його публіка щоразу обирають короткий.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Психогігієна -->
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Психогігієна — не розкіш, а щоденна звичка</h2>
+    <p>Про шкіру й імунну систему піклуються щодня, не чекаючи хвороби, — вони захищають організм від того, що постійно намагається в нього проникнути. Психологічні межі працюють так само. Дозволити чужій людині безкарно вторгатися у своє життя — те саме, що ходити вулицею й підбирати те, що лишили після себе тварини.</p>
+    <p>Стійкість до чужих маніпуляцій буває вродженою — вона формується здоровими стосунками в родині — або набувається свідомо, через розуміння самого механізму. Друге доступне кожному, незалежно від того, пощастило з першим чи ні.</p>
+  </div>
+
+  <!-- Розмова на користь бідних -->
+  <div class="section" style="animation-delay:1.25s">
+    <h2 class="section-title">«Розмова на користь бідних»</h2>
+    <p>Прийом, коли співрозмовнику навіюють: ти бідолашний, з тобою вчинили несправедливо, тобі просто не пощастило. Так Гліб готує мужиків заздалегідь — називає майбутнього гостя «нерізаним собакою», наперед формулює за слухачів заперечення, які вони самі могли б висловити, і тим самим стелить соломку там, де сам може впасти.</p>
+
+    <div class="quote-block">
+      <p>Ніхто з мужиків не заперечує Глібу очевидне — «а ти сам на себе подивись» — тому що солодка, лестива роль «ми прості, чесні люди, а он ті — зазнайки» приємніша за правду.</p>
+      <div class="qa">Механізм, який працює задовго до самої зустрічі</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Стальна сідниця -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Стальна сідниця</h2>
+    <p>Так у мові оповідання названо якість, якої в Гліба немає, а в приїжджого гостя є: здатність не відволікатися, повністю зосереджуватись на справі, планувати наперед і думати про довгострокове, а не проїдати все й одразу. Груба назва точно описує роботу, яка ніколи не виглядає ефектно в моменті, — саме тому вона й недооцінена.</p>
+    <p>Це якраз те, що відрізняє людину, яка щось будує роками, від тваринного імпульсу зжерти все зараз. Гліб не має стальної сідниці — і саме тому єдина доступна йому перемога коротка, гучна й нічого не будує.</p>
+  </div>
+
+  <!-- Рукавичка -->
+  <div class="section" style="animation-delay:1.35s">
+    <h2 class="section-title">Кинута рукавичка</h2>
+    <p>Гліб довго мовчить перед атакою, збирає інформацію, придивляється, з ким має справу, — і лише потім переходить у наступ. Перше запитання — про первинність духу і матерії — не пошук істини. Це провокація, розрахована на те, щоб її підняли.</p>
+    <p>Гість рукавичку піднімає — і цим одразу програє позицію. Формула, яку варто запам'ятати дослівно:</p>
+
+    <div class="quote-block">
+      <p>Той, хто кидає рукавичку, хоче бути зрізаним. Той, хто піднімає, обирає бути ображеним.</p>
+      <div class="qa">Ключ до всього подальшого протистояння</div>
+    </div>
+
+    <p>Три способи не піднімати:</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">🚫</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Пряма відмова</div>
+          <div class="card-text">«Я не згоден відповідати на ці питання». Без пояснень і виправдань — просто вихід із запропонованих правил гри.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🔄</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Комплімент і зустрічне питання</div>
+          <div class="card-text">«Розкажи-но краще про себе» — розмова повертається до того, хто її почав, і ініціатива міняє напрямок без єдиного слова протесту.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🎯</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Утримувати ініціативу самому</div>
+          <div class="card-text">Хто задає питання, той керує комунікацією. Перше ж власне питання забирає в опонента можливість вести далі за своїм сценарієм.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Прийоми -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Прийоми за столом</h2>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">🌀</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Незрозумілі «розумні» слова</div>
+          <div class="card-text">Мета не пояснити, а збити з пантелику — перенести фокус уваги співрозмовника всередину, змусити сумніватися в собі замість того, щоб оцінювати сказане.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">😏</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Подвійне послання</div>
+          <div class="card-text">Посмішка, що демонструє доброзичливість, — і в'їдливе зауваження одразу поруч. Мозок отримує суперечливий сигнал і не встигає визначити, як реагувати.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🚧</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Ми — прості, ви — он який»</div>
+          <div class="card-text">Відокремлення себе й публіки від чужинця. Тепер це вже не суперечка двох людей, а свій проти чужого — а проти цього важче захищатися словами.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <p><em>Ескалація працює як телефонне шахрайство.</em> Жертва спочатку виконує прості, безневинні команди — підтвердити ім'я, назвати банк, — і кожна прийнята команда робить наступну легшою. Зрештою вона вже сама диктує код із СМС, не помічаючи моменту переходу. Гліб веде розмову тим самим маршрутом: перше прийняте питання робить друге неминучим.</p>
+    </div>
+  </div>
+
+  <!-- Ознаки клювання -->
+  <div class="section" style="animation-delay:1.45s">
+    <h2 class="section-title">Ознаки, що ти вже клюнула</h2>
+
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">Жертва гри</div>
+        <div class="col-text">Емоційне хвилювання, збентеження, збите дихання, відведений погляд. Тіло реагує раніше, ніж розум встигає це помітити.</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">Контроль тримається</div>
+        <div class="col-text">Пауза перед відповіддю, рівне дихання, спокійний зоровий контакт, відчуття опори під ногами — фізичне усвідомлення того, що відбувається просто зараз.</div>
+      </div>
+    </div>
+
+    <p style="margin-top:20px">Не відповідай миттєво на подразник. Секунда паузи повертає з другорядної реальності гри в генеральну реальність власного тіла — і саме звідти вирішувати, чи варто взагалі грати далі.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Козел провокатор -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Козел-провокатор</h2>
+    <p>Коли гість намагається серйозно й по суті відповісти на псевдофілософське питання про першопричину, Гліб не слухає відповідь — він продовжує сипати новими абсурдними темами: про шаманізм, про Місяць як «штучну орбіту», про розумних істот там само. Сенсу в цих словах немає жодного. Публіка регоче й вірить — не тому що це переконливо, а тому що сказано з абсолютною впевненістю.</p>
+
+    <div class="soft">
+      <p>На бійні є спеціальна тварина — козел-провокатор. Вона веде отару на забій, а сама лишається живою й отримує свій пайок, бо стадо їй довіряє. Гліб виконує рівно цю роль. Ведучи мужиків у сміх над гостем, він веде їх до власного загнивання — і позбавляє їхніх дітей шансу мати перед очима приклад, вартий наслідування.</p>
+    </div>
+
+    <p style="margin-top:20px">Ерік Берн у книзі «Ігри, у які грають люди» писав, що для юрби в цілому порятунку немає — юрба легковірна й піддається натовпу за визначенням. Але для окремої людини порятунок можливий, якщо вона усвідомлює механізм гри і свідомо обирає з нього вийти. Це і є вся різниця між мужиками за столом і тобою, яка щойно дочитала до цього рядка.</p>
+  </div>
+
+  <!-- Розв'язка -->
+  <div class="section" style="animation-delay:1.55s">
+    <h2 class="section-title">Момент, коли позиція остаточно втрачена</h2>
+    <p>Гість остаточно програє не тоді, коли не знає відповіді, а коли починає виправдовуватися й апелює до дружини за підтримкою. Цим він демонструє юрбі власну вразливість — а юрба реагує на вразливість, а не на правоту.</p>
+    <p>Гліб тим часом продовжує «розмову на користь бідних», приписуючи гостю зверхність, якої той насправді не демонстрував: «ви на таксі приїхали, а ми тут прості». Одночасно він грає одразу трьома ролями: переслідувача («ви нескромні»), рятівника («я ж хочу, як краще») і жертви («мене ображають») — усі три по черзі, за лічені хвилини. Ту саму конструкцію, драматичний трикутник, і те, як із неї виходити, розібрано окремо: <a href="triangle-exit.html">Трикутник, з якого можна вийти</a>.</p>
+    <p>Зрештою Гліб іде переможцем — не тому, що мав рацію, а тому, що зумів змусити компетентну людину засумніватися в собі на очах у публіки. Мужики розходяться задоволені: «зрізав», «наш Гліб краще за столичного».</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Матері -->
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">Чому матері шанованих людей села Гліба не любили</h2>
+    <p>Не через якусь конкретну провину — інтуїтивно. Матері відчували небезпеку такого типу людей раніше, ніж могли б це пояснити словами. Це чуття варто довіряти й брати із собою, приходячи в чуже коло, де є свій Гліб.</p>
+    <p>Практичний висновок простий: якщо ти знаєш, що близька людина йде в компанію, де подібний сценарій можливий, — попередь заздалегідь. Пояснення «там може бути хтось, хто спробує тебе зрізати, і ось як це виглядає» коштує однієї розмови, а рятує від вечора, зіпсованого чужою грою.</p>
+  </div>
+
+  <div class="section" style="animation-delay:1.65s">
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Чи впізнаєш ти цю поведінку у власному житті — і чи готова цього разу не піднімати рукавичку?</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Фінал -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Насамкінець</h2>
+    <p>Історія про Гліба Капустіна — не про те, хто тут поганий. Це історія про людину, яка не визнала власного невдоволення собою і знайшла, до чого причепитися в іншому, щоб хтось компетентний засумнівався у власній компетентності. Головне питання не «хто правий», а інше: чи готова я щоразу піднімати рукавичку, коли мене намагаються втягнути в чужу гру за правилами знецінення.</p>
+    <p>Захист особистих меж — це щоденна психогігієна, а не одноразовий вчинок. Про сам механізм, чому чуже невдоволення взагалі вибиває з рівноваги, — <a href="disapproval.html">Витримувати чуже незадоволення</a>. Про те, як читати прийоми співрозмовника в моменті, — <a href="reading-people.html">Читати людину по мовленню</a>.</p>
+
+    <div class="final-quote">
+      <div class="final-text">Гліб не переміг тому, що мав рацію. <strong>Він переміг тому, що гість погодився грати</strong>. Найнадійніший захист від цієї гри — не краща відповідь на провокаційне питання, а рішення взагалі не сідати за цей стіл.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
