@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Трикутник, з якого можна вийти</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,140,80,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.8);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(40px,7.4vw,68px);letter-spacing:.08em;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.8);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:18px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#5261c2;box-shadow:0 0 12px rgba(82,97,194,.6)}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a,.card-text a,.phrase-text a{color:#5a3f9e;text-decoration:none;border-bottom:1px solid rgba(122,95,190,.45);transition:border-color .3s}
+.section p a:hover,.card-text a:hover,.phrase-text a:hover{border-bottom-color:rgba(122,95,190,.9)}
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:#242844}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(82,97,194,.35),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:26px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(82,97,194,.35),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:26px;flex-shrink:0;width:34px;text-align:center}
+.phrase-word{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:19px;line-height:1.4;color:rgba(36,40,68,.97);margin-bottom:8px}
+.phrase-text{font-family:'Montserrat',sans-serif;font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.88)}
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(52,58,94,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.quote-block .qa{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:#7a5410}
+.exercise{padding:24px 28px;border-left:2px solid rgba(82,97,194,.4);margin:20px 0;background:rgba(82,97,194,.06);border-radius:0 16px 16px 0}
+.exercise-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:#3f4a9e;margin-bottom:10px;display:block}
+.exercise p{font-size:14px;font-weight:300;line-height:1.8;color:rgba(36,40,68,.9);margin:0}
+.triangle{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:20px}
+.tri-role{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:24px 18px;text-align:center;transition:all .4s}
+.tri-role:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.tri-role-icon{font-size:26px;margin-bottom:10px;display:block}
+.tri-role-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:16px;color:rgba(36,40,68,.95);margin-bottom:8px}
+.tri-role-text{font-size:12.5px;font-weight:300;line-height:1.65;color:rgba(36,40,68,.85)}
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.78);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,34px);color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:640px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:#7a5fbe;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,#7a5fbe,transparent)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.75);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:#2c2c2c}
+.read-toggle.active{background:rgba(212,175,110,.16);border-color:rgba(212,175,110,.55);color:#7a5410}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Трикутник, з якого можна вийти</h1>
+  <p class="page-subtitle">Маніпуляції, жертва і роль, яку граєш сьогодні</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"У чому б людина не була впевнена — вона знайде цьому підтвердження"</div>
+      <div class="hero-author">Альберт Сафін · у розмові з Надією Стрілець</div>
+    </div>
+    <p>Сафін — коуч і психолог, який принципово не продає онлайн-курсів: усі його уроки у відкритому доступі, а глядачів він називає партнерами, а не клієнтами. Його теза проста й незручна водночас: людина сама є причиною всіх наслідків у своєму житті — окрім випадків, коли вона справді жертва катастрофи чи трагедії. Не тому, що так «правильно» думати, а тому, що жити в просторі власної відповідальності вигідніше, ніж вважати винними зовнішні сили: перше дає двері, друге — стіну.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Берн -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Гра, яку описав Берн</h2>
+    <p>Книга, яка, за словами Сафіна, перевернула його життя, — «Ігри, у які грають люди» Еріка Берна. Її головна думка різкіша, ніж здається: людина відчуває емоції не в результаті подій, а несвідомо створює події, щоб проживати звичні для себе емоції й знаходити підтвердження власним переконанням про себе, інших і світ.</p>
+    <p>Люди взаємодіють переважно з тими, хто грає в ті самі ігри, а сама гра має впізнавану послідовність: принада — гачок — перемикання ролей — розплата. Розплата тут не покарання, а звичний емоційний стан, який людина несвідомо йшла здобути.</p>
+    <div class="highlight">
+      <p><em>Навіть шум за вікном можна перетворити на гачок.</em> Якщо запис розмови заважає вуличний шум, це легко прочитати як підтвердження «навколо — непрофесіонали» — і використати нейтральний привід, щоб «покотити бочку». Гра починається не з великої провокації, а з готовності побачити провокацію там, де її не було.</p>
+    </div>
+  </div>
+
+  <!-- Трикутник Карпмана -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Трикутник, який крутиться сам</h2>
+    <p>Класична модель, що стоїть за більшістю таких ігор, — драматичний трикутник: переслідувач, жертва, рятівник. Головне, що в ній не так зрозуміло, поки не побачиш на прикладі: ролі не закріплені за людиною назавжди. Одна й та сама людина може прожити всі три за один день.</p>
+    <div class="triangle">
+      <div class="tri-role">
+        <span class="tri-role-icon">⚔️</span>
+        <div class="tri-role-title">Переслідувач</div>
+        <div class="tri-role-text">Тисне, звинувачує, шукає привід «покотити бочку» — часто несвідомо створюючи саму ситуацію для цього.</div>
+      </div>
+      <div class="tri-role">
+        <span class="tri-role-icon">😔</span>
+        <div class="tri-role-title">Жертва</div>
+        <div class="tri-role-text">Отримує жаль, увагу чи звільнення від відповідальності — і це може бути дуже зручно, навіть непомітно для неї самої.</div>
+      </div>
+      <div class="tri-role">
+        <span class="tri-role-icon">🤲</span>
+        <div class="tri-role-title">Рятівник</div>
+        <div class="tri-role-text">Втішає, вирішує чужі проблеми — і непомітно для себе теж отримує вигоду: власну значущість.</div>
+      </div>
+    </div>
+    <div class="quote-block">
+      <p>Вранці, з похмілля, чоловік почувається жертвою. Дружина, готуючи йому бульйон, — рятівниця. Увечері він, відкуповуючись подарунками, сам стає рятівником. А дружина пізніше може стати переслідувачкою — уже для дітей.</p>
+      <div class="qa">Приклад із розмови</div>
+    </div>
+    <p style="margin-top:22px">Той самий візерунок працює і поза домом: людина просить позичити грошей у ролі жертви («мені дуже треба, у мене проблема»), а коли настає час повертати — раптово перемикається на переслідувача («який же ти друг після цього»), перетворюючи того, хто допоміг, на нову жертву. Трикутник тому й крутиться далі, що в кожній вершині є своя вигода.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Жертва не завжди невинна -->
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Чому жертва не завжди невинна</h2>
+    <p>Одразу важливе застереження: ніщо з нижченаписаного не виправдовує насильство. Але сьогодні дія переслідувача повністю засуджується суспільною свідомістю, а дія жертви — майже ніколи не ставиться під сумнів. А за поняттям віктимології з криміналістики, людина, яка вийшла зі стосунків із кривдником, часто знову входить у подібні стосунки — і це майже завжди двостороння психосоціальна гра, а не одностороннє явище.</p>
+    <p>Часом «жертва» насправді використовує сльози й технологію жалю, щоб досягти власної мети, — трохи інша ситуація, ніж здається на перший погляд. Іноді те, що виглядає як переслідування, — спроба привернути увагу людини, яка симпатична. Це не применшує реальну шкоду там, де вона є. Це лише нагадування, що ярлик «жертва» не звільняє від запитання: а яку роль граю я сама?</p>
+  </div>
+
+  <!-- Три техніки -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Три техніки з прямого ефіру</h2>
+    <p>Сафін розбирає відомі інтерв'ю не заради пліток, а щоб показати технології, які працюють і в звичайній розмові.</p>
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">🌊</span>
+        <div>
+          <div class="phrase-word">Амортизація</div>
+          <div class="phrase-text">На незручне запитання — три кроки: спершу «добре, що ви про це запитали» (визнання, не оборона), потім поступова відповідь, дотична до суті, і насамкінець — запрошення співрозмовника поставити наступне питання. Так людина лишається в контакті, а не провалюється в захист.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🪝</span>
+        <div>
+          <div class="phrase-word">Не клювати на приховану вимогу</div>
+          <div class="phrase-text">Коли співрозмовник неявно вимагає «доведи, що ти вартий цієї розмови», найсильніша відповідь — не довести, а просто не почати виправдовуватись. В одному з розібраних інтерв'ю гість замість переліку досягнень просто сказав «привіт, мене звати...» — і цим повністю знецінив пастку.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🪟</span>
+        <div>
+          <div class="phrase-word">Муха біля скла</div>
+          <div class="phrase-text">Коли співрозмовник опирається темі, не варто «пробивати стіну» силоміць — так само як муха б'ється в скло за сантиметр від відчиненої кватирки. Дай опору побути, зміни напрямок розмови, повертайся поступово. Опір слабшає сам, коли перестає бути потрібним.</div>
+        </div>
+      </div>
+    </div>
+    <div class="highlight">
+      <p><em>Усі три тримаються на одному й тому самому.</em> Впевненість — це байдужість до результату зустрічі. Той, хто занадто хоче щось довести, уже вступив у наперед програний бій.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Цикл насильства -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Цикл, що затягує звикання</h2>
+    <p>У стосунках, де є насильство, є й впізнаваний цикл: рівна пауза → наростання напруги → дрібне «прощупування» кордонів → сам акт → вибачення й «цукерково-букетний» період → повернення до паузи. Небезпека саме в передостанній ланці: період примирення викликає звикання в обох сторін — той, хто заподіює шкоду, звикає до влади, якої не має в інших сферах життя, а той, хто постраждав, звикає до амплітуди «дуже погано — потім дуже добре».</p>
+    <p>В ілюстрацію годиться сцена з фільму «Догвіль» Ларса фон Трієра: бездоганна доброта й покірність героїні мимоволі «пробуджує звіра» в мешканцях містечка. Звідси нюанс, який легко сплутати зі звинуваченням: не варто спокушати звіра в іншому — але так само не варто довіряти тому, хто сам не здатен витримати довіру. Перше — про власні кордони. Друге — про чужу відповідальність. Одне не скасовує інше.</p>
+  </div>
+
+  <!-- Хто стає жертвою -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Хто частіше опиняється в цій ролі</h2>
+    <p>Людина, якій пощастило бачити здорові стосунки батьків — на повазі й вдячності одразу на кількох рівнях: духовному, соціальному, когнітивному, емоційному й тілесному, — має на що орієнтуватися. Вона швидше відчуває, що щось не так, навіть коли не може одразу пояснити словами, чому саме.</p>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🎲</span>
+        <div class="card-title">Випадкова жертва</div>
+        <div class="card-text">Опинилась у ситуації без стійкого патерну за спиною — і саме в неї найбільше шансів вийти й не повторити.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔁</span>
+        <div class="card-title">Активна й агресивна жертва</div>
+        <div class="card-text">Спершу сама порушує чужі кордони, отримує відсіч — і перетворюється на переслідувача, який захищає своє «право» знову опинитися в тій самій ситуації.</div>
+      </div>
+    </div>
+    <p style="margin-top:22px">Спільна ознака в обох випадках — поступове прощупування кордонів і «непроговорені» домовленості за замовчуванням: більшість бід у стосунках виростають саме з того, що ніхто вголос не проговорив умови. А невербально роль жертви часто видає загублений погляд, здійняті «будиночком» брови й тихі зітхання — мова тіла, яка запрошує когось урятувати, навіть коли слова цього не кажуть.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Звідки береться потяг до драми -->
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">Звідки береться потяг саме до такої драми</h2>
+    <p>Дитина, чиї батьки випивають, ховається під ліжком, коли бачить їх п'яними, — а наступного дня, коли вдома лад і тверезість, відчуває справжнє щастя. Саме різниця амплітуди між «дуже погано» і «дуже добре» стає для психіки своєрідним наркотиком, до якого звикають. У дорослому житті це несвідомо шукає повторення — партнера із залежністю, з яким можна знову пережити ті самі гойдалки. Стабільні, рівні стосунки такій людині здаються прісними й нецікавими.</p>
+    <div class="highlight">
+      <p><em>Подібне до подібного.</em> Здоров'я тягнеться до здоров'я, а травма — до травми. Це не вирок, а пояснення того, чому «саме такий тип людей» повторюється в житті знову й знову.</p>
+    </div>
+  </div>
+
+  <!-- Як затягують -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Як маніпулятори затягують у стосунки</h2>
+    <p>Типовий початок — миттєва ідеалізація: «коли я тебе побачив, відчув, що шукав тебе все життя», «ти найкраща з усіх». Між рядків цієї ідеалізації схована умова: спробуй повестися інакше — і я в тобі розчаруюся. Такі стосунки поглиблюються навмисно швидко, поки інша сторона ще в ейфорії й нічого не встигає перевірити.</p>
+    <p>Прийом «то тепло, то холодно» діє особливо сильно саме на тих, хто в дитинстві вже звик до подібних емоційних перепадів удома, — тому впізнавання власної історії тут не менш важливе за впізнавання чужої тактики.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Три опори -->
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Три опори здорових стосунків</h2>
+    <p>Проста модель, придатна навіть для того, щоб пояснити її дитині.</p>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🎈</span>
+        <div class="card-title">Інтерес і час</div>
+        <div class="card-text">Спільне бажання проводити час разом — і взаємна цікавість одне до одного, а не обов'язок терпіти компанію.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🤝</span>
+        <div class="card-title">Зобов'язання</div>
+        <div class="card-text">Готовність домовлятися й «тягнути упряж разом», а не зникати після першої серйозної сварки.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔥</span>
+        <div class="card-title">Тілесність</div>
+        <div class="card-text">Сексуальна складова — не бонус, а одна з трьох рівноправних опор, без якої конструкція хитається.</div>
+      </div>
+    </div>
+    <p style="margin-top:22px">Більшість шлюбів розпадаються не тому, що зникло кохання, а тому, що складалися переважно на гормональній хвилі, без досвіду самостійності й уміння домовлятися про побутове. Світова література й досі романтизує саме драматичну, невротичну модель стосунків — зі сльозами й розривами — бо вона кінематографічніша за спокійне, рівне щастя. Це не робить її здоровішою.</p>
+  </div>
+
+  <!-- Материнська і батьківська любов -->
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Дві любові — не одна й та сама</h2>
+    <p>Материнська любов безумовна — дитина буквально вийшла з тіла матері, і цей зв'язок особливий за визначенням. Батьківська любов — умовна, і це не недолік: її функція — вчити кордонам, перетворювати непроговорені домовленості на явні, вчити казати «ні», готувати до самостійного майбутнього.</p>
+    <div class="highlight">
+      <p><em>У «тепличному» світі — з інтернетом, швидким дофаміном і фастфудом — саме ця друга функція, здатність дати дитині виклик замість зручності, стає рідкіснішою і тому важливішою, ніж будь-коли.</em></p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Три звички переглянути -->
+  <div class="section" style="animation-delay:2s">
+    <h2 class="section-title">Три звички варто переглянути</h2>
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">🗣️</span>
+        <div>
+          <div class="phrase-word">Виправдовуватись</div>
+          <div class="phrase-text">Щойно людина починає пояснювати, що насправді мала на увазі інше, вона опиняється в позиції дитини — і мимоволі запрошує співрозмовника в позицію батька. Далі розмовляють уже не двоє людей, а два уявлення одне про одного.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">💬</span>
+        <div>
+          <div class="phrase-word">Робити компліменти без думки</div>
+          <div class="phrase-text">На поверхні — приємність. На прихованому рівні — «я тебе оцінюю і знаю краще, як правильно», плюс натяк, що наступний комплімент залежатиме від того, чи поводитиметься людина так, як очікувано.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🙏</span>
+        <div>
+          <div class="phrase-word">Вибачатися за звичкою</div>
+          <div class="phrase-text">Вагу мають вибачення тільки тієї людини, яка вибачається вкрай рідко — не з черствості, а тому, що рідко дає для цього привід. Той, хто вибачається постійно, лише навчає інших користуватися цим знову.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Щоденні маніпуляції -->
+  <div class="section" style="animation-delay:2.1s">
+    <h2 class="section-title">Коли манипуляція — насправді проблема</h2>
+    <p>Усі люди інколи маніпулюють, усвідомлено чи ні: умовляють дитину піти в садочок, фліртують, демонстративно ображаються, щоб оточення саме вирішило незручне питання. Одну й ту саму ситуацію можна назвати «жахливою проблемою» або «цікавою задачкою на кмітливість» — і назва багато що визначає наперед.</p>
+    <div class="highlight">
+      <p><em>Тому слово «маніпуляція» варто застосовувати не до кожної взаємодії з подвійним посланням, а лише тоді, коли за нею стоїть реальне страждання і власний запит із цим розібратися.</em> Якщо людині від якоїсь взаємодії добре — немає сенсу забирати в неї право про це не знати.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- З чого почати -->
+  <div class="section" style="animation-delay:2.2s">
+    <h2 class="section-title">З чого почати, якщо впізнала себе</h2>
+    <p>Різкі зміни рідко приживаються — білого ведмедя, поміщеного в пустелю, це не робить пристосованим до спеки, лише виснаженим. Працює поступовий, майже непомітний підхід.</p>
+    <div class="exercise">
+      <span class="exercise-label">Дві щоденні хвилини</span>
+      <p>Вранці — уяви, який результат сьогодні був би для тебе найкращим. Увечері — згадай, за що вдячна і в чому сьогодні була молодець. Навіть якщо найкращий результат дня — випити чаю, помити тарілку й застелити ліжко, це вже маленький порядок усередині хаосу. Дві здатності, які це тренує: втілювати задумане в дійсність і помічати радість від зробленого.</p>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:2.3s">
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">У якій вершині трикутника — переслідувача, жертви чи рятівника — ти провела найбільше часу цього тижня, навіть не помітивши цього?</div>
+    </div>
+  </div>
+
+  <!-- Фінал -->
+  <div class="section" style="animation-delay:2.4s">
+    <h2 class="section-title">Двері відкриваються зсередини</h2>
+    <p>Трикутник тримається не на злій волі, а на вигоді, яку кожна вершина непомітно дає. Побачити свою роль — не привід звинуватити себе, а перший рух до виходу: людина — наче пластилін, і що частіше її «заганяли» в певну форму, то важче з неї вийти. Але форма змінюється, щойно з'являється власний запит на це.</p>
+    <p>Про типові тактики маніпуляції в повсякденні — <a href="manipulation.html">Маніпуляція</a>. Про п'ять облич токсичної поведінки, серед яких і жертва, і маніпулятор, — <a href="toxic-types.html">П'ять типів токсичних людей</a>. Про гойдалку ідеалізації й знецінення зблизька — <a href="narcissist.html">Нарцис</a>.</p>
+    <div class="final-quote">
+      <div class="final-text">Ролі в цьому трикутнику ніхто не роздає назавжди. <strong>Двері позитивних змін завжди відчиняються зсередини</strong> — і саме тому їх ніхто, крім тебе самої, не може ні відкрити, ні тримати зачиненими.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
