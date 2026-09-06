@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Твоя шкіра, твої стіни</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,140,80,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(52,58,94,.65);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(40px,7.6vw,68px);letter-spacing:.08em;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:11px;font-weight:200;letter-spacing:.4em;color:rgba(52,58,94,.65);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:18px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#5261c2;box-shadow:0 0 12px rgba(82,97,194,.6)}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a,.card-text a,.phrase-text a{color:#7a5fbe;text-decoration:none;border-bottom:1px solid rgba(122,95,190,.45);transition:border-color .3s}
+.section p a:hover,.card-text a:hover,.phrase-text a:hover{border-bottom-color:rgba(122,95,190,.9)}
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(82,97,194,.35),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:24px 26px;transition:all .4s;position:relative;overflow:hidden}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(82,97,194,.35),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:16px;line-height:1.5;color:rgba(36,40,68,.75);margin-bottom:10px}
+.phrase-said::before{content:'“';color:rgba(148,103,23,.6)}
+.phrase-reply{font-size:14.5px;font-weight:400;line-height:1.7;color:#3f4a9e;padding-left:18px;position:relative}
+.phrase-reply::before{content:'→';position:absolute;left:0;color:#7a5fbe}
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(52,58,94,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#946717}
+.exercise{padding:24px 28px;border-left:2px solid rgba(82,97,194,.4);margin:20px 0;background:rgba(82,97,194,.06);border-radius:0 16px 16px 0}
+.exercise-label{font-size:9.5px;font-weight:400;letter-spacing:.3em;text-transform:uppercase;color:#3f4a9e;margin-bottom:10px;display:block}
+.exercise p{font-size:14px;font-weight:300;line-height:1.8;color:rgba(36,40,68,.9);margin:0}
+.q-list{margin-top:20px}
+.q-item{display:flex;gap:16px;padding:13px 0;border-bottom:1px solid rgba(52,58,94,.1)}
+.q-item:last-child{border-bottom:none}
+.q-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:19px;color:#7a5410;min-width:26px;line-height:1.5}
+.q-text{font-size:14.5px;font-weight:300;line-height:1.7;color:rgba(36,40,68,.9);padding-top:2px}
+.story{background:rgba(52,58,94,.04);border:1px solid rgba(52,58,94,.12);border-radius:20px;padding:36px 34px;margin-top:20px}
+.story p{font-size:15px;font-weight:300;line-height:1.9;color:rgba(36,40,68,.92)}
+.story p:last-child{margin-bottom:0}
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:10px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(52,58,94,.5);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,34px);color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:640px;margin:0 auto}
+.final-text strong{font-weight:400;color:#946717}
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:#7a5fbe;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,#7a5fbe,transparent)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.75);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:#2c2c2c}
+.read-toggle.active{background:rgba(212,175,110,.16);border-color:rgba(212,175,110,.55);color:#7a5410}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="boundaries.html">← Межі</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Твоя шкіра, твої стіни</h1>
+  <p class="page-subtitle">Арсенал фраз проти тиску, який не здається</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Там, де немає меж, — просто порожнеча, калюжа і сльота. Там, де межі є, — є людина"</div>
+    </div>
+    <p>Уяви звичайний аркуш паперу А4. У цій вправі він говорить голосом настирливого прохача: «з'їж мене». Аркуш — це що завгодно, чого від тебе домагаються: час, гроші, тіло, увага. Питання не в тому, як красиво відмовити, — а в тому, яка «енергія» стоїть за відмовою: право бути собою і з повагою вимагати поваги до себе. Межі захищають так само, як шкіра захищає тіло, а стіни й жалюзі — кімнату від холоду й сонця.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Право на своє -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Право на своє</h2>
+    <p>Під більшістю слабких меж лежить одна тиха думка: «якщо в мене є щось своє — я погана». Але це не етика, а пастка: найчастіше в тебе намагається викликати провину за власність саме той, хто хоче цією власністю скористатися.</p>
+    <p>Практичний висновок — примножувати «своє мале»: фінансову подушку, сон, харчування, тіло. У людей із розмитими межами ці речі майже завжди в хаосі — не тому, що бракує часу, а тому, що дбати про своє й здається тим самим «поганим» вчинком.</p>
+  </div>
+
+  <!-- 44 фрази -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Коли просте «ні» не спрацьовує</h2>
+    <p>Базові формули відмови — «я не можу», «мені важливо, щоб...» — уже розібрані в <a href="boundaries.html">Межах</a>. Тут — розширений арсенал саме для випадків, коли співрозмовник тисне далі: погрожує, соромить, лестить або грає на жалості.</p>
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-said">«Невже тобі мене не шкода, мені так самотньо і сумно, а ти такий бездушний»</div>
+        <div class="phrase-reply">Я не приймаю ні твоїх слів, ні форми, в якій ти проявляєш свою турботу.</div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-said">«Невже ти не розумієш, що варто робити це інакше» (порада під виглядом турботи)</div>
+        <div class="phrase-reply">Я почув, про що ви кажете, але ваша турбота мені не потрібна.</div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-said">«Якщо ти будеш до цього повертатися...» (погроза продовжити в тому ж дусі)</div>
+        <div class="phrase-reply">Тоді мені доведеться припинити з тобою спілкування — це не в моїх правилах.</div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-said">Перехід на образи — «ти лисий», «ти окулярик»</div>
+        <div class="phrase-reply">Так зі мною розмовляти не варто. Спершу скажи, як ти мене почув — а щодо пропозиції, точно ні.</div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-said">Настирливий холодний дзвінок, що триває навіть після відмови</div>
+        <div class="phrase-reply">Мені це нецікаво, зробіть, будь ласка, позначку у вашій базі, щоб мені більше не телефонували, до побачення — сказане навіть тоді, коли співрозмовник ще не замовк.</div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-said">«З'їж мене — станеш кращим, красивішим» (лестощі як винагорода)</div>
+        <div class="phrase-reply">Я сам собі подобаюся, сам вирішую, що мені личить.</div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-said">«Ти ж тепер мені винен за те, що я дозволив тобі відмовити» (борг за саму відмову)</div>
+        <div class="phrase-reply">У мене є свої острівці безпеки, тому мені це нецікаво, до побачення.</div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-said">«Тебе погано виховали, раз відмовляєш, тобі не соромно» (сором через виховання)</div>
+        <div class="phrase-reply">Я не можу спілкуватися з людьми, які не збираються поважати мої межі, тому змушений зараз завершити наше спілкування.</div>
+      </div>
+    </div>
+    <p style="margin-top:22px">І окремо — легальний третій варіант між «так» і жорстким «ні»: <em>«я беру тайм-аут»</em>, коли потрібен час подумати, а не остаточний розрив.</p>
+  </div>
+
+  <!-- Принципи -->
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Що спільного в усіх цих фразах</h2>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🎯</span>
+        <div class="card-title">Прямо, але не грубо</div>
+        <div class="card-text">Без виправдань і без агресії. «Якщо треба пояснювати — то не треба пояснювати».</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🤐</span>
+        <div class="card-title">Пауза замість виправдань</div>
+        <div class="card-text">Після «ні» — тиша, а не серія причин. Кожна причина — це шпаринка, у яку можна протиснутися далі.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎭</span>
+        <div class="card-title">Тіло узгоджене зі словами</div>
+        <div class="card-text">Не казати м'яко «ну не треба», коли мається на увазі тверде «ні». Зоровий контакт, не опущений погляд.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌫️</span>
+        <div class="card-title">Без фальшивої надії</div>
+        <div class="card-text">Не «може, іншим разом», якщо це неправда. Фальшива надія — це відкладена, більш болісна відмова.</div>
+      </div>
+    </div>
+    <div class="highlight">
+      <p><em>Останній, найважчий принцип.</em> Той, хто тисне, — не «погана людина» загалом. Його вчинок не скасовує його як особистість, так само як звільнення співробітника — не тому, що він поганий, а тому, що не знайшлося застосування.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Гачок -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Гачок закидають тому, хто клює</h2>
+    <p>Хто не клює — тому гачки просто не закидають. Це не про везіння, а про те, що манипулятивний підхід перестає бути вигідним, коли він регулярно не спрацьовує.</p>
+    <div class="exercise">
+      <span class="exercise-label">Порада</span>
+      <p>Пропиши й потренуй заздалегідь — можна перед дзеркалом — власну фразу-заготовку під свою типову ситуацію. Нова навичка спочатку слабша за стару звичку, і це нормально: тренування — не ознака слабкості, а спосіб дати новому шаблону шанс закріпитися.</p>
+    </div>
+  </div>
+
+  <!-- Тактика і стратегія -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Листя капусти і качан</h2>
+    <p>Фрази вище — це зовнішній, тактичний рівень: як відповісти тут і зараз. Але є рівень глибший — стратегічний: так побудувати життя, щоб у людей узагалі не виникало бажання звертатися до тебе з надмірними вимогами.</p>
+    <div class="highlight">
+      <p><em>У токсичної людини значно більше досвіду тиснути, ніж у тебе — досвіду цьому запобігти.</em> Тому поодинокі спроби «переграти» її в моменті рідко працюють так добре, як зміна власного стратегічного рівня: сигналів, які ти подаєш задовго до самого прохання.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Ознаки токсичності -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Хто найчастіше краде твою енергію</h2>
+    <p>Загальний портрет токсичної людини й типи токсичної поведінки — у <a href="toxic.html">Токсичних стосунках</a>. Тут — конкретніший, поведінковий чекліст: не «який характер», а «що саме людина робить із твоїм часом і увагою».</p>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🗑️</span>
+        <div class="card-title">Ти — смітник для образ</div>
+        <div class="card-text">Поруч із цією людиною погано без видимої причини: тебе використовують як місце, куди скидають чужий негатив.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🍵</span>
+        <div class="card-title">Плітки як наркотик</div>
+        <div class="card-text">Обговорення чужих невдач тимчасово знімає власну невпевненість — і саме тому затягує.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎬</span>
+        <div class="card-title">Постійна драма</div>
+        <div class="card-text">Кризи, істерики, «то ближче, то далі». Розумний вирішує проблеми, яких мудрий узагалі не створює.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎁</span>
+        <div class="card-title">Непрохані поради</div>
+        <div class="card-text">Спосіб перевести фокус із зовнішнього на твоє внутрішнє — прихована форма ворожості під маскою турботи.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎭</span>
+        <div class="card-title">Демонстративна жертва</div>
+        <div class="card-text">Звинувачення інших чи всього світу. Слухати це так само шкідливо, як дихати вихлопними газами — це заразливо.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⏰</span>
+        <div class="card-title">Крадіжка часу</div>
+        <div class="card-text">Невчасні прохання. Краще не відмовляти щоразу окремо, а побудувати життя так, щоб із такими проханнями до тебе взагалі не зверталися.</div>
+      </div>
+    </div>
+    <p style="margin-top:22px">Ще кілька маркерів варто тримати в полі зору: неввічливість із офіціантами й охоронцями — сигнал того, як з тобою поводитимуться, щойно ти станеш «своєю»; непохитна впевненість у власній правоті, яку не змінюють жодні аргументи — спроба переконати без запиту, це роль рятівника в <a href="triangle-exit.html">драматичному трикутнику</a>, і в неї краще не встрявати; розмови лише про себе без інтересу до тебе.</p>
+  </div>
+
+  <!-- Ознаки відсутності меж -->
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">А тепер про твої власні межі</h2>
+    <p>Якщо межі порушують часто, варто перевірити не лише кривдника, а й себе: чи не порушую меж інших саме я — за звичкою, не зі зла. Класичний приклад такої перевірки в обидва боки — вже на сторінці <a href="boundaries-cases.html">«Скажи одразу і лише раз»</a>.</p>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🙊</span>
+        <div class="card-title">Виправдовуєш замість відмовляти</div>
+        <div class="card-text">Замість «мені це не цікаво» чи «це мене ранить» — довге пояснення, чому інша людина насправді має рацію.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎁</span>
+        <div class="card-title">Не вмієш просити й приймати</div>
+        <div class="card-text">Щиро подякувати, не знецінюючи ні свій внесок, ні чужий; попросити так, щоб залишити іншому право відмовити без провини.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📢</span>
+        <div class="card-title">Ніхто не чує твоїх думок</div>
+        <div class="card-text">Спробуй формулу: «я пропоную — ми разом подивимось — ти сама вирішиш, чи підходить це тобі».</div>
+      </div>
+    </div>
+    <div class="highlight">
+      <p><em>Про критику окремо.</em> Вагу має лише критика конструктивна, ввічлива й запрошена. Решта — це «подія в чужій голові», яка не має стосунку до тебе особисто. Надто гостра реакція саме на непрошену критику — теж ознака розмитої межі.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Ситуації -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Кілька побутових ситуацій</h2>
+    <p>Ситуації з батьками, роботою й родичами докладно розібрані в <a href="boundaries-cases.html">«Скажи одразу і лише раз»</a>. Тут — типи тиску, які туди не увійшли.</p>
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-said">«Тільки ти впораєшся» (лестощі з проханням)</div>
+        <div class="phrase-reply">Подяка за комплімент — і чітке «ні», без почуття провини за можливу образу.</div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-said">«Подивись, до чого ти мене довів» (провина за чужу проблему)</div>
+        <div class="phrase-reply">Пропозиція розібратися, що можна з цим зробити, — без того, щоб узяти на себе всю вину.</div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-said">«Тобі варто менше довіряти своїй інтуїції» (знецінююча порада)</div>
+        <div class="phrase-reply">Подяка за пораду — і право самостійно вирішувати.</div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-said">Хтось зробив щось за тебе без відома (наприклад, попросив за тебе підвищення)</div>
+        <div class="phrase-reply">Прохання надалі не втручатися в подібні питання.</div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-said">Знецінення зовнішності чи ваги</div>
+        <div class="phrase-reply">Тверде «мені не подобається спілкування в такому ключі» — або спроба м'яко перевести розмову на емоційний стан співрозмовника.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 17 питань -->
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Питання, які варто собі поставити</h2>
+    <p>Найкраще відповідати на них не абстрактно, а крізь призму конкретної ролі — мама, партнерка, працівниця. Це не тест із правильними відповідями, а матеріал для чесної розмови із собою.</p>
+    <div class="q-list">
+      <div class="q-item"><span class="q-num">1</span><span class="q-text">Хто ти? Спробуй відповісти метафорою, а не посадою.</span></div>
+      <div class="q-item"><span class="q-num">2</span><span class="q-text">Що тобі подобається, що ти любиш?</span></div>
+      <div class="q-item"><span class="q-num">3</span><span class="q-text">Які почуття й емоції ти віддаєш перевагу проживати найбільшою мірою?</span></div>
+      <div class="q-item"><span class="q-num">4</span><span class="q-text">Як тобі хочеться, щоб з тобою поводилися інші?</span></div>
+      <div class="q-item"><span class="q-num">5</span><span class="q-text">Ким ти точно не є, ніколи не будеш і не була?</span></div>
+      <div class="q-item"><span class="q-num">6</span><span class="q-text">Що тобі не подобається?</span></div>
+      <div class="q-item"><span class="q-num">7</span><span class="q-text">Як з тобою категорично не можна поводитися?</span></div>
+      <div class="q-item"><span class="q-num">8</span><span class="q-text">Що для тебе найважливіше в дружбі, в романтичних стосунках, на роботі, з родичами?</span></div>
+      <div class="q-item"><span class="q-num">9</span><span class="q-text">Які правила існують щодо твого часу і простору? («З нами або з повагою, або ніяк» — і в обидва боки.)</span></div>
+      <div class="q-item"><span class="q-num">10</span><span class="q-text">Що має статися, щоб ти припинила стосунки?</span></div>
+      <div class="q-item"><span class="q-num">11</span><span class="q-text">Чи вибачаєшся ти часто? Вибачення мають вагу лише в того, хто не вибачається постійно — не через черствість, а тому що рідко дає для цього привід.</span></div>
+      <div class="q-item"><span class="q-num">12</span><span class="q-text">Чи проговорюєш ти партнеру межі дозволеного з тобою?</span></div>
+      <div class="q-item"><span class="q-num">13</span><span class="q-text">Ти жертва обставин чи господиня становища? Це не разова відповідь, а щоденне мурування — цеглинка за цеглинкою.</span></div>
+      <div class="q-item"><span class="q-num">14</span><span class="q-text">Чи знаєш ти свої права — на роботі, в сім'ї, у стосунках — і чи дотримуються вони?</span></div>
+      <div class="q-item"><span class="q-num">15</span><span class="q-text">Навколо чого саме побудовані твої межі — і чим наповнений простір усередині них? Стіни можуть бути міцними, а всередині — порожньо.</span></div>
+      <div class="q-item"><span class="q-num">16</span><span class="q-text">Чи не порушуєш меж інших ти сама? Найчастіше межі інших порушує саме той, хто сам любить, щоб порушували його.</span></div>
+      <div class="q-item"><span class="q-num">17</span><span class="q-text">Чи практикуєш ти постійне пізнання себе? Не одноразове «пізнати», а безперервне «пізнавати» — завжди є, куди рости далі.</span></div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Притча -->
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Дівчина, яка ходила з відкритими дверима</h2>
+    <div class="story">
+      <p>До сивого мудреця в сльозах прийшла молода дівчина. Вона завжди намагається бути доброю з усіма, нікому не відмовляє, привітна й лагідна — а натомість регулярно отримує образи й насмішки, хоч ні в чому не винна.</p>
+      <p>Мудрець запропонував їй роздягнутися й пройтися голою містом. Дівчина в жаху відмовилася — її ж зневажатимуть. Тоді він поставив перед нею дзеркало: показатися людям з оголеним тілом вона боїться, то чому ж ходить світом з оголеною душею? Її душа розчахнута, наче двері навстіж, — туди заходить хто завгодно. А ті, хто бачить у її чеснотах віддзеркалення власних вад, намагаються її образити, бо не кожному вистачає мужності визнати чиюсь перевагу.</p>
+      <p>На запитання, що ж їй робити, мудрець відвів дівчину в сад. Він багато років поливає ці квіти, сказав він, але жодного разу не бачив, як саме розкривається бутон, — хоча потім насолоджується красою й ароматом кожної квітки. Так само варто розкривати серце перед людьми — не поспішаючи, непомітно, помічаючи, хто дійсно поливає, а хто обриває пелюстки й топче їх. І не намагатися будь-що довести свою цінність кожному зустрічному.</p>
+      <p>Після цієї розмови дівчина перестала надавати всім «ведмежі послуги» — і її життя налагодилося.</p>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:2s">
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Перед ким із твого оточення двері твоєї душі досі відчинені навстіж — хоча він жодного разу не поливав ці квіти?</div>
+    </div>
+  </div>
+
+  <!-- Фінал -->
+  <div class="section" style="animation-delay:2.1s">
+    <h2 class="section-title">Що з цим робити далі</h2>
+    <p>Тонкий шар дистанції навколо тебе — це не холодність, а те саме, що шкіра для тіла: природний захист, без якого немає меж між «я» і «не я». Про базові формули цього захисту — <a href="boundaries.html">Межі</a>; про мовчазні, невербальні межі без пояснень — <a href="boundaries-silent.html">Межі без слів</a>; про побутові ситуації з батьками, роботою й родичами — <a href="boundaries-cases.html">«Скажи одразу і лише раз»</a>.</p>
+    <div class="final-quote">
+      <div class="final-text">Гачки закидають тому, хто клює. <strong>Хто не клює — тому їх просто не закидають.</strong> А до цього ведуть не тактичні фрази самі по собі, а те, як ти живеш увесь інший час.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>

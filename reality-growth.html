@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Ріст вище за цілі</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.08em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.92)}
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(52,58,94,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(110,200,160,.45),transparent)}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(26px,4vw,36px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:640px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.soft em{font-style:normal;color:#146239!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p,.objection p{color:rgba(96,44,32,.92)!important}
+.tag.red{color:#9c2f22!important}.tag.gold{color:#7a5410!important}.tag.green{color:#146239!important}
+.legend-txt{color:rgba(52,58,94,.82)!important}.legend-txt b{color:#242844!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.soft{background:linear-gradient(135deg,rgba(31,122,77,.10),rgba(82,97,194,.05))!important;border-color:rgba(31,122,77,.28)!important}
+.soft p{color:rgba(30,60,46,.92)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.objection{background:linear-gradient(135deg,rgba(178,60,46,.09),rgba(200,150,60,.05))!important;border-color:rgba(178,60,46,.22)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="reality.html">← Рівні сприйняття</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Ріст вище за цілі</h1>
+  <p class="page-subtitle">Чому твої цілі — не твої</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Моя ціль ніколи не стане твоєю ціллю"</div>
+      <div class="hero-author">A Life Changing Video For People 19–27 Years Old</div>
+    </div>
+    <p>Проблеми виникають у голові, а рішення шукають зовні. Це перевернута логіка, і вона тримається довше за все саме в той період, коли здається, що ти вже мусила б бути десь далі.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Між -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Вік, у якому ти між</h2>
+    <p>Дев'ятнадцять — це проміжок. Молодші дивляться на тебе як на людину, що вже в усьому розібралася. Старші — як на ту, що тільки починає. Обидва погляди звучать усередині одночасно: ти й запізнилася, і ще навіть не почала.</p>
+    <p>Дорослість не приходить із датою в паспорті. Вона приходить зі здатністю витримувати реальність такою, як вона є, і проживати власні емоції, не виносячи їх назовні як рахунок іншим.</p>
+    <p>І ще одне, з чим варто розібратися одразу: «прибуття» не існує. Скільки б ти не досягла, буде наступний рівень — це не покарання, це будова гри. Докладно про те, чому кінця немає, — <a href="reality-noend.html">Немає кінця — це ілюзія</a> і <a href="reality-achieved.html">Ти вже там, куди йдеш</a>.</p>
+  </div>
+
+  <!-- Насмотреність -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Пісня, яку ти знаєш напам'ять і ніколи не вмикала</h2>
+    <p>Є пісня, яку ти можеш проспівати рядок у рядок. Ти жодного разу не вмикала її навмисно. Вона просто звучала — з чужих колонок, із реклами, з маршрутки, з фону в кав'ярні. І одного дня виявилося, що вона всередині, повністю, без твоєї згоди.</p>
+    <p>Точно так само в тебе потрапило все інше. Не тільки музика — уявлення про те, що таке нормальне життя, скільки має заробляти чоловік, коли пора народжувати, який вигляд має успіх і що вважається соромом.</p>
+
+    <div class="highlight">
+      <p><em>Ланцюг простий і майже непомітний.</em> Насмотреність → нормалізація → ідентичність → цілі. Спочатку ти просто бачиш щось достатньо часто. Потім воно перестає бути дивним. Потім стає частиною уявлення про те, ким слід бути. І аж тоді з нього виростає ціль — але це вже четвертий крок, а не перший.</p>
+    </div>
+
+    <p style="margin-top:24px">Середовище, яке це все в тебе поклало, ти не обирала. Ані країну народження, ані родину, ані двір, ані те, що дивилися вдома по телевізору. Якби батько працював в IT, ціллю було б стати інженеркою. Двір із футболом — і ціллю став би футбол. Це не робить твої цілі поганими. Це просто означає, що вони не звідти, звідки здається.</p>
+  </div>
+
+  <!-- Ідентичність -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Ціль — це не те, чого ти хочеш</h2>
+    <p>Згадай дитячу рекламу іграшки. Приваблювала не сама іграшка. Приваблював хлопчик у кадрі, якому було весело, — хотілося опинитися на його місці. Іграшка була лише перепусткою туди.</p>
+    <p>Із дорослими цілями те саме, тільки складніше замасковано. Ти хочеш не річ, а <strong>не бути тією, у кого цієї речі немає</strong>. Не квартиру — не бути тією, хто в тридцять знімає кімнату. Не посаду — не бути тією, про кого думають «вона так і не виросла».</p>
+    <p>Ціль — це не бажання. Це втеча від ідентичності, яка тебе зачіпає. Про те, як на цьому механізмі побудовані бренди й чому запал гасне на п'ятий місяць, — <a href="reality-image.html">Ти ніколи не мала цілей</a>.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Темне дзеркало -->
+  <div class="section" style="animation-delay:1.15s">
+    <h2 class="section-title">Темне дзеркало</h2>
+    <p>Уяви двох людей. Джонні — мультимільйонер, який заробив усе працею. І ти — без грошей, але з абсолютно щирим внутрішнім відчуттям, що ти розумніша за нього.</p>
+    <p>Зніми з грошей контекст, і від них мало що залишиться: посередник у розмові між людьми, спосіб домовитися. Значить, вище за тебе Джонні робить не він сам — а його кишені. Про це окремо: <a href="reality-money.html">Гроші — це розмова</a>.</p>
+    <p>Тоді чим він від тебе справді відрізняється? Одним. Він не тікав від дзеркала, а ти тікала.</p>
+
+    <div class="soft">
+      <p>Темне дзеркало — це не про зовнішність. Це той внутрішній простір, де ти чесна із собою. Перед людьми можна тримати обличчя, у соцмережах — вигляд, що все під контролем. Дзеркало показує тільки одне: де ти сама знаєш, що не права. Найімовірніше, ти читаєш цю сторінку саме через нього.</p>
+    </div>
+
+    <p style="margin-top:24px">Ріст завжди впирається в це дзеркало. Не в мотивацію, не в план, не в дисципліну — у момент, коли треба подивитися й не відвести очі.</p>
+  </div>
+
+  <!-- Думати vs робити -->
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Розумна людина робить те, що вміє найкраще — думає</h2>
+    <p>Думки йдуть цілодобово, і складати з них конструкції приємно. У голові все виходить: план готовий, наслідки прораховані, варіанти перебрані. Мозок отримує від цього майже те саме задоволення, що й від зробленого.</p>
+    <p>Майже. Бо реакція від того, щоб скласти щось у голові, і реакція від того, щоб скласти те саме в реальності, — різні речі. Одна закінчується разом із думкою, друга залишається стояти.</p>
+    <p>Джонні не думає. Джонні робить. Це звучить образливо для того, хто розумніший, — і саме тому це варто почути.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🧠</span>
+        <div class="card-title">Життя в голові</div>
+        <div class="card-text">Думки будують ідентичність, ідентичність дає відчуття наповненості просто там, де ти вже стоїш. Нічого не змінюється, але й порожньо не стає — тому конструкція тримається роками.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔨</span>
+        <div class="card-title">Життя в дії</div>
+        <div class="card-text">Думка перетворюється на крок. Наповненості на місці немає — вона з'являється тільки після зробленого, і кожного разу заново.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 50/50 -->
+  <div class="section" style="animation-delay:1.25s">
+    <h2 class="section-title">Якщо ти можеш програти — значить, можеш і виграти</h2>
+    <p>Провал і перемога не існують окремо. Вони — дві сторони однієї можливості: там, де є шанс не вийти, автоматично є шанс вийти. Інакше не буває.</p>
+    <p>Це означає дивну на перший погляд річ: сам факт, що ти можеш провалитися, ставить тебе на одну лінію з перемогою. Не гарантує її — ставить на лінію. Ті, хто не ризикує, не мають ані першого, ані другого.</p>
+
+    <div class="highlight">
+      <p><em>Монета.</em> Навіть якщо вона тисячу разів випала орлом, решка від цього не стала неможливою. Кожен новий кидок нічого не пам'ятає про попередні. Одна невдача не закінчує підкидання — вона просто одне підкидання.</p>
+    </div>
+
+    <p style="margin-top:24px">Імовірність узагалі вшита в конструкцію світу глибше, ніж здається, — аж до квантового рівня, де частинка не «знаходиться десь», а має розподіл шансів опинитися там чи там. Навіть двері, які відчиняються щодня тридцять років, одного дня можуть заклинити.</p>
+    <p>Різниця між тими, хто рухається, і тими, хто ні, часто саме тут: перші тримають цю ймовірність у голові й продовжують кидати монету, проходячи крізь біль. Другі після третього орла роблять висновок про себе.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Немає ти проти себе -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Немає жодного «ти проти себе»</h2>
+    <p>Ця формула звучить мотивуюче й продається краще за всі інші: «твій єдиний суперник — ти вчорашня». Але якщо це справді ти проти тебе, то постраждати може рівно одна людина. Обидві сторони цього бою — ти.</p>
+    <p>Найточніший приклад — будильник. Увечері одна людина ставить його на шосту, ранком інша його вимикає й перевертається. У голові вони справді сприймаються як двоє: відповідальна й слабка, та, що планує, і та, що зраджує. Насправді це одна людина в різному стані.</p>
+    <p>Так само немає розділення на свідоме й підсвідоме як на двох мешканців однієї голови. Та, що знає, як треба, і та, що робить навпаки, — не дві. Внутрішня війна виникає не між частинами, а між знанням і бездіяльністю — і це не бій, а просто зазор.</p>
+
+    <div class="soft">
+      <p>Практичний наслідок: перестати воювати. Ти не переможеш себе — з ким би не воювала, програє та сама людина. Замість боротьби залишається одне питання: що я роблю з тим, що вже знаю?</p>
+    </div>
+  </div>
+
+  <!-- Біль -->
+  <div class="section" style="animation-delay:1.35s">
+    <h2 class="section-title">Біль повертає з фантазії</h2>
+    <p>Найшвидший спосіб стати справді усвідомленою — пройти через біль. Не тому, що страждання облагороджує; тому що воно єдине працює миттєво.</p>
+    <p>У тих, хто щось будує, він накопичується буденно: відмови, бізнеси, які не пішли, податки, позови, партнери, які зникли. Кожен такий епізод вибиває з уявної версії того, як усе мало би бути, і повертає в те, як воно є. Після цього рішення стають іншими — не тими, які диктує розум у пошуку швидкої винагороди.</p>
+    <p>При цьому страждання нікуди не зникає з життя навіть у тих, хто дійшов. У людини без грошей воно звучить як «а що, як не вийде». У людини з грошима — як «а що, як я все втрачу». Форма інша, наявність та сама. Про це докладно: <a href="reality-havefun.html">Весело — ти однаково страждатимеш</a>.</p>
+  </div>
+
+  <!-- Чужі формули -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Чому чужа формула не спрацює</h2>
+    <p>Логіка здається бездоганною: якщо людина вже пройшла шлях, у неї є формула, і треба просто її взяти. Проблема в тому, що формули не було, поки вона йшла.</p>
+    <p>Ті, на кого ти дивишся, були так само загублені. Вони працювали з єдиним матеріалом, який мали, — із собою. Коли вийшло, вони озирнулися, побачили закономірність, упакували її в систему й поставили цінник. Але зібрана вона була з їхніх смаків, їхнього наміру, їхньої дисципліни й того життя, яке хотіли саме вони.</p>
+
+    <div class="highlight">
+      <p><em>Не обов'язково йти в те, де «зараз гроші».</em> Є люди, які зробили статки на канцелярських скріпках — просто тому, що це був їхній власний дивний інтерес, у який вони залізли глибше за всіх. Якби вони шукали відповідь зовні, вони б її не знайшли: зовні не було нікого, хто робив би це до них.</p>
+    </div>
+
+    <p style="margin-top:24px">І ще одна річ, яка знімає багато напруги: ніхто про тебе не думає, засинаючи. Люди, на яких ти дивишся знизу вгору, просто пройшли своє дзеркало, а не оцінюють тебе.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Намір -->
+  <div class="section" style="animation-delay:1.45s">
+    <h2 class="section-title">Намір замість цілей</h2>
+    <p>Що раніше приймеш, що це скінченно, то раніше почнеш жити з наміром. Намір більший за ціль: ціль — це пункт, намір — це напрямок, у якому ти йдеш незалежно від того, чи дійшла до чергового пункту.</p>
+    <p>Звідси й головна перестановка: <strong>гроші — побічний продукт того, ким ти стаєш</strong>, а не мета, до якої ти йдеш. Це не заперечення грошей і не пропозиція жити бідно. Це просто інший порядок причин.</p>
+    <p>Те саме — з усім, що навколо. Кімната, у якій ти живеш, коло людей поруч, цифра на рахунку — це відображення, а не випадковий набір обставин. Про механіку цього: <a href="reality-onlyworld.html">Світ, який ти бачиш — єдиний</a>. Власного обличчя ти не бачиш ніколи — тільки в дзеркалі й на фото; ти є усвідомленням, яке переживає все це зсередини, і в цьому сенсі ти головна героїня власного досвіду: <a href="reality-experience.html">Ти — сам досвід</a>.</p>
+    <p>І чесний рахунок часу: по-справжньому яскравих років у житті приблизно двадцять-тридцять. Час іде однаково — і коли ти рухаєшся, і коли ні.</p>
+  </div>
+
+  <div class="section" style="animation-delay:1.5s">
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Ким ти будеш, якщо жодна з твоїх цілей ніколи не здійсниться?</div>
+    </div>
+  </div>
+
+  <!-- Дитина -->
+  <div class="section" style="animation-delay:1.55s">
+    <h2 class="section-title">Дитина на старих фотографіях</h2>
+    <p>Не всі можуть бути найкращими. Не всі стануть мультимільйонерами — номер один тому й номер один, що він один. Це не привід зупинятися, але це варто сказати вголос, бо на замовчуванні цього будується половина розчарувань.</p>
+    <p>Тепер подивися на старе фото, де тобі шість. Багато хто носить у собі борг перед цією дитиною: колись доведу їй, що виріс не дарма. Куплю, досягну, стану, покажу.</p>
+
+    <div class="soft">
+      <p>Тій дитині ніколи не було діла до твоїх цілей, машин і грошей. Її цікавило інше: бути найсильнішою на майданчику, найшвидшою, першою добігти до дерева. Її цікавили не цілі. Її цікавила ти.</p>
+    </div>
+
+    <p style="margin-top:24px">Тому доводити їй нічого не треба. Вона не чекає звіту — вона просто дивиться в камеру.</p>
+  </div>
+
+  <!-- Фінал -->
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">Твоя гра</h2>
+    <p>Є гра, у яку можеш грати тільки ти, і контролер у ній один — твій погляд. Вона не про досягнення, а про ріст і про досвід за межами рамок, які тобі видали разом із місцем народження. Життя, яке тобі дали, — це фундамент, а не стеля.</p>
+    <p>І остання практична деталь: коли справ мільйон, з'являються відволікання. Коли залишаєшся тільки ти — зосередитися легко.</p>
+
+    <div class="final-quote">
+      <div class="final-text">Постав ріст вище за цілі. <strong>Цілі — позичені, ріст — твій</strong>. Життя більше, ніж долар, це твоя гра — і грати в неї можна так, як хочеш ти.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
