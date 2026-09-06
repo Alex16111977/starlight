@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Словник жертви</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(52,58,94,.65);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:11px;font-weight:200;letter-spacing:.5em;color:rgba(52,58,94,.65);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:10px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section-lead{font-size:14.5px;font-weight:300;line-height:1.85;color:rgba(52,58,94,.82);margin-bottom:22px;padding-left:20px}
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:10px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(52,58,94,.58)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+.card.ok{border-color:rgba(150,214,165,.3)}
+.card.ok::before{background:linear-gradient(to right,transparent,rgba(150,214,165,.45),transparent)}
+.card.bad{border-color:rgba(224,150,150,.28)}
+.card.bad::before{background:linear-gradient(to right,transparent,rgba(224,150,150,.42),transparent)}
+.ctx-line{font-size:14.5px;font-weight:300;line-height:1.7;color:rgba(36,40,68,.9);margin-top:8px}
+.ctx-ok{color:#1f7a4d;font-weight:400}
+.ctx-bad{color:#b23c2e;font-weight:400}
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:19px;line-height:1.4;color:rgba(36,40,68,.97);margin-bottom:10px}
+.marker{font-family:'Montserrat',sans-serif;font-size:14px;font-weight:300;line-height:1.7;color:#946717;margin-top:12px;padding-top:12px;border-top:1px solid rgba(212,175,110,.22)}
+.marker em{font-style:normal;color:#946717;letter-spacing:.03em}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(150,214,165,.24)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:9.5px;font-weight:400;letter-spacing:.3em;text-transform:uppercase;color:#1f7a4d;margin-bottom:8px}
+.reply-text{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16.5px;line-height:1.5;color:rgba(36,40,68,.92)}
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(52,58,94,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#946717}
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:10px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(52,58,94,.5);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(26px,4vw,36px);color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#946717}
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:#7a5fbe;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,#7a5fbe,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.75);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:#2c2c2c}
+.read-toggle.active{background:rgba(212,175,110,.16);border-color:rgba(212,175,110,.55);color:#7a5410}
+.section p a,.card-text a,.phrase-text a,.reply-text a{color:#7a5fbe;text-decoration:none;border-bottom:1px solid rgba(122,95,190,.45);transition:border-color .3s}
+.section p a:hover,.card-text a:hover,.phrase-text a:hover{border-bottom-color:rgba(122,95,190,.9)}
+.phrase-text{flex:1;min-width:0}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Словник жертви</h1>
+  <p class="page-subtitle">Вісімдесят фраз і що казати замість них</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"У чому б ти не була впевнена — ти знайдеш цьому підтвердження"</div>
+    </div>
+    <p>Є коло, у якому людина ходить роками, не помічаючи його. Те, як ти думаєш, задає, що ти відчуваєш. Те, що ти відчуваєш, задає, що ти кажеш і робиш. Те, що ти кажеш і робиш, створює конкретні події. А події підтверджують ту саму думку, з якої все почалося.</p>
+    <p>Найнеприємніше в цьому колі — воно замикається поза увагою. Людина не «потрапляє» в ситуації, у яких можна знову відчути провину, знецінення чи безсилля: вона їх непомітно для себе будує, бо ця емоція звична й давно вміє знаходити для себе привід.</p>
+    <p>Мова — єдине місце, де це коло видно ззовні. Нижче — фрази, які тримають людину в позиції наслідку, і те, що можна сказати собі замість них.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Нюанс -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">🟢 Одразу про межі цієї ідеї</h2>
+    <p class="section-lead">«Ти — причина всього, що з тобою відбувається» — це не опис реальності, а робоча позиція. Вона потрібна не тому, що завжди правдива, а тому, що тільки з неї можна щось змінити. Різниця між нею і самозвинуваченням тонка, і її варто бачити з першої сторінки.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">⚡</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:6px">Подія і те, що після неї</div>
+          <div class="ctx-line"><span class="ctx-ok">🟢 Працює:</span> відповідальність за наступний крок — за те, що ти робиш із тим, що сталося.</div>
+          <div class="ctx-line"><span class="ctx-bad">🚩 Не працює:</span> «сама винна» щодо хвороби, аварії, війни, чужого злочину. Це не твій вибір і ніколи ним не було.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">📄</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:6px">Факт і позиція</div>
+          <div class="ctx-line"><span class="ctx-ok">🟢 Норм:</span> назвати те, що сталося, прямо: «мене звільнили несправедливо», «він мене обдурив».</div>
+          <div class="ctx-line"><span class="ctx-bad">🚩 Пастка:</span> жити всередині цієї фрази роками, зробивши її поясненням усього, що не вийшло далі.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🤲</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:6px">Просити допомоги і скаржитися</div>
+          <div class="ctx-line"><span class="ctx-ok">🟢 Норм:</span> «мені важко, мені потрібна допомога, зроби, будь ласка, ось це» — пряме прохання з адресою і змістом.</div>
+          <div class="ctx-line"><span class="ctx-bad">🚩 Пастка:</span> розповідь про те, як усе погано, без запиту й без наміру щось міняти — і на кожну пропозицію відповідь «так, але».</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🕯️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:6px">Один раз і завжди</div>
+          <div class="ctx-line"><span class="ctx-ok">🟢 Норм:</span> сказати «за що мені це» у важкий день. Так говорять усі, це не діагноз.</div>
+          <div class="ctx-line"><span class="ctx-bad">🚩 Пастка:</span> коли це не фраза, а постійна мова — коли інших пояснень для свого життя не залишилося.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <p><em>Коротко: тут ідеться не про провину, а про авторство.</em> Провина дивиться назад і шукає винного. Авторство дивиться вперед і шукає наступний крок. Тому жодна фраза нижче не означає «ти сама це заслужила» — вона означає тільки те, що в цьому місці в тебе є хід, якого ти зараз не робиш.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 1. Провина за вчинок -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Зняти з себе конкретний вчинок</h2>
+    <p class="section-lead">Найпряміший вид: щось зроблено, і треба, щоб це зробив не ти.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🪢</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Мене змусили»</div>
+          <div class="card-text">Майже завжди означає «я погодилася, бо відмовитися було дорожче». Це теж вибір — просто зроблений під тиском і без визнання. Різниця принципова: у першій версії в тебе немає ходу, у другій ти знаєш ціну, яку не захотіла платити.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Я обрала цей варіант, бо відмова коштувала б мені ось цього. Наступного разу я готова заплатити?»</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🙅</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Я не винен»</div>
+          <div class="card-text">Фраза, після якої розмова зупиняється. Вона захищає, але нічого не виправляє — і зазвичай звучить саме тоді, коли виправити ще можна.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Що саме з цього — моя частина? Її я і візьму, решту обговоримо».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">📢</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Мені говорили, що…»</div>
+          <div class="card-text">Переказ чужих слів як власного знання. Зручно: якщо виявиться неправдою — винен той, хто сказав. Але діяти ти будеш за цією інформацією, і наслідки будуть твої.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«На яких фактах це тримається? Поки не перевірила — це чутка, а не підстава».</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Звинувачення -->
+  <div class="section" style="animation-delay:1.15s">
+    <h2 class="section-title">«Я хороша — ти поганий»</h2>
+    <p class="section-lead">Тут людина не просто уникає відповідальності — вона видає її іншому разом із рахунком.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">😤</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Ви дієте мені на нерви»</div>
+          <div class="card-text">Твої нерви — твої. Інша людина може поводитися незручно, але роздратування виробляється всередині тебе, і кнопка від нього теж усередині. Інакше виходить, що будь-хто на вулиці має пульт від твого стану.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Я дратуюся, коли відбувається ось це. Попрошу робити інакше — або вирішу, чи мені тут бути».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">❓</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Як він міг так учинити?»</div>
+          <div class="card-text">Питання, на яке не чекають відповіді. А відповідь зазвичай є, і вона проста: у людини були свої причини, які тобі не видно. Поки питання риторичне, воно тільки підігріває образу.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Чим він керувався? Я справді не знаю — і можу спитати».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">⚖️</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Це нечесно»</div>
+          <div class="card-text">Апеляція до правил, на які ніхто не підписувався. Чесність — це твоя внутрішня шкала, і в іншої людини вона інша. Фраза дає праведність і не дає нічого більше.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Мене це не влаштовує. Ось що я пропоную натомість».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">😲</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Не можу повірити, що ти це зробив»</div>
+          <div class="card-text">Найчастіше — можеш. Просто не хочеться перебудовувати уявлення про людину. Здивування тут захищає стару картинку, а не описує реальність.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Він здатен на таке. Тепер я це знаю — що я з цим знанням робитиму?»</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🎫</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Це я постраждала — це ти маєш вибачатися»</div>
+          <div class="card-text">Статус потерпілої перетворюється на право вимагати. Проблема в тому, що вибачення, витребуване силою, нічого не лікує: ти отримуєш слова й залишаєшся з тим самим болем.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Мені боляче. Мені потрібно, щоб надалі було ось так — це для мене важливіше за вибачення».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🗡️</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Ти ще пожалкуєш»</div>
+          <div class="card-text">Погроза замість розмови. Вона віддає твоє майбутнє в оренду: тепер тобі потрібно, щоб іншому стало погано, інакше фраза не збудеться.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Я не хочу, щоб йому було погано. Я хочу, щоб мені було добре — це різні задачі».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🔁</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Усі чоловіки козли, і чому мені трапляються тільки такі»</div>
+          <div class="card-text">У другій половині фрази вже сховано відповідь. «Усі» — це вибірка, яку зібрала ти: кого підпустила, кому пробачила перший дзвіночок, з ким залишилася після другого.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«За якою ознакою я їх обираю — і на чому щоразу залишаюся, коли вже все видно?»</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 3. Манипуляції -->
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Рахунок, який не виставляли вголос</h2>
+    <p class="section-lead">Фрази, у яких турбота була позикою під відсотки, тільки боржника про це не попередили.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🧾</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«І це після всього, що я для нього зробила»</div>
+          <div class="card-text">Означає, що робилося не безкоштовно. Рахунок висів увесь час, просто його не показували — і тепер його пред'являють до сплати людині, яка нічого не підписувала.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Я робила це, бо хотіла. Якщо мені потрібна віддача — я маю сказати про це прямо, а не збирати борг».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">💔</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Якби він дорожив стосунками, він би так не вчинив»</div>
+          <div class="card-text">Чужі почуття вимірюються твоєю шкалою вчинків. Часто людина дорожить — просто показує це не тим способом, який ти вважаєш доказом.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Що для мене є доказом, що мною дорожать? Він про це знає?»</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🎁</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Я всім усе роблю — а що я за це маю?»</div>
+          <div class="card-text">Класичний вхід у трикутник: рятувальниця, яка втомилася рятувати, стає жертвою і починає шукати винного. Ніхто не просив — але й ти не питала.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Кого з них я питала, чи потрібна їм моя допомога? І що я хочу отримати — назву це вголос».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🪫</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Я стільки сил на це поклала, а тобі байдуже»</div>
+          <div class="card-text">Витрачені сили — не аргумент і не заслуга самі по собі. Інша людина оцінює результат і власну потребу в ньому, а не кількість твоєї втоми.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Мені важливо почути, що це помітили. Я так і скажу — без докору».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🪞</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Ти б нізащо на таке не погодився»</div>
+          <div class="card-text">Твоя жертовність подається як його борг. Але він і справді не погоджувався — і саме тому не зобов'язаний почуватися винним за твій вибір.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Я погодилася сама. Якщо мені це не підходить — я можу передомовитися».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🏋️</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Ти навіть не уявляєш, як я цілий день упираюся»</div>
+          <div class="card-text">Турбота про сім'ю подана як повинність, за яку належить компенсація. Насправді це добровільно взяте зобов'язання — і в цьому вся різниця між гідністю і мучеництвом.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Я взяла це на себе сама. Якщо мені завеликий обсяг — я перерозподілю його, а не пред'являтиму рахунок».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">⚠️</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Зі мною важко»</div>
+          <div class="card-text">Виглядає як чесність, працює як індульгенція наперед: попередила — отже, далі можна. Такі самоописи мають властивість збуватися саме тому, що озвучені.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Що конкретно зі мною важко? Це те, що я готова змінювати, чи те, про що варто домовитися?»</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">😢</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Ти не уявляєш, як я через тебе страждаю»</div>
+          <div class="card-text">Найважча форма: біль подається як доказ провини іншого. Людина поруч не має способу відповісти правильно — вона може тільки почуватися винною.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Мені погано. Ось що конкретно я прошу зробити — це в його силах чи ні?»</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🔚</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Ти образив мене востаннє»</div>
+          <div class="card-text">Ультиматум, який рідко виконують. Кожен невиконаний ультиматум знецінює наступний — і врешті слова перестають щось означати для обох.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Що я зроблю, якщо це повториться? Якщо відповіді немає — краще не оголошувати».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🧹</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Я завжди чомусь маю прибирати за тобою»</div>
+          <div class="card-text">«Завжди» і «чомусь» — два слова, у яких сховано вибір. Причина зазвичай проста: тобі швидше зробити самій, ніж витримати паузу, поки зробить інший.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Я прибираю, бо не витримую безлад довше за нього. Домовляюся конкретно — або приймаю, що це моя зона».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🔄</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Чому я завжди маю поступатися»</div>
+          <div class="card-text">Бо поступатися для тебе дешевше, ніж конфліктувати. Це нормальна стратегія — доти, доки ти не почала виставляти за неї рахунок.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Цього разу я не поступлюся. Витримаю незручність, яка за цим піде».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🤕</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Через тебе в мене розболілася голова»</div>
+          <div class="card-text">Ніхто не має доступу до твого тіла й настрою без твоєї участі. Фраза перетворює чужу поведінку на причину, а тебе — на прилад, що просто реагує.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«У мене болить голова. Мені потрібна тиша на годину — зробиш?»</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 4. Нерозуміння -->
+  <div class="section" style="animation-delay:1.25s">
+    <h2 class="section-title">«Мене не цінують, не чують, не поважають»</h2>
+    <p class="section-lead">Найчастотніша група. Спільне в ній одне: описується поведінка інших, а не те, як саме її було влаштовано.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">👔</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Мій керівник мене не поважає»</div>
+          <div class="card-text">Повага в робочих стосунках здебільшого будується на результаті, який видно, і на межах, які ти сама позначила. Якщо жодне з двох не заявлено, з'являється саме таке ставлення.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Що я зробила, щоб мій внесок був видимим, і де я жодного разу не сказала "так не можна"?»</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🧒</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Діти не цінують того, що ми для них робимо»</div>
+          <div class="card-text">Діти й не мають цінувати — вони не просили народжуватися й не підписували договір про вдячність. Очікування вдячності перетворює батьківство на послугу.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Я роблю це, бо я батько. Вдячність — не оплата, а якщо колись буде, то подарунок».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🔇</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Мене ніколи не слухають»</div>
+          <div class="card-text">Найчастіше це не про глухоту оточення, а про спосіб говорити: між рядків, натяком, у невдалий момент або так довго, що слухач губиться на другій хвилині.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Я скажу коротко, прямо і в момент, коли людина справді може слухати».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🕳️</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Мене ніхто не любить»</div>
+          <div class="card-text">Найшвидший спосіб не перевіряти. Поки твердження абсолютне, його не треба звіряти з реальністю — і не треба ризикувати, підходячи першою.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Кому я за останній місяць дала шанс мене полюбити — і що я для цього зробила?»</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🌀</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Мене весь час неправильно розуміють»</div>
+          <div class="card-text">Якщо це трапляється з багатьма різними людьми — справа вже не в людях. Те, що повторюється з усіма, говорить про того, з ким повторюється.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Спитаю навпростець: як ти зрозумів те, що я щойно сказала?»</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🚪</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Мене ніхто не розуміє»</div>
+          <div class="card-text">Людину розуміють приблизно настільки, наскільки вона сама вміє розуміти інших. Це не покарання, а механіка: розуміння — навичка, і вона взаємна.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Кого я останнім часом справді намагалася зрозуміти — не для відповіді, а щоб зрозуміти?»</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🧱</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Вони мною попихають»</div>
+          <div class="card-text">Попихати можна тим, хто жодного разу не сказав «ні». Кожне непромовлене «ні» тихо посуває межу далі — і через рік вона вже там, де ти б ніколи її не поставила свідомо.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Найближче прохання, яке мені не підходить, я відхилю. Без пояснень і без вибачень».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🙉</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Вони не хочуть мене слухати»</div>
+          <div class="card-text">Іноді правда. Але частіше — не хочуть слухати саме в тій формі, у якій це подається: як докір, як лекцію або як розмову, від якої не видно виходу.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Спробую сказати те саме інакше — і почну з питання, а не з претензії».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">👨‍👩‍👧</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Батьки мене зовсім не розуміють»</div>
+          <div class="card-text">Вимога зрозуміти адресована людям із іншим досвідом, іншою епохою й іншими словами для тих самих речей. Розуміння тут — не обов'язок і рідко досяжне повністю.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Вони мають право думати інакше. Я можу любити їх і не чекати згоди».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">💎</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Інші не помічають, який я насправді хороший»</div>
+          <div class="card-text">Люди бачать не те, яка ти всередині, а те, що ти робиш і кажеш. Внутрішня хорошість, яку ніхто не бачив у дії, для оточення просто не існує.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«У чому конкретно моя хорошість виявилася цього тижня — так, щоб це можна було помітити?»</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🚧</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Вони хочуть від мене позбутися, я їм увесь час заважаю»</div>
+          <div class="card-text">Здогадка, подана як факт. Найдорожча її властивість — вона змінює твою поведінку так, що з часом справді починає збуватися.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Це моя інтерпретація. Які є факти — і що станеться, якщо я просто спитаю?»</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">📉</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Вони мене зовсім не цінують»</div>
+          <div class="card-text">Ціну призначаєш ти сама — тим, на що погоджуєшся. Якщо все дістається безкоштовно і без умов, оточення просто приймає запропоновану ціну.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Яку ціну я собі призначила — і чи готова я її підняти вголос?»</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🎓</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Мені завжди діставалися погані вчителі й керівники»</div>
+          <div class="card-text">У школі це видно найкраще: на одному уроці найважчий клас сидить тихо, на іншому відмінники лізуть на стіни. Клас той самий — різний той, хто стоїть попереду. Але й учень, з яким «усім важко», теж приносить із собою щось стабільне.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Що я приношу в кожні нові стосунки з керівництвом — і що з цього повторюється щоразу?»</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 5. Нездатність -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">«Я не можу» і його родичі</h2>
+    <p class="section-lead">Найбільша група. Тут вибір не перекладається на іншого — він просто оголошується неіснуючим.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🧬</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Нічого не можу з цим удіяти, я просто така людина»</div>
+          <div class="card-text">Характер подається як діагноз. Але «така людина» — це набір звичок, а звичка за визначенням змінна; інакше ніхто б ніколи не кидав курити.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Я поки так роблю. Що станеться, якщо один раз зроблю інакше?»</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🚫</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Я не можу»</div>
+          <div class="card-text">У дев'яти випадках із десяти означає «не хочу» або «не хочу платити цю ціну». Підміна зручна: «не хочу» треба обстоювати, «не можу» знімає розмову.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Я не хочу. І це нормальна причина — її не треба маскувати під нездатність».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🎣</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Я спробую»</div>
+          <div class="card-text">Заздалегідь підготовлене пояснення, чому не вийшло. Перевір буквально: спробуй моргнути. Не виходить — або моргаєш, або ні; «спробувати» тут просто немає де поміститися.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Я зроблю це до п'ятниці» — або чесно: «я не братимуся».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🦠</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Я не відповідаю за свої реакції»</div>
+          <div class="card-text">Так влаштована інфузорія: укол — смикнулася, між подразником і відповіддю немає нічого. У людини між ними є проміжок, і саме в цьому проміжку живе вся її свобода. Він короткий, але його можна розтягувати.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Між тим, що сталося, і тим, що я зроблю, є пауза. Вона моя».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🏢</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Досвід тут не цінується»</div>
+          <div class="card-text">Досвід сам по собі — це стаж, а не цінність. Цінується те, які задачі ти завдяки йому закриваєш, і чи знає про це той, хто ухвалює рішення.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Яку конкретну проблему мій досвід вирішує — і кому я про це сказала?»</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🎯</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Чому мені ніколи нічого не вдається»</div>
+          <div class="card-text">«Ніколи» — слово, яке викреслює половину твоєї біографії. Мозок після такого питання слухняно принесе тільки провали: він відповідає рівно на те, що спитали.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Що мені вдалося за останній рік? Перелічу три речі — і подивлюся, що там спрацювало».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">📉</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«У мене зазвичай виходить не дуже»</div>
+          <div class="card-text">Скромність, яка працює як страховка: якщо попередила — не так соромно. Але це попередження чує й твій власний мозок, і він приймає його як інструкцію.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Я роблю це вперше — тому результат буде рівно такий, як у першого разу».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🚷</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Я знаю, що не вийде, тому навіть не буду пробувати»</div>
+          <div class="card-text">Найдешевший спосіб зберегти уявлення про себе цілим: непочате не може провалитися. Ціна — життя, у якому нічого не починається.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Я не знаю, що вийде. Я знаю тільки, що без спроби не буде нічого».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">💠</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Я перфекціоністка, тому хочу зробити все ідеально»</div>
+          <div class="card-text">Найкомфортніша з відмазок, бо звучить як чеснота. На практиці зазвичай означає «я не почну, поки не буде гарантії, що вийде добре» — тобто не почну.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Зроблю поганий перший варіант. Ідеальний виростає з нього, а не з порожнього аркуша».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🤷</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Але ж я не вмію»</div>
+          <div class="card-text">Точне твердження про минуле, видане за твердження про майбутнє. Не вміти — це стартова умова будь-якої навички, а не аргумент проти неї.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Я поки не вмію. Скільки часу треба, щоб навчитися хоча б на трієчку?»</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">⛰️</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Це вище моїх сил»</div>
+          <div class="card-text">Оцінка задачі цілком, без розбирання. Майже все, що виглядає непідйомним, стає підйомним, щойно розкладено на перший крок і всі наступні.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Яка найменша частина цього мені зараз по силах? З неї й почну».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🪜</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Це занадто важко для мене»</div>
+          <div class="card-text">Колись ходити було важко. І тримати ложку, і виводити літери, і читати по складах. Усе, що ти зараз робиш не думаючи, було в певний момент саме таким.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Це важко зараз. Важко — це стадія, а не властивість».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🍀</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Деяким щастить, а мені ні»</div>
+          <div class="card-text">За майже кожним «талантом» стоять тисячі годин, яких тобі не показали. Ти бачиш результат і не бачиш періоду, коли в людини теж нічого не виходило.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Скільки годин він у це вклав, перш ніж я про нього почула?»</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🥵</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Мені це так важко дається»</div>
+          <div class="card-text">Іноді правда — і тоді це просто інформація про темп, а не про здатність. Небезпечно, коли фраза перетворюється на постійний коментар до власних дій: вона починає їх сповільнювати.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Мені потрібно більше підходів, ніж я думала. Це нормальний темп, а не вирок».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🎲</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Чому мені це дісталося»</div>
+          <div class="card-text">Питання без відповіді, яке при цьому повністю з'їдає ресурс. Воно шукає справедливість там, де її механізму немає.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Це вже є. Що я з цим робитиму найближчим тижнем?»</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🌧️</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Чому мені постійно не щастить»</div>
+          <div class="card-text">Удача — це кількість спроб помножена на готовність упізнати шанс. Той, хто робить десять підходів на місяць, «щасливчик» частіше за того, хто робить один на рік.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Скільки спроб я зробила цього місяця? Додам ще одну».</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 6. Порівняння -->
+  <div class="section" style="animation-delay:1.35s">
+    <h2 class="section-title">Порівняння і мотивація, що залежить від інших</h2>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">⚖️</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Чому це маю робити я, коли він натомість…»</div>
+          <div class="card-text">Справедливість тут вимірюється чужою бездіяльністю. Найчастіше в результаті не робить ніхто, а справа залишається зробленою наполовину.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Мені це потрібно? Тоді я роблю. Не потрібно — не роблю, і не через нього».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🙋</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«А як же я?»</div>
+          <div class="card-text">Питання правильне, адреса неправильна. Воно звернене до тих, хто мав би здогадатися, — замість того щоб бути сказаним вголос як прохання.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Мені теж це потрібно. Кажу прямо, а не чекаю, поки помітять».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🎭</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Інший на моєму місці розлютився б»</div>
+          <div class="card-text">Дозвіл на емоцію береться в уявного іншого. Насправді питання не в тому, що зробив би хтось, а в тому, що з цим робитимеш ти.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Я злюся. Мені не потрібен чужий приклад, щоб мати на це право».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">⏳</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Я зміню себе, коли зміняться вони»</div>
+          <div class="card-text">Стратегія, приречена за побудовою: твоє життя поставлено в залежність від рішення, яке ухвалюють не ти й навіть не для тебе.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Я міняю те, до чого дотягуюся. Решта — не мій хід».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🪚</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Ніхто стільки не працює, як я»</div>
+          <div class="card-text">Людина цілий день пиляє дерево тупою пилкою і пишається кількістю поту. Зупинитися й наточити здається марнуванням часу — саме тому пилка й тупа. Кількість зусиль не є ані результатом, ані заслугою.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Де тут моя тупа пилка? Витрачу годину на те, щоб її наточити».</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. Зайнятість -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">«Немає часу»</h2>
+    <p class="section-lead">Час — єдиний ресурс, який у всіх однаковий. Тому фрази про його брак насправді завжди про пріоритет.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">⌛</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«У мене ніколи немає вільної хвилинки для себе»</div>
+          <div class="card-text">Вільна хвилинка не з'являється сама — її не залишається ніколи, бо на це місце завжди знайдеться чиясь потреба. Її або ставлять у розклад, або її немає.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Я ставлю собі в календар годину. Цей час зайнятий — так само, як будь-яка інша зустріч».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">📅</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Я жахливо зайнята, не зможу цим зайнятися»</div>
+          <div class="card-text">Зайнятість тут — форма відмови, яка не виглядає відмовою. Зручно для того, хто відмовляє, і незручно для того, хто просив: йому не сказали «ні», а отже, він чекатиме.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Я обираю цим не займатися». Прямо, від першої особи — це чесніше й до всіх добріше.</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🕰️</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«На це в мене немає часу»</div>
+          <div class="card-text">Точний переклад: це не в першій десятці мого списку. Що абсолютно нормально — до моменту, коли починаєш шкодувати, що так і не зайнялася.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Це не мій пріоритет зараз. Якщо хочу, щоб став, — що я з розкладу приберу?»</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">💼</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Робота зводить мене з розуму»</div>
+          <div class="card-text">Роботу організувала не абстрактна сила. Хтось погодився на цей обсяг, на ці умови й на це мовчання щоразу, коли додавали ще трохи.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Що саме тут мене руйнує — і що з цього я можу передомовити цього місяця?»</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 8. Жалість до себе -->
+  <div class="section" style="animation-delay:1.45s">
+    <h2 class="section-title">Жалість до себе й драматизація</h2>
+    <p class="section-lead">Найгустіша частина словника. Тут фрази вже не пояснюють життя — вони його призначають.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">😞</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Мене це так засмучує»</div>
+          <div class="card-text">Сказано вголос, воно перестає бути емоцією і стає позицією, у яку тепер треба вкладатися. Розказаний смуток триває довше за непроговорений.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Мені сумно через ось це. Побуду з цим — і подивлюся, що з цим можна зробити».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🥱</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Мені все набридло»</div>
+          <div class="card-text">Зазвичай означає не «все», а щось одне цілком конкретне, на що страшно подивитися. «Все» — це спосіб не називати.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Що саме мені набридло? Назву одну річ — і почну з неї».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🛏️</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Я втомилася від життя»</div>
+          <div class="card-text">Перш ніж вважати це філософією, варто перевірити механіку: скільки годин сну, скільки цукру й простих вуглеводів, скільки руху. Дуже часто «втома від життя» — це тіло, у якого немає з чого виробляти енергію. Без цієї бази до тонких матерій просто немає чим братися.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Спершу два тижні сну, білка й прогулянок. Потім подивлюся, чи це справді про життя».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🧸</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«У мене було жахливе дитинство»</div>
+          <div class="card-text">Іноді це чиста правда, і її не треба применшувати. Але як пояснення сьогоднішнього дня фраза працює погано: вона пояснює, звідки ти прийшла, і нічого не каже про те, куди йдеш.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Що з батьківського я беру із собою, а що свідомо залишаю там?»</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">👶</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Якби не діти, у мене все склалося б інакше»</div>
+          <div class="card-text">Найдорожча фраза в списку — тому що дитина рано чи пізно її почує або відчує. Вона розповідає не про дитину, а про рішення, які дорослий за собою не визнав.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Це моє життя і мої рішення. Що з нерозпочатого я можу почати зараз — разом із дітьми, а не замість них?»</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">⚰️</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Ось вони ще поплачуть, коли мене не стане»</div>
+          <div class="card-text">Помста, віднесена в майбутнє, якого ти не побачиш. Ціною за неї стають роки, які проживаються зараз — у ролі невизнаної.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Що я хочу встигнути прожити, поки я є? З цього й почну».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">📰</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Ну хіба це не жах?»</div>
+          <div class="card-text">Про чужі справи, новини, сусідів. Спосіб щодня переживати сильні емоції, не ризикуючи нічим власним. Життя при цьому проживається чуже.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Це не моя історія. Що відбувається в моїй просто зараз?»</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🌪️</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Зі мною вічно щось трапляється»</div>
+          <div class="card-text">Формулювання, у якому ти — місце подій, а не їхня учасниця. «Трапляється» саме, приходить ззовні, вибирає чомусь тебе.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Що в цих історіях повторюється — і де в кожній із них був мій крок?»</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🍷</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Після такого дня мені треба випити / зняти напругу»</div>
+          <div class="card-text">Важкий день видається за припис. Так поступово будується конструкція, у якій погані дні стають потрібні — інакше немає підстави для вечора.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Мені треба відновитися. Що з того, що справді відновлює, я можу зробити зараз?»</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">💥</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Я знову все зіпсую»</div>
+          <div class="card-text">Пророцтво, яке готує ґрунт: людина заздалегідь напружена, робить різкіше, помічає тільки те, що йде не так, — і зрештою справді псує.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Я не знаю, як вийде цього разу. Робитиму уважно й дивитимуся по ходу».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🎯</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Я нікого не чіпаю, а мене дістають»</div>
+          <div class="card-text">Перша половина фрази — і є відповідь на другу. Той, хто нікого не чіпає, зокрема ніколи не позначає, де його межа; вона й виявляється невидимою для інших.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Де конкретно проходить моя межа — і чи хтось із них узагалі про неї чув?»</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🩹</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Така травма залишиться зі мною на все життя»</div>
+          <div class="card-text">Слід від справді важкого справді залишається — це не вигадка. Але «залишиться» і «визначатиме все» — різні речі, і друге з першого не випливає. Із травмою працюють, і вона перестає бути центром.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Це зі мною сталося. Я хочу, щоб воно перестало вирішувати за мене — з чого почати?»</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🏥</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Лікарі перетворили мене на руїну»</div>
+          <div class="card-text">Лікарська помилка буває реальною, і тоді це факт, а не позиція. Питання лише в тому, чим фраза працює сьогодні: якщо вона стала поясненням, чому нічого не робиться далі, — вона вже не про лікарів.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Що з мого стану ще можна поліпшити — і хто мені в цьому допоможе?»</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 9. Пророцтва -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Пророцтва, які збуваються</h2>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🎯</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Чому таке трапляється тільки зі мною»</div>
+          <div class="card-text">Не тільки з тобою — просто чужі версії цієї історії тобі не показують. Люди діляться перемогами, а не тим самим, що й у тебе.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Це трапляється з багатьма. Як із цього виходили інші?»</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">⚖️</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«За що мені це»</div>
+          <div class="card-text">Питання шукає вирок і завжди його знаходить — зазвичай у формі «мабуть, я цього заслужила». Воно дивиться назад і не має виходу вперед.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Не за що, а для чого. Чого мене це вчить і що я тепер зроблю інакше?»</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🕳️</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Усе одно нічого не вийде»</div>
+          <div class="card-text">Найефективніша фраза в списку: вона економить усі зусилля відразу й гарантує собі підтвердження, бо після неї нічого й не робиться.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Один крок. Найменший. Потім подивлюся, що змінилося».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🧊</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Людям на мене начхати, вони використають за першої нагоди»</div>
+          <div class="card-text">З таким переконанням не буває близькості: воно змушує триматися на дистанції, а дистанція справді залишає поруч тільки тих, кому від тебе щось потрібно. Коло замикається.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Кому я за останній рік дозволила підійти близько — і що з цього вийшло насправді?»</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🚪</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Немає сенсу навіть сподіватися»</div>
+          <div class="card-text">Захист від розчарування, який коштує рівно стільки ж, скільки саме розчарування, — тільки платиться щодня, а не один раз.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Я не знаю, чим це закінчиться. Я витримаю, якщо не вийде».</div></div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🌍</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Через кризу / вік / країну / обставини я нічого не можу вдіяти»</div>
+          <div class="card-text">Причина завжди справжня і завжди зовнішня — тому й незаперечна. Зручність її в тому, що вона одразу закриває всю тему й не потребує жодної перевірки.</div>
+          <div class="reply"><div class="reply-label">🔄 Скажи собі замість цього</div><div class="reply-text">«Це справді на мене впливає. Що всередині цих умов усе ще залежить від мене?»</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Механізм -->
+  <div class="section" style="animation-delay:1.55s">
+    <h2 class="section-title">Чому це працює саме так</h2>
+    <p>Жодна з цих фраз не є причиною сама по собі. Причина — коло, у яке вони вбудовані, і кожна фраза просто робить наступний оберт.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🧠</span>
+        <div class="card-title">Думка задає емоцію</div>
+        <div class="card-text">«Мене не цінують» — і всередині вже інший фон, ще до будь-яких подій дня.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💬</span>
+        <div class="card-title">Емоція задає слова й дії</div>
+        <div class="card-text">З цього фону виходить інша інтонація, інші паузи, інші рішення — часто непомітні для самої людини.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎬</span>
+        <div class="card-title">Слова й дії створюють подію</div>
+        <div class="card-text">Хтось відповідає холодніше, хтось не покликав, десь не поставили в план. Реальна подія, з реальними свідками.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔁</span>
+        <div class="card-title">Подія підтверджує думку</div>
+        <div class="card-text">«Ну от, я ж казала». Коло замкнулося — і тепер це вже не переконання, а «досвід».</div>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <p><em>Найпідступніше тут — швидкість і непомітність.</em> Ніхто не вирішує свідомо «створю-но я сьогодні ситуацію, у якій знову почуватимуся винною». Якщо в дитинстві увага діставалася через провину, доросла людина роками добирає оточення й ситуації, у яких можна знову відчути це знайоме — і щиро дивується, чому воно повторюється саме з нею.</p>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:1.6s">
+    <div class="question-card">
+      <div class="question-label">Ключове питання</div>
+      <div class="question-main">Не відповіді, а самі питання, які ти собі ставиш, вирішують, яке життя в тебе вийде. Які питання ти ставиш собі щодня?</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Дзеркало -->
+  <div class="section" style="animation-delay:1.65s">
+    <h2 class="section-title">🪞 А якщо ти впізнала себе</h2>
+    <p class="section-lead">Тут немає двох людей — тієї, що читає список, і тієї, що говорить цими фразами. Це одна ти в двох різних моментах: у втомі, коли говорилося, і у спокої, коли читається. Не суддя і підсудна, а та сама вода — просто в різну погоду.</p>
+
+    <div class="cards">
+      <div class="card ok">
+        <span class="card-icon">👀</span>
+        <div class="card-title">Помітити — уже достатньо</div>
+        <div class="card-text">Не треба виправляти всі вісімдесят фраз. Достатньо піймати одну свою в момент, коли вона вимовляється. Спійманої фрази вже недостатньо, щоб замкнути коло — вона більше не працює автоматично.</div>
+      </div>
+      <div class="card ok">
+        <span class="card-icon">🔧</span>
+        <div class="card-title">Переформулювати можна вголос</div>
+        <div class="card-text">Просто посеред розмови: «зачекай, я сказала неправду — не "мене змусили", а "я погодилася"». Це не збентежує співрозмовника, а зазвичай робить розмову різко чеснішою для обох.</div>
+      </div>
+      <div class="card ok">
+        <span class="card-icon">🌊</span>
+        <div class="card-title">Один зрив — не позиція</div>
+        <div class="card-text">Сказати «за що мені це» у поганий день — це не «позиція жертви». Позиція — це коли інших пояснень уже не залишилося. Хвиля не робить океан штормом назавжди.</div>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <p><em>Ти — океан і човен одночасно.</em> Та, що каже «нічого не вийде», і та, що це помічає, — не дві людини. Одна вода: колись вона хиталася в маленькому човні й вивчила напам'ять, як звучить страх, а тепер несе цей човен на собі. Не треба перемагати ту, ранню. Достатньо згадати, що вона — це теж ти, і що човен пливе не всупереч воді.</p>
+    </div>
+  </div>
+
+  <!-- Алгоритм -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Алгоритм на будь-яку з цих фраз</h2>
+    <p>Він однаковий для всіх вісімдесяти. Три кроки, у такому порядку.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">1️⃣</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Визнати себе причиною, а не наслідком</div>
+          <div class="card-text">Не «я винна», а «я в цьому брала участь». Знайти в ситуації бодай одну точку, де рішення було твоє — навіть якщо це рішення промовчати.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">2️⃣</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Обрати рішення й найменший крок</div>
+          <div class="card-text">Не план на рік. Одна конкретна дія, яку можна зробити цього тижня і яку видно на календарі: подзвонити, сказати «ні», попросити, записатися, прибрати з розкладу.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">3️⃣</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Витягти висновок на наступний раз</div>
+          <div class="card-text">Що саме я робитиму інакше, щоб не створювати такої самої події. Без цього кроку перші два перетворюються на разовий подвиг, після якого все повертається.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <p><em>І два питання на вечір — вони працюють сильніше за будь-які афірмації.</em> Що я сьогодні обираю створювати у своєму житті? І за що я сьогодні вдячна? Перше повертає авторство, друге переставляє фокус уваги — а фокус, як видно з усього списку вище, і є тим механізмом, який щодня добирає докази під те, у що ти вже віриш.</p>
+    </div>
+
+    <p style="margin-top:24px">Далі за темою: <a href="control.html">Відпусти контроль</a> — про межу між тим, що залежить від тебе, і тим, що ні; <a href="boundaries.html">Межі</a> — про те, як говорити «ні» так, щоб чули; <a href="manipulation.html">Маніпуляція</a> і <a href="toxic-phrases.html">Переклад із токсичної</a> — той самий розбір, але з іншого боку розмови.</p>
+  </div>
+
+  <!-- Фінал -->
+  <div class="section" style="animation-delay:1.75s">
+    <h2 class="section-title">Насамкінець</h2>
+    <div class="final-quote">
+      <div class="final-text">Позиція жертви зручна тим, що з неї нічого не треба робити. Позиція автора незручна тим, що з неї доводиться. <strong>Але тільки з другої взагалі видно двері</strong> — з першої видно лише стіни й тих, хто їх нібито поставив.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>

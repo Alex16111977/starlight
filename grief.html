@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Рубець, що не болить</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,140,80,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:10px;font-weight:200;letter-spacing:.4em;color:rgba(52,58,94,.65);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:11px;font-weight:200;letter-spacing:.5em;color:rgba(52,58,94,.65);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:18px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#5261c2;box-shadow:0 0 12px rgba(82,97,194,.6)}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a,.card-text a,.phrase-text a{color:#7a5fbe;text-decoration:none;border-bottom:1px solid rgba(122,95,190,.45);transition:border-color .3s}
+.section p a:hover,.card-text a:hover,.phrase-text a:hover{border-bottom-color:rgba(122,95,190,.9)}
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:10px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(52,58,94,.58)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(82,97,194,.35),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+.card.ok{border-color:rgba(150,214,165,.35)}
+.card.ok::before{background:linear-gradient(to right,transparent,rgba(150,214,165,.5),transparent)}
+.card.bad{border-color:rgba(224,150,150,.32)}
+.card.bad::before{background:linear-gradient(to right,transparent,rgba(224,150,150,.45),transparent)}
+.card-label{font-size:9.5px;font-weight:400;letter-spacing:.3em;text-transform:uppercase;margin-bottom:10px;display:block}
+.card.ok .card-label{color:#1f7a4d}
+.card.bad .card-label{color:#b23c2e}
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:26px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(82,97,194,.35),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:26px;flex-shrink:0;width:34px;text-align:center}
+.phrase-word{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:19px;line-height:1.4;color:rgba(36,40,68,.97);margin-bottom:8px}
+.phrase-text{font-family:'Montserrat',sans-serif;font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.88)}
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(52,58,94,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#946717}
+.exercise{padding:24px 28px;border-left:2px solid rgba(82,97,194,.4);margin:20px 0;background:rgba(82,97,194,.06);border-radius:0 16px 16px 0}
+.exercise-label{font-size:9.5px;font-weight:400;letter-spacing:.3em;text-transform:uppercase;color:#3f4a9e;margin-bottom:10px;display:block}
+.exercise p{font-size:14px;font-weight:300;line-height:1.8;color:rgba(36,40,68,.9);margin:0}
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:10px;font-weight:300;letter-spacing:.5em;text-transform:uppercase;color:rgba(52,58,94,.5);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,34px);color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:640px;margin:0 auto}
+.final-text strong{font-weight:400;color:#946717}
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:#7a5fbe;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,#7a5fbe,transparent)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.75);font-family:'Montserrat',sans-serif;font-size:11px;font-weight:300;letter-spacing:.3em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:#2c2c2c}
+.read-toggle.active{background:rgba(212,175,110,.16);border-color:rgba(212,175,110,.55);color:#7a5410}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Рубець, що не болить</h1>
+  <p class="page-subtitle">Робота горя — смерть, розрив, зрада</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Зцілення — це не тоді, коли рубець зникає. А коли він перестає боліти від кожного дотику"</div>
+    </div>
+    <p>Горе прийнято лікувати порадами «час лікує» і «тримайся». Обидві фрази мовчки припускають, що горе — це збій, який треба перечекати. Насправді це не збій. Це тотальна робота психіки з перебудови себе під нову реальність — і зачіпає вона одразу тіло, думки, почуття, стосунки з людьми і те, у що ти віриш про сенс життя. Байдуже, що саме сталося: смерть близької людини, важкий розрив чи зрада, — механізм один, хоча шлях різний.</p>
+    <div class="exercise">
+      <span class="exercise-label">Вправа · Кола горя</span>
+      <p>Намалюй у центрі аркуша маленьке коло — це ти. Навколо — кільця: тіло й емоції, думки й переконання, стосунки, робота, сенси й бачення майбутнього. У кожному кільці познач, як саме туди дотяглася втрата. Горе рідко залишається в межах одного кільця.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Тіло -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Чому це болить фізично</h2>
+    <p>«Розбите серце» — не метафора. Система прив'язаності в мозку тісно переплетена з центрами болю й стресу: розрив прив'язаності запускає ті самі нейронні мережі, що й фізична травма. Звідси цілком реальний біль у грудях, безсоння, зникнення апетиту — без жодної кардіологічної патології за цим.</p>
+    <div class="highlight">
+      <p><em>Тіло тут не ламається — воно говорить.</em> Реакції тіла — це мова, якою горе промовляє, коли слів не вистачає. Підтримати себе в гострий момент допомагає заземлення: перевести увагу на фізичне відчуття тут і зараз — стопи на підлозі, текстуру тканини під пальцями, кілька повільних вдихів.</p>
+    </div>
+  </div>
+
+  <!-- Чотири задачі -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Не маршрут, а набір задач</h2>
+    <p>Модель «стадій горя» — заперечення, гнів, торг, депресія, прийняття — знають усі, але сприймають хибно: як сходи, які проходять по черзі знизу вгору. Це не так, і чому саме — детальніше в <a href="kubler-ross.html">Коконі й метелику</a>. Тут корисніше інше: не стадії, а чотири задачі, які горе вирішує в довільному порядку й часто одночасно.</p>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🪞</span>
+        <div class="card-title">Визнати реальність</div>
+        <div class="card-text">Повірити на рівні не лише розуму, а й тіла, що втрата відбулася і назад дороги немає.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌊</span>
+        <div class="card-title">Прожити біль</div>
+        <div class="card-text">Не обійти його роботою чи відволіканням, а дати місце всьому, що піднімається, — і болю, і гніву, і полегшенню.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧭</span>
+        <div class="card-title">Адаптуватися</div>
+        <div class="card-text">Навчитися жити у світі, де цієї людини або цих стосунків більше немає в старій формі.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔗</span>
+        <div class="card-title">Перенести зв'язок</div>
+        <div class="card-text">Знайти новий спосіб берегти значущість того, що було, — і водночас продовжувати жити.</div>
+      </div>
+    </div>
+    <div class="exercise">
+      <span class="exercise-label">Вправа · Щоденник погоди</span>
+      <p>Щовечора одним реченням записуй не події дня, а внутрішню «погоду»: туман, гроза гніву, серпанок смутку, раптове сонце. За кілька тижнів стає видно головне — жоден стан не тримається вічно, все рухається.</p>
+    </div>
+  </div>
+
+  <!-- Горе чи депресія -->
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Горе чи депресія</h2>
+    <p>Різниця важлива, бо визначає, що робити далі.</p>
+    <div class="cards">
+      <div class="card ok">
+        <span class="card-label">Горе</span>
+        <div class="card-text">Хвилеподібне: гострий біль змінюється проблиском полегшення. Прив'язане до конкретної втрати. Зв'язок зі світом і людьми зберігається, хай і ослаблений.</div>
+      </div>
+      <div class="card bad">
+        <span class="card-label">Депресія</span>
+        <div class="card-text">Стійка, всепроникна, не пов'язана прямо з об'єктом втрати. Здатність радіти зникає повністю, з'являється відчуття власної нікчемності. Потребує професійної підтримки.</div>
+      </div>
+    </div>
+    <div class="exercise">
+      <span class="exercise-label">Вправа · Дві колонки</span>
+      <p>Веди список: коли сьогодні біль був особливо гострим — і коли ставало хоч трохи легше. Якщо друга колонка порожня тижнями поспіль, а до цього додається відчуття власної непотрібності, — це підстава звернутися до психотерапевта.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Частина себе -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Частина себе, яка теж пішла</h2>
+    <p>Значущі стосунки вбудовують іншу людину у структуру власної ідентичності: ти не просто «мала чоловіка» чи «мала найкращу подругу» — ці ролі були частиною того, як ти себе визначала. Тому втрата близького — символічна ампутація: горюєш не тільки за тим, хто пішов, а й за тією версією себе, яка існувала поруч із ним.</p>
+    <div class="exercise">
+      <span class="exercise-label">Вправа · Ролі та якості</span>
+      <p>Випиши, які ролі виконувала ця людина — супутник у подорожах, той, хто смішив, той, з ким радилася. Для кожної ролі назви потребу, яку вона закривала. А тоді подумай, як цю саму потребу можна реалізувати тепер, без неї.</p>
+    </div>
+  </div>
+
+  <!-- Провина -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Провина, яка обманює</h2>
+    <p>Один з найчастіших супутників горя. Іноді провина реальна — був учинок. Але частіше вона ірраціональна, і причина в ілюзії контролю: психіці легше повірити «я могла щось зробити», ніж визнати цілковите безсилля перед хворобою, смертю чи чужим вибором. Іноді провина — це «перевернута туга»: спроба утримати зв'язок з тим, хто пішов, через самопокарання.</p>
+    <div class="exercise">
+      <span class="exercise-label">Вправа · Суд над провиною</span>
+      <p>Розіграй три ролі. Прокурор формулює звинувачення на повну — без пом'якшень. Адвокат наводить усі обставини, які прокурор не назвав. Співчутливий суддя виносить вердикт про реальну, а не «магічну» зону відповідальності. Або уяви провину рюкзаком із камінням: візьми кожен камінь окремо і запитай, чи справді він твій, чи підібраний зі страху, відчаю або любові.</p>
+    </div>
+  </div>
+
+  <!-- Хвилі і тригери -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Хвилі болю і тригери</h2>
+    <p>Гострі напади болю — нормальна частина процесу. Їх провокує дата, місце, запах — або взагалі нічого. Боротися з хвилею чи ігнорувати її однаково виснажливо. Працює двокроковий підхід: спершу визнати й легалізувати («це боляче, і це нормально»), потім скористатися короткою технікою саморегуляції. Задача не скасувати шторм, а протриматися на плаву.</p>
+    <p>Тригери — це сенсорні якорі, що миттєво повертають у момент травми. Повне уникнення звужує життя до мінімуму, тому краще заздалегідь знати свої тригери, планувати дії на «важкі» дати, а з часом свідомо й дозовано контактувати з ними — так вони поступово перетворюються з джерела болю на привід для світлого смутку.</p>
+    <div class="exercise">
+      <span class="exercise-label">Техніка · 5-4-3-2-1</span>
+      <p>Назви подумки: п'ять речей, які бачиш, чотири відчуття шкірою, три звуки, два запахи, один смак. Працює і від хвилі болю, і від дереалізації — коли світ після втрати здається кіно про чуже життя. Це захисний механізм, тимчасове «заморожування» заради виживання, а не байдужість.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Зрада і розрив -->
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">Коли причина — зрада або важкий розрив</h2>
+    <p>Смерть залишає горе, яке може бути світлим. Зрада чи важкий розрив — подвійна травма: втрачається не лише людина, а й віра в реальність спільного минулого, і віра у власну здатність розумітися на людях. Минуле переписується заднім числом у «сцену обману». І на відміну від смерті тут немає остаточності: фізична присутність іншої людини створює ілюзію, що все можна ще виправити, — а це саме те, що заважає завершити горювання. Детальніше про сам розрив — у <a href="breakup.html">Розставанні</a>.</p>
+    <div class="exercise">
+      <span class="exercise-label">Вправа · Ліворуч і праворуч</span>
+      <p>Розділи аркуш навпіл. Ліворуч — те, що було реальним і цінним у стосунках. Праворуч — обман та ілюзії, пов'язані з учинком іншого. Це відокремлює твій справжній досвід від руйнівних дій партнера — обидва списки можуть бути правдою одночасно.</p>
+    </div>
+  </div>
+
+  <!-- Гнів -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Гнів і суперечливі почуття</h2>
+    <p>Гнів у горі — не зрив, а енергія протесту проти несправедливості того, що сталося. Він може бути спрямований на долю, на інших людей, на вищі сили, на себе — і навіть на того, хто пішов. Пригнічувати його небезпечно: вихід гніву звільняє місце для смутку й теплих почуттів.</p>
+    <p>Якщо стосунки були складними — конфлікти, образи, насильство, — після відходу людини нормально відчувати одразу горе, полегшення, злість і провину. Полегшення після важких стосунків не є ознакою черствості, хоч суспільство рідко це схвалює. Установка «про мертвих або добре, або нічого» тут шкідлива: вона забороняє саме ту чесність, яка потрібна для зцілення.</p>
+    <div class="exercise">
+      <span class="exercise-label">Техніка · Порожній стілець</span>
+      <p>Постав навпроти порожній стілець, уяви на ньому того, на кого спрямований гнів, і скажи все накопичене без цензури, наодинці. А для суперечливих почуттів — два листи, які нікому не показуєш: перший чесно про весь біль і образи, другий — про хороше, вдячність і моменти радості.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Зберегти зв'язок -->
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Не розірвати зв'язок, а перенести його всередину</h2>
+    <p>Задача горювання — не розірвати зв'язок з тим, хто пішов, а трансформувати його: перевести зовнішні стосунки, яких більше немає, у внутрішній, тривалий зв'язок, де любов і значущість цієї людини стають орієнтиром і джерелом сили, а не тягарем. Продовжувати жити й радіти — не є зрадою пам'яті.</p>
+    <div class="exercise">
+      <span class="exercise-label">Вправа · Лист подяки</span>
+      <p>Напиши листа тому, хто пішов. У першій частині подякуй за все хороше. У другій — сформулюй головний урок чи дар, який лишився після цієї людини, і те, що хочеш узяти з собою далі — як заповіт.</p>
+    </div>
+  </div>
+
+  <!-- Втрата майбутнього -->
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Втрата, яку не видно: втрата майбутнього</h2>
+    <p>Прихований шар горя — коли ти втрачаєш не лише когось у теперішньому, а й усі спільні плани, ненароджених дітей, спільну старість, яку уявляла. Ця вторинна втрата може боліти не менше за первинну: горюєш одразу за двох — за тим, хто пішов, і за тією версією себе, якою могла б стати в майбутньому, що тепер не станеться.</p>
+    <div class="exercise">
+      <span class="exercise-label">Вправа · Прощання з мрією</span>
+      <p>На самоті випиши все, про що мріялося разом. Дозволь собі відчути гіркоту. Напиши прощального листа цим мріям і символічно їх «поховай» — спали лист або відпусти паперовий кораблик за течією. Цінність, що стояла за мрією — родина, любов, довіра, — можна втілити в новому майбутньому, і це не зрада старого.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Ритуали, оточення, діти -->
+  <div class="section" style="animation-delay:2s">
+    <h2 class="section-title">Ритуали, оточення і діти поруч</h2>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🕯️</span>
+        <div class="card-title">Ритуали</div>
+        <div class="card-text">Похорон, поминки, річниці структурують хаос, публічно підтверджують факт втрати і символічно позначають перехід — із дружини у вдову, наприклад. Особистий ритуал зі своїм змістом (спалити листа, посадити дерево) працює сильніше за формальне виконання чужого сценарію.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🗣️</span>
+        <div class="card-title">Оточення</div>
+        <div class="card-text">Люди губляться біля чужого горя й ховаються за «час лікує» — це говорить про їхній страх, не про тебе. Керуй розмовою сама: прямі інструкції («просто побудь поруч», «сьогодні хочу поговорити про неї») і коло підтримки з двох-трьох людей, які витримують поруч без порад.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧸</span>
+        <div class="card-title">Дитина поруч</div>
+        <div class="card-text">Дитяче горе фрагментарне — плаче й за хвилину вже грається, це не байдужість, а захист від перевантаження. Малюки регресують, старші діти йдуть в агресію чи мовчання; і ті, й ті можуть вірити, що смерть спричинили їхні власні погані думки. Кажи правду без евфемізмів на кшталт «заснув» — мовчання лякає дитину сильніше за саму смерть.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Чоловіче/жіноче -->
+  <div class="section" style="animation-delay:2.1s">
+    <h2 class="section-title">Не всі горюють однаково</h2>
+    <p>Горе універсальне, але гендерні стереотипи впливають на його форму. Чоловіче горювання частіше інструментальне, а не інтуїтивне: не сльози й розмови, а дії — робота, спорт, ремонт, турбота про інших, іноді гнів чи ризик замість смутку. Це не відсутність почуттів, а інший спосіб їх проживати. Підтримка тут — не спроба довести до сліз, а спільна діяльність, розмова про практичні наслідки втрати і повага до мовчання.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Застрягання -->
+  <div class="section" style="animation-delay:2.2s">
+    <h2 class="section-title">Коли горе застрягає</h2>
+    <p>Якщо біль не слабшає з часом і продовжує дезадаптувати — це ускладнене горе: природний процес заблокований. Блокаторами бувають уникнення болю через роботу, алкоголь чи поспішні нові стосунки; надто травматичний характер втрати (насильство, самогубство); невирішені конфлікти з тим, хто пішов; відсутність підтримки поруч. Тут не працює порада «візьми себе в руки» — працює цілеспрямоване повернення до недороблених задач горювання, за підтримки психотерапевта.</p>
+    <div class="exercise">
+      <span class="exercise-label">Самоперевірка</span>
+      <p>Чи уникаєш місць і розмов, що нагадують про втрату? Чи є відчуття, що частина тебе померла разом з тим, хто пішов? Чи здається майбутнє безнадійним без цієї людини? Чи минув рік без жодного зниження гостроти болю? Кілька впевнених «так» — привід звернутися по допомогу.</p>
+    </div>
+    <p style="margin-top:22px">Непрожите горе не зникає само — воно повертається через роки як психосоматика, тривога, страх нової прив'язаності чи загальна втрата життєвих сил. Психіка не терпить незавершеності: якщо роботу горя свідомо не зроблено, тіло зробить її за тебе, і зазвичай у гіршій формі.</p>
+    <div class="exercise">
+      <span class="exercise-label">Вправа · Лінія життя</span>
+      <p>На довгому аркуші намалюй лінію життя, познач ключові події з особливою увагою до втрат. Подивись, чи не «підкосилася» лінія після якоїсь із них, — так видно довгостроковий слід непрожитого горя.</p>
+    </div>
+  </div>
+
+  <!-- Нові стосунки -->
+  <div class="section" style="animation-delay:2.3s">
+    <h2 class="section-title">Як наважитися на нове</h2>
+    <p>Страх нових стосунків після втрати чи зради — не слабкість, а логічний захист: психіка засвоїла урок «близькість дорівнює біль» і уникає повтору. До нового не приходять через вольове «просто не бійся» — приходять через завершення попереднього горя, відновлення довіри до власних відчуттів і вибору, і повільний початок із безпечного спілкування, без вимоги негайно замінити втрачене. Готовність настає не тоді, коли зникає страх, а коли віра в себе стає сильнішою за нього.</p>
+    <div class="highlight">
+      <p><em>Метафора броні.</em> Недовіра до людей після зради колись була захистом і виконала свою роботу. Задача не зривати її силою, а шукати маленьке віконце, крізь яке можна з цікавістю подивитися на світ, не виходячи з укриття.</p>
+    </div>
+    <div class="exercise">
+      <span class="exercise-label">Вправа · Інвентаризація стосунків</span>
+      <p>Що цінного було в попередніх стосунках? Чого навчив саме пережитий біль? Якою ти бачиш себе — і партнера — у наступних стосунках з огляду на цей досвід?</p>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:2.4s">
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Що з того, за чим ти досі сумуєш, могло б жити всередині тебе — замість того, щоб чекати зовні?</div>
+    </div>
+  </div>
+
+  <!-- Фінал -->
+  <div class="section" style="animation-delay:2.5s">
+    <h2 class="section-title">Що таке зцілення насправді</h2>
+    <p>На початку минуле здається прихистком, теперішнє — нестерпним, а майбутнє — порожнім і лячним. Це нормально. Зцілення — поступова реінтеграція часу: пам'ять перестає бути раною і стає надійним архівом, світлим смутком як продовженням любові; майбутнє потроху наповнюється планами, які не скасовують минуле, а виростають із нього. Втрата — не кінець книги, а завершення важливого розділу; коли важко думати про далеке майбутнє, досить думати про найближчу годину.</p>
+    <p>Говорити про «користь» втрати в гострий момент недоречно й нечесно. Але правда і в тому, що після проходження через горе люди часто приходять до глибших змін — ціннішого ставлення до стосунків, нової життєвої філософії, більшого співчуття. Сама травма нікого не робить сильнішою — вона руйнує. Сильнішою робить тільки наступна робота з її подоланням. Тож ідеться не про пошук хорошого в трагедії, а про повагу до того, як людина з нею справляється.</p>
+    <p>Про сам страх, з якого починається будь-яка втрата ще до того, як вона сталася, — <a href="mortality.html">Страх смерті</a>. Про п'ять станів, які проживає й той, хто йде, — <a href="kubler-ross.html">Кокон і метелик</a>.</p>
+    <div class="final-quote">
+      <div class="final-text">Мета горя — не повернутися туди, де було «до». Туди повернутися неможливо. <strong>Мета — дійти нової цілісності, де втрата стає частиною історії, а не її обривом.</strong></div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
