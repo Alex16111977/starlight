@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Прожектор, який можна вимкнути</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(52,58,94,.78);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:13px;font-weight:200;line-height:1.85;color:rgba(52,58,94,.8)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(52,58,94,.82);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Прожектор, який можна вимкнути</h1>
+  <p class="page-subtitle">Соціальна тривожність: як вона працює і що з нею робити</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Ти боїшся не людей. Ти боїшся підтвердження того, що вже й так думаєш про себе"</div>
+    </div>
+    <p>Сором'язливість — це легкий дискомфорт у новій ситуації, який минає з адаптацією. Соціальна тривожність — зовсім інше: паралізуючий страх негативної оцінки, побудований на переконанні, що за тобою постійно спостерігають і постійно засуджують. Різниця не в силі відчуття, а в тому, чи воно взагалі відпускає.</p>
+    <p>Найточніший образ — прожектор. Людина із соціальною тривожністю живе так, ніби на неї весь час спрямований яскравий промінь, який висвітлює кожен недолік перед публікою. Насправді прожектор можна вимкнути — просто спершу треба зрозуміти, хто його тримає.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Звідки береться -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Звідки це береться</h2>
+    <p>Три фактори зазвичай складаються разом, а не діють поодинці.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🩹</span>
+        <div class="card-title">Ранній досвід</div>
+        <div class="card-text">Критика, насмішки чи відторгнення в родині або школі — той момент, коли соціальна ситуація вперше стала пов'язана з болем.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📜</span>
+        <div class="card-title">Засвоєні переконання</div>
+        <div class="card-text">«Помилятися не можна», «завжди справляй хороше враження», «люди злі й засуджують» — прямі й непрямі послання від значущих дорослих, узяті на віру ще до того, як їх можна було перевірити.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧬</span>
+        <div class="card-title">Чутлива нервова система</div>
+        <div class="card-text">Біологічна схильність реагувати на соціальні сигнали сильніше й довше, ніж у середньому.</div>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <p><em>Разом вони формують глибинні переконання</em> — «я неповноцінна», «я не гідна любові», «світ небезпечний, людям не можна довіряти». І ключовий момент, який усе перевертає: людина із соціальною тривогою боїться не самих людей. Вона боїться, що чужа реакція підтвердить те, що вона й так уже думає про себе.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Цикл -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Замкнене коло, яке саме себе підживлює</h2>
+    <p>Тривога — не одноразова реакція, а цикл із чотирьох кроків, і кожен наступний робить попередній переконливішим.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">⚡</span>
+        <div class="phrase-body">
+          <div class="phrase-said">1 · Тригер</div>
+          <div class="card-text">З'являється соціальна ситуація — знайомство, дзвінок, виступ, навіть просто погляд незнайомця.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">💭</span>
+        <div class="phrase-body">
+          <div class="phrase-said">2 · Автоматичні негативні думки</div>
+          <div class="card-text">Миттєві катастрофічні прогнози: «читання думок» (я знаю, що вони вже про мене подумали) і «передбачення майбутнього» (я точно провалюся).</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🫀</span>
+        <div class="phrase-body">
+          <div class="phrase-said">3 · Емоційна й тілесна реакція</div>
+          <div class="card-text">Страх, сором, серцебиття, тремтіння, почервоніння — тіло реагує так, ніби загроза вже фізична.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🛡️</span>
+        <div class="phrase-body">
+          <div class="phrase-said">4 · Охоронна поведінка</div>
+          <div class="card-text">Дії заради уникнення уявної катастрофи — від прямого уникнення до непомітного промовляння фраз подумки перед тим, як їх сказати вголос.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="soft">
+      <p>Соціальна тривога — невидима клітка, побудована з власних думок. Людина сама її будує, сама в ній сидить і сама тримає ключ — і водночас щиро впевнена, що замкнена ззовні. Що частіше цикл повторюється, то складніше з нього вийти, бо кожен виток тільки підтверджує вихідну думку.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Охоронна поведінка -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Охоронна поведінка як пастка</h2>
+    <p>Будь-яка дія, явна чи непомітна, покликана запобігти уявній соціальній катастрофі. Виглядає як допомога. Насправді — три окремі пастки одразу.</p>
+
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">Відсутність спростування</div>
+        <div class="col-text">Спираючись на «милиці», людина ніколи не дізнається, що могла б впоратися й без них.</div>
+      </div>
+      <div class="col bad">
+        <div class="col-label">Фокус на собі</div>
+        <div class="col-text">Посилена увага до власних симптомів і недоліків лише розганяє тривогу далі.</div>
+      </div>
+    </div>
+    <div class="compare" style="margin-top:16px">
+      <div class="col bad">
+        <div class="col-label">Шкода комунікації</div>
+        <div class="col-text">Скутість чи відстороненість заважають іншим налагодити контакт — і тим самим підтверджують страх, що контакту не буде.</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">Ціна й вигода</div>
+        <div class="col-text">Короткострокове полегшення за рахунок довгострокового страждання. Відмова від охоронної поведінки — не додаткова вправа, а сам ключ до одужання.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Зміщення уваги -->
+  <div class="section" style="animation-delay:1.15s">
+    <h2 class="section-title">Прожектор, спрямований усередину</h2>
+    <p>Замість того щоб дивитися на співрозмовника, тему розмови й обстановку навколо, тривожна увага розвертається всередину — стежить за власним диханням, серцебиттям, тоном голосу, почервонінням.</p>
+    <p>Це шкодить одразу з кількох боків: підсилює фізичні симптоми, заважає адекватно бачити реальність (пропускаєш усмішку, кивок, щирий інтерес співрозмовника) і — найдорожче — не дає отримати позитивний зворотний зв'язок, через що негативні переконання про себе тільки зміцнюються, хоча насправді розмова могла піти зовсім непогано.</p>
+
+    <div class="highlight">
+      <p><em>Техніка трьох чуттєвих фокусів.</em> Свідомо перемкни увагу назовні: що я бачу — що я чую — що я відчуваю тілом. Три короткі запитання повертають розум із внутрішнього хаосу до зовнішньої реальності, де насправді й відбувається розмова.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Перфекціонізм -->
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Перфекціонізм — не зростання, а паливо</h2>
+    <p>Перфекціонізм тут не про здорове прагнення до майстерності. Це переконання в існуванні ідеального образу — ідеального співрозмовника, ідеального спікера, — якому треба відповідати, і будь-яке відхилення від нього сприймається як цілковитий провал.</p>
+    <p>Соціальний перфекціоніст ставить собі надвисокі стандарти («я мушу всім подобатися», «я не маю права на помилку») і переносить їх на оточення, вважаючи, що інші чекають того самого. Спілкування перетворюється на іспит із двома оцінками: ідеально або дуже погано, без проміжних варіантів.</p>
+
+    <div class="soft">
+      <p>Страх оцінки насправді — це страх не відповідати власним нереалістичним стандартам, помилково спроєктованим на інших. Здорове прагнення до майстерності дає енергію. Паралізуючий перфекціонізм її забирає. Різницю легко відчути тілесно: одне надихає почати, інше — заморожує ще до старту.</p>
+    </div>
+
+    <p style="margin-top:20px">Практична вправа: свідомо знижуй планку перед тривожною ситуацією — ціль не ідеальний виступ, а виконання «на трійку». Це знімає значну частину напруги і, як не дивно, часто дає кращий результат, ніж націленість на ідеал.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Внутрішній діалог -->
+  <div class="section" style="animation-delay:1.25s">
+    <h2 class="section-title">Не заглушити критика, а виростити поруч іншого</h2>
+    <p>Внутрішній критик за соціальної тривоги — голос, надто незадоволений усім: вказує на помилки, наперед передбачає провал, знецінює будь-який успіх. Змусити його замовкнути неможливо — його захисна функція давніша за здатність її стримувати. Задача інша: виростити поруч іншу фігуру — підтримуючого, співчутливого спостерігача.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">👁️</span>
+        <div class="phrase-body">
+          <div class="phrase-said">1 · Усвідомлення</div>
+          <div class="card-text">Помітити голос критика як окреме явище, а не об'єктивну істину. Можна навіть дати йому ім'я — це створює дистанцію, потрібну, щоб не зливатися з ним автоматично.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">⚖️</span>
+        <div class="phrase-body">
+          <div class="phrase-said">2 · Розубіждення</div>
+          <div class="card-text">Сократичний діалог: які є докази за й проти цієї думки? Чи є інший спосіб подивитися на ситуацію? Питання, а не спростування з нальоту.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🤍</span>
+        <div class="phrase-body">
+          <div class="phrase-said">3 · Співчутлива відповідь</div>
+          <div class="card-text">Свідомо сформульована підтримка замість самозвинувачення — не сліпа похвала, а збалансований погляд, який визнає право на помилку так само, як визнав би його для будь-кого іншого.</div>
+        </div>
+      </div>
+    </div>
+
+    <p style="margin-top:20px">Критика паралізує. Підтримка дає сили розібрати помилку і спробувати ще раз. Про той самий принцип із трохи іншого боку — «дві стріли» самокритики — на сторінці <a href="disapproval.html">Витримувати чуже незадоволення</a>.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Експозиція -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Зустрітися зі страхом поступово</h2>
+    <p>Свідоме, поступове й систематичне зіткнення із ситуаціями, що лякають, — без охоронної поведінки. Мета не в тому, щоб тривога зникла назавжди. Мета — переконатися на практиці у двох речах: уявна катастрофа не відбувається, а дискомфорт можна витримати, і з часом він знижується сам.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">📶</span>
+        <div class="card-title">Послідовність</div>
+        <div class="card-text">Починати з малого і рухатися від простого до складного, а не одразу штурмувати найстрашніше.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔁</span>
+        <div class="card-title">Регулярність</div>
+        <div class="card-text">Практикуватися часто, не даючи страху повернутися між спробами.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🚫</span>
+        <div class="card-title">Без милиць</div>
+        <div class="card-text">Відмова від охоронної поведінки в процесі — інакше досвід не рахується як спростування страху.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Драбина сміливості -->
+  <div class="section" style="animation-delay:1.35s">
+    <h2 class="section-title">Драбина сміливості</h2>
+    <p>Намалюй драбину з десятьма сходинками. На нижній — ситуація з мінімальним рівнем страху, яку все ж уникаєш. На верхній — мета, яка зараз здається неможливою. Проміжні сходинки заповнюються поступово, від простого до складного.</p>
+
+    <div class="highlight">
+      <p><em>Три правила, які роблять цю вправу робочою, а не черговим списком побажань.</em> Обирай перший крок так, щоб ризик реальної невдачі був мінімальним. Заздалегідь продумай план Б на випадок, якщо не вийде. І пам'ятай: головна мета — не успіх, а навчання. Порівняй свій прогноз щодо ситуації з тим, що сталося насправді, — саме цей розрив і лікує тривогу, а не сам факт «пройшла чи ні».</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Паніка тут і зараз -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Коли накрило просто зараз</h2>
+    <p>Приступ тривоги чи сорому — не провал, а можливість для практики. Послідовність, яку варто натренувати заздалегідь, у спокійному стані, щоб вона спрацювала автоматично в момент реального хвилювання.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">✅</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Визнати відчуття</div>
+          <div class="card-text">«Приступ тривоги прийшов. Це неприємно, але не небезпечно. Він завжди минає».</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🌬️</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Змістити фокус на дихання</div>
+          <div class="card-text">Кілька глибоких повільних вдихів і видихів — тіло заспокоюється раніше, ніж думки.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🖐️</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«5-4-3-2-1»</div>
+          <div class="card-text">П'ять речей, які бачиш, чотири тілесні відчуття, три звуки, два запахи, один смак — це повертає увагу в теперішній момент.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🧍</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Залишитися в ситуації</div>
+          <div class="card-text">Не тікати з неї — утеча закріплює в мозку рівняння «ситуація дорівнює небезпека», і наступного разу тривога прийде швидше й сильніше.</div>
+        </div>
+      </div>
+    </div>
+
+    <p style="margin-top:20px">Корисно заздалегідь підготувати коротку письмову «карту самодопомоги» з такими формулюваннями — щоб не вигадувати їх на ходу, коли думки й так плутаються.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Недосконалість -->
+  <div class="section" style="animation-delay:1.45s">
+    <h2 class="section-title">Свобода народжується з прийняття недосконалості</h2>
+    <p>Найпоширеніша помилка в боротьбі із соціальною тривогою — спроба стати ідеальною, невразливою версією себе. Натомість варто визнати простіше право: бути звичайною живою людиною, яка може помилятися, забувати, виглядати не найкраще в конкретний момент.</p>
+    <p>Це зміщує саму мету спілкування — з «справити враження» на «просто бути в контакті». Звільняється ресурс для щирого інтересу до співрозмовника, гумору, спонтанності. Вразливість перестає бути загрозою і стає інструментом зв'язку: людям подобається не ідеальність співрозмовника, а його людяність — а вона завжди включає й недосконалість.</p>
+  </div>
+
+  <!-- Асертивність -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Асертивність: між мовчанням і агресією</h2>
+    <p>Спокійно й шанобливо виражати свої думки, почуття й потреби, одночасно поважаючи права інших, — на відміну від пасивності (мовчати, коли є що сказати) і агресії. Починається це не з фрази, а з визнання самого права мати свою думку, свої потреби і свої межі.</p>
+
+    <div class="compare">
+      <div class="col good">
+        <div class="col-label">Я-висловлювання</div>
+        <div class="col-text">«Коли ви робите А, я відчуваю Б, мені важливо В, прошу вас Г» — опис факту, свого почуття, своєї потреби і конкретного прохання, без звинувачення.</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">Формула відмови</div>
+        <div class="col-text">Співчуття + відмова + альтернатива за бажанням. Розгорнутий варіант цієї ж формули — на сторінці <a href="self-esteem.html">Самооцінка</a>.</div>
+      </div>
+    </div>
+
+    <p style="margin-top:20px">П'ять прав, які варто визнати за собою прямо зараз:</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">🙅</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Право говорити «ні» без почуття провини</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🔄</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Право змінювати свою думку</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🙏</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Право просити про бажане</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🌱</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Право помилятися й не бути ідеальною</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🕊️</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Право не відповідати чужим очікуванням</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Цінності -->
+  <div class="section" style="animation-delay:1.55s">
+    <h2 class="section-title">Мотивація, яка не залежить від сили волі</h2>
+    <p>Боротьба з тривогою заради самої боротьби виснажлива і здебільшого безуспішна. Справжня мотивація з'являється тоді, коли зрозуміло, заради чого більшого варто терпіти тимчасовий дискомфорт.</p>
+    <p>Тут працюють не цілі, а цінності — обрані напрямки й принципи, які роблять життя осмисленим: близькість, розвиток, турбота, творчість, сміливість. Коли стає видно, що саме тривога заважає жити відповідно до власних цінностей, з'являється внутрішній двигун — і будь-яка експозиційна вправа перестає бути просто лячним завданням, стаючи кроком назустріч важливому.</p>
+
+    <div class="highlight">
+      <p><em>Мистецтво присутності.</em> Навик занурення в поточний момент контакту складається з двох частин: усвідомленості — помічати свої думки й почуття без осуду, і залученості — спрямовувати увагу на співрозмовника й сам процес діалогу, а не на контроль враження, яке справляєш.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Невдача -->
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">Соціальна невдача як точка даних</h2>
+    <p>Невдачі й відмови на цьому шляху неминучі. Питання не в тому, як їх уникнути, а в тому, як їх тлумачити. Тривожне мислення сприймає будь-яку невдачу як глобальне підтвердження власної неповноцінності — здоровий підхід розкладає ту саму подію на чотири кроки.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">💔</span>
+        <div class="phrase-body">
+          <div class="phrase-said">1 · Визнати біль</div>
+          <div class="card-text">Чесно назвати свої почуття, не заперечуючи їх і не роблячи вигляд, що все одно.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🔍</span>
+        <div class="phrase-body">
+          <div class="phrase-said">2 · Декатастрофізувати</div>
+          <div class="card-text">Це конкретний випадок, а не тотальний жах і не вирок на все життя.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🎓</span>
+        <div class="phrase-body">
+          <div class="phrase-said">3 · Витягти урок</div>
+          <div class="card-text">Якщо він є — без самокатування, просто як інформацію на майбутнє.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">➡️</span>
+        <div class="phrase-body">
+          <div class="phrase-said">4 · Повернутися до руху</div>
+          <div class="card-text">Свідомо, пам'ятаючи, що соціальна невдача — не вирок особистості, а лише точка даних на шляху навчання.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:1.65s">
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Що зміниться в твоєму житті, якщо прожектор, який ти сама на себе спрямувала, нарешті вимкнеться?</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Фінал -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Насамкінець</h2>
+    <p>Заздалегідь підготуй собі «аптечку підтримки» — кілька заготовлених способів заспокоїтися: розмова з другом, щоденник, улюблена музика, нагадування собі про власні цінності. Не тому, що вона знадобиться щодня, а тому що в момент, коли справді накриє, вигадувати щось нове вже пізно.</p>
+    <p>Прожектор соціальної тривоги не вимикається одним рішенням «більше не боятися». Він гасне поступово — щоразу, коли замість охоронної поведінки обираєш маленький, посильний крок драбиною сміливості. Про той самий принцип грамотного дефіциту стресу — <a href="anxiety-ahead.html">Тривога наперед</a>. Про право говорити «ні» без провини докладніше — <a href="self-esteem.html">Самооцінка</a>.</p>
+
+    <div class="final-quote">
+      <div class="final-text">Ти боялася не людей. <strong>Ти боялася, що вони побачать те саме, що ти вже й так думаєш про себе</strong>. Найкоротший шлях вимкнути прожектор — перестати вірити цій думці настільки беззастережно.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
