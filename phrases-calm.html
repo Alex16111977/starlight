@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Причина, а не наслідок</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(52,58,94,.78);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:13px;font-weight:200;line-height:1.85;color:rgba(52,58,94,.8)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(52,58,94,.82);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Причина, а не наслідок</h1>
+  <p class="page-subtitle">Прислів'я, які тримають внутрішній спокій</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Дурень створює безлад, щоб бути втомленим. Мудрець створює порядок, щоб відчувати спокій"</div>
+    </div>
+    <p>Це не список нових ідей. Це старі прислів'я, приказки й афоризми, зібрані навколо однієї думки: людина не просто реагує на події — вона часто сама, непомітно для себе, створює саме ті події, які дають привід відчувати звичне.</p>
+    <p>Хто мене злить, той уже керує мною — тому що я перетворююся на наслідок, а не на причину. Нижче — прислів'я, зібрані так, щоб цю різницю було видно щоразу заново.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Причина і наслідок -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Причина і наслідок</h2>
+    <p class="section-lead">Той самий сюжет із різних боків: хто я, що я роблю і що я через це відчуваю.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">😤</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Ображати можна лише того, хто ображатися радий»</div>
+          <div class="card-text">А хто радий ображатися, той завжди знайде привід. Це не про кривдника — це про те, наскільки легко в тебе самої запускається образа.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">⏱️</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Людина поспішає не тому, що спізнюється»</div>
+          <div class="card-text">Вона спізнюється, щоб мати привід поспішати. Хронічний поспіх часто не наслідок обставин, а спосіб жити в звичному стані тривоги.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🎭</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Керує тобою той, хто тебе злить»</div>
+          <div class="card-text">Щойно хтось мене «злить», я вже наслідок, а не причина. Кнопка від мого стану виявляється в чужих руках — і я сама її туди віддала.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🐺</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Не буди звіра в іншому»</div>
+          <div class="card-text">Не наражай себе на непотрібний ризик. У кожній людині одночасно живуть давній звір, що прокидається в стресі, і приручена, здатна мислити людина — і питання лише в тому, до кого саме ти щойно постукала.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🎪</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Маріонетки нервують, коли їх не смикають»</div>
+          <div class="card-text">Якщо людина звикла бути смикнутою, а її раптом ніхто не смикає — вона сама починає шукати, хто б це зробив. Звичний драматизм затягує сильніше, ніж здається.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Факти проти домислів -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Факти проти домислів</h2>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">🔍</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Ніколи не вірте тому, що здається, — вірте лише доказам»</div>
+          <div class="card-text">Дозволь собі розкіш уточнювального питання: на основі яких конкретних фактів зроблено цей висновок? Здебільшого відповіді на нього немає — є тільки враження.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🗡️</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Образи — доводи неправих»</div>
+          <div class="card-text">Якщо виникло бажання когось образити, варто придивитися: можливо, десь помиляюся саме я, і образа — це спосіб не визнавати цього вголос.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🍯</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Дурня легко впізнати: він вірить у те, у що хоче вірити»</div>
+          <div class="card-text">І що солодша брехня — то важче в неї не повірити. Перевірка проста: чи хочу я, щоб це виявилося правдою, більше, ніж перевіряю, чи це правда.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="quote-block">
+      <p>Слова та ілюзії гинуть, факти залишаються.</p>
+      <div class="qa">Стара приказка</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Запитання і слухання -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Мистецтво запитань і слухання</h2>
+    <p class="section-lead">Розмовою керує не той, хто багато говорить, а той, хто ставить запитання.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">❓</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Хто ставить запитання, той керує бесідою»</div>
+          <div class="card-text">Сам факт запитання — уже свого роду навіювання: воно спрямовує увагу співрозмовника туди, куди ти хочеш подивитися разом із ним.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🎯</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Якщо ти ставиш запитання — ти вже знаєш половину відповіді»</div>
+          <div class="card-text">Про розум людини легше судити з її запитань, ніж із її відповідей: відповідь показує, що людина знає, запитання — як саме вона думає.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🙊</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Хто ризикує здатися дурним на п'ять хвилин, ставлячи запитання, — той, хто не ставить, залишиться дурним на все життя»</div>
+          <div class="card-text">Найдорожча ціна в цьому уроці — не соромно спитати, а соромно так і не дізнатися.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">💡</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Хто ясно мислить, той ясно викладає»</div>
+          <div class="card-text">Довго й незрозуміло людина говорить здебільшого тоді, коли сама не до кінця розуміє, про що говорить. Найточніша перевірка розуміння теми — здатність навести метафору, намалювати образ і дати приклад із життя.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🚰</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«У повний стакан води не наллєш»</div>
+          <div class="card-text">Перш ніж «наливати» в іншого пораду чи знання, варто переконатися, що стакан вільний, — а ще краще, щоб він спорожнився сам, без твоєї допомоги.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <p><em>«Відкрий вухо співрозмовника, перш ніж говорити в нього».</em> Підбери ключ до вуха — інтригу, цікавість, відкрите питання про те, що для нього справді важливо, — перш ніж казати те, що важливо тобі. Той самий принцип, тільки з іншого боку розмови, детальніше на сторінці <a href="reading-people.html">Читати людину по мовленню</a>.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Межі -->
+  <div class="section" style="animation-delay:1.15s">
+    <h2 class="section-title">Межі, відмова і чесне «ні»</h2>
+    <p>Формулу ввічливої відмови й острівці безпеки вже розібрано на сторінці <a href="self-esteem.html">Самооцінка</a>. Тут — прислів'я, які пояснюють, чому це взагалі варто робити.</p>
+
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">Річ</div>
+        <div class="col-text">«У кого слабкий характер, той не людина, а річ». Людина, яка не вміє відмовляти, сама перетворює себе на засіб для чужих цілей.</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">Формула</div>
+        <div class="col-text">«Чую твоє прохання — я тобі в ньому відмовлю». Проста структура: чую, відмовляю, тому що мені важливо…</div>
+      </div>
+    </div>
+
+    <div class="phrases" style="margin-top:20px">
+      <div class="phrase">
+        <span class="phrase-icon">🔁</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Так правильно я розумію, що ви не почули мою відмову?»</div>
+          <div class="card-text">Фраза для моменту, коли співрозмовник тисне далі, намагаючись викликати провину замість того, щоб прийняти «ні».</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🌫️</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Ніколи не обнадіюй інших даремно»</div>
+          <div class="card-text">Краще одразу чітко сказати «ні», ніж лишити двозначну надію. Брехливі обіцянки дратують сильніше, ніж відверті відмови, — і псують довіру довше.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🚫</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Не поспішай говорити «ні» за інших, поки тебе не запитали»</div>
+          <div class="card-text">Та сама межа, тільки в інший бік: не вирішувати за людину те, що вона ще навіть не встигла попросити.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🤐</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Розголошення таємниці — провина того, хто її довірив»</div>
+          <div class="card-text">Довіра — це вага, яку не кожен здатен витримати. Не можна вимагати від людини здібності, якої в неї немає, — і краще дізнатися про це до того, як довірити щось важливе.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Мова -->
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Мова як інструмент, а не шум</h2>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">🌊</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Слова — це звукові хвилі, і я можу вибирати, у який смисл їх перетворювати»</div>
+          <div class="card-text">Ту саму фразу співрозмовника можна перетворити на образу, а можна — на привід для діалогу. Вибір відбувається не в момент, коли фразу почули, а в момент, коли її почали тлумачити.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🎙️</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Найбільша чеснота оратора — не тільки сказати потрібне, а й не сказати зайвого»</div>
+          <div class="card-text">Найблискучіша промова набридає, якщо її затягнути. Усьому свій час, і зупинитися вчасно — окремий навик, не менш важливий за вміння говорити.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🕊️</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Кажи лише тоді, коли спокійний»</div>
+          <div class="card-text">Інакше твоя мова працюватиме проти тебе — виказуватиме не те, що ти хотіла сказати, а той стан, у якому ти це казала.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">📢</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Коли співрозмовник підкреслює, що каже правду — можеш не сумніватися: він бреше»</div>
+          <div class="card-text">Мається на увазі не завжди буквально, а звичка — надмірне «чесно кажу, чесно тобі кажу» частіше супроводжує невпевненість, ніж чесність.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="quote-block">
+      <p>Знаючий не доводить, доводячий не знає.</p>
+      <div class="qa">Приписують Лао-цзи</div>
+    </div>
+
+    <p style="margin-top:20px">Немає потреби комусь щось доводити — і немає потреби метати бісер перед свинями, коли аудиторія просто не готова почути. За фразою «я ж заради тебе стараюся» часто ховається зовсім інше послання: «я розумний, а ти — ні». Слова тут — шум і сміття; значення має тільки те, яке послання за ними реально стоїть. Хто говорить, той сіє; хто слухає — той збирає, і кожен сам обирає, що з посіяного підбирати.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Гнів і спокій -->
+  <div class="section" style="animation-delay:1.25s">
+    <h2 class="section-title">Гнів і спокій</h2>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">🕯️</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Гнів — це вітер, що задуває свічку свідомості»</div>
+          <div class="card-text">Усе, що починається гнівом, закінчується соромом — цю формулу вже розібрано на сторінці <a href="future-vision.html">Образ бажаного життя</a>. Тут головне інше: свічку легко задути й важко запалити знову посеред розмови.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">💧</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Спокійний розум, як і спокійна вода, краще відображає реальність»</div>
+          <div class="card-text">У стані сум'яття людина не бачить навіть очевидних речей — не тому що вони приховані, а тому що поверхня йде брижами.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🩸</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Тіло керує думкою, розум обслуговує інстинкти, пристрасть керує розумом»</div>
+          <div class="card-text">Три формулювання одного факту: поки людина не подбала про базові тілесні потреби — сон, їжу, відпочинок, — її рішення визначає не розум, а стан тіла. Розумна порада, дана голодній чи невиспаній людині, просто не буде почута.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🐦</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Не можна заборонити птахам пролітати над головою, але можна не дозволити їм звивати на ній гніздо»</div>
+          <div class="card-text">Чужа критика чи прикрий коментар можуть пролітати повз — якщо не дозволяти їм оселитися й звити гніздо, з якого доведеться виганяти тижнями.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <p><em>«Я не в змозі змінити напрямок вітру, але можу повернути свої вітрила».</em> І найпрактичніший висновок з усього цього розділу: найкращий спосіб позбутися ворога — зробити його другом. Не тому, що це благородно, а тому, що це найдешевший спосіб із наявних.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Терпіння -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Терпіння, малі кроки й довга праця</h2>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">💧</span>
+        <div class="card-title">Крапля довбає камінь</div>
+        <div class="card-text">Не силою, а постійністю. Подорож у тисячу миль починається з одного кроку — і жоден крок сам собою не виглядає значним.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚔️</span>
+        <div class="card-title">Тяжко в навчанні — легко в бою</div>
+        <div class="card-text">Формула Суворова, яка пережила саму російську армію. Терпіння гірке, та плід його солодкий — особливо це відчутно на нудних, повторюваних тренувальних вправах.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔁</span>
+        <div class="card-title">Дія, повторена багато разів, стає легкою</div>
+        <div class="card-text">Нова звичка формується через багаторазове повторення, а не через одне лише розуміння ідеї. Людина не знає того, чого не вміє, — і жодна книжка цього не замінить.</div>
+      </div>
+    </div>
+
+    <p style="margin-top:24px">«Масштаб вторинний, звичка первинна» — цю думку вже розкрито на сторінці <a href="self-esteem.html">Самооцінка</a>. Тут вона доповнюється ще одним образом: перемога залежить від глядача, а непереможність — від тебе самого. Шматок пінопласту сам по собі на дні басейну не опиниться — його треба туди силоміць затримувати; відпустиш — виринає сам.</p>
+
+    <div class="highlight">
+      <p><em>Справа виганяє вади, породжені неробством.</em> Праця, що дає відчутний і цінний для інших результат, приносить найяскравіші переживання з усіх доступних. Позбавлення людини можливості трудитися — навіть із найкращих намірів, навіть у вигляді «відпочинку» — робить її нещасною. І дорогу здолає той, хто йде: сам процес ходіння неминуче формує дорогу під ногами.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Компетентність -->
+  <div class="section" style="animation-delay:1.35s">
+    <h2 class="section-title">Компетентність і критика</h2>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">🙈</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Щоб уникнути критики, потрібно нічого не робити, нічого не говорити і ніким не бути»</div>
+          <div class="card-text">Тобто критики уникнути неможливо в принципі — залишається тільки питання, скільки вона важитиме.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">💸</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Якщо думаєте, що компетентність коштує дорого, спробуйте некомпетентність»</div>
+          <div class="card-text">Вона обійдеться значно дорожче — просто рахунок за неї приходить пізніше й не завжди у грошах.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🍽️</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Хто не вчиться — їжа для тих, хто вчиться»</div>
+          <div class="card-text">Різко сформульовано, але точно: ринок і стосунки не чекають, поки хтось наздожене.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🎈</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Зайва самовпевненість — не ознака інтелекту, а наслідок незрілості характеру»</div>
+          <div class="card-text">Найгучніше про себе заявляє той, хто ще не зіткнувся з достатньою кількістю власних помилок.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <p><em>«Ідеї можна знешкодити лише ідеями».</em> Переконувати варто не тиском, а іншими прикладами й уточнювальними питаннями — а не «розбиваючи людині лоба об сире яйце». І окреме попередження: дай людині надію — і станеш їй винною. Обіцянка чи надія, дана даремно, робить того, хто її дав, заручником чужих очікувань.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Емпатія і турбота -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Емпатія, увага до себе і турбота</h2>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">🪞</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Не можна навчити того, як не живеш сам»</div>
+          <div class="card-text">Що б людина не говорила іншим, вона між рядків навчає тому, як живе сама, — і саме це чується найголосніше.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🎪</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Керувати людиною легше, якщо вона вважає себе нікчемою, а того, хто керує, — чесним мудрецем»</div>
+          <div class="card-text">Кожен шахрай це знає. Тому варто помічати послання, що стоїть за словами інших, а не тільки самі слова — особливо коли хтось наполегливо переконує тебе у власній нікчемності.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🍀</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Слабкі люди вірять в удачу, сильні — у причину і наслідок»</div>
+          <div class="card-text">Віра в себе складається не з оптимізму, а з трьох речей: розуміння своїх перемог, розуміння дій, які до них привели, і рішучості ці дії повторити.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">📢</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Немає нічого всередині у людей, що вічно виставляють усе назовні»</div>
+          <div class="card-text">Надмірна демонстрація власного успіху часто працює як ампутація здатності дивитися всередину — чим гучніше зовні, тим менше залишається на розмову із собою.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="quote-block">
+      <p>Хто поважає себе — вселяє повагу в інших. Боїться презирства лише той, хто на нього заслуговує.</p>
+      <div class="qa">Народна мудрість</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Час і майбутнє -->
+  <div class="section" style="animation-delay:1.45s">
+    <h2 class="section-title">Час, майбутнє і планування</h2>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">🪟</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Майбутнє — це дзеркало без скла»</div>
+          <div class="card-text">Людина неминуче побачить у ньому саму себе — свої звички, свій темп, свою чесність із собою, помножені на прожиті роки.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🌅</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Майбутнє настає не з приходом завтра, а з досягненням якісно нового стану»</div>
+          <div class="card-text">І в першу чергу це стан внутрішній. Календарна дата нічого не змінює сама по собі — змінює те, що людина за цей час зробила зі своїм способом мислити.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🔨</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Майбутнє — не те місце, куди ми маємо увійти, а те, що ми маємо створити»</div>
+          <div class="card-text">Різниця невелика на слух і величезна на практиці: одна позиція чекає, інша будує.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <p><em>«Незапланована справа не буде зроблена».</em> Усе створюється двічі: спершу в уяві, потім у реальному світі. Пропущений перший крок — не деталь, а причина, чому другий так і не стався. «Вітер у голові ніколи не буває попутним»: якщо людина сама не розпорядилася, чим заповнити свій день, це неодмінно зроблять за неї інші обставини.</p>
+    </div>
+
+    <p style="margin-top:20px">Час — капітал розумового працівника; обрати час — означає зберегти час, а зроблене невчасно зроблене марно. І окреме попередження про терпіння в іншому сенсі: не поспішай сіяти врожай і одразу все з'їдати — це дасть коротку насолоду, але гірким виявиться результат у довгостроковій перспективі.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Стосунки і довіра -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Стосунки, довіра і людська природа</h2>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">😢</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Ніколи не довіряй тому, хто розповідає про всі свої проблеми, але приховує всі свої радощі»</div>
+          <div class="card-text">Якщо людина постійно говорить лише про погане, можливо, вона таким чином систематично викликає до себе жалість — а не просто ділиться.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">👁️</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Проблему найкраще вирішити тоді, коли люди здатні вільно обговорити її, перебуваючи з нею віч-на-віч»</div>
+          <div class="card-text">Уникання незручної теми — фінансових труднощів, конфлікту, помилки — лише ускладнює те, що й так уже сталося.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🥾</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Людина, яка кусає руку, що її годує, зазвичай лежить біля чобота, що її б'є»</div>
+          <div class="card-text">Тенденція цінувати того, хто принижує, і не цінувати того, хто турбується, — упізнаваний малюнок драматичного трикутника: переслідувач, рятівник, жертва міняються місцями, а закономірність залишається.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🚪</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Двері позитивних змін відчиняються лише зсередини»</div>
+          <div class="card-text">Не можна змусити іншу людину силою взяти твої знання чи твою правоту — можна лише створити умови, за яких вона сама захоче відчинити.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <p><em>«Немає ворога, перемогти якого важко, коли він не існує взагалі».</em> Краще створювати умови, за яких протистояння не виникає, ніж потім героїчно його долати. Спершу ти працюєш на репутацію, потім репутація працює на тебе. І де згода — там перемога: варто шукати в словах співрозмовника хоч щось, із чим можна погодитися, навіть якщо це лише визнання його права на власну думку.</p>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:1.55s">
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">У якій зі своїх звичних ситуацій ти насправді причина — а не наслідок, яким зручно себе вважати?</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Фінал -->
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">Насамкінець</h2>
+    <p>Це не 198 нових ідей. Це кілька наскрізних принципів, перекладені на мову прислів'їв і приказок так, щоб їх було легше пригадати саме в момент, коли вони потрібні: людина значною мірою сама створює події свого життя, щоб проживати звичні емоції; спокій народжується не з відсутності проблем, а з навички не заражатися чужими; уміння говорити «ні» рівнозначне повазі до себе; ясне мислення цінніше за багатослів'я; а стійкий результат у будь-якій справі — сума маленьких, послідовно повторюваних дій, а не одного пориву.</p>
+    <p>Про сам механізм внутрішнього спокою в момент чужого невдоволення — <a href="disapproval.html">Витримувати чуже незадоволення</a>. Про щоденну практику, яка з часом ці прислів'я перетворює на звичку, — <a href="self-esteem.html">Самооцінка</a>.</p>
+
+    <div class="final-quote">
+      <div class="final-text">Жодне прислів'я саме по собі нічого не змінює. <strong>Змінює момент, коли ти згадуєш його не після, а до</strong> — до того, як образилася, поспішила чи повірила в те, у що хотілося вірити.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
