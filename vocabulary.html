@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Словниковий запас</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.08em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.92)}
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(52,58,94,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(110,200,160,.45),transparent)}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(26px,4vw,36px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:640px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.soft em{font-style:normal;color:#146239!important}
+.tag.red{color:#9c2f22!important}.tag.gold{color:#7a5410!important}.tag.green{color:#146239!important}.legend-txt b{color:#242844!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.soft{background:linear-gradient(135deg,rgba(31,122,77,.10),rgba(82,97,194,.05))!important;border-color:rgba(31,122,77,.28)!important}
+.soft p{color:rgba(30,60,46,.92)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.section p a,.card-text a,.phrase-text a{color:#5a3f9e;text-decoration:none;border-bottom:1px solid rgba(122,95,190,.45);transition:border-color .3s}
+.section p a:hover,.card-text a:hover,.phrase-text a:hover{border-bottom-color:rgba(122,95,190,.9)}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Словниковий запас</h1>
+  <p class="page-subtitle">Карта твого інтелекту</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Словниковий запас — це карта інтелекту"</div>
+      <div class="hero-author">Стівен Пінкер</div>
+    </div>
+    <p>Психолог Роберт Стернберг із Єльського університету стверджує: якщо потрібно оцінити інтелект людини одним коротким тестом, немає кращого показника за словниковий запас. Він пояснює близько половини підсумкового балу за IQ-тестом.</p>
+    <p>Але це працює не тому, що слова самі по собі щось важать. Словник — це слід того, що ти читала, обдумувала й намагалася сформулювати. Тому розширити його читанням «просто побільше» не вдається: слова від читання здебільшого залишаються в пасивному запасі й ніколи не потрапляють у мовлення.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Чому не росте -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Чому словник не росте сам собою</h2>
+    <p>Три причини, і жодна з них не про брак старанності.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🔋</span>
+        <div class="card-title">Економія мозку</div>
+        <div class="card-text">Мозок налаштований на виживання, а не на красу мовлення. Якщо тебе й так розуміють наявними словами, він не бачить сенсу витрачати ресурс на нові — зусилля без видимої користі він відкидає першим.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌾</span>
+        <div class="card-title">Синдром високого маку</div>
+        <div class="card-text">Щойно мова стає точнішою й образнішою, оточення часто намагається «зрізати» того, хто вирізняється. Зрізають саме яскраве й ефектне — те, чому найлегше позаздрити.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📱</span>
+        <div class="card-title">Мовна бульбашка соцмереж</div>
+        <div class="card-text">Алгоритми показують звичне й просте, бо воно краще утримує увагу. Спрощена мова стрічки непомітно переходить у повсякденну — і нові слова просто не встигають туди потрапити.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Лінгвістичний інтелект -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Один із видів розуму, який видно одразу</h2>
+    <p>Психолог Говард Гарднер описав кілька незалежних видів інтелекту — когнітивний, емоційний, кінестетичний, музичний, моральний. Лінгвістичний стоїть окремо: він проявляється в тому, наскільки уважно людина обирає слова, — і його чути за перші кілька речень, ще до будь-якого тесту.</p>
+
+    <div class="quote-block">
+      <p>«Не існує на світі нічого більш нематеріального, більш суб'єктивного і більш невловимого, ніж професія актора».</p>
+      <div class="qa">Точна мова, що одразу видає глибину думки</div>
+    </div>
+
+    <p>Порівняй це з «хочеться бути, ну, як бути…» — та сама тема, той самий намір щось сказати про професію, але порожні слова-заповнювачі створюють враження, ніби за ними взагалі нічого немає. Різниця не в розумі мовця, а в тому, наскільки точно він уміє впіймати думку словом.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Забування -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Чому нове слово зникає за годину</h2>
+    <p>Крива забування показує неприємну арифметику: без повторення людина втрачає близько 60% щойно вивченого вже за годину. Слово не «губиться» кудись — просто зв'язок між нейронами, які мали б його утримувати, так і не встиг зміцніти. Нейрони не «зустрілися» — і за потреби пригадати слово знаходити стає нічого.</p>
+    <p>Щоб зв'язок утримався, потрібні не самі літери, а контекст навколо: образ, сусідні слова, тілесне відчуття, ситуація, у якій це слово справді знадобилося. Без цього шару слово залишається сирим фактом, а сирі факти пам'ять тримає найгірше.</p>
+
+    <div class="highlight">
+      <p><em>І тут вмикається ще один механізм — тривога.</em> Спроба вжити нове слово в незнайомій ситуації сама по собі викликає невпевненість. Якщо потрібне слово не знайшлося вчасно, на зміну тривозі приходить сором за провал — і мозок запам'ятовує не слово, а неприємне відчуття навколо спроби. Наступного разу він обирає звичне слово, щоб просто уникнути повторення цього відчуття. Розірвати це можна тільки в один спосіб: знижуючи тривогу навколо спроби, а не вимагаючи від себе точності одразу.</p>
+    </div>
+  </div>
+
+  <!-- Ментальний лексикон -->
+  <div class="section" style="animation-delay:1.15s">
+    <h2 class="section-title">Слово живе не саме, а в мережі</h2>
+    <p>У мозку немає полиці зі словами, розкладеними за абеткою. Кожне слово закодоване одразу за кількома параметрами — як звучить, як пишеться, що означає, яку роль виконує в реченні, з якими іншими словами звикло стояти поруч. Це називають ментальним лексиконом, і працює він не як архів, а як мережа зв'язків.</p>
+    <p>Тому механічне зазубрювання за словником майже не працює: воно додає ізольовану картку без жодного зв'язку з рештою мережі. Розширення словника — процес аналітичний: узагальнення, висновок, спроба зрозуміти, де саме це слово точніше за все, що вже є.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🎯</span>
+        <div class="card-title">Слово з'являється, коли є точна потреба</div>
+        <div class="card-text">Раніше неприємну людину описували через «шкідливий», «нав'язливий», «колючий» — приблизно, здалеку. Слово «токсичний» одразу зафіксувало явище одним ударом. Тепер воно «береться з полиці» само, бо є точна потреба, під яку воно підходить.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📦</span>
+        <div class="card-title">Слово — не прикраса, а концепція</div>
+        <div class="card-text">Кожне слово — коробка з кількома смислами всередині. Академік Дмитро Лихачов, розкриваючи слово «агресія», доходить до ідеї відсутності духовної культури — не тому що підбирав красиве слово, а тому що розпакував концепцію до кінця й вийшов на думку, якої напряму не шукав.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Гітари в підвалі -->
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Гітари в підвалі</h2>
+    <p>Найпоширеніша помилка — вважати, що досить просто багато читати. Читання справді знайомить із новими словами, але здебільшого залишає їх у пасивному запасі: ти впізнаєш слово в тексті, розумієш його, і на цьому все закінчується.</p>
+
+    <div class="soft">
+      <p>Уяви музиканта, який колекціонує рідкісні гітари. Вони красиво розставлені в підвалі, він ними милується, вихваляється друзям — і жодного разу не бере в руки, щоб зіграти. Доступ до інструментів є. Користі — нуль. Так само й слово, яке лежить у пасивному запасі: воно є, але не грає.</p>
+    </div>
+
+    <p style="margin-top:24px">Щоб слово перейшло з полиці в руки, потрібен зсув: слова запам'ятовуються не лише як смисл, а аудіально й моторикою — тілом, яке промовляло звук. Швидкість, з якою слово пригадується, більше пов'язана з тим, як воно звучить, ніж з тим, що воно означає.</p>
+    <p>Мозок реагує на слова буквально фізично: «бігти» вмикає зону, пов'язану з рухом ніг; «червоний» — зону зору й образів; «тихий» — зону, що відповідає за звуки. Тому запам'ятовування слова — це не одна дія, а кілька одночасно: почути, як воно звучить, побачити, як виглядає, сформулювати значення своїми словами, уявити образ і відчути емоційний відгук. Про те, як сама мова, якою ти думаєш, формує мислення ще глибше, — <a href="language-thought.html">Мова і мислення</a>.</p>
+  </div>
+
+  <!-- Три кроки -->
+  <div class="section" style="animation-delay:1.25s">
+    <h2 class="section-title">Три кроки, які переводять слово в дію</h2>
+    <p>Система працює тому, що зачіпає кілька каналів сприйняття одночасно, а не просто повторює текст очима.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">📓</span>
+        <div>
+          <div class="phrase-word">1 · Блокнот слів</div>
+          <div class="phrase-text">Окремий блокнот для слів, виразів і метафор, які сподобалися, — «свербіж творчості», «жити всередині їжака, виверненого навиворіт». Запис від руки вже задіює зоровий і моторний канали. Далі слово треба вимовити вголос кілька разів, «розпробувати на смак» — відчути, як у ньому повторюються звуки, наприклад подвійне «рн» у слові «дерзновенно». Потім намалювати образ, що асоціюється зі словом, — художні здібності тут ні до чого, важливий сам факт створення картинки. І перевірити значення одразу в кількох словниках: як його визначають інші, які приклади вживання існують, які в нього синоніми.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">📌</span>
+        <div>
+          <div class="phrase-word">2 · Слово дня</div>
+          <div class="phrase-text">Одне слово записується на аркуші й лежить на видному місці біля робочого столу — наприклад рідкісне «хандрливий» з листа Пушкіна. Далі свідомо шукаєш йому застосування: у листуванні з друзями, в усній розмові, у голосовому повідомленні. Зв'язок у пам'яті міцнішає рівно тоді, коли слово поєднується з реальним досвідом і чиєюсь реакцією — особливо коли хтось перепитує, що воно означає.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">📖</span>
+        <div>
+          <div class="phrase-word">3 · Художня література й поезія</div>
+          <div class="phrase-text">Поети підбирають слова найретельніше з усіх, тому у віршах трапляються рідкісні слова й незвичне вживання звичних — це привчає мозок до гнучкості. Під час читання цікаві слова й звороти варто виписувати в окремий документ, а не просто ковзати по них очима. Приклад із біографії Блока: «випровадив із лютим добродушністю», «духовний розпад», «безсмертна вульгарність», «істота, що проміняла корені на крила» — фрази, які самі просяться бути виписаними.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <p><em>Без усіх трьох кроків нове слово не закріплюється.</em> Прочитати один раз — це побачити гітару в вітрині. Записати, промовити, намалювати, знайти привід ужити вголос і зустріти живу реакцію співрозмовника — це взяти її в руки й зіграти перший акорд. Саме повторення через різні канали, а не кількість прочитаних сторінок, переводить слово з пасивного запасу в активний.</p>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:1.3s">
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Яке слово тобі останнім часом сподобалось — і чи вимовила ти його вголос хоч раз?</div>
+    </div>
+  </div>
+
+  <!-- Фінал -->
+  <div class="section" style="animation-delay:1.35s">
+    <h2 class="section-title">Насамкінець</h2>
+    <p>Ширший словник не робить мову «розумнішою» напоказ. Він робить мислення точнішим: легше сформулювати складне почуття, легше побачити відмінність там, де раніше було одне розмите слово на все, легше підібрати аргумент, який справді відповідає ситуації.</p>
+    <p>І починається це не з рішучості «нарешті почати більше читати», а з трьох конкретних дій: записати слово, яке зачепило, промовити його вголос і знайти йому застосування цього ж тижня. Якщо звичка читати ще не встоялася — з чого почати, є окремо: <a href="reading.html">Читання</a>.</p>
+
+    <div class="final-quote">
+      <div class="final-text">Слово, яке лежить у книзі, — ще не твоє. <strong>Твоїм воно стає тільки тоді, коли ти сама його промовиш</strong> — і хтось у відповідь перепитає, що воно означає.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
