@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Образ бажаного життя</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.25) 0%,rgba(40,80,200,.14) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.14) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:10px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section-lead{font-size:14.5px;font-weight:300;line-height:1.85;color:rgba(52,58,94,.82);margin-bottom:22px;padding-left:20px}
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}
+.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85)}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+.card.ok{border-color:rgba(150,214,165,.3)}
+.card.ok::before{background:linear-gradient(to right,transparent,rgba(150,214,165,.45),transparent)}
+.card.bad{border-color:rgba(224,150,150,.28)}
+.card.bad::before{background:linear-gradient(to right,transparent,rgba(224,150,150,.42),transparent)}
+.ctx-line{font-size:14.5px;font-weight:300;line-height:1.7;color:rgba(36,40,68,.9);margin-top:8px}
+.ctx-ok{color:#146239;font-weight:400}
+.ctx-bad{color:#9c2f22;font-weight:400}
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:19px;line-height:1.4;color:rgba(36,40,68,.97);margin-bottom:10px}
+.marker{font-family:'Montserrat',sans-serif;font-size:14px;font-weight:300;line-height:1.7;color:#7a5410;margin-top:12px;padding-top:12px;border-top:1px solid rgba(212,175,110,.22)}
+.marker em{font-style:normal;color:#7a5410;letter-spacing:.03em}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(26,30,54,.96)}
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.09),rgba(212,175,110,.07));border:1px solid rgba(52,58,94,.18);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(26px,4vw,36px);color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.final-quote::before{top:0}
+.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:#7a5fbe;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,#7a5fbe,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:#2c2c2c}
+.read-toggle.active{background:rgba(212,175,110,.16);border-color:rgba(212,175,110,.55);color:#7a5410}
+.section p a,.card-text a,.phrase-text a,.reply-text a{color:#5a3f9e;text-decoration:none;border-bottom:1px solid rgba(122,95,190,.45);transition:border-color .3s}
+.section p a:hover,.card-text a:hover,.phrase-text a:hover{border-bottom-color:rgba(122,95,190,.9)}
+.phrase-text{flex:1;min-width:0}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Образ бажаного життя</h1>
+  <p class="page-subtitle">Стратегічне мислення і дозвіл собі не знати</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Факт теперішнього — це наслідок. Причина — образ майбутнього, який у тобі вже стоїть"</div>
+    </div>
+    <p>Звична логіка каже: постав ціль — і йди до неї. Тут порядок інший. Цілі не ставлять окремо: вони випадають самі, коли є образ життя, яким ти хочеш жити. Без нього ціль — це або чужа ціль, або спосіб заповнити порожнечу справами.</p>
+    <p>І перед усім цим — маленький дозвіл, без якого не рухається нічого: <em>дозволити собі поки не знати, чого ти хочеш</em>.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Стратегічно -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Що означає діяти стратегічно</h2>
+    <p>Найкоротше визначення вміщується в заміну двох слів.</p>
+
+    <div class="cards">
+      <div class="card bad">
+        <span class="card-icon">↩️</span>
+        <div class="card-title">«Тому що»</div>
+        <div class="card-text">Я пішла з роботи, <em>тому що</em> начальник дістав. Я вступила туди, <em>тому що</em> так сказали батьки. Я мовчу, <em>тому що</em> знову буде скандал. Рішення є, але воно не твоє — його продиктували обставини, а ти лише відреагувала.</div>
+      </div>
+      <div class="card ok">
+        <span class="card-icon">➡️</span>
+        <div class="card-title">«Для того щоб»</div>
+        <div class="card-text">Я йду з цієї роботи, <em>для того щоб</em> за рік мати справу, у якій мене не треба терпіти. Та сама дія — інша причина. І перевіряється вона просто: у першому випадку тебе штовхають ззаду, у другому тягне вперед.</div>
+      </div>
+    </div>
+
+    <p style="margin-top:24px">Стратегічно — це працювати над образом бажаного майбутнього і робити кроки в його бік, зважаючи на те, що обставини змінюються. Не «план на десять років, від якого не відступати», а напрямок, який ти щоразу звіряєш із тим, що змінилося.</p>
+  </div>
+
+  <!-- Причина і наслідок -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Звідки в тебе взявся теперішній образ майбутнього</h2>
+    <p>Він у тебе вже є — питання лише в тому, хто його встановив. Найчастіше це зробили в дитинстві, і зробили в один рядок:</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🚪</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Це не для тебе»</div>
+          <div class="card-text">Сказане один раз про музичну школу, а працює потім на будь-що дороге, велике або помітне. Дитина не сперечається — вона просто вносить це в опис світу як факт.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🏚️</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Як народилася в селі, так тут і помреш»</div>
+          <div class="card-text">Найчастіше кажуть не зі зла, а зі страху — щоб дитина не розчарувалася. Ефект той самий: у неї в голові вже стоїть готовий кінець історії, і всі теперішні кроки непомітно звіряються з ним.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🤐</div>
+        <div class="phrase-text">
+          <div class="phrase-said">«Ти ще малий, щоб мати свою думку»</div>
+          <div class="card-text">Виховання соромом, провиною й критикою часто йде з добрих намірів: критика здається способом мотивувати. На виході — доросла людина, яка не має навички хотіти вголос.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <p><em>Тому робота йде не з цілями, а на рівень вище.</em> Образ майбутнього — це те, що впливає на сьогоднішні дії, а не навпаки. Якщо його не редагувати свідомо, у ньому так і залишиться чуже уявлення про твою межу — і ти щодня, не помічаючи, робитимеш кроки, які його підтверджують.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Дозвіл не знати -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Перший крок: дозволити собі не знати</h2>
+    <p>Питання «чого ти хочеш?» частіше паралізує, ніж допомагає. Воно вимагає готової відповіді просто зараз — і людина, яка її не має, робить висновок, що з нею щось не так.</p>
+    <p>Не знати відразу — нормально. Це не діагноз і не лінь, а стадія. Відповіді уточнюються ітераціями: перша спроба буде банальною, п'ята — трохи чеснішою, дванадцята — раптом дуже точною. Так само пес після купання не висихає одним рухом: він струшується поступово, і жоден із рухів окремо не є «неправильним».</p>
+  </div>
+
+  <!-- Вправа -->
+  <div class="section" style="animation-delay:1.15s">
+    <h2 class="section-title">Вправа: звичайний день через п'ять років</h2>
+    <p class="section-lead">Це головна практика всього підходу. Виглядає до смішного просто й дає результат саме тому, що повторюється.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">🕐</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Формат</div>
+          <div class="card-text">Раз на тиждень, приблизно сорок хвилин. Письмово. Одне й те саме питання щоразу — не треба вигадувати нове.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">📅</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Питання</div>
+          <div class="card-text">Опиши свій <strong>звичайний</strong> день через п'ять років. Не свято, не відпустку, не день перемоги — середу. Як минає ранок. Де ти прокидаєшся. Що робиш до обіду. Хто поруч. Чим наповнений вечір. Що для тебе в цьому дні важливо. Коли з п'ятьма роками стане легко — те саме про п'ятнадцять.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🔁</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Чому саме повторюваність</div>
+          <div class="card-text">Перші рази вийде набір чужих картинок — тих, що на слуху. Приблизно до дванадцятого разу відповіді стають різкішими й конкретнішими: зникає те, чого насправді не хочеться, і залишається те, що повертається щоразу.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🪶</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Це ні до чого не зобов'язує</div>
+          <div class="card-text">Написане не є контрактом. Ти нічого не мусиш утілювати буквально, і завтра можеш написати інше. Зміст відповідей узагалі вторинний — працює сама форма роботи.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <p><em>Чому «звичайний день», а не «мрія».</em> Мрію легко описати чужими словами — вілла, море, свобода. Звичайну середу чужими словами не опишеш: доводиться вигадувати, о котрій ти встаєш, із ким снідаєш і що робиш о третій дня. Саме там і виявляється, чого ти справді хочеш — і чого не хочеш зовсім.</p>
+    </div>
+  </div>
+
+  <!-- Франкл -->
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">А якщо все навколо непередбачуване</h2>
+    <p>Заперечення очевидне: як планувати на п'ять років, коли невідомо, що буде за місяць.</p>
+    <p>Віктор Франкл робив цю роботу в концтаборі. Він уявляв, як після війни стоїть перед аудиторією й читає лекцію про психологію людини в таборі — про те саме, що переживав тієї миті. Це не було прогнозом; ніяких підстав вважати, що він виживе, у нього не було.</p>
+
+    <div class="quote-block">
+      <p>Робота над образом майбутнього — не про те, щоб угадати, що станеться тоді й там. Вона про те, щоб наповнити смислом те, що відбувається тут і зараз.</p>
+      <div class="qa">Саме тому вона працює найкраще в турбулентні часи</div>
+    </div>
+
+    <p>Образ майбутнього не робить теперішнє передбачуваним. Він робить його осмисленим — і цього достатньо, щоб сьогоднішній день перестав бути просто витриманим.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Три критерії -->
+  <div class="section" style="animation-delay:1.25s">
+    <h2 class="section-title">Три питання до будь-якого рішення</h2>
+    <p>Коли образ уже є, рішення перестають бути муками вибору й перетворюються на перевірку за трьома пунктами.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🫶</span>
+        <div class="card-title">Це турбота про себе?</div>
+        <div class="card-text">Не «приємно» і не «легко». Турбота — це те, за що завтрашня ти скаже спасибі. Іноді це відмовитися, іноді — навпаки, взятися за щось важке.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🏗️</span>
+        <div class="card-title">Це створює актив?</div>
+        <div class="card-text">Актив — те, що працює на тебе, поки ти зайнята іншим: навичка, репутація, текст, інструмент, стосунки. Протилежність — носити воду відрами: щодня спочатку, і нічого не накопичується.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧭</span>
+        <div class="card-title">Це співзвучне моїм цінностям?</div>
+        <div class="card-text">Рішення, яке дає результат і суперечить цінностям, доведеться потім весь час виправдовувати перед собою. Це найдорожчий вид витрат.</div>
+      </div>
+    </div>
+
+    <p style="margin-top:24px">Три «так» — роби. Одне «ні» — не заборона, а привід подивитися уважніше, що саме тебе туди тягне.</p>
+  </div>
+
+  <!-- Маленькі кроки -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Не вимагати від себе різких змін</h2>
+    <p>Найпоширеніший спосіб нічого не зробити — вимагати від себе одразу всього. Робоча альтернатива — розкласти страшний крок на нестрашні.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">1️⃣</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Зробити й нікому не показати</div>
+          <div class="card-text">Записати відео і залишити в теці. Написати текст і не надсилати. На цьому етапі задача — не результат, а перестати боятися самої дії.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">2️⃣</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Показати вузькому колу</div>
+          <div class="card-text">Двом-трьом людям, від яких не страшно почути правду. Це вже публічність, тільки в дозі, яку витримуєш.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">3️⃣</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Опублікувати</div>
+          <div class="card-text">Крок, який здавався неможливим на початку, тут виявляється просто наступним. Не тому, що ти стала сміливішою, — тому що між тобою і ним уже стоять два зроблені.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <p><em>І правило, яке знімає більшу частину гальм: ідеальність стирає людяність.</em> Один дубль, без переписування. Помилка, обмовка, пауза — це те, за чим людину впізнають як живу. Відшліфоване до блиску не викликає довіри, бо в ньому не видно людини.</p>
+    </div>
+
+    <p style="margin-top:24px">Другий інструмент того самого рівня — щоденник самоспостереження. Не про події й не про почуття: щодня два рядки — <strong>чого я сьогодні навчилася</strong> і <strong>що я вибираю зробити далі</strong>. За місяць із цих рядків видно рух, якого зсередини дня не помітно.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Стан -->
+  <div class="section" style="animation-delay:1.35s">
+    <h2 class="section-title">З якого стану ти це робиш</h2>
+    <p>Найнесподіваніша теза цього підходу: сама по собі дія важить менше, ніж стан, з якого вона починається. Одне й те саме рішення, ухвалене з люті й ухвалене зі спокою, дає різні результати — бо з різних станів по-різному видно наступні кроки.</p>
+
+    <div class="quote-block">
+      <p>Усе, що починається в гніві, закінчується соромом. Усе, що починається у спокої й радості, закінчується відчуттям перемоги.</p>
+      <div class="qa">Перевірка перед будь-яким важливим кроком</div>
+    </div>
+
+    <p>Практично це означає одне: перед рішенням, яке щось міняє, спершу вийти зі стану, а вже потім вирішувати. Лист, написаний увечері після сварки, і той самий лист, написаний зранку, — це два різні листи, хоч тема одна.</p>
+    <p>Той самий фільтр працює і в зворотний бік: емоційний стан визначає, що ти взагалі помічаєш навколо. Тому щоденник вдячності — не милота, а спосіб змінити те, що потрапляє в поле зору завтра.</p>
+  </div>
+
+  <!-- Криза -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Криза як загадка</h2>
+    <p>Робоче визначення, з яким із кризою легше поводитися: криза — це загадка, яку тобі загадали, наперед знаючи, що все потрібне для розгадки в тебе вже є. Навіть якщо ти поки цього не бачиш.</p>
+    <p>Різниця між цим і «все буде добре» принципова. «Все буде добре» пропонує чекати. Загадка пропонує шукати — і одразу переводить у режим, у якому ти щось робиш.</p>
+    <p>Найтиповіша помилка в кризі — чекати, поки стане як раніше. Як раніше зазвичай не стає; змінюється сама технологія. Той, хто в перші тижні карантину перебудував спосіб роботи під нові умови, вийшов з іншим інструментом у руках. Той, хто чекав відновлення, просто втратив цей час.</p>
+  </div>
+
+  <!-- Впевненість -->
+  <div class="section" style="animation-delay:1.45s">
+    <h2 class="section-title">З чого складається впевненість</h2>
+    <p>Не з характеру й не з афірмацій. З трьох цілком технічних речей — і всі три можна набрати.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🏦</span>
+        <div class="card-title">Банк перемог</div>
+        <div class="card-text">Список того, що в тебе вже вийшло. Не «великі досягнення» — усе: вивчила, витримала, домовилася, зробила вперше. Без цього списку мозок щоразу починає з нуля.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🪜</span>
+        <div class="card-title">Розуміння кроків</div>
+        <div class="card-text">Не просто «вийшло», а <em>як саме</em> вийшло: що ти зробила першим, що другим, де було найважче. Перемога без розібраних кроків не повторюється — вона залишається везінням.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔁</span>
+        <div class="card-title">Готовність повторити</div>
+        <div class="card-text">Знання, що ці кроки ти зможеш пройти ще раз, якщо доведеться. Саме воно й дає спокій — не віра в успіх, а знання маршруту.</div>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <p><em>Побічний ефект — байдужість до результату зустрічі.</em> Коли є банк перемог, зникає потреба справляти враження й доводити свою вартість на кожній розмові. Ти зосереджуєшся на тому, що залежить від тебе, і саме через це на тебе починають дивитися інакше. Зворотний зв'язок неприємно точний: чим більше треба справити враження, тим гірше воно виходить.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Заздрість -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Заздрість і що під нею</h2>
+    <p>У заздрості є дуже давній корінь — уявлення, що благо у світі є в обмеженій кількості. Якщо в сусіда дерево вродило краще, ніж у мене, то не тому, що він більше працював, а тому, що він якимось чином забрав це в мене. У селянській картині світу це було майже буквальним переконанням.</p>
+    <p>Звідси й притча про людину, яка згодна втратити одне око, аби сусід втратив два. Логіка тут не про здобуток, а про вирівнювання: якщо не можна піднятися самому, можна опустити іншого.</p>
+    <p>Під заздрістю зазвичай лежить не жадібність, а гнів — глухий, невизнаний, від відчуття «у нього є, а в мене немає». Помітити цей гнів — уже половина роботи, бо визнана емоція перестає керувати непомітно.</p>
+
+    <div class="highlight">
+      <p><em>Робоча заміна, яка не потребує святості.</em> Не «я радію за нього» — це часто неправда, і брехати собі марно. Достатньо іншого: припустити, що чужий успіх нічого в тебе не відняв, і подивитися, чого конкретно там можна навчитися. Заздрість, переведена в питання «а як він це зробив?», перестає бути отрутою і стає джерелом.</p>
+    </div>
+  </div>
+
+  <!-- Талант -->
+  <div class="section" style="animation-delay:1.55s">
+    <h2 class="section-title">Талант як зручне пояснення</h2>
+    <p>Ідея вродженого таланту небезпечна тим, що працює в обидва боки й обидва рази — проти тебе.</p>
+
+    <div class="cards">
+      <div class="card bad">
+        <span class="card-icon">🚫</span>
+        <div class="card-title">Якщо таланту нема</div>
+        <div class="card-text">Тоді й братися нема сенсу. Зручний дозвіл нічого не робити — виданий самій собі й ніким не оскаржуваний.</div>
+      </div>
+      <div class="card bad">
+        <span class="card-icon">🛑</span>
+        <div class="card-title">Якщо талант нібито є</div>
+        <div class="card-text">Тоді можна не працювати — воно ж «саме». Так зупиняються ті, кого в дитинстві хвалили за здібності, а не за зусилля.</div>
+      </div>
+    </div>
+
+    <p style="margin-top:24px">Ель Естепаріо Сіберіано, один із найтехнічніших барабанщиків, які зараз є, в кожному другому відео повторює те саме: це не талант, це кілька годин щодня протягом років. Ми бачимо результат — і не бачимо періоду, коли в людини нічого не виходило.</p>
+    <p>Корисніше переформулювати питання. Не «чи є в мене талант», а <strong>«чи готова я вкладати в це стільки часу, скільки воно потребує»</strong>. На друге питання можна чесно відповісти «ні» — і це нормальна відповідь, після якої видно, куди йти замість.</p>
+  </div>
+
+  <!-- Жертва -->
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">Про «жертву заради справи»</h2>
+    <p>Поширена думка: щоб досягти видатного, треба чимось пожертвувати — сім'єю, здоров'ям, спокоєм. Тут варто зачепитися за саме слово.</p>
+    <p>Якщо ти робиш щось із радістю, це не жертва. Це обмін, у якому виграють усі учасники. Жертвою це стає рівно тоді, коли робиться без радості, — і тоді питання не в масштабі справи, а в тому, навіщо ти в ній залишаєшся.</p>
+    <p>І другий бік: історії про самотніх геніїв, які всім пожертвували, — класична помилка виживання. Ми не бачимо тих, хто пожертвував так само й нічого не досяг. І ніяк не можна перевірити, чи не досяг би той самий геній більшого, маючи сім'ю, — цей експеримент нікому не провести.</p>
+    <p>Те саме стосується й зворотного рахунку: результат сімейного життя — це заслуга всієї системи, а не лише того, хто приносить гроші. Дружина, чоловік, діти, батьки — усі щось вкладають, і приписувати підсумок одному учаснику так само неточно.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Зміна професії -->
+  <div class="section" style="animation-delay:1.65s">
+    <h2 class="section-title">Змінювати напрямок — не означає починати з нуля</h2>
+    <p>Страх зміни професії тримається на переконанні, що попередні роки доведеться списати. На практиці не списується нічого: кожен наступний етап стоїть на навичках попереднього, просто це видно не одразу.</p>
+
+    <div class="highlight">
+      <p><em>Приклад із перших рук.</em> Шість років серйозних занять на барабанах — щоденні години з метрономом, нотна грамота, контроль рук. Потім пошукове просування сайтів: власні майданчики, заявки, клієнти. Потім викладання й психологія. Три різні світи — але дисципліна прийшла з барабанів, уміння структурувати урок і думати про попит — з інтернет-маркетингу, а бажання пояснювати з'явилося ще на тих навчаннях із SEO, де дев'яносто відсотків часу говорили не про технічну частину, а про те, навіщо людині свобода.</p>
+    </div>
+
+    <p style="margin-top:24px">Спосіб не втратити нитку — знайти <strong>об'єднувальний смисл</strong>: не професію, а те, що ти робиш у будь-якій із них. «Лікувати поранені серця» можна лікарем, юристом, учителем і навіть кур'єром. Якщо такий смисл сформульований, зовнішня форма діяльності може мінятися скільки завгодно — усередині це залишиться однією послідовною історією.</p>
+    <p>Практичне питання до себе: що спільного між тим, чим я займалася раніше, і тим, куди мене тягне зараз? Відповідь майже завжди є, і вона рідко про професію.</p>
+  </div>
+
+  <!-- Не токсичний позитив -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Це не «мисли позитивно»</h2>
+    <p>Робота над образом майбутнього легко плутається з афірмаціями й вимогою постійно бути в ресурсі. Різниця в тому, що тут не забороняється жодна емоція.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <div class="phrase-icon">⚡</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Коротка реакція — прожити повністю</div>
+          <div class="card-text">Злість, страх, розпач, образа у відповідь на подію — нормальні й потрібні. Їх варто випустити, зокрема через тіло: рух, голос, руки, розмова. Заборонена емоція не зникає, вона просто йде вглиб.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">🧭</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Довга перспектива — свідомий вибір</div>
+          <div class="card-text">А от яким ти хочеш бачити своє життя загалом — це вже не реакція, а рішення. Тут доречно вибирати напрямок, і саме на цьому рівні працює образ майбутнього.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <div class="phrase-icon">⚠️</div>
+        <div class="phrase-text">
+          <div class="card-title" style="margin-bottom:8px">Небезпечна тільки хронізація</div>
+          <div class="card-text">Проблема не в тому, що ти злишся, а в тому, що злість із реакції на конкретну подію перетворилася на постійний фон, у якому живеш. Так само і з нав'язаним оптимізмом: обидві крайнощі — це чорно-біле мислення, просто пофарбоване в різні кольори.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:1.75s">
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Опиши свою звичайну середу через п'ять років. Не свято — середу. О котрій ти встаєш і що робиш о третій дня?</div>
+    </div>
+  </div>
+
+  <!-- Фінал -->
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">З чого почати цього тижня</h2>
+    <p>Уся конструкція складається з чотирьох звичок, і кожну можна завести окремо.</p>
+
+    <div class="cards">
+      <div class="card ok">
+        <span class="card-icon">📝</span>
+        <div class="card-title">Сорок хвилин раз на тиждень</div>
+        <div class="card-text">Звичайний день через п'ять років, письмово. Дванадцять разів — і буде видно, що з написаного справді твоє.</div>
+      </div>
+      <div class="card ok">
+        <span class="card-icon">📓</span>
+        <div class="card-title">Два рядки щодня</div>
+        <div class="card-text">Чого навчилася і що вибираю зробити далі. Плюс, за бажанням, за що вдячна — це змінює фільтр, крізь який ти завтра дивишся.</div>
+      </div>
+      <div class="card ok">
+        <span class="card-icon">🧾</span>
+        <div class="card-title">Три питання до рішень</div>
+        <div class="card-text">Турбота про себе? Створює актив? Співзвучне цінностям? Перед кожним рішенням, яке щось міняє.</div>
+      </div>
+      <div class="card ok">
+        <span class="card-icon">🌤️</span>
+        <div class="card-title">Перевірка стану</div>
+        <div class="card-text">Перед важливим кроком — з якого стану я це роблю. Якщо з гніву, крок відкладається до завтра.</div>
+      </div>
+    </div>
+
+    <p style="margin-top:24px">Далі за темою: <a href="goals.html">Цілі та прогрес</a> — про рівень нижче, коли образ уже є; <a href="purpose.html">Призначення</a> — про пошук справи життя; <a href="discipline.html">Здорова дисципліна</a> — про те, як робити без самопримусу; <a href="self-permission.html">Ти сама собі дозвіл</a> — про власну норму; <a href="reading-people.html">Читати людину по мовленню</a> — та сама оптика, тільки назовні.</p>
+
+    <div class="final-quote">
+      <div class="final-text">Цілі не треба вигадувати. Треба один раз чесно описати середу, у якій ти хочеш прокидатися, — <strong>і цілі виявляться просто списком того, чого для цієї середи ще бракує</strong>.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
