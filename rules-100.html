@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — 100 правил</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(52,58,94,.78);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:13px;font-weight:200;line-height:1.85;color:rgba(52,58,94,.8)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(52,58,94,.82);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">100 правил</h1>
+  <p class="page-subtitle">Список щасливого життя — з розбором кожного пункту</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Починай свій день із вдячності за все, що в тебе є"</div>
+    </div>
+    <p>Документ, що ходить інтернетом уже роками, — сто пунктів без автора, зібраних кимось у список поради на все життя одразу. Дев'ять пунктів позначені як ключові — на них варто затриматися довше за інші. Під кожним правилом — не просто повторення, а спроба зрозуміти, чому воно взагалі туди потрапило і за яких умов справді працює.</p>
+    <p>Список нерівний: поряд із точними спостереженнями там є й спірні твердження, і кілька пунктів, які варто читати з обережністю. Це теж частина чесного розбору — не ковтати список цілком, а перевіряти кожен рядок.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- A: Ранок і тіло -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Ранок і тіло</h2>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">🙏</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">1.</span>Починай день із вдячності за все, що маєш<span class="key-tag">ключове</span></div>
+          <div class="card-text">Не тому, що вдячність «притягує добро», а тому, що перший фокус уваги за день задає, що ти помічатимеш у решті нього. Почати зі списку того, чого бракує, — і решта дня йде на пошук підтверджень нестачі.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🌅</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">2.</span>Рано вставай (5–6 ранку)</div>
+          <div class="card-text">Конкретна година тут другорядна — головне, що рано підняті ранкові години рідко в кого зайняті чужими справами. Це єдиний час доби, який належить тільки тобі, якщо ти сама його не проспиш чи не віддаси телефону.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">💧</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">3.</span>Пий багато води (3–4 літри на день)<span class="key-tag">ключове</span></div>
+          <div class="card-text">Цифра завищена для більшості — офіційні рекомендації ближчі до 1,5–2 літрів чистої води плюс рідина з їжі, а 3–4 літри виправдані хіба за спекотного клімату чи інтенсивних тренувань. Сам принцип вірний: зневоднення на кілька відсотків уже відчутно знижує концентрацію й настрій, тому легше просто тримати воду на видноті.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🚿</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">4.</span>Приймай контрастний душ для оздоровлення</div>
+          <div class="card-text">Різка зміна температури бадьорить і тренує судини, хоча наукові докази щодо «зміцнення імунітету» скромніші за популярну репутацію методу. Найчесніше формулювання користі — це бадьорість і звичка витримувати короткий дискомфорт, а не диво-ліки від застуди.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">📋</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">5.</span>Плануй свій день</div>
+          <div class="card-text">План — не розклад по хвилинах, а список того, що справді має значення сьогодні, написаний до того, як день почав диктувати свої умови. Без нього прокидається не твій день, а той, що складеться сам із чужих запитів.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🎯</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">6.</span>Став цілі, але не прив'язуйся до них</div>
+          <div class="card-text">Ціль дає напрямок руху. Прив'язаність до неї перетворює будь-яке відхилення на особисту катастрофу. Різниця в тому, чи ти йдеш до цілі, чи ціль тримає тебе за горло.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🕊️</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">7.</span>Прощай, прощай, прощай — друзів і ворогів<span class="key-tag">ключове</span></div>
+          <div class="card-text">Ти недосконала, тому прощай іншим їхню недосконалість — логіка чесна: вимагати від інших ідеальності, якої немає в тебе самої, означає жити в постійному розчаруванні. Потрійне повторення тут не риторика, а натяк, що прощення — не одноразова дія, а процес, який доводиться повторювати.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🌳</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">8.</span>Проводь на свіжому повітрі щонайменше 15 хвилин, краще 30–60</div>
+          <div class="card-text">Найпростіша зі звичок у списку — і одна з тих, які реально впливають на сон і настрій через денне світло, а не через «повітря» саме собою.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🍽️</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">9.</span>Не пий одразу після їжі<span class="key-tag">ключове</span></div>
+          <div class="card-text">Популярна порада з аюрведичної традиції: рідина нібито розбавляє травні соки й заважає перетравленню. Строгих клінічних доказів шкоди немає, а сама звичка робити паузу перед склянкою радше вчить їсти уважніше, не поспішаючи запивати шматок, який погано прожувала.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🚧</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">10.</span>Уникай негативного оточення</div>
+          <div class="card-text">Найочевидніше правило в списку — і найважче в застосуванні, бо «негативне оточення» рідко виглядає токсичним іззовні. Про те, як його впізнати, коли воно маскується під норму, — <a href="toxic-collective.html">Кімната з витоком газу</a>.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- B: Оточення і робота -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Оточення і робота</h2>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">🔄</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">11.</span>Якщо опинилася в руйнівному середовищі — учись «від зворотного»</div>
+          <div class="card-text">Навіть погане місце можна використати як матеріал: дивитися, якою поведінкою людина стає нещасною, і робити висновок «отже, не так». Це не виправдання лишатися там довше, ніж потрібно, а спосіб не витратити час, поки виходу ще немає.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">⭐</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">12.</span>Будь вірна своїй мрії</div>
+          <div class="safin-note">Власна примітка Сафіна: гроші — поганий хазяїн, але хороший слуга.</div>
+          <div class="card-text">Мрія тут — не мрія в дитинному сенсі, а напрямок, якому не зраджуєш заради швидшого чи зручнішого шляху. Приписка про гроші уточнює межу: слугувати меті гроші можуть чудово, керувати нею — ніколи, бо тоді метою стають самі гроші.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">👥</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">13.</span>Оточи себе гідними людьми, які сприятимуть твоїй реалізації</div>
+          <div class="card-text">Оточення — це не фон, а активний учасник того, ким ти станеш за п'ять років. Люди навколо або підштовхують, або непомітно гальмують — рідко існує нейтральний варіант.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🏋️</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">14.</span>Займайся спортом щодня</div>
+          <div class="card-text">Щодня — не обов'язково означає важке тренування щодня; це радше про регулярність руху як фон життя, а не про подвиг раз на тиждень, який потім компенсують шість днів нерухомості.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">📉</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">15.</span>У кризу виконуй програму-мінімум</div>
+          <div class="card-text">Не «зроби все як завжди», а «зроби базове, щоб не розсипатися». Криза — не час для нових звершень; це час утримати каркас, поки минеться найгостріше.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🧭</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">16.</span>Учись у професійного наставника</div>
+          <div class="card-text">Наставник скорочує шлях не тому, що дає готові відповіді, а тому, що показує, які помилки взагалі не варто робити самостійно, — досвід, куплений чужою ціною.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">✨</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">17.</span>Працюй, насолоджуючись</div>
+          <div class="card-text">Найкоротший з усіх пунктів — і найважчий для виконання, якщо решта життя влаштована так, що робота залишається єдиним джерелом сенсу.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">⚙️</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">18.</span>Якщо робота не подобається, але потрібна для зростання — продовжуй<span class="key-tag">ключове</span></div>
+          <div class="safin-note">Власна примітка Сафіна: ЖОЖ — життя окремих життів, тобто ролі, які тимчасово граєш заради більшої мети.</div>
+          <div class="card-text">Критерій тут не «подобається», а «наближає». Нелюбима робота, яка справді будує навичку чи репутацію, потрібну далі, — це інвестиція, а не втрата часу, навіть коли щодня неприємна.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🚪</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">19.</span>Якщо робота не подобається і не наближає до цілі — кидай<span class="key-tag">ключове</span></div>
+          <div class="card-text">Дзеркальне продовження 18-го пункту. Різниця між «терпіти заради мети» і «терпіти просто так» — головне питання, яке варто ставити собі регулярно, а не одного разу.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🪞</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">20.</span>Вір у себе</div>
+          <div class="safin-note">Власна примітка Сафіна: повага до себе — веди щоденник майстерності / щоденник досягнень.</div>
+          <div class="card-text">Голе «вір у себе» нічого не дає без матеріалу для віри. Приписка вирішує проблему конкретно: віра будується не на переконанні, а на записаних доказах того, що вже вдалося. Той самий принцип докладніше — на сторінці <a href="self-esteem.html">Самооцінка</a>.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- C: Внутрішній стан -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Внутрішній стан</h2>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">🌬️</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">21.</span>Дихай глибоко якомога частіше протягом дня</div>
+          <div class="card-text">Найдешевший інструмент регуляції стану з усіх існуючих — і саме тому найчастіше ігнорований. Кілька глибоких вдихів займають менше хвилини й міняють фізіологію стресу помітно швидше, ніж будь-яка думка про заспокоєння.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🕯️</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">22.</span>Молись або медитуй щодня, очищай душу</div>
+          <div class="card-text">Формулювання навмисно широке — байдуже, яка саме традиція чи практика, важлива регулярна пауза, у якій розум не вирішує задачі, а просто спостерігає.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🎵</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">23.</span>Онови плейлист улюблених пісень для енергетичної підзарядки</div>
+          <div class="card-text">Музика — один із найшвидших способів змінити фізіологічний стан за лічені секунди. Але плейлист, який не оновлюється роками, поступово перестає працювати саме тому, що став фоном, а не подією.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🎓</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">24.</span>Знайди найкращих учителів у кожній сфері життя<span class="key-tag">ключове</span></div>
+          <div class="card-text">Не одного наставника на все, а окремого сильного орієнтира в кожній важливій сфері — стосунках, здоров'ї, фінансах, творчості. Розкидати цю відповідальність на кількох людей чесніше, ніж чекати від однієї людини компетентності в усьому.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🤲</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">25.</span>Віддавай 10% доходу на благодійність</div>
+          <div class="card-text">Конкретна цифра — данина традиції десятини з різних релігійних культур. Механіка, яка тут працює незалежно від відсотка: регулярна віддача привчає не триматися за ресурс так, ніби його завжди недостатньо.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">👏</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">26.</span>Не скупися на похвалу, особливо для своєї команди</div>
+          <div class="card-text">Похвала коштує мовцю нічого, а отримувачу — багато. Це один із найдешевших ресурсів управління людьми, який чомусь витрачають найощадливіше.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">⚖️</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">27.</span>Будь емоційною в похвалі й стриманою в критиці</div>
+          <div class="card-text">Асиметрія навмисна: похвала краще запам'ятовується, коли щира й помітна, а критика краще засвоюється, коли сказана спокійно, без зайвого емоційного заряду, який заважає почути суть.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🌫️</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">28.</span>Хоч би яку хорошу справу ти робила, хтось буде незадоволений</div>
+          <div class="card-text">Це не привід перестати намагатися чи почати всім догоджати. Це просто статистика: неможливо задовольнити всіх, і намагання це зробити коштує дорожче за саме невдоволення.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🙏</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">29.</span>В успіху — вдячність за перемогу, у поразці — вдячність за досвід</div>
+          <div class="card-text">Однакова емоція (вдячність) прив'язана до різних об'єктів залежно від результату. Це не заперечення різниці між перемогою й поразкою — це спосіб не втрачати опору в жодній із них.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🎈</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">30.</span>Іноді будь дитиною, дозволяй собі подуріти</div>
+          <div class="card-text">Дорослість, узята занадто серйозно, з часом стає власною в'язницею. Дозвіл на дурощі — не регрес, а спосіб не забути, що серйозність — вибір, а не обов'язок.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- D: Дисципліна і стандарт -->
+  <div class="section" style="animation-delay:1.15s">
+    <h2 class="section-title">Дисципліна і стандарт</h2>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">1️⃣</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">31.</span>Найважливіше роби першим</div>
+          <div class="card-text">Ресурс уваги й сили волі найбільший на початку дня. Відкладене на «потім» головне майже завжди залишається невиконаним, бо «потім» заповнюється дрібницями.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🎧</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">32.</span>Застосовуй принцип «два в одному»</div>
+          <div class="card-text">Спорт плюс аудіокнига, ранковий макіяж плюс мотиваційне відео. Не мультизадачність у шкідливому сенсі, а поєднання дій, які не конкурують за одну й ту саму увагу.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">💝</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">33.</span>Щоб відчувати щастя від роботи, думай тільки про віддачу</div>
+          <div class="card-text">Фокус на сумі, яку заробиш, тримає увагу на дефіциті — скільки ще бракує. Фокус на користі, яку створюєш, тримає увагу на процесі, який відбувається просто зараз.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🧱</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">34.</span>Прагни зростання, не бійся перешкод</div>
+          <div class="card-text">Перешкода в цій рамці — не сигнал зупинитися, а ознака, що ти рухаєшся в бік, де раніше не була. Відсутність перешкод частіше означає застій, ніж легкість шляху.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">⏳</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">35.</span>Для майстерності потрібно щонайменше 10 000 годин старанної праці<span class="key-tag">ключове</span></div>
+          <div class="card-text">Число з дослідження Андерса Еріксона стало популярним завдяки книжці Малкольма Гладвелла — і саме дослідження, і його трактування пізніше критикували: результат сильно залежить від сфери, а сама лише кількість годин без якісного зворотного зв'язку майстерності не дає. Точна цифра тут менш важлива за суть: майстерність — питання років цілеспрямованої практики, а не таланту чи натхнення одного разу.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">📈</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">36.</span>Маленькі щоденні покращення ведуть до масштабного успіху<span class="key-tag">ключове</span></div>
+          <div class="card-text">Той самий принцип, що й «масштаб вторинний, звичка первинна» на сторінці <a href="self-esteem.html">Самооцінка</a>. Складний відсоток працює не тільки з грошима — з навичками й характером теж, тільки повільніше і непомітніше для ока.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">👋</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">37.</span>Вітайся першою й усміхайся людям</div>
+          <div class="card-text">Ідея, що першою вітається тільки сильний і успішний, — радше мотиваційний прийом, ніж факт: у реальності перше вітання майже завжди дешевша дія, ніж здається, і рідко хтось вважає її ознакою слабкості.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🏆</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">38.</span>Єдиний гідний стандарт — найкращий</div>
+          <div class="card-text">Радикальна формула, яку варто читати з поправкою на перфекціонізм: орієнтир на найкраще корисний як напрямок руху, шкідливий — як мірило кожного окремого дня. Про різницю між здоровим прагненням і паралізуючим перфекціонізмом — <a href="social-anxiety.html">Прожектор, який можна вимкнути</a>.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🚶</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">39.</span>Делікатно прощайся з тими, хто не сприяє реалізації твого потенціалу</div>
+          <div class="card-text">Ключове слово тут «делікатно» — вихід зі стосунків не вимагає скандалу чи звинувачень, достатньо поступового зменшення контакту без пояснень, які нікому не потрібні.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">👨‍👩‍👧</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">40.</span>Родичів люби й приймай такими, які вони є — вони навряд чи зміняться</div>
+          <div class="card-text">Найчесніший пункт списку про сім'ю: не заклик миритися з реальною шкодою, а визнання того, що чекати від конкретної дорослої людини зміни характеру — марна трата років, які можна витратити на щось, що справді у твоїй владі.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- E: Не намагайся змінити інших -->
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Не намагайся нікого змінити</h2>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">🚫</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">41.</span>Ніколи не намагайся нікого змінити — це найвірніший шлях до нещастя</div>
+          <div class="card-text">Найважливіший пункт цього блоку: енергія, вкладена в зміну іншої людини всупереч її волі, майже завжди повертається розчаруванням, бо результат ніколи повністю не в твоїй владі. Той самий принцип рятівництва — на сторінці <a href="triangle-exit.html">Трикутник, з якого можна вийти</a>.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">💫</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">42.</span>Натхнення приходить у результаті правильного способу життя</div>
+          <div class="card-text">Заперечення поширеного міфу, що натхнення — випадкова гостя. Насправді воно частіше з'являється як наслідок сну, руху й режиму, а не навпаки.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🍎</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">43.</span>Чим гірше харчування і менше рухливості, тим менше бажання й пристрасті в роботі</div>
+          <div class="card-text">Пряме продовження попереднього пункту: тіло, яке погано забезпечене, просто фізіологічно не має ресурсу на ентузіазм, скільки б мотивації людина не намагалася в себе вкачати словами.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🛗</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">44.</span>Будь «ліфтом» для людей навколо — піднімай їх</div>
+          <div class="card-text">Метафора точна: ліфт не тягне за собою примусово, він просто підвозить того, хто зайшов сам. Підтримка працює так само — вона доступна, але не нав'язана.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🙈</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">45.</span>Стався до критиків із розумінням — це нереалізовані люди</div>
+          <div class="card-text">Спрощення, яке варто читати обережно: не кожен критик нереалізований, і не варто автоматично знецінювати будь-яке зауваження цим поясненням. Але як спосіб не сприймати випадкову грубість особисто — робоча стратегія.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🤝</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">46.</span>Якщо критик компетентний і щирий — зроби його другом</div>
+          <div class="card-text">Тут різниця з попереднім пунктом принципова: кваліфікована критика від чистого серця — ресурс, а не напад. Про різницю між конструктивною критикою й нападом на особистість докладніше — <a href="toxic-collective.html">Кімната з витоком газу</a>.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🪞</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">47.</span>Минуле й майбутнє — дзеркальне відображення теперішнього</div>
+          <div class="card-text">Красива, але не буквальна формула: минуле не визначає майбутнє механічно, проте звички теперішнього справді є найкращим прогнозом того й того — просто дзеркало тут метафоричне, а не пророче.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🔋</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">48.</span>Мотивація має йти зсередини — інакше причин дві: бракує енергії або займаєшся не своєю справою</div>
+          <div class="card-text">Корисна діагностична вилка: перш ніж шукати мотиваційне відео, варто перевірити, чи це взагалі питання настрою, а не питання сну, харчування чи неправильно обраної справи.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">⚠️</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">49.</span>Ніколи не ухвалюй важливих рішень у поганому настрої</div>
+          <div class="card-text">Спершу вийди в позитивний піковий стан, потім вирішуй. Рішення, ухвалені на емоціях, майже завжди виглядають інакше, коли емоція минає, — і найчастіше гірше.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">📱</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">50.</span>Читай пошту й соцмережі не більше двох разів на день</div>
+          <div class="card-text">Обмеження часу, а не заборона: постійна перевірка сповіщень тримає увагу в стані готовності реагувати, замість того щоб бути повністю в тому, чим займаєшся зараз.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- F: Слова і любов -->
+  <div class="section" style="animation-delay:1.25s">
+    <h2 class="section-title">Слова і любов</h2>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">💬</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">51.</span>Слова надихають і слова руйнують — обирай їх із чуйністю й любов'ю</div>
+          <div class="card-text">Найпростіше формулювання того, чим займається ціла родина сторінок про мовлення на цьому сайті: слово — не нейтральний носій інформації, а інструмент, який щоразу щось із людиною робить.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">❤️</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">52.</span>Любити людину — допомогти їй реалізуватися, навіть на шкоду власним бажанням</div>
+          <div class="card-text">Пункт, який варто читати з обережністю: доведений до краю, він виправдовує самопожертву без меж. Здоровіша версія — допомагати реалізації іншого, не забуваючи про власну; про різницю компромісу й жертви — <a href="disapproval.html">Витримувати чуже незадоволення</a>.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🌙</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">53.</span>Насолоджуйся самотністю</div>
+          <div class="card-text">Не «терпи», а насолоджуйся — різниця принципова. Здатність бути наодинці із собою без тривоги — окрема навичка, а не покарання за відсутність компанії.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🌱</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">54.</span>Ніколи не пізно почати нову справу, звичку чи хобі</div>
+          <div class="card-text">Найпоширеніше виправдання не починати — «уже пізно» — спростовується простим фактом: час однаково мине, з новою справою чи без неї.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🏅</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">55.</span>Здатність надихати інших на реалізацію потенціалу — найвища нагорода</div>
+          <div class="card-text">Твердження, яке важко перевірити об'єктивно, але легко перевірити суб'єктивно: спитай себе, який момент запам'ятався найяскравіше — коли досягла чогось сама чи коли допомогла досягти комусь іншому.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">📔</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">56.</span>Веди щоденник успіху, особливо в категоріях, над якими найбільше працюєш</div>
+          <div class="card-text">Той самий «банк досягнень», що й у пункті 20 і на сторінці <a href="toxic-collective.html">Кімната з витоком газу</a> — записаний доказ прогресу там, де прогрес найважче помітити самій.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🤝</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">57.</span>Виконуй домовленості — для цього не обіцяй нічого, у чому не впевнена на 100%</div>
+          <div class="card-text">Надійність починається не в момент виконання, а в момент обіцянки: легше не давати слова, ніж потім героїчно його дотримуватися ціною ресурсу, якого не було.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🤐</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">58.</span>Уникай пліток</div>
+          <div class="card-text">Найкоротший спосіб перевірити, чи ти щойно пліткувала: чи сказала б ти те саме людині, про яку йдеться, у вічі.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">📰</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">59.</span>Стеж за новинами, політикою, економікою — розвивайся всебічно</div>
+          <div class="card-text">Обізнаність корисна, поки не перетворюється на постійне занурення в чужу тривогу. Про цю межу докладніше — <a href="anxiety-ahead.html">Тривога наперед</a>.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🌌</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">60.</span>Але пам'ятай: сенс життя в іншому — у глибокому розумінні законів світобудови й слідуванні їм</div>
+          <div class="card-text">Пряме продовження попереднього пункту, яке ставить новини на місце: бути в курсі корисно, але це не замінює власного пошуку сенсу, а лише один із фонових шумів навколо нього.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- G: Активність і аналіз -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Активність і аналіз</h2>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">🏃</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">61.</span>«З активних і розумних перемагають активні. А серед активних — найрозумніші»</div>
+          <div class="card-text">Дія перевершує розум без дії, але розум без дії — це просто варіант дії, який ще не почався. Найкраще поєднання — обидва одразу, і саме тому воно рідкісне.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">📊</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">62.</span>Аналізуй кожну значущу подію — який урок ти з неї винесла</div>
+          <div class="card-text">Без цього кроку досвід накопичується, але не перетворюється на розуміння. Подія, яку не проаналізували, має шанс повторитися в тій самій формі.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">✂️</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">63.</span>Перестань робити те, що не сприяє твоїй реалізації</div>
+          <div class="card-text">Простіше сформулювати, ніж виконати: більшість часу йде не на шкідливі звички, а на нейтральні дії, які просто нічого не будують. Їх найважче помітити саме тому, що вони не здаються проблемою.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🥑</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">64.</span>Їж якомога більше олужнюючих продуктів і корисних жирів</div>
+          <div class="card-text">Ідея «олужнення» організму їжею наукою не підтверджена — тіло регулює власний pH крові незалежно від раціону. А от сирі овочі, авокадо, олії й горіхи справді корисні власним складом, просто не з цієї причини.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">⚡</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">65.</span>Чим краще фізичне здоров'я, тим більше енергії — і тим більше користі ти принесеш світу</div>
+          <div class="card-text">Ланцюжок причин, який легко пропустити, коли турбота про тіло здається дрібницею порівняно з «важливими справами»: насправді вона і є базою для всього іншого.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🏠</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">66.</span>«Мій дім там, де я живу»</div>
+          <div class="card-text">Проти прив'язки почуття дому до конкретного міста чи країни: дім — функція теперішнього моменту, а не географічна точка з минулого.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🔗</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">67.</span>Розривай ланцюги прив'язаностей — давай повну свободу тим, кого любиш</div>
+          <div class="card-text">Найважчий пункт для тих, хто плутає любов із контролем: справжня близькість не потребує утримувати іншого силою страху втратити.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">😌</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">68.</span>Раз на тиждень дозволяй собі нічого не робити</div>
+          <div class="card-text">Парадокс, який варто перевірити на собі: день без задач часто виявляється не втраченим часом, а найпродуктивнішим у сенсі відновлення, яке потім окупається в решту тижня.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🎨</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">69.</span>Важливу творчу роботу роби в піковому стані</div>
+          <div class="card-text">Творчість вимагає ресурсу так само, як фізична праця — планувати її на момент виснаження означає гарантовано отримати гірший результат за той самий час.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🚧</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">70.</span>Займаючись творчістю, не відволікайся на термінове, але не важливе</div>
+          <div class="card-text">Термінове завжди голосніше за важливе — тому без свідомого рішення ігнорувати дрібні термінові справи творча робота програє їм щоразу.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- H: Баланс і поразки -->
+  <div class="section" style="animation-delay:1.35s">
+    <h2 class="section-title">Баланс і поразки</h2>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">☯️</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">71.</span>Пам'ятай про баланс духовного й матеріального</div>
+          <div class="card-text">Захоплення одним за рахунок іншого однаково небезпечне в обидва боки: людина, повністю занурена в духовне, ризикує не проживати реальне життя, а зациклена лише на матеріальному — не помічати, навіщо воно взагалі потрібне.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">📖</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">72.</span>Вивчай життя великих людей</div>
+          <div class="card-text">Не заради наслідування деталей, а щоб побачити повну траєкторію — з провалами, сумнівами й довгими періодами непомітної роботи, які зазвичай не потрапляють у коротку версію історії успіху.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🌟</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">73.</span>Оточи себе найталановитішими й найщасливішими людьми, яких зможеш знайти</div>
+          <div class="card-text">Повторення принципу з пункту 13, тепер із наголосом саме на щасті — талант без щастя нерідко виснажений; орієнтир на обидва одразу задає точніший приклад.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🎁</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">74.</span>Ніколи нічого не бери в людини, якщо не готова віддати те, що потрібно їй</div>
+          <div class="card-text">Про баланс обміну — не приймати послугу чи подарунок, розуміючи, що за них попросять того, чого ти не хочеш давати. Схожий механізм нав'язаного обов'язку розібраний на прикладі одного оповідання: <a href="poison-kindness.html">Отрута доброти</a>.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">⚠️</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">75.</span>Якщо тебе зрадили — винна ти</div>
+          <div class="card-text">Найспірніший пункт списку, і його варто читати з великою обережністю: у контексті документа йдеться радше про відповідальність за вибір, кому довіряти, — а не про виправдання самої зради чи провину постраждалої за чужий вчинок. Пряме звинувачення жертви в чужому насильстві чи обмані — не те, чого варто вчитися з цього рядка.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🏔️</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">76.</span>Чим крутіший підйом, тим болючіше наступне падіння — готуйся заздалегідь</div>
+          <div class="card-text">Практична порада тут конкретна: створюй тили й надійну команду до того, як вони знадобляться, а не в момент, коли вже падаєш.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🎓</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">77.</span>Поразки неминучі — це твої головні вчителі, люби їх</div>
+          <div class="card-text">Той самий принцип, що й «немає поразок — є зворотний зв'язок» на сторінці <a href="self-esteem.html">Самооцінка</a> — тільки сформульований жорсткіше й коротше.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">💪</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">78.</span>Чим сильніше падіння, тим серйозніше треба працювати заради наступної перемоги</div>
+          <div class="card-text">Справжній успіх, за цією логікою, вимірюється саме відрізком від найглибшої поразки до наступного підйому — не висотою піку самого по собі.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🔓</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">79.</span>Будь відкрита з близькими по духу й закрита для далеких від твоїх цінностей</div>
+          <div class="card-text">Не про недовірливість до всіх підряд, а про вибіркову вразливість: відкритість — ресурс, і його варто витрачати саме на тих, хто вміє з ним поводитися дбайливо.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">📝</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">80.</span>Завжди фіксуй домовленості письмово — люди іноді забувають їх, а іноді «забувають»</div>
+          <div class="card-text">Різниця в лапках навмисна: письмова фіксація захищає і від чесного людського забування, і від зручного вдаваного. Той самий принцип документування — <a href="toxic-collective.html">Кімната з витоком газу</a>.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- I: Енергообмін і благородство -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Енергообмін і благородство</h2>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">🔄</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">81.</span>Зі щедрими будь щедрою, з жадібними — жадібною</div>
+          <div class="card-text">Дзеркальна поведінка як спосіб не порушувати «закон взаємообміну енергією» — формулювання езотеричне, але суть цілком практична: щедрість, спрямована на того, хто нею користується, а не відповідає взаємністю, вигорає швидко й без результату.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🌊</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">82.</span>Щоб багато віддавати, треба багато й якісно брати від життя</div>
+          <div class="card-text">Їжа, відпочинок, спорт, сауна, плавання, сонце, спілкування — конкретний перелік того, звідки береться ресурс для віддачі. Постійно віддавати з порожнього неможливо довго.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🛫</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">83.</span>«Чорна смуга часто стає злітною»</div>
+          <div class="card-text">Не гарантія, а спостереження: важкий період нерідко змушує змінити щось, що давно потребувало зміни, і саме ця зміна потім виявляється початком підйому.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">👑</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">84.</span>Прагни благородства в усіх стосунках</div>
+          <div class="card-text">Абстрактне слово, яке варто перекласти конкретно: не користуватися чужою слабкістю навіть тоді, коли це можливо й ніхто не дізнається.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">💎</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">85.</span>Розвивай внутрішню грацію — сплав мудрості, гідності й доброти</div>
+          <div class="card-text">Три компоненти, які рідко приходять окремо: мудрість без доброти стає холодною, доброта без гідності — безхребетною, гідність без мудрості — впертою.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">👋</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">86.</span>Не звертай уваги на людей зі свого минулого — завжди є причина, чому їх немає в майбутньому</div>
+          <div class="card-text">Твердий пункт, який варто застосовувати вибірково: не кожне зникнення людини з життя було свідомим чи справедливим рішенням. Але як загальний принцип не тримати місце для тих, хто сам його залишив, — робочий орієнтир.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">📚</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">87.</span>Найкращі інвестиції — у навчання і стосунки</div>
+          <div class="card-text">Обидві категорії об'єднує одне: віддача від них зростає з часом сама по собі, на відміну від більшості матеріальних покупок, які тільки втрачають цінність.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🧗</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">88.</span>«Стіна — це та сама сходинка. Просто треба до неї дорости»</div>
+          <div class="card-text">Перевизначення перешкоди: те, що виглядає глухим кутом, часто є просто наступним рівнем складності, який поки що більший за поточні навички.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">😔</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">89.</span>Наприкінці життя ти жалкуватимеш більше про те, чого не зробила, ніж про те, що зробила</div>
+          <div class="card-text">Спостереження, що збігається з дослідженнями паліативної психології: жаль про нездійснене живе довше і болючіше за жаль про зроблену, але невдалу спробу.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🥾</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">90.</span>«Іноді крок уперед — результат стусана ззаду»</div>
+          <div class="card-text">Люди, які досягли успіху в твоїй справі, можуть служити саме таким мотивуючим стусаном — не завжди приємним, але дієвим способом зрушити з місця те, що застрягло.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- J: Влада, порядок, індивідуальність -->
+  <div class="section" style="animation-delay:1.45s">
+    <h2 class="section-title">Влада, порядок, індивідуальність</h2>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">⚡</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">91.</span>Чим більше відповідальності, тим більше влади; чим більше влади, тим більше можливостей допомогти; чим більше допомагаєш, тим щасливіша ти</div>
+          <div class="card-text">Ланцюжок, який працює у зворотний бік від популярного уявлення про владу як мету саму по собі: тут вона лише проміжна ланка на шляху до можливості бути корисною.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🧹</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">92.</span>Регулярно наводь лад у своєму житті й безжально позбавляйся хламу</div>
+          <div class="card-text">Стосується не тільки речей — застарілих домовленостей, зайвих зобов'язань, підписок і контактів, які давно перестали щось важити.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🗣️</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">93.</span>Завжди говори людям про свої очікування й дізнавайся про їхні, перш ніж вступати у стосунки чи угоди</div>
+          <div class="card-text">99% сварок і образ, за спостереженням автора, — наслідок нез'ясованих очікувань, а не поганих намірів. Проговорене заздалегідь очікування дешевше за з'ясоване постфактум непорозуміння.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🚴</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">94.</span>Життя — як їзда на велосипеді: якщо важко, значить, ти їдеш угору</div>
+          <div class="card-text">Простий спосіб перевіряти, чи труднощі — ознака руху вперед, а не ознака того, що щось зламалося: питання не «чому важко», а «куди веде цей підйом».</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🎲</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">95.</span>Регулярно йди на усвідомлений і прорахований ризик — це тренує інтуїцію й характер</div>
+          <div class="card-text">Ключове слово — прорахований: ідеться не про будь-який ризик, а про той, наслідки якого ти заздалегідь оцінила й готова прийняти.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">👗</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">96.</span>Раз на місяць купуй собі щось нове — плаття, взуття чи техніку</div>
+          <div class="card-text">Найбуденніший пункт списку: маленька регулярна радість для себе, яка не потребує виправдання чи великого приводу.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🌟</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">97.</span>Талант — наслідок наполегливої праці й систематичних тренувань</div>
+          <div class="safin-note">У фінальній версії документа, яку сам автор переписав під час розбору, замінивши початковий абзац про конкретних відомих жінок.</div>
+          <div class="card-text">Той самий принцип, що й «10 000 годин» у пункті 35, тільки без цифри: те, що виглядає природним даром, майже завжди виявляється результатом років непомітної роботи, яку глядач просто не бачив.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🏡</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">98.</span>Головна задача жінки — навчитися любити, створювати затишок, тепло й добру атмосферу всюди, де вона перебуває</div>
+          <div class="card-text">Формулювання гендерно вузьке — навичка створювати теплу атмосферу навколо себе не належить якійсь одній статі, а корисна будь-кому, хто хоче, щоб поруч із ним людям було легше.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">💞</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">99.</span>Люби всіх, дружи з кількома, будь з одним</div>
+          <div class="card-text">Три різні рівні близькості з різною ціною входу: загальна доброзичливість дешева і доступна всім, дружба вимагає часу й вибору, а найглибша прив'язаність — тільки одна за раз.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🌈</span>
+        <div class="phrase-body">
+          <div class="phrase-said"><span class="rule-num">100.</span>Щастя — це твоя максимальна реалізація в усіх життєвих сферах</div>
+          <div class="card-text">Останній пункт закриває коло списку, повертаючи до самого початку: не одна перемога в одній сфері, а рівновага між тілом, роботою, стосунками й внутрішнім станом — саме тому список і починається з ранкової вдячності, а не з амбітної мети.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:1.5s">
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Які три пункти з цих ста ти вже виконуєш — і які три хотіла б почати цього тижня?</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Фінал -->
+  <div class="section" style="animation-delay:1.55s">
+    <h2 class="section-title">Насамкінець</h2>
+    <p>Сто правил — забагато, щоб виконувати всі одразу, і в цьому, мабуть, головний урок: список такого розміру не для виконання, а для вибору. Дев'ять пунктів позначені як ключові не випадково — саме вони найчастіше повторюють один принцип у різних формулюваннях: почни з малого, з тіла, з вдячності, з чесності перед собою — і решта підтягнеться сама.</p>
+    <p>І варто пам'ятати, що це не священний текст, а чийсь чорновик, який сам автор правив просто в кадрі. Пункт 75 і пункт 96 однаково претендують на місце у списку, хоча важать зовсім по-різному, — читати такі списки означає утримувати право не погоджуватися з кожним рядком.</p>
+
+    <div class="final-quote">
+      <div class="final-text">Найкращий спосіб використати цей список — <strong>не прийняти його цілком і не відкинути цілком</strong>, а вибрати п'ять пунктів, які справді резонують просто зараз, і почати з них.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
