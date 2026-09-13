@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Щоденник майстерності</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.num-step{display:flex;gap:18px;align-items:flex-start}
+.num-badge{flex-shrink:0;width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:17px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.formula{margin-top:20px;display:grid;gap:10px}
+.frow{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.fkey{flex-shrink:0;width:118px;font-size:10.5px;font-weight:400;letter-spacing:.13em;text-transform:uppercase;color:#7a5410;padding-top:3px}
+.fval{flex:1;min-width:0;font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+.fval em{font-style:italic;color:rgba(52,58,94,.72)}
+@media (max-width:600px){.frow{flex-direction:column;gap:6px}.fkey{width:auto}}
+.jr{background:linear-gradient(135deg,rgba(82,97,194,.07),rgba(148,103,23,.05));border:1px solid rgba(52,58,94,.16);border-radius:20px;padding:32px 28px;margin-top:24px;position:relative;overflow:hidden}
+.jr::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.jr-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.jr-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:22px;color:#242844}
+.jr-stat{font-size:11px;font-weight:400;letter-spacing:.13em;text-transform:uppercase;color:rgba(52,58,94,.72)}
+.jr-tabs{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.jr-tab{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:.06em;padding:8px 16px;border-radius:100px;border:1px solid rgba(52,58,94,.22);background:transparent;color:rgba(52,58,94,.8);cursor:pointer;transition:all .3s}
+.jr-tab:hover{border-color:rgba(148,103,23,.45)}
+.jr-tab.on{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+.jr-tab.on.skill{background:rgba(31,122,77,.12);border-color:rgba(31,122,77,.45);color:#146239}
+.jr-field{display:block;width:100%;font-family:'Montserrat',sans-serif;font-size:14px;font-weight:300;line-height:1.7;color:#242844;background:rgba(255,255,255,.55);border:1px solid rgba(52,58,94,.18);border-radius:14px;padding:14px 16px;resize:vertical;min-height:86px;outline:none;transition:border-color .3s}
+.jr-field:focus{border-color:rgba(82,97,194,.5)}
+.jr-field::placeholder{color:rgba(52,58,94,.42)}
+.jr-row{display:flex;align-items:center;gap:12px;margin-top:12px;flex-wrap:wrap}
+.jr-btn{font-family:'Montserrat',sans-serif;font-size:11.5px;font-weight:400;letter-spacing:.1em;text-transform:uppercase;padding:11px 22px;border-radius:100px;border:1px solid rgba(148,103,23,.45);background:rgba(212,175,110,.14);color:#7a5410;cursor:pointer;transition:all .3s}
+.jr-btn:hover{background:rgba(212,175,110,.26);border-color:rgba(148,103,23,.7)}
+.jr-btn.ghost{background:transparent;border-color:rgba(52,58,94,.22);color:rgba(52,58,94,.78)}
+.jr-btn.ghost:hover{background:rgba(52,58,94,.07)}
+.jr-hint{font-size:11.5px;font-weight:300;color:rgba(52,58,94,.6)}
+.jr-list{margin-top:22px;display:grid;gap:12px}
+.jr-item{background:rgba(255,255,255,.5);border:1px solid rgba(52,58,94,.13);border-left:3px solid rgba(212,175,110,.65);border-radius:12px;padding:16px 18px;display:flex;gap:14px;align-items:flex-start}
+.jr-item.skill{border-left-color:rgba(31,122,77,.55)}
+.jr-item-body{flex:1;min-width:0}
+.jr-item-meta{font-size:10.5px;font-weight:400;letter-spacing:.12em;text-transform:uppercase;color:#7a5410;margin-bottom:6px}
+.jr-item.skill .jr-item-meta{color:#146239}
+.jr-item-text{font-size:14px;font-weight:300;line-height:1.7;color:rgba(36,40,68,.92);white-space:pre-wrap;overflow-wrap:break-word}
+.jr-del{background:transparent;border:none;color:rgba(52,58,94,.32);font-size:18px;line-height:1;cursor:pointer;padding:2px 5px;transition:color .3s;flex-shrink:0}
+.jr-del:hover{color:#9c2f22}
+.jr-empty{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;line-height:1.6;color:rgba(52,58,94,.6);text-align:center;padding:22px 10px}
+.jr-note{margin-top:16px;font-size:11.5px;font-weight:300;line-height:1.75;color:rgba(52,58,94,.62)}
+.jr-warn{display:none;margin-bottom:16px;font-size:12px;font-weight:300;line-height:1.7;color:#9c2f22;background:rgba(178,60,46,.08);border:1px solid rgba(178,60,46,.25);border-radius:12px;padding:12px 14px}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="rules-100.html">← 100 правил</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Щоденник<br>майстерності</h1>
+  <p class="page-subtitle">Як вести щоденник досягнень — формула запису, правила, перші сім днів</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">"Вір у себе" не працює доти, доки віра не має матеріалу</div>
+    </div>
+    <p>У списку <a href="rules-100.html">ста правил</a> двадцятий пункт звучить як порожня фраза: вір у себе. Приписка поряд рятує його — веди щоденник майстерності, щоденник досягнень. Це і є відповідь на питання «як саме вірити»: не вмовляти себе, а зібрати докази.</p>
+    <p>Різниця принципова. Переконання тримається рівно до першої невдачі. Записаний факт не зникає — його можна перечитати в той день, коли здається, що ти нічого не варта й нічого не вмієш. Нижче — як саме це вести, щоб воно не перетворилося на ще один покинутий зошит.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Навіщо -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Чому пам'ять не впорається без записника</h2>
+    <p>Мозок влаштований так, що промахи зберігаються яскравіше за перемоги: помилка колись означала загрозу, а вдалий день — просто день. Тому провал трирічної давнини ти згадаєш до дрібниць, а що зробила крутого минулого місяця — навряд.</p>
+    <p>До цього додається знецінення. Те, що вдалося, за два-три дні перестає здаватися досягненням: «ну то було нескладно», «будь-хто б зробив», «мені просто пощастило». Через тиждень цей епізод уже не рахується взагалі. Саме тому запис має з'явитися в день події — поки він ще не встиг знецінитися у власних очах.</p>
+    <div class="highlight">
+      <p><em>Щоденник — це зовнішня пам'ять, яка не вміє знецінювати.</em> Через півроку в поганий день ти читаєш власний почерк і бачиш не відчуття, а факти: ось що ти зробила, ось коли, ось що для цього знадобилося. Із фактом сперечатися складніше, ніж із настроєм.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Два щоденники -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Два щоденники — одна книжка</h2>
+    <p>У приписці названо два різні щоденники, і це не синоніми. Вони лікують два різні відчуття, тому найпростіше вести їх в одному зошиті, просто позначаючи тип запису.</p>
+
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">🏆 Щоденник досягнень</div>
+        <div class="col-text">Про результат. Що сталося, що вдалося, що ти зробила й довела до кінця.</div>
+        <div class="col-note">Відповідь на «я нічого не досягла». Записується подіями: розмова, лист, рішення, завершена справа.</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">🛠 Щоденник майстерності</div>
+        <div class="col-text">Про процес. Що ти тепер умієш краще, ніж місяць чи рік тому.</div>
+        <div class="col-note">Відповідь на «я стою на місці». Записується порівнянням із собою колишньою: раніше — три години й паніка, тепер — сорок хвилин спокійно.</div>
+      </div>
+    </div>
+
+    <p>Досягнення бувають рідко — майстерність росте щодня. Тому в тижні, де «нічого не сталося», рятує саме друга колонка: подій нема, а навичка все одно змінилася.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Формула -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Формула одного запису</h2>
+    <p>Головна причина, чому такі щоденники кидають, — вони перетворюються на список справ. «Помила посуд, відповіла на листи, сходила на пошту» не додає ані краплі поваги до себе. Працює чотирирядковий формат, де останній рядок обов'язковий.</p>
+
+    <div class="formula">
+      <div class="frow"><div class="fkey">Дата</div><div class="fval">Просто число. Потім саме воно покаже темп: як часто в тебе бувають такі дні.</div></div>
+      <div class="frow"><div class="fkey">Факт</div><div class="fval">Що сталося — без прикметників і оцінок. Не «була молодець», а що конкретно ти зробила.</div></div>
+      <div class="frow"><div class="fkey">Що знадобилось</div><div class="fval">Яка твоя якість або навичка це зробила: витримка, підготовка, вміння не погодитися одразу, набита рука.</div></div>
+      <div class="frow"><div class="fkey">Що це доводить</div><div class="fval">Один рядок висновку про себе. <em>Саме він перетворює список справ на щоденник майстерності.</em></div></div>
+    </div>
+
+    <div class="quote-block">
+      <div class="qa">Приклад запису — досягнення</div>
+      <p>10 вересня. Зателефонувала в банк і оскаржила комісію, яку списали помилково, — гроші повернули. Знадобилося: витримати незручну розмову й не погодитися на перше «ні». Доводить: я вмію відстоювати своє, навіть коли неприємно.</p>
+    </div>
+
+    <div class="quote-block">
+      <div class="qa">Приклад запису — майстерність</div>
+      <p>12 вересня. Зробила звіт за годину. У березні така сама робота забирала пів дня. Виросло: швидкість і те, що я вже не перепитую по кожному кроку. Доводить: те, що колись здавалося складним, стало для мене буденним.</p>
+    </div>
+
+    <p>Дві-три хвилини на запис. Якщо третій і четвертий рядки не пишуться — залиш перші два, це краще, ніж не писати нічого.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що рахується -->
+  <div class="section" style="animation-delay:1.15s">
+    <h2 class="section-title">Що взагалі рахується</h2>
+    <p>Найчастіша перешкода — «мені нема чого записати». Це майже завжди не про порожній день, а про завищену планку: досягненням вважається щось на рівні диплома чи підвищення. Ось що рахується насправді.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">🚪</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Зробила те, що відкладала тижнями</div>
+          <div class="card-text">Дзвінок, лист, документ, візит. Чим довше воно відкладалося, тим більше це важить: ти подолала не задачу, а опір перед нею.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🗣</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Сказала «ні» — або назвала свою ціну</div>
+          <div class="card-text">Відмовила, попросила більше, не погодилася працювати безплатно, не взяла на себе чужу справу. Кожен такий епізод — окремий запис.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">⚡️</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Зробила попри страх</div>
+          <div class="card-text">Не «не боялася», а «боялася і зробила». Це і є сміливість у робочому вигляді — записуй разом зі страхом, який довелося пройти.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🧩</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Помилилася — і зрозуміла, чому</div>
+          <div class="card-text">Помилка з висновком — це запис у щоденник майстерності, а не в список провалів. Формула та сама: що сталося, що я з цього тепер знаю.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🎧</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Тебе похвалили — запиши дослівно</div>
+          <div class="card-text">Чужі слова стираються найшвидше, а перечитуються найтепліше. Записуй цитатою і з іменем: хто сказав, за що, коли.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">⏱</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Те саме, але швидше й спокійніше</div>
+          <div class="card-text">Головний тип запису про майстерність. Порівнюй тільки з собою колишньою — і обов'язково з датою, інакше зростання не побачиш.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🏁</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Довела до кінця</div>
+          <div class="card-text">Завершене важить більше за почате. Курс, книжка, ремонт, повернений борг, доведена до кінця незручна справа.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🛡</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Обрала себе</div>
+          <div class="card-text">Лягла спати замість «ще трохи попрацюю», пішла з розмови, яка ранила, не поїхала туди, куди не хотіла. Це навичка, і вона теж тренується.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">📊</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Цифри, якщо вони є</div>
+          <div class="card-text">Скільки клієнтів, скільки сторінок, скільки кілометрів, на скільки виросла оплата. Цифри неможливо потім переграти в «то було дрібницею».</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🌫</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Витримала важкий день</div>
+          <div class="card-text">У дні, коли не сталося нічого, запис усе одно є: день був важкий — і ти його пройшла. Витримка теж входить у майстерність.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="soft">
+      <p><em>Просте правило для сумнівів:</em> якщо рік тому це здалося б тобі складним — воно рахується. Планка «важливо це чи ні» ставиться від тебе колишньої, а не від чужих результатів.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Правила -->
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Шість правил ведення</h2>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🕯</span>
+        <div class="card-title">П'ять хвилин, той самий час</div>
+        <div class="card-text">Найзручніше — увечері, прив'язавши до чогось звичного: після душу, перед тим як поставити телефон на зарядку. Час дня менш важливий за сталість.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">3️⃣</span>
+        <div class="card-title">Один-три пункти, не більше</div>
+        <div class="card-text">Обмеження зверху важливіше за обмеження знизу. Щоденник, який вимагає десяти пунктів, стає роботою — і його кидають на другому тижні.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📏</span>
+        <div class="card-title">Факти замість оцінок</div>
+        <div class="card-text">«Відправила резюме в чотири місця» — факт. «Була сьогодні молодець» — оцінка, яку завтра ж можна відкликати. Оцінки знецінюються, факти ні.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔍</span>
+        <div class="card-title">Дрібне важливіше за велике</div>
+        <div class="card-text">Велике трапляється раз на рік, і на ньому щоденник не тримається. Тримається він на дрібному, якого назбирується сто пунктів за квартал.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">✍️</span>
+        <div class="card-title">Не переписуй начисто</div>
+        <div class="card-text">Кривий запис олівцем у дорозі рахується так само, як каліграфічний. Бажання зробити красиво — найпоширеніший спосіб не зробити взагалі.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌀</span>
+        <div class="card-title">Пропустила — продовжуй із сьогодні</div>
+        <div class="card-text">Не наздоганяй тиждень заднім числом. Пропуск — це просто пропуск, а не провалена спроба; повертаєшся сьогоднішнім записом і все.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Чого не робити -->
+  <div class="section" style="animation-delay:1.25s">
+    <h2 class="section-title">Три способи зіпсувати щоденник</h2>
+
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">🚩 Так не працює</div>
+        <div class="col-text">«Сьогодні нічого не було, пропускаю»</div>
+        <div class="col-note">Два таких вечори підряд — і зошит закривається до наступного січня.</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">✅ Так працює</div>
+        <div class="col-text">«День важкий, витримала. Не зірвалася на дитину, хоча була на межі»</div>
+        <div class="col-note">Мінімальний запис зберігає ланцюжок і сам по собі є фактом про твою витримку.</div>
+      </div>
+    </div>
+
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">🚩 Так не працює</div>
+        <div class="col-text">«Зробила проєкт, але в Олі вийшло краще»</div>
+        <div class="col-note">Порівняння з іншими стирає запис: замість доказу про себе виходить черговий вирок.</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">✅ Так працює</div>
+        <div class="col-text">«Зробила проєкт сама. Торік не наважилася б узятися»</div>
+        <div class="col-note">Єдине допустиме порівняння — з собою в минулому. Тільки воно показує напрямок руху.</div>
+      </div>
+    </div>
+
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">🚩 Так не працює</div>
+        <div class="col-text">«Завтра нарешті почну бігати й розберу пошту»</div>
+        <div class="col-note">Плани на майбутнє — це інший інструмент. У щоденнику досягнень вони перетворюють сторінку на список боргів перед собою.</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">✅ Так працює</div>
+        <div class="col-text">«Пробігла два кілометри, вперше за зиму»</div>
+        <div class="col-note">Тільки те, що вже сталося. Для планів є <a href="daylight.html">Daylight</a> — там окремі поля для завтрашнього дня.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Перечитування -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Половина сенсу — у перечитуванні</h2>
+    <p>Записування — це тільки збір матеріалу. Ефект дає повернення до записів, і саме цей крок пропускають найчастіше. Розклад простий.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">📅</span>
+        <div class="card-title">Раз на тиждень — дві хвилини</div>
+        <div class="card-text">Просто перечитати сім записів. Нічого не аналізувати, не оцінювати. Тижневий зріз майже завжди виглядає повнішим, ніж відчувався зсередини.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📈</span>
+        <div class="card-title">Раз на місяць — три навички</div>
+        <div class="card-text">Перегорни місяць і випиши окремо три речі, які ти тепер умієш краще. Це і є та сама повага до себе — не відчуття, а перелік.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌧</span>
+        <div class="card-title">У поганий день — навмання</div>
+        <div class="card-text">Відкрий на випадковій сторінці й прочитай три записи. Це найшвидший антидот до «я нічого не можу»: думці протиставляється не інша думка, а власний почерк.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💼</span>
+        <div class="card-title">Перед переговорами — вибірка</div>
+        <div class="card-text">Співбесіда, розмова про підвищення, підсумок року: у тебе вже є готовий матеріал із датами й цифрами замість спроби згадати щось на місці.</div>
+      </div>
+    </div>
+
+    <p>Через півроку в цих сторінок з'являється побічний ефект: із них видно не окремі перемоги, а лінію. Стає видно, у чому ти справді сильна — і це вже інша розмова про себе, ніж <a href="not-smart-enough.html">«мені просто пощастило»</a>.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Перші сім днів -->
+  <div class="section" style="animation-delay:1.35s">
+    <h2 class="section-title">Перші сім днів</h2>
+    <p>Порожня перша сторінка — найчастіша причина, чому щоденник не починається. Тому перший тиждень краще заповнювати не «тим, що сталося сьогодні», а готовими підказками: вони одразу наповнюють зошит матеріалом із минулого.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">①</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Три речі, якими ти пишаєшся за останній рік</div>
+          <div class="card-text">Не найбільші, а перші, що спали на думку. Кожну — за формулою, із рядком «що це доводить».</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">②</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Навичка, якої в тебе не було три роки тому</div>
+          <div class="card-text">Робоча, побутова, будь-яка. Пригадай, як виглядала перша спроба — контраст і є записом.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">③</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Найважча розмова, яку ти витримала</div>
+          <div class="card-text">Що ти сказала, чого це коштувало, чим закінчилось. Такі записи потім перечитуються найчастіше.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">④</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Те, чого ти навчилася сама</div>
+          <div class="card-text">Без курсу й наставника — по відео, методом спроб, у процесі. Самонавчання — окрема навичка, і вона недооцінюється найбільше.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">⑤</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Момент, коли ти передумала — і мала рацію</div>
+          <div class="card-text">Змінене рішення, від якого ти виграла. Уміння переграти себе — теж майстерність, хоч і рідко записується як досягнення.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">⑥</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Комплімент, який ти досі пам'ятаєш</div>
+          <div class="card-text">Дослівно, з іменем автора. Якщо він тримається в пам'яті роками — там сказано щось точне про тебе.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">⑦</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Сьогоднішній день — за формулою</div>
+          <div class="card-text">Звичайний день, чотири рядки. Далі щоденник уже не починається щоразу з нуля — він просто триває.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Інтерактив -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Почати просто зараз</h2>
+    <p>Паперовий зошит кращий тим, що його видно на столі. Але щоб не відкладати початок до покупки зошита — ось те саме тут, на сторінці. Записи зберігаються в цьому браузері, нікуди не надсилаються.</p>
+
+    <div class="jr">
+      <div class="jr-warn" id="jrWarn">Цей браузер блокує збереження на цій сторінці — записи зникнуть після оновлення. Спробуй відкрити сторінку не в приватному вікні.</div>
+      <div class="jr-head">
+        <div class="jr-title">Мій щоденник</div>
+        <div class="jr-stat" id="jrStat">Записів: 0</div>
+      </div>
+
+      <div class="jr-tabs">
+        <button class="jr-tab on" id="tabWin" type="button">🏆 Досягнення</button>
+        <button class="jr-tab skill" id="tabSkill" type="button">🛠 Майстерність</button>
+      </div>
+
+      <textarea class="jr-field" id="jrText" placeholder="Що сталося · що для цього знадобилося · що це доводить"></textarea>
+
+      <div class="jr-row">
+        <button class="jr-btn" id="jrAdd" type="button">Записати</button>
+        <button class="jr-btn ghost" id="jrCopy" type="button">Скопіювати все</button>
+        <span class="jr-hint" id="jrHint"></span>
+      </div>
+
+      <div class="jr-list" id="jrList"></div>
+      <div class="jr-note">Записи живуть тільки в цьому браузері на цьому пристрої. Перед тим як чистити історію — скопіюй їх собі кудись.</div>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:1.45s">
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Що ти зробила за останній місяць такого, чого рік тому ще не вміла?</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Фінал -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Насамкінець</h2>
+    <p>Щоденник досягнень часто плутають зі способом себе хвалити. Він працює інакше: не додає гарних слів, а прибирає можливість чесно сказати «я нічого не зробила». Через три місяці це вже не питання настрою — це сторінки з датами.</p>
+    <p>Про те, з чого взагалі складається відчуття власної вартості, докладніше — на сторінці <a href="self-esteem.html">Самооцінка</a>. Про те, як писати про стан, а не про результати, — <a href="journal.html">Щоденник і рефлексія</a>. Про щоденні справи й плани — <a href="daylight.html">Daylight</a>.</p>
+
+    <div class="final-quote">
+      <div class="final-text">Повага до себе не з'являється з рішення поважати себе. Вона <strong>накопичується рядками</strong> — по три хвилини щовечора.</div>
+    </div>
+  </div>
+
+</div>
+<script>/* щоденник майстерності — локальні записи */
+(function(){
+  var KEY='sl_mastery_journal_v1';
+  var MONTHS=['січня','лютого','березня','квітня','травня','червня','липня','серпня','вересня','жовтня','листопада','грудня'];
+  var list=document.getElementById('jrList'),field=document.getElementById('jrText'),stat=document.getElementById('jrStat');
+  var hint=document.getElementById('jrHint'),warn=document.getElementById('jrWarn');
+  var tabWin=document.getElementById('tabWin'),tabSkill=document.getElementById('tabSkill');
+  var addBtn=document.getElementById('jrAdd'),copyBtn=document.getElementById('jrCopy');
+  if(!list||!field)return;
+  var type='win',items=[],hintTimer=null;
+
+  function storageWorks(){try{var p='__sl_probe__';localStorage.setItem(p,'1');localStorage.removeItem(p);return true}catch(e){return false}}
+  var ok=storageWorks();
+  if(!ok&&warn)warn.style.display='block';
+
+  function load(){try{var raw=ok?localStorage.getItem(KEY):null;items=raw?JSON.parse(raw):[];if(!Array.isArray(items))items=[]}catch(e){items=[]}}
+  function save(){if(!ok)return false;try{localStorage.setItem(KEY,JSON.stringify(items));return true}catch(e){if(warn)warn.style.display='block';return false}}
+  function say(msg){if(!hint)return;hint.textContent=msg;if(hintTimer)clearTimeout(hintTimer);hintTimer=setTimeout(function(){hint.textContent=''},2600)}
+  function fmt(ts){var d=new Date(ts),now=new Date();var s=d.getDate()+' '+MONTHS[d.getMonth()];if(d.getFullYear()!==now.getFullYear())s+=' '+d.getFullYear();return s}
+
+  function render(){
+    list.innerHTML='';
+    if(!items.length){
+      var e=document.createElement('div');e.className='jr-empty';
+      e.textContent='Тут поки порожньо. Перший запис можна взяти з підказки першого дня — три речі, якими ти пишаєшся за останній рік.';
+      list.appendChild(e);
+    } else {
+      for(var i=items.length-1;i>=0;i--){
+        (function(it){
+          var row=document.createElement('div');row.className='jr-item'+(it.type==='skill'?' skill':'');
+          var body=document.createElement('div');body.className='jr-item-body';
+          var meta=document.createElement('div');meta.className='jr-item-meta';
+          meta.textContent=fmt(it.ts)+' · '+(it.type==='skill'?'майстерність':'досягнення');
+          var txt=document.createElement('div');txt.className='jr-item-text';txt.textContent=it.text;
+          body.appendChild(meta);body.appendChild(txt);
+          var del=document.createElement('button');del.className='jr-del';del.type='button';del.textContent='×';
+          del.setAttribute('aria-label','Видалити запис');
+          del.onclick=function(){items=items.filter(function(x){return x.id!==it.id});save();render();say('Запис видалено')};
+          row.appendChild(body);row.appendChild(del);list.appendChild(row);
+        })(items[i]);
+      }
+    }
+    var n=items.length,now=new Date(),m=0;
+    for(var j=0;j<n;j++){var d=new Date(items[j].ts);if(d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear())m++}
+    if(stat)stat.textContent=n?('Записів: '+n+' · цього місяця: '+m):'Записів: 0';
+  }
+
+  function setType(t){
+    type=t;
+    if(tabWin)tabWin.classList.toggle('on',t==='win');
+    if(tabSkill)tabSkill.classList.toggle('on',t==='skill');
+    field.placeholder=t==='skill'
+      ? 'Що тепер виходить краще · порівняно з яким часом · що це доводить'
+      : 'Що сталося · що для цього знадобилося · що це доводить';
+  }
+  if(tabWin)tabWin.onclick=function(){setType('win')};
+  if(tabSkill)tabSkill.onclick=function(){setType('skill')};
+
+  function add(){
+    var v=field.value.replace(/\s+$/,'').replace(/^\s+/,'');
+    if(!v){say('Спочатку напиши рядок');field.focus();return}
+    items.push({id:Date.now()+'-'+Math.random().toString(36).slice(2,7),ts:Date.now(),type:type,text:v});
+    var saved=save();
+    field.value='';render();
+    say(saved?'Записано':'Записано, але не збереглося');
+  }
+  if(addBtn)addBtn.onclick=add;
+  field.addEventListener('keydown',function(e){if((e.metaKey||e.ctrlKey)&&e.key==='Enter')add()});
+
+  if(copyBtn)copyBtn.onclick=function(){
+    if(!items.length){say('Ще нема чого копіювати');return}
+    var out=items.map(function(it){return fmt(it.ts)+' · '+(it.type==='skill'?'майстерність':'досягнення')+'\n'+it.text}).join('\n\n');
+    var done=function(){say('Скопійовано')};
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(out).then(done,function(){legacy(out,done)});
+    } else legacy(out,done);
+  };
+  function legacy(text,done){
+    try{
+      var ta=document.createElement('textarea');ta.value=text;
+      ta.style.cssText='position:fixed;top:-1000px;left:0;opacity:0';
+      document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);done();
+    }catch(e){say('Не вдалося скопіювати')}
+  }
+
+  load();setType('win');render();
+})();
+</script>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
