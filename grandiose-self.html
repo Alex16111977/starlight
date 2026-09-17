@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Блискуча тюрма</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Блискуча<br>тюрма</h1>
+  <p class="page-subtitle">Грандіозне Я і сором, який воно приховує. Чому так страшно бути «звичайною»</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Грандіозність — це не святкування власної сили, а маскування нестерпного сорому</div>
+      <div class="hero-author">Альберт Сафін</div>
+    </div>
+    <p>Ти часто плутаєш грандіозність зі здоровою впевненістю в собі. Впевненість — спокійне знання своїх сильних і слабких сторін, опора на себе: є те, в чому я хороша, є те, в чому не дуже, і загалом це не робить мене нікчемою. Грандіозність — категорично інше: компенсаторна стратегія. Усередині є глибоке болісне відчуття власної неправильності й недостатності, і воно настільки нестерпне, що психіка створює потужну сяючу надбудову, яка нашіптує: «ти не просто хороша, ти найкраща, ти особлива, ти не можеш помилятися». Це не сила, а реакція на страх.</p>
+    <p>Здорова впевненість каже: «я впораюся, навіть якщо помилюся, і в цілому це не робить мене нікчемою». Грандіозне Я кричить: «я не можу помилитися, бо якщо помилюся — я ніщо». Це не фундамент, а крихка шкаралупа, яка потребує постійного підживлення ззовні — захоплення, визнання, доказів власної винятковості, причому толерантність до цього зростає: вчорашньої дози стає замало, і завтра потрібно вже втричі більше, аби не відчувати болю.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 1 -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Спалахи, які варто помітити</h2>
+    <p>Думка «якщо я відмовлюся від грандіозності, стану сірою, нудною і нікому не потрібною» — чорно-біле мислення: або я грандіозна, або сіре ніщо. Спитай себе: чого ти боїшся більше — здійснити помилку чи того, що інші побачать, що ти її здійснила?</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: спостереження за день</div>
+      <p>Протягом одного дня відстежуй спалахи грандіозності — момент, коли виникає сильне бажання довести свою правоту, блиснути ерудицією чи отримати порцію захоплення. Не намагайся це зупинити, просто роби, як звикла, але вже помічаючи, як саме ти це робиш. Увечері, поки свіжі спогади, письмово дай п'ять відповідей на: як сьогодні я намагалась справити враження і довести всім, що я права, і яку внутрішню вразливість чи дискомфорт я цим намагалась прикрити? Роби це без осуду, наодинці з собою — не для того, щоб справити враження навіть на саму себе тим, як добре я «працюю над собою».</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 2 -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Від чого насправді захищає ця броня</h2>
+    <p>У кожної є сором, страх і порожнеча тією чи іншою мірою — це природні супутники життя, питання лише в інтенсивності. Броня захищає не від зовнішніх ворогів, а від нестерпних внутрішніх станів, у центрі яких — токсичний сором. Це не те саме, що функціональний сором (легке зніяковіння, яке мотивує виправити поведінку) — токсичний сором є глибинним, наскрізним відчуттям власної суті: «я погана, я недостатньо хороша, я дефектна, зі мною щось фундаментально не так». Це відчуття настільки болісне, що психіка не може його витримати і створює протилежний полюс, аби його врівноважити: «я ідеальна, я грандіозна, я взагалі класна».</p>
+    <p>Ця сяюча броня захищає ще й від страху нікчемності — жаху бути невидимою, незначущою, порожнім місцем, — і від внутрішньої порожнечі, дзвінкої тиші там, де мав би бути зв'язок із собою, зі своїми почуттями й бажаннями.</p>
+
+    <div class="highlight">
+      <p>Грандіозність — це гучний, кричущий, дуже яскравий, гротескний фасад, що приховує занедбаний порожній дім; це наче крик жаху, замаскований під гімн перемоги.</p>
+    </div>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: витримати укол сорому</div>
+      <p>Згадай недавній епізод, коли виник укол сорому невисокої інтенсивності — невелику оплошність, незручне слово, помилку. Сядь у тиші на дві-три хвилини, заплющ очі, згадай цей епізод і фізично відчуй це відчуття в тілі, не аналізуючи, не виправдовуючи, не проганяючи, а просто дихаючи крізь нього і помічаючи: цей сором не смертельний, його можна витримати.</p>
+    </div>
+
+    <p>Яке почуття для тебе найнестерпніше — бути неправою, бути висміяною чи бути проігнорованою? А що, якщо це нормально — бути неправою? Хто з нас правий завжди і в усьому? І перевір раціоналізацію: якщо кажеш собі «мені зовсім не соромно, я просто злюся на несправедливість і дурість інших людей», це може бути способом виносити фокус назовні, аби не торкатися болючого ядра всередині.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 3 -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Пастка сучасного світу</h2>
+    <p>Сучасний світ одержимий досягненнями, успіхом і образом, який ти створюєш навколо себе, — здаватися, а не бути. Соціальні мережі — глобальний театр грандіозності, де ти тішиш своє грандіозне Я, навіть демонструючи там власну вразливість. Кожна показує свій найкращий фасад; культура «бути найкращою версією себе» безпосередньо живить цю захисну конструкцію. Світ платить фасаду, а не суті. Легко сплутати зовнішнє схвалення — лайки, похвалу, заздрісні погляди, коментарі — зі справжньою цінністю; починаєш вірити, що ти і є твій фасад, твої досягнення, твій статус, — і віддаєш ключі від своєї самооцінки в руки натовпу. Що більше оплесків отримуєш за свій сяючий обладунок, то страшніше показати, хто всередині нього.</p>
+    <p>Пастка — у плутанині між здоровим прагненням до зростання і нав'язливою потребою бути найкращою, аби відчувати себе нормально, інакше — погано.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: детокс схвалення</div>
+      <p>Введи на 24 години «детокс схвалення» — не публікуй нічого в соцмережах; якщо зробила щось хороше на роботі чи вдома, свідомо не шукай похвали й нікому про це не розповідай. Спробуй прожити радість чи задоволення тільки для себе і помітити, що відчуваєш у цей момент — полегшення, тривогу, нудьгу, повноту чи порожнечу. Що з того, що я роблю щодня, я роблю «для картинки», а що — тому що це мені по-справжньому важливо? Чиїм захопленням ти живилась останнім часом?</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 4 -->
+  <div class="section" style="animation-delay:1.15s">
+    <h2 class="section-title">Всемогутній Ідеал і Нікчемний Критик</h2>
+    <p>Грандіозність рідко проявляється як відверте хизування — набагато частіше вона живе всередині у вигляді двох, на перший погляд протилежних, фігур.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">👑</span>
+        <div class="card-title">Всемогутній Ідеал</div>
+        <div class="card-text">Шепоче: «ти повинна бути ідеальною матір'ю, ти повинна все знати на роботі, ти не маєш права на втому чи помилку» — планка, яку фізично неможливо взяти.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚖️</span>
+        <div class="card-title">Нікчемний Критик</div>
+        <div class="card-text">З'являється, коли ти неминуче зриваєшся — щось не встигла, підвищила голос, помилилась, відчула втому: «я так і знала, ти всіх підвела, ти ошуканка».</div>
+      </div>
+    </div>
+
+    <p>Це дві сторони однієї медалі грандіозності — постійний внутрішній суд і нездатність пробачити собі найменшу звичайність чи помилку. Здорова людина, помилившись, думає: «неприємно, шкода, зроблю щось із цим»; людина з Грандіозним Я, помилившись, думає: «я і є помилка». Грандіозне Я — безжальний суддя, який спочатку виносить неможливий вирок, а потім страчує за його невиконання.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: перехоплення критика</div>
+      <p>Наступного разу, коли зловиш себе на жорсткій самокритиці («яка ж я ідіотка, знову все зіпсувала») — зупинись і зауваж цю фразу. Уяви, що говориш її вголос семирічній дитині, яка припустилася такої самої помилки, — відчуй абсурдність і жорстокість цього. Переформулюй так, як би ти підтримала цю дитину: «так, ти помилилась, це неприємно, але це не робить тебе в цілому поганою; бувають плюси й мінуси; давай подивимось, що тут можна виправити».</p>
+    </div>
+
+    <p>Відстежуй мовні маркери грандіозності — слова «завжди», «ніколи», «повинна», «ідеально», «зобов'язана», «інакше ніяк» у думках про власні дії. І застерігайся поширеної ілюзії, що самокритика — єдиний двигун досягнень: чим жорсткішим було виховання (по суті — насильство) в дитинстві, тим більша ймовірність, що ти вважаєш самокритику єдиним способом мотивації, — це самообман, породжений страхом, що без «батога» настане хаос.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 5 -->
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Ціна за носіння обладунків</h2>
+    <p>Три ціни за броню грандіозного Я: тотальне виснаження, крижана самотність і постійний страх викриття. Підтримувати фасад ідеальності цілодобово — як тримати над головою штангу вагою сто кілограмів без перерви: забирає всю енергію, не лишаючи сил на просту радість, творчість, відпочинок.</p>
+    <p>Обладунки захищають, але вони ж ізолюють: до сяючої броні не можна доторкнутися, її не можна обійняти; люди можуть захоплюватися чи заздрити, але не можуть відчути справжню людину — вона лишається сама на своєму п'єдесталі, невидима й незрозуміла. Третя ціна — постійний страх викриття, життя на вулкані, фонова тривога: ось-ось усі зрозуміють, хтось помітить тріщину в броні, і весь фасад обвалиться, оголивши ту саму нікчемність, яку ти так відчайдушно приховуєш.</p>
+
+    <div class="highlight">
+      <p>Носити обладунки грандіозності — як постійно ходити навшпиньки, щоб здаватися вищою: можна деякий час обманювати глядачів, але литки почне зводити нестерпним болем, і зрештою вже не зможеш по-справжньому твердо стати на землю.</p>
+    </div>
+
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">Дає</div>
+        <div class="col-text">Повагу колег, відчуття контролю, похвалу, можливість уникати критики — мінімум 10 пунктів для тебе особисто.</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">Забирає</div>
+        <div class="col-text">Щирі стосунки, спокій, право на помилку, енергію, близькість — мінімум 10 пунктів для тебе особисто.</div>
+      </div>
+    </div>
+
+    <p>Чи бувають моменти, коли хочеться просто зняти ці обладунки й бути звичайною, але ти собі цього не дозволяєш? Чи є у твоєму оточенні хоч хтось, з ким ти можеш дозволити собі бути не на висоті? Якщо відповідь «ні з ким» — це важливий сигнал. І стережись романтизації самотності й виснаження як неминучих атрибутів успіху («сильні люди завжди самотні, такий шлях лідера») — це спосіб не визнавати свій біль і заперечувати необхідність з ним щось робити; чим сильніша внутрішня рана, тим більше готовності платити за розповіді про те, що це нормально.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 6 -->
+  <div class="section" style="animation-delay:1.25s">
+    <h2 class="section-title">Дитина, яку захищає ця броня</h2>
+    <p>Здається, що під обладунками — порожнеча, але це не так: під обладунками завжди хтось є. Це не порожнеча, а відкинута частина себе — найчастіше внутрішня дитина (зручна метафора для роботи). Дитина, якій колись було дуже соромно, страшно чи боляче; дитина, яку не приймали такою, якою вона є, — можливо, її хвалили лише за досягнення й соромили за емоції та невдачі. І ця дитина засвоїла урок, вигравіюваний на внутрішній стінці черепа: «щоб мене любили, я повинна бути ідеальною; щоб мене любили, я повинна бути сильною; у мене немає права на слабкість» — бути слабкою прирівнюється до загибелі.</p>
+
+    <div class="highlight">
+      <p>Грандіозне Я — це не ти, це складний, важкий захист, який ця налякана дитина побудувала, щоб вижити і більше ніколи не зіткнутися з тим нестерпним соромом чи болем. Грандіозність — обладунки, викувані з дитячого болю, щоб захистити невинність дитини. Уяви лютого вогнедишного дракона біля входу до печери, яким усі захоплюються і якого всі бояться, — але цей дракон охороняє не скарби, а маленьку налякану дитину, що ховається в глибині темної печери.</p>
+    </div>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: лист дитині на фотографії</div>
+      <p>Знайди свою дитячу фотографію — особливо ту, де ти виглядаєш серйозною, наляканою або просто справжньою, не позованою. Поклади її перед собою, подивись в очі цій дитині кілька хвилин, а тоді напиши їй коротке письмо від себе-дорослої: «я бачу тебе, я знаю, як тобі було, я тут, щоб захистити тебе по-новому, я з тобою» — і додай те, що вважаєш важливим. Пригадай, яке головне послання про любов і прийняття було отримано в дитинстві («любов треба заслужити», «бути слабкою небезпечно», «будь класною, щоб тебе не покинули»), і які саме почуття — смуток, страх, розгубленість, образа — були заборонені чи висміювані в батьківській родині. Усвідомлення цього не означає, що так має бути й надалі — цим почуттям можна дати місце, і це не робить тебе поганою.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 7 -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Прийняти вразливість замість боротьби з нею</h2>
+    <p>Це поворотна точка всього шляху. Для грандіозного Я вразливість — синонім смерті, те, що потрібно перемогти, приховати, усунути; це головна битва, яку воно веде все життя і яку неможливо виграти — свою вразливість неможливо ані перемогти, ані остаточно приховати. Прийняти вразливість не означає стати слабкою, скигліючою чи дозволяти витирати об себе ноги — це означає визнати реальність: «так, я можу помилятися; так, я буваю неправою; так, мені буває боляче; так, я не все знаю; так, я не завжди справляюся; так, мені потрібна допомога».</p>
+
+    <div class="highlight">
+      <p>Це фундаментальна зміна парадигми: перестати сприймати світ як боротьбу проти власної людяності і почати сприймати його як діалог прийняття цієї людяності. Тоді ти перестаєш витрачати величезну кількість енергії на боротьбу із власною людяністю, опускаєш зброю й обладунки та починаєш ставитися до себе не як до проєкту, який потрібно довести до ідеалу, а як до живої людини, гідної співчуття до себе.</p>
+    </div>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: один безпечний день</div>
+      <p>Обери один безпечний день і одну безпечну ситуацію та спробуй не перебільшувати свої заслуги і не приховувати промахи. Якщо втомилась — скажи «я втомилась», а не «все чудово, зараз усе зроблю». Якщо чогось не знаєш — скажи «я не знаю, потрібно уточнити». Зауваж: світ і ти сама не руйнуєтеся від визнання «я не знаю», «я не вмію», «не хочу», «втомилась». Якщо важко говорити «ні» — пам'ятай: це не загроза для грандіозного Я, а визнання власних меж, навіть якщо після цього хтось вважатиме тебе байдужою — це вже процеси іншої людини.</p>
+    </div>
+
+    <p>Що найгірше може статися, якщо визнаєш свою неправоту навіть у невеликій суперечці? Чи є хтось, з ким ти почуваєшся найбільш справжньою в житті, і що саме ця людина робить чи не робить, що дозволяє тобі трохи зняти обладунки?</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 8 -->
+  <div class="section" style="animation-delay:1.35s">
+    <h2 class="section-title">Прохання про допомогу як акт сили</h2>
+    <p>Для грандіозного Я прохання про допомогу — ультимативне приниження, рівносильне визнанню власної некомпетентності й нікчемності: грандіозне Я живе за принципом «я повинна впоратися з усім сама», і будь-яка залежність від іншого сприймається як загроза. Щоб навчитися просити, потрібно змінити внутрішню оптику: прохання про допомогу — це не декларація слабкості, а акт визнання сили іншої людини та акт довіри до неї, ознака зрілості й розуміння того, що жодна людина не може бути самодостатнім островом, який знає й уміє абсолютно все.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: мікропрохання</div>
+      <p>Протягом найближчих 48 годин знайди один привід попросити про невелику конкретну допомогу — притримати двері, порадитися щодо фільму, попросити близьку людину вислухати («мені не потрібні поради, просто вислухай»). Формулюй прохання чітко, без вибачень і виправдань — не «вибач, що відволікаю, можеш, якщо не складно», а прямо: «мені потрібна твоя допомога, будь ласка, подивись цей абзац». Прийми допомогу і подякуй, не применшуючи цінність зробленого. Яке саме почуття виникає при думці про прохання допомоги — сором, страх бути зобов'язаною, роздратування? Що відчуваєш, коли допомагають тобі, і коли допомагаєш ти?</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 9 -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Внутрішня опора: як витримувати критику</h2>
+    <p>Поки самооцінка залежить від зовнішнього «насоса» — похвали, лайків, схвалення, уваги, — ти лишаєшся заручницею всього світу: будь-хто, хто не похвалив, проігнорував чи розкритикував, тримає в руках пульт керування твоїм станом. Вихід — поступове зміщення центру ваги із зовнішніх оцінок на внутрішні: здатність самій відповісти собі на питання «як у мене справи насправді». Коли тебе не хвалять за те, що ти вважаєш хорошим, — навчись сама давати собі це визнання, не знецінюючи свою роботу лише тому, що її ніхто не помітив. Коли критикують — завдання не впадати ні в лють, ні в самозвинувачення, а виставити фільтр, що відділяє конструктивне зерно від емоційних полови інших людей — їхніх проєкцій та внутрішніх процесів.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: контейнер для критики</div>
+      <p>Отримавши критичне зауваження, не відповідай одразу — зроби паузу, подумки поклади це зауваження у «коробочку» на 24 години («приймаю до відома, дам коментар післязавтра»). Через добу відкрий цю коробку і спокійно подивись, чи є там щось корисне: якщо так — візьми це, якщо ні — відкинь. Так ти не реагуєш сліпо, а обираєш, як реагувати. Чи можеш згадати випадок, коли була по-справжньому задоволена своєю роботою, навіть якщо її ніхто не оцінив, і що ти тоді відчувала?</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 10 -->
+  <div class="section" style="animation-delay:1.45s">
+    <h2 class="section-title">Справжня самооцінка проти нарцисичного підживлення</h2>
+
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">🎭 Нарцисичне підживлення</div>
+        <div class="col-text">Зовнішній ресурс, що діє за принципом порівняння: «я кращий, ніж він, я розумніша, мене більше похвалили, я успішніша».</div>
+        <div class="col-note">Відносна й крихка, вимагає постійного доведення переваги — посадами, грошима, статусом.</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">🌱 Справжня самооцінка</div>
+        <div class="col-text">Внутрішній ресурс: «я цінна, тому що я є; я маю право на існування, на почуття, на бажання, на помилки, на життя незалежно від моїх досягнень і незалежно від думки інших».</div>
+        <div class="col-note">Абсолютна, заснована не на порівнянні, а на зв'язку із собою.</div>
+      </div>
+    </div>
+
+    <p>Ця самооцінка не вимагає доведень — вона вимагає проживання й визнання власної людяності: грандіозність вимірює цінність за шкалою переваги, а справжня самооцінка визнає цінність як даність.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: щоденник самоцінності</div>
+      <p>Наприкінці дня записуй не досягнення, а три речі, у яких сьогодні ти була чесною із собою і подбала про себе («я відчула втому і зробила перерву», «я чесно сказала ні на прохання, на яке не була готова погодитись», «я припустилася помилки і не стала себе за неї карати, а просто виправила»). Завдання — поступово зміщувати центр ваги з «бути найкращою» на «бути собою».</p>
+    </div>
+
+    <p>Уяви, що завтра тебе ніхто не може ні оцінити, ні похвалити, ні осудити — що б ти тоді продовжила робити у своєму житті, а що б негайно припинила? Уяви, що тобі не потрібно заробляти гроші й нічого нікому доводити — як би ти тоді розпоряджалася своїм часом, рішеннями, вибором?</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 11 -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Близькість на рівних замість ієрархії</h2>
+    <p>Грандіозне Я не вміє будувати близькість, воно вміє будувати лише ієрархію — у його світі є лише ті, хто вами захоплюється (публіка), і ті, кого ви зневажаєте (конкуренти чи «нікчеми»). Близькість можлива лише на рівних: стосунки з людяності будуються не на демонстрації фасаду, а на розділеній вразливості — це відбувається, коли ти ризикуєш зняти обладунки й кажеш: «я не впоралась, мені страшно, я рада за тебе без заздрості, мені потрібна твоя допомога». Це означає перестати бути для іншого ідеальною картинкою і дозволити іншому бути поруч із тобою справжнім, а також самій слухати іншого не для того, щоб оцінити його чи дати пораду, а щоб трохи побачити й зрозуміти цю людину.</p>
+
+    <div class="highlight">
+      <p>Близькість — це простір між двома людьми, де обоє можуть безпечно зняти свої обладунки, не намагаючись справити враження одне на одного.</p>
+    </div>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: просто слухати</div>
+      <p>У розмові з близькою людиною спробуй не давати порад, не повчати, не перебивати, не намагатися вирішувати чужі проблеми — просто слухай, можна ставити запитання для дослідження внутрішнього світу іншого («що там було, що ти тоді відчув»), щоб побачити людину, а не оцінити її ситуацію. Чи дозволяєш ти хоч комусь із близьких бачити тебе втомленою, неправою, розгубленою? Що ти частіше робиш у стосунках — намагаєшся справити враження на партнера чи ділишся з ним своїм справжнім станом?</p>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:1.55s">
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Що ти обираєш, вивчивши цей матеріал, почати робити у своєму житті, а що — припинити? Що для тебе означає турбота про себе?</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Насамкінець -->
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">Насамкінець</h2>
+    <p>Другорядне тут те, що сказано в цьому чи будь-якому іншому тексті, — ключове те, до якого висновку прийшла ти сама, просуваючись цим матеріалом. Кожна людина — завод з виробництва власних думок, емоцій і поведінки, і жодні чужі думки не можна «підкинути за комір» так, щоб вони напряму вплинули на чиєсь рішення — усе переробляється власними фільтрами й досвідом, і відповідальність за свої вибори лежить на самій людині.</p>
+    <p>Про той самий дракон-і-дитину з іншого боку — витіснені якості, які теж захищає броня, — сторінка <a href="shadow-resource.html">Тінь як ресурс</a>. Про те, звідки взагалі беруться дитячі переконання «я повинна бути ідеальною», — <a href="belief-scenario.html">Одна й та сама п'єса</a>. Про право не подобатися всім — <a href="stop-pleasing.html">«Ні» іншому — «так» собі</a>. Про комплекс неповноцінності й концепцію «достатньо добре» — <a href="good-enough.html">Достатньо хороша</a>.</p>
+
+    <div class="final-quote">
+      <div class="final-text">Дракон біля входу до печери охороняє не скарби. Він охороняє <strong>налякану дитину</strong>, яка досі вірить, що бути звичайною — небезпечно.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>

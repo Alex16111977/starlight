@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — «Ні» іншому — «так» собі</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">«Ні» іншому —<br>«так» собі</h1>
+  <p class="page-subtitle">Як перестати одержимо хотіти всім подобатися</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Коли ти кажеш «ні» іншим, ти кажеш «так» собі</div>
+      <div class="hero-author">Альберт Сафін</div>
+    </div>
+    <p>Різниця між здоровою ввічливістю і невротичною потребою всім подобатися — не в самому вчинку, а в мотивації й у стані після нього. Ввічливість — вибір, заснований на повазі до іншого і до себе; догоджання — примус, заснований на страху відкидання. Коли ти ввічлива, ти відчуваєш спокій і гідність: можна відкрити комусь двері, вислухати близьку людину, бо на це є ресурс і бажання. А якщо те саме робиться, жертвуючи власними планами, зціпивши зуби, зі страху, що про тебе погано подумають, — це вже невротична потреба подобатися.</p>
+    <p>Головний маркер — емоційний післясмак. Після ввічливості ти про неї забуваєш. Після догоджання всередині лишається тяжкість, роздратування на себе чи на іншого, спустошення. Та, хто догоджає, діє з дефіциту: «я повинна це зробити, щоб мене прийняли, інакше відкинуть». Ввічлива людина діє з надлишку: «я можу це зробити, бо це відповідає моїм цінностям». Якщо не можеш відмовити в проханні без відчуття катастрофи — це називається залежністю від чужої оцінки.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 1. Хибна тривога -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Хибна тривога давнього мозку</h2>
+    <p>Думка про те, що хтось незадоволений, викликає фізичний дискомфорт — прискорене серцебиття, пітливість, клубок у горлі: це працюють давні відділи мозку, які сприймають соціальне відкидання як загрозу життю. Тисячі років тому вигнання з племені означало вірну смерть; сьогодні, коли начальник хмурить брови, давній мозок б'є тривогу так само інтенсивно, ніби ти побачила хижака. У сучасному світі чуже невдоволення не загрожує виживанню, але психіка не завжди бачить різницю між реальною небезпекою і соціальним дискомфортом — ти проєктуєш на іншого фігуру значущого дорослого з дитинства, від якого колись залежала.</p>
+
+    <div class="highlight">
+      <p>Це схоже на систему пожежогасіння, яка реагує на тепло від яскраво увімкненої лампочки так, ніби це пожежа, і заливає все піною, хоча лампочка просто освітлює кімнату. Систему потрібно переналаштувати — це хибна тривога системи безпеки.</p>
+    </div>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: стара реакція тіла</div>
+      <p>Письмово десять разів заверши речення «Коли хтось мною незадоволений, я відчуваю себе ___», описуючи тілесні відчуття (стиснення, холод, тремтіння). Тоді великими літерами напиши: «Це просто стара реакція мого тіла. Прямо зараз мені ніщо не загрожує. Я доросла, я в безпеці».</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 2. Звідки установка -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Звідки взялося «я повинна бути хорошою для всіх»</h2>
+    <p>Це адаптаційний механізм, який колись допоміг вижити і заслужити любов. Найчастіше установка формується там, де любов і прийняття були умовними: тебе хвалили лише тоді, коли була зручною, тихою, приносила хороші оцінки й не заважала дорослим; або, навпаки, у сім'ї була непередбачувана атмосфера, і ти навчилася сканувати настрій батьків, щоб підлаштуватися й уникнути агресії. Так ти звикла, що твоє «я» цінне не саме по собі, а лише як функція задоволення інших. Стратегія закріпилася, бо роками працювала, і мозок сприймає її як гарантію безпеки; відмова від неї відчувається психікою як крок у прірву без страховки.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: віддати шану минулому</div>
+      <p>Письмово десять разів заверши речення «У моєму дитинстві бути хорошою означало ___» (бути непомітною, вгадувати бажання інших, не плакати, добре вчитися). Тоді десять разів — «Ця стратегія допомагала мені вижити тоді, але зараз вона мені заважає, тому що ___». Мета вправи — не сварити себе, а віддати шану своєму минулому і чітко позначити: ця стара стратегія більше не вигідна сьогодні.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 3. Шлях до себе -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Легалізація бажань і відрази</h2>
+    <p>Якщо постійно відчуваєш, що носиш маску, і хочеш дізнатися, хто ти насправді, — впізнати себе можна лише через контакт зі своїми бажаннями і, не менш важливо, зі своєю відразою. Маска «хорошої людини» складається з чужих «треба», чужих «повинна», чужих «зобов'язана», а під нею ховається живе «хочу» і «не хочу». Ті, хто звик підлаштовуватися, часто втрачають чутливість до власного дискомфорту і терплять до останнього.</p>
+    <p>Шлях до себе починається не з глобальних філософських питань, а з побутових дрібниць: що я насправді хочу з'їсти на обід, а не що корисно чи що їдять інші; яку музику я хочу слухати; з ким я справді хочу спілкуватися. Справжнє «я» проявляється там, де відчувається спонтанний інтерес або, навпаки, нудьга і злість, — емоції є маркером істинної особистості. Якщо відчуваєш злість, значить, твої межі порушені, навіть якщо продовжуєш посміхатися.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: мої «не хочу», які я терплю</div>
+      <p>Склади письмовий перелік із десяти пунктів під заголовком «Мої "не хочу", які я терплю» — те, що робиш регулярно, щоб бути гарною в чужих очах, але насправді тобі це не подобається (слухати довгі скарги подруги, відповідати на дзвінки в пізній час, доїдати їжу, коли вже наїлася).</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 4. Токсична провина -->
+  <div class="section" style="animation-delay:1.15s">
+    <h2 class="section-title">«Ні» — це не напад</h2>
+    <p>Гостре почуття провини при відмові, навіть маючи для неї вагомі підстави, — це соціальний регулятор, який зламався і працює на максимальній гучності там, де досить було б пошепки. Є два різні поняття. По-справжньому бути винною — це порушити закон, порушити домовленість, завдати іншому реальної шкоди, і тоді потрібно щось із цим робити: вибачитися, компенсувати збиток. Інша справа — не виправдати чужих очікувань: коли кажеш «ні», ти лише повідомляєш про свої межі й ресурси. «Ні» — не напад на іншу людину, а захист власної території. Але у внутрішній карті світу тієї, хто схильна догоджати, відмова прирівнюється до образи, і здається, що вона відповідає за почуття іншого.</p>
+
+    <div class="highlight">
+      <p>Коли ти кажеш «ні» іншим, ти кажеш «так» собі. Емоції іншої людини з приводу твоєї відмови — не твоя провина, а її відповідальність: кожна людина — завод з виробництва власних думок, емоцій і поведінки. Якщо хтось образився на твою відмову, відповідальність за цю образу лежить на цій людині.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 5. Страх відкидання -->
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Зручних використовують, особистостей — люблять</h2>
+    <p>Панічний страх бути відкинутою чи покинутою, якщо перестати бути зручною, не потрібно придушувати — його потрібно перевіряти реальністю. Парадокс у тому, що зручних людей використовують, але рідко по-справжньому поважають і цінують: зручна людина передбачувана, як функція, і з нею лишаються, бо це вигідно. По-справжньому люблять і поважають особистостей — із характером, межами і навіть незручними рисами. Страх ґрунтується на переконанні «мене потрібно лише тоді, коли я корисна; якщо не буду корисною і гарною, мене викинуть».</p>
+    <p>Варто йти на усвідомлений ризик і побачити реальні наслідки: катастрофа, яку малює уява, найчастіше не трапляється; люди можуть здивуватися новій поведінці, поворчати, але стосунки не руйнуються повністю через одну відмову. Якщо хтось справді припиняє спілкування лише тому, що ти перестала бути зручним ресурсом, — це привід не для горя, а для полегшення: це означає, що стосунків не було взагалі, було лише використання.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: найстрашніший прогноз + план дій</div>
+      <p>Письмово десять разів дай відповідь на «Яким я бачу найстрашніший прогноз, якщо стану незручною?», а тоді для кожного пункту пропиши конкретний план дій на випадок, якщо він справдиться. Страх живиться невизначеністю: коли прописано план дій навіть на найгірший сценарій, рівень тривоги автоматично знижується.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 6. Румінація і ефект прожектора -->
+  <div class="section" style="animation-delay:1.25s">
+    <h2 class="section-title">Ефект прожектора</h2>
+    <p>Румінація — «мисленнєва жуйка», застрягла, як магнітофонна плівка: ти прокручуєш у голові діалоги, побоюючись, чи не образила когось, чи не сказала зайвого. Це створює ілюзію контролю — здається, що, прокрутивши ситуацію ще раз, можна щось виправити чи запобігти загрозі, — насправді ж ти лише витрачаєш час, нерви й енергію. В основі — «ефект прожектора»: здається, що всі дивляться на тебе й аналізують кожне слово, тоді як насправді люди переважно зайняті собою і думають про власні проблеми, а помічене в іншому забувають за кілька секунд.</p>
+    <p>Переключай фокус і знецінюй важливість події питанням: «Чи матиме це значення через рік? А через місяць?» А також позицією спостерігача: якби так само повелася близька тобі людина, чи поставила б ти на ній хрест назавжди? Зазвичай ні. Реальний масштаб хвилювання здебільшого мізерно малий порівняно з тим значенням, яке ти йому надаєш, бажаючи бути центром всесвіту.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 7. Стійкість до критики -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Товста шкіра — це не байдужість</h2>
+    <p>Навіть конструктивна критика вибиває з колії на кілька днів тоді, коли немає стійкої власної думки про себе — ти ніби порожня посудина, в яку інші заливають свій зміст. Критика тоді влучає не в дію («ти погано зробила звіт»), а в ідентичність («ти в цілому погана людина»). «Товста шкіра» — це не байдужість, а знання фактів про себе: коли ти точно знаєш, яка ти, недосконала, зі своїми вадами, зовнішня думка стає просто інформацією до роздумів, а не вироком.</p>
+    <p>Зміцнення внутрішньої опори дозволяє відділяти зерна від полови: десь визнаєш — «тут ця людина має рацію, я виправлю помилку», а десь бачиш — «а тут просто поганий настрій іншого» — і те, що інший про тебе говорить, здебільшого не про тебе, а про фільтри сприйняття цієї людини.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: ядро впевненості</div>
+      <p>Письмово десять разів заверши речення «Незалежно від того, що говорять про мене інші, я точно знаю, що я ___» — це ядро, до якого можна подумки повертатися в момент критики.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 8. Вихід із ролі жертви -->
+  <div class="section" style="animation-delay:1.35s">
+    <h2 class="section-title">Вихід із ролі жертви</h2>
+    <p>Подивись на стосунки як на гіпотезу, а не абсолютне правило: якщо поводишся як безвідмовна рятівниця чи жертва, ти автоматично стаєш магнітом для агресорів і маніпуляторів, бо інші зчитують невербальні сигнали — сутулість, запобігливий погляд, відсутність чіткого «ні». Такі люди йдуть туди, де межі відкриті. Вихід із ролі жертви починається з визнання власної відповідальності за те, як із тобою поводяться, — це не означає провини за чуже хамство, а означає, що твоя присутність у цьому просторі дозволяє цьому відбуватися. Перестати бути жертвою означає почати створювати незручність для тих, хто звик «їздити на твоїй шиї»: коли вибудовуєш межі, «споживачі» твоєї безвідмовності самі відпадають, звільняючи місце для партнерських стосунків.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: лист (не відправляти)</div>
+      <p>Подумки напиши лист людині, яка тебе використовувала, за формулою «Я вчила тебе використовувати мене, коли я ___» (десять разів продовж речення), а далі — «З сьогоднішнього дня правила змінюються. Я більше не буду ___».</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 9. Ментальна сепарація -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Чужі емоції — не твоє робоче завдання</h2>
+    <p>Це класична проблема злиття: здається, що якщо близькій людині погано, ти зобов'язана це виправити, інакше ти погана подруга чи партнерка. Емоції — внутрішній процес кожної людини; так само, як неможливо контролювати погоду, неможливо і не потрібно контролювати почуття інших. Кожна людина — завод з виробництва власних думок, емоцій і поведінки, і кожен сам відповідає за свої вибори. Підтримати можна, співчувати потрібно, але брати на себе тягар чужих переживань шкідливо для обох сторін: намагаючись «полагодити» чуже почуття, ти інвалідизуєш іншого, позбавляючи його здатності самостійно справлятися зі своїм життям.</p>
+
+    <div class="highlight">
+      <p>«Я бачу, що тобі погано. Я співчуваю, що тобі погано. Але це твої почуття, що тобі погано. Це не моя провина, що тобі погано» — не фраза для буквального промовляння вголос, а внутрішній сенс, що проходить через стосунки.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 10. Агресія близьких -->
+  <div class="section" style="animation-delay:1.45s">
+    <h2 class="section-title">Агресія близьких — опір системи</h2>
+    <p>Коли близькі, звикнувши до твоєї безвідмовності, починають агресувати у відповідь на зміни, — це абсолютно нормальна реакція системи. Уяви механізм, де одна шестерня раптом почала крутитися в інший бік: уся система почне скрипіти й опиратися. Близькі злляться не тому, що вони лихі, а тому, що порушено їхній звичний комфорт і уклад; система прагне до рівноваги й намагається повернути тебе на звичне місце за допомогою образ, докорів і маніпуляцій. У цей момент важливо витримувати тиск і не відкочуватися назад: агресія близьких часто є ознакою того, що зміни реальні. Якщо поступитися зараз, наступного разу вирватися буде ще складніше.</p>
+    <p>Пояснюй свою позицію спокійно, без виправдань, і використовуй метод «заїждженої платівки» — повторюй свою відмову чи нове правило одними й тими самими словами, не втягуючись в емоційні суперечки.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: фраза-опора</div>
+      <p>Заздалегідь напиши собі одну фразу, яку можна повторювати подумки під тиском, наприклад: «Їхня злість — це плата за мою свободу. Я готова її заплатити» або «Я маю право змінюватися, навіть якщо їм це не подобається».</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 11. Тиша -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Витримувати паузи й тишу</h2>
+    <p>Метушливість у розмові видає високу тривожність: здається, що мовчання — ознака провалу комунікації, і ти береш на себе роль аніматорки, зобов'язаної розважати публіку. Але комунікація — завжди відповідальність 50 на 50, і пауза — спільний простір, а не особиста недоробка. Мовчання — потужний інструмент: воно дає можливість обдумати сказане і відчути контакт на глибшому рівні.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: п'ять хвилин тиші</div>
+      <p>Візьми таймер, засічи п'ять хвилин тиші і нічого не роби, лише спостерігай за бажанням схопитися за телефон чи поворушитися. Після завершення відзнач: «Я витримала п'ять хвилин тиші, і нічого страшного не сталося».</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 12. Штучна пауза -->
+  <div class="section" style="animation-delay:1.55s">
+    <h2 class="section-title">Пауза замість автоматичної згоди</h2>
+    <p>Ти погоджуєшся на прохання на автоматі, а потім шкодуєш і злишся на себе — це відбувається через відсутність зазору між стимулом (проханням) і реакцією (відповіддю): сформувався рефлекс «прохання дорівнює згоді», доведений до автоматизму, щоб якнайшвидше знизити тривогу в моменті. Згода приносить миттєве полегшення, але потім накриває хвиля реальності — часу немає, сил немає, бажання немає. Щоб зламати цей механізм, потрібно штучно створити паузу — ти не зобов'язана давати відповідь миттєво.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">📅</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Мені потрібно звірити з розкладом, я відповім вам за годину»</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🤔</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Дайте мені час подумати, потрібно зважити всі за і проти»</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">📩</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Надішліть мені всю інформацію з цього питання, я вивчу і протягом тижня дам відповідь»</div>
+        </div>
+      </div>
+    </div>
+
+    <p>Пауза потрібна, щоб уляглася перша тривожна реакція і увімкнувся раціональний мозок, який реально оцінить наявні ресурси.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 13. Вибачення -> подяка -->
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">Замінити «вибач» на «дякую»</h2>
+    <p>Постійні «вибачте», навіть коли ти ні в чому не винна, — несвідомий спосіб сказати водночас «пробачте, що я існую» і заздалегідь применшити себе, щоб критика не могла завдати шкоди. Такий маркер може свідчити про занижену самооцінку і приховану агресію до себе; крім того, зайві вибачення дратують оточення, бо змушують інших постійно заспокоювати й переконувати, що все гаразд.</p>
+
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">🚩 Вибачення</div>
+        <div class="col-text">«Вибач, що я тебе, напевно, завантажую»</div>
+        <div class="col-note">Позиція винної дитини.</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">✅ Подяка</div>
+        <div class="col-text">«Дякую, що вислухав»</div>
+        <div class="col-note">Позиція рівної дорослої, яка цінує іншого, але не принижує себе.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 14. Доброта і межі -->
+  <div class="section" style="animation-delay:1.65s">
+    <h2 class="section-title">Доброта можлива лише за наявності меж</h2>
+    <p>Чи можна бути доброю людиною і водночас жорстко відстоювати свої межі й інтереси? Не просто можливо — тільки так і можливо. Людина без особистих меж не може бути по-справжньому доброю — вона може бути лише зручною і безвідмовною, а всередині накопичується втома і пасивна агресія. Справжня доброта — ресурсний стан: щиро допомогти іншому можна лише тоді, коли власні потреби закриті і ти сама в безпеці. Жорсткість у відстоюванні інтересів часто плутають із хамством, але тут ідеться про ясність, а не про грубість: «зі мною так не можна», «я цього робити не буду», «цей час я присвячу собі» — це не жорстокість, а інструкція для оточення, як із тобою поводитися. Чіткі межі роблять стосунки прозорими і безпечними для обох сторін.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: для мене добра людина — це та, що…</div>
+      <p>Письмово десять разів заверши речення «Для мене добра людина — це та, що ___», додаючи пункти, які втілюють повагу до себе (та, що допомагає не на шкоду собі; та, що чесна у своїх відмовах; та, що не сподівається на читання думок, а перетворює те, що малося на увазі, на явне).</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 15. Токсичний сором -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Офіційний дозвіл собі бути «поганою»</h2>
+    <p>Бути поганою в чиїхось очах — неминуча побічна ціна за те, щоб бути собою; неможливо прожити життя, нікого не розчарувавши. Сором виникає через розбіжність між образом ідеального «я», яке має всім подобатися, і реальністю такою, як вона є. Дозволити собі бути поганою означає визнати свою звичайну людську природу — недосконалу, сумнівну, таку, що іноді помиляється, лінується, буває егоїстичною чи роздратованою. Переживання сорому стає нестерпним саме тоді, коли намагаєшся приховати від себе, що ти — цілісна людина зі своїми вадами. Якщо визнати: «зараз я погана для цієї людини, бо обрала себе», напруга лишиться, але не буде токсичною, а стане лише певним зніяковінням, інтенсивність якого поступово знижується.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: дозвіл на недосконалість</div>
+      <p>Письмово десять разів заверши речення «Я дозволяю собі бути незручною для [ім'я людини або групи]», а далі десять разів — «Якщо ці люди вважатимуть мене поганою і незручною, я все одно залишаюся цінною, тому що ___».</p>
+    </div>
+
+    <p>Будувати межі варто не з «босів» — найважливіших людей у житті (батьків, партнера), де ставки надто високі, — а з малих кроків у ситуаціях із низькою емоційною значущістю: повернути в ресторані несмачну страву, попросити таксиста вимкнути музику, сказати консультантці в магазині «мені не потрібна допомога, я просто дивлюся», відмовитися від рекламної листівки на вулиці.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: три мікроризики</div>
+      <p>Склади список із трьох мікроризиків на найближчий тиждень — невеликих дій чи слів, якими можна позначити власні межі (наприклад, не брати слухавку, коли немає бажання розмовляти, якщо це не входить у робочі обов'язки).</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 16. Внутрішня опора -->
+  <div class="section" style="animation-delay:1.75s">
+    <h2 class="section-title">Внутрішня опора</h2>
+    <p>Якщо в тебе немає власного фундаменту, ти хитаєшся від кожного пориву вітру і змушена постійно підпирати себе ззовні — чужими похвалами. Внутрішня опора будується на знанні власних цінностей — сенсів, які ти вкладаєш у форму своїх дій, на власних досягненнях і досвіді. Ти шукаєш підтвердження зовні, бо не ведеш обліку своєї цінності всередині; ті, хто схильні догоджати, часто знецінюють себе («та це випадково», «та мені просто пощастило»). Вчися бути самій собі доброю підтримувальною опорою замість гучного, критикуючого внутрішнього голосу.</p>
+
+    <div class="quote-block">
+      <div class="qa">Щоденник власних перемог</div>
+      <p>Щодня знаходь хоча б одну річ, за яку можна себе похвалити (вчасно прокинулась, добре виконала завдання, стрималась і не нагрубила) — навіть у звичайний день. Так профілактується негативна фільтрація — схильність перебільшувати погане й ігнорувати хороше, і мозок привчається помічати власні достоїнства замість самокритики.</p>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:1.8s">
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Що ти насправді отримаєш, якщо ризикнеш не сподобатися оточенню?</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Насамкінець -->
+  <div class="section" style="animation-delay:1.85s">
+    <h2 class="section-title">Насамкінець</h2>
+    <p>У відповідь ти отримуєш найдорожче, що є в житті, — свободу й енергію. Колосальна кількість сил іде на обслуговування фасаду, сканування чужих реакцій і придушення власних бажань; коли перестаєш намагатися всім подобатися, ця енергія повертається до тебе, і ти починаєш проживати власне життя, а не сценарій, написаний іншими. Поруч лишаються лише ті, для кого ти важлива справжньою, а не зручною; може піти хронічна тривога, з'явиться смак до життя і певна спонтанність. Дехто, звісно, відсіється, і будуть моменти дискомфорту — але відчуття, що ти сама у себе є і ти на своєму боці, варте будь-яких тимчасових незручностей.</p>
+    <p>Про те, звідки взагалі беруться подібні переконання й дитячі сценарії, — сторінка <a href="belief-scenario.html">Одна й та сама п'єса</a>. Про паузу між почуттям і вчинком докладніше — <a href="feelings-pause.html">Чуттям — так, вчинкам — почекай</a>. Про здоровий егоїзм і межі — розділ у <a href="shadow-resource.html">Тінь як ресурс</a>. Про комплекс неповноцінності, з якого догоджання часто росте, — <a href="good-enough.html">Достатньо хороша</a>.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: лист у майбутнє</div>
+      <p>Напиши собі лист через рік, описавши, як почувається людина, якій більше не потрібно всім подобатися — що вона робить, з ким спілкується, які відчуття переживає, коли живе вільно.</p>
+    </div>
+
+    <div class="final-quote">
+      <div class="final-text">Зручну людину <strong>використовують</strong>. Особистість із межами — <strong>люблять</strong>.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>

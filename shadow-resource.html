@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Тінь як ресурс</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.dialog{margin:26px 0 8px;padding:4px 0 4px 24px;border-left:2px solid rgba(148,103,23,.35)}
+.dialog-q{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18.5px;line-height:1.5;color:#6b4708;margin:20px 0 8px}
+.dialog-q:first-child{margin-top:0}
+.dialog-a{font-size:15px;font-weight:300;line-height:1.85;color:#2b3050;margin:0}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Тінь<br>як ресурс</h1>
+  <p class="page-subtitle">Як перестати боротися з «поганими» частинами себе</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Уяви людину, яка витрачає 80% свого життєвого ресурсу на те, щоб здаватися «нормальненькою» й «правильненькою» — тоді як її справжня сила лишається замкненою в тіні</div>
+      <div class="hero-author">Альберт Сафін</div>
+    </div>
+    <p>Тінь — це психологічний склад усіх тих якостей, здібностей, імпульсів, які ти з різних причин визнала неприпустимими і витіснила зі свідомості. Помилково думати, що тінь складається лише зі злоби чи жорстокості — насправді це все, що не увійшло до твоєї «соціальної вітрини», того образу, яким ти хочеш здаватися світові.</p>
+    <p>Якщо в дитинстві тебе карали за лідерські якості як за вискочку — у тінь пішла рішучість. Якщо соромили за щиру радість — у тінь пішли вітальність і драйв. Тінь не погана за своєю природою — вона стає небезпечною лише тоді, коли пригнічена. Уяви м'яч, який тримають під водою: що глибше його занурюють, то більше сил іде на це і то боляче він вдарить, коли хватку послаблять. Тінь — не ворог, а відрізана частина власної сили; у ній замкнений колосальний ресурс енергії. Визнаючи свою тінь, ти не стаєш поганою — ти стаєш цілісною. Цей урок саме про цілісність.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 1. Як формується тінь -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Чому ти ховаєш свої таланти</h2>
+    <p>Тінь формується як стратегія виживання в ранньому дитинстві. Ти відмовилась від тих частин себе, які не схвалювали значущі дорослі, — щоб гарантовано отримувати любов, захист і прийняття, навіть ціною зради самій собі. Дитина не може вижити самотужки, тому дуже швидко зчитує правила гри. Мама хмуриться на гучний сміх — і висновок готовий: «бути радісною небезпечно, мене можуть розлюбити», життєрадісність іде в тінь. Батько каже «чоловіки не плачуть» — у тінь ідуть емпатія і чутливість.</p>
+    <p>Ти маєш схильність ховати й найкращі свої якості — це «золота тінь»: талант вимагає прояву, амбіції потребують місця, сексуальність привертає увагу, і все це може викликати заздрість чи осуд оточення. Щоб не виділятися і бути в безпеці, ти одягаєш тісний одяг посередності. Доросла особистість тоді нагадує будинок, мешканці якого користуються лише передпокоєм, тоді як величезні зали з чимось цікавим замкнені й припадають пилом — ти звикла, що виходити туди небезпечно, і навіть не пробуєш, коли самого джерела заборони поруч давно немає.</p>
+
+    <div class="highlight">
+      <p>Які заборони допомагали вижити тобі в 6 років — і як ці самі заборони у 30 чи 40 перетворилися на кайдани? Ти вже не залежиш від схвалення батьків так тотально, як у дитинстві, і сама вирішуєш, які якості тобі корисні.</p>
+    </div>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: «у моїй родині було не прийнято…»</div>
+      <p>П'ять разів продовж речення «У моїй родині було не прийнято…» (бути успішнішою за інших, бути забезпеченішою, відкрито конфліктувати, хвалитися успіхами). Дослідь, як ця заборона заважає жити й досягати цілей сьогодні. Ці правила належать не тобі, а твоєму минулому: тоді ти була змушена їх обслуговувати, щоб вижити, а зараз, коли готова, можеш їх зняти. Ти маєш право переглянути умови «контракту» зі своїм минулим і повернути собі все, що колись відклала заради чужого спокою.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 2. Ознаки -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Ознаки, що тінь керує тобою прямо зараз</h2>
+    <p>Тінь бере управління в момент, коли свідомість ніби засинає чи виснажується — навіть якщо ти фізично не спиш. Реакції тоді стають непропорційними ситуації.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">💥</span>
+        <div class="card-title">Афективні спалахи</div>
+        <div class="card-text">Накричала на дитину через розбиту чашку так, ніби та скоїла злочин, — це прорвалася тінь. Пригнічені почуття накопичують тиск і завжди знаходять шпарину: саркастичне зауваження, раптове небажання щось робити, саботаж, запізнення.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔋</span>
+        <div class="card-title">Хронічна втома</div>
+        <div class="card-text">Постійно втомлена, хоч фізично здорова, — значить, величезна частина ресурсу йде на «внутрішню митницю», щоб не випускати тінь.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔁</span>
+        <div class="card-title">Повторюваний сценарій</div>
+        <div class="card-text">Раптово опиняєшся то в ролі агресорки, то жертви, хоч клялася собі, що це більше не повториться, — а потім кажеш: «я не знаю, що на мене найшло».</div>
+      </div>
+    </div>
+
+    <p>Стеж за власними реакціями зі словом «занадто» — занадто бурхлива реакція на критику, занадто сильне бажання подобатися, занадто активне засудження чужої поведінки: де є приставка «занадто», там завжди ховається тіньовий аспект. Тінь проявляється і в снах: звертай увагу на персонажів, які переслідують уві сні чи лякають, — часто це ті частини себе, зустрічі з якими ти боїшся в реальності.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: три пункти</div>
+      <p>Протягом дня фіксуй моменти, коли реакція була сильнішою, ніж вимагали обставини: перше — сама ситуація; друге — яке почуття виникло (гнів, сором, страх); третє — «якби я дала цьому почуттю повну волю, що б я тоді зробила?» — сформулюй навіть найдикіший варіант і дослідь його на папері. Тінь перестає бути небезпечною, коли на неї падає світло усвідомлення; те, що не усвідомлюється всередині, проявляється зовні як доля.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 3. Проекція -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Дзеркало, яке дратує</h2>
+    <p>Проекція працює як психологічний кінопроектор: ти береш власні витіснені риси, наче плівку, і накладаєш їх на інших людей, як на екрани, щиро вважаючи, що ці якості належать їм. Найдужче дратують у інших саме ті недоліки, які ти носиш у собі, але категорично відмовляєшся визнати. Якщо тебе вкрай дратує чиясь самозакоханість — найімовірніше, ти сама гостро потребуєш визнання, але забороняєш собі навіть подумати про це.</p>
+    <p>Проекція — спосіб психіки захистити від болю й сорому: простіше засудити сусідку за лінь, ніж визнати, що сама смертельно втомилась і мрієш нічого не робити, але внутрішній наглядач забороняє відпочинок. Проекція завжди емоційно заряджена: якщо якість просто не подобається — це думка, і це нормально; але якщо вона викликає люту лють чи бажання «наставити людину на шлях істинний» — це майже завжди проекція. Проектується і хороше: якщо захоплюєшся чиїмось талантом до обожнювання — це твоя золота тінь, власні нереалізовані здібності.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: три найнестерпніші якості</div>
+      <p>Обери людину, яка найбільше дратує, випиши три найнестерпніші її якості й для кожної відповідай: де і коли я сама забороняю собі бути такою хоча б на 10%? Яку користь я б отримала, якби дозволила собі краплинку цієї якості? Світ можна уявити як залу дзеркал — якщо перестати воювати з відображеннями, нарешті видно того, хто в ці дзеркала дивиться.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 4. Злість як паливо -->
+  <div class="section" style="animation-delay:1.15s">
+    <h2 class="section-title">Злість як паливо</h2>
+    <p>Основна витрата життєвих сил — не від самих «поганих» почуттів, а від опору їм: придушення — активний і дуже енергозатратний процес. Замість боротьби — інтеграція: не «почну ображати інших, коли злюся», а «я зараз злюся, у мене багато енергії, і я спрямую її на те, щоб закінчити цю складну роботу за годину» — замість годин на приховування злості за фальшивою посмішкою.</p>
+    <p>Будь-яке «негативне» почуття — це паливо. Гнів — енергія для змін і захисту меж. Заздрість — вказівник на те, чого не вистачає для благополучного життя. Страх — сигнал підготуватися до чогось. Сором — індикатор того, що ти йдеш проти власних цінностей або нав'язаних чужих. Щойно почуття назване на ім'я і йому дозволено бути всередині, воно перестає «зламувати» систему керування тобою, і енергія вивільняється сама.</p>
+
+    <div class="highlight">
+      <p>Коли відчуваєш приплив негативу — зроби паузу й скажи подумки: «я відчуваю це, і це нормально, це просто енергія». Спробуй фізично відчути, де в тілі живе це почуття, не проганяючи його, а просто побувши з ним — за кілька хвилин інтенсивність спаде, і з'явиться ясність: на яку корисну дію можна витратити цю силу?</p>
+    </div>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: формула з трьох пунктів</div>
+      <p>Пригадай ситуацію, де було пригнічено сильне почуття: перше — «я відчувала, наприклад, лють, тому що…»; друге — «я витратила сили на те, щоб це приховати (промовчати, заїсти, проспати)»; третє — «якби я використала цю енергію конструктивно, я могла б…» (чесно обговорити умови домовленості, прибрати вдома, сходити на тренування). Тінь — не звалище відходів, а атомна електростанція; навчися керувати цим реактором, і буде і світло, і тепло для життя.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 5. Страх тіні -->
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Чого ти насправді боїшся</h2>
+    <p>Страх перед тінню — це страх втрати контролю: здається, що визнання в собі люті, хтивості чи егоїзму миттєво дасть цим почуттям владу над тобою. Реальність зворотна: саме ті частини, які ти заперечуєш, мають над тобою найбільшу владу. Пригнічений імпульс нікуди не зникає — він накопичується, перетворюючись на психологічну бомбу; руйнування відбувається не через тінь, а через її раптові неконтрольовані прориви, коли свідомість уже фізично не може утримувати «дамбу».</p>
+
+    <div class="highlight">
+      <p>Тінь — це ніколи не дія. Тінь — це інформація й енергія. Відчувати бажання вдарити не дорівнює вдарити; відчувати бажання все кинути не дорівнює все кинути. Даючи цим почуттям місце у свідомості, ти повертаєш собі право вибору і починаєш керувати імпульсом, а не навпаки. Інтеграція тіні — перетворення дикого звіра на службового пса, який знає своє місце і приносить користь, коли потрібно.</p>
+    </div>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: переговори з внутрішнім монстром</div>
+      <p>Уяви свою лякаючу внутрішню частину як персонажа і письмово запитай: «Від чого ти намагаєшся мене захистити? Якої моєї сили, на твою думку, мені не вистачає у звичайному житті? Що мені потрібно зробити, щоб ти перестав бунтувати? Як мені з тобою потоваришувати?» Записуй перші відповіді, що спадають на думку. Та, хто знає свою темряву, ніколи не стане її рабинею — цілісність є страховкою від саморуйнування.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 6. Золота тінь -->
+  <div class="section" style="animation-delay:1.25s">
+    <h2 class="section-title">Золота тінь</h2>
+    <p>Окрім тіні негативних якостей, є й золота тінь — нереалізовані таланти, сміливість, творчість, масштаб особистості, від яких ти відмовилась, бо вони здавалися «занадто» для оточення. Ти боїшся свого світла навіть більше, ніж своєї темряви: бути посередньою безпечно, а бути визначною означає нести відповідальність, стикатися з критикою, виходити зі звичного стану речей.</p>
+    <p>Золота тінь — це той потенціал, який ти бачиш в інших і яким захоплюєшся. Якщо вважаєш когось геніальним, харизматичним чи неймовірно мудрим — зерна цих якостей є і в тобі, просто заблоковані: ти боїшся їх проявити, щоб не зруйнувати звичний образ себе, скромної й зрозумілої. Присвоєння золотої тіні вимагає відмови від ролі жертви й готовності зайняти своє місце у світі.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: власне захоплення</div>
+      <p>Відстеж, ким ти захоплюєшся, хто тебе надихає, — і які саме їхні риси тебе зачіпляють. Ти не змогла б помітити ці якості в іншому, якби в твоїй психіці не було відповідного резонансу. Дозволь собі впустити у своє життя хоча б 5% тієї сміливості чи яскравості, яку бачиш у людях, що надихають, — і подивись, як зміниться самовідчуття. Надихання чужою творчістю й синтез різних впливів у власний унікальний стиль — це і є шлях до формування свого унікального почерку успіху.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 7. Здорова агресія -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Здорова агресія і руйнівна злість</h2>
+    <p>Повна заборона на агресію робить безвідмовною й зручною — і виснаженою зсередини. Здорова агресія — це життєва сила, потрібна, щоб заявити про себе, захистити свої межі, домогтися мети, сказати тверде «ні» чи тверде «так»; без неї особистість стає млявою й апатичною. Руйнівна злість — результат тривалого пригнічення здорової агресії, коли енергія «прокисає», перетворюючись на отруту.</p>
+
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">🚩 Руйнівна злість</div>
+        <div class="col-text">Спрямована на знищення себе чи іншого — ірраціональна, залишає по собі провину.</div>
+        <div class="col-note">Результат тривалого пригнічення здорової агресії.</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">✅ Здорова агресія</div>
+        <div class="col-text">Спрямована на творення й захист — контрольована й адекватна ситуації.</div>
+        <div class="col-note">Коли ти повертаєш собі право на неї, ти перестаєш бути «злою» — навпаки, стаєш спокійнішою.</div>
+      </div>
+    </div>
+
+    <p>Поспостерігай за власною пасивною агресією — запізненнями, забудькуватістю, сарказмом: часто це ознаки того, що здорова агресія заблокована й просто просочується крізь тінь. Спробуй наступного разу висловити незгоду прямо й спокійно в момент її виникнення — світ від цього не зруйнується. Агресія — це зуби особистості: потрібні не для того, щоб кусати всіх підряд, а щоб саму тебе ніхто не «з'їв».</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 8. Депресія -->
+  <div class="section" style="animation-delay:1.35s">
+    <h2 class="section-title">Коли «зручність» веде в депресію</h2>
+    <p>Депресія часто є замкненим гнівом. Коли з дитинства звикаєш бути «хорошенькою», вчишся пригнічувати будь-які імпульси, які можуть хоч трохи засмутити оточення. У тінь тоді йде не лише злість, а й бажання, драйв, особиста думка, саме відчуття «я є». Щоб утримувати такий пласт особистості в ізоляції, психіка витрачає колосальну кількість енергії на обслуговування цього процесу — на життя сил уже не лишається, настає апатія й сірість.</p>
+    <p>«Хороша людина» — соціальний конструкт, часто позбавлений життя: живе за чужими правилами, намагаючись заслужити любов, якої, як здається, не заслуговує просто так. Депресія тут — крик тіні про те, що вона більше не може задихатися в стерильному образі. Інтеграція тіні дозволяє стати не поганою, а живою: жива людина буває різною — іноді егоїстичною, іноді гнівною, іноді слабкою, і саме це різноманіття дає енергію для радості.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: право на «погане»</div>
+      <p>Сформулюй п'ять речей, які нібито «не можна робити», щоб залишатися хорошою («мені не можна скаржитися», «мені не можна лінуватися»), і навпроти кожного — а що мені насправді можна, якщо я цього справді хочу? Обери один пункт і реалізуй протягом найближчих 24 годин.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 9. Заздрість -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Заздрість як навігатор</h2>
+    <p>Заздрість вважають одним із найганебніших почуттів, тому її ховають найглибше. Але це найчистіший індикатор прихованих потреб і нереалізованого потенціалу: ти ніколи не заздриш тому, що тобі не потрібне або до чого в тебе немає здібностей. Укол заздрості з'являється, коли хтось інший отримує те, чого в глибині душі хочеш ти сама, але забороняєш собі навіть подумати про це.</p>
+    <p>Якщо перетворити формулу «я хочу, щоб у цього не було цього» на «я бачу, що це можливо, і я теж цього хочу» — заздрість стає навігатором до власної золотої тіні, підсвічуючи зони, де ти себе обмежуєш. Замість того щоб знецінювати чужий успіх («йому просто пощастило»), використай заздрість як паливо для власного руху.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: кому я заздрила цього місяця</div>
+      <p>Пригадай, кому ти заздрила за останній місяць, і сформулюй: чому саме я заздрю, якому конкретному предмету чи якості; як змінилося б моє життя, якби це в мене було; який перший крок я можу зробити вже завтра.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 10. Харизма -->
+  <div class="section" style="animation-delay:1.45s">
+    <h2 class="section-title">Секрет харизми</h2>
+    <p>Притягальність так званих «поганих хлопців» чи «фатальних жінок» — не в їхній злобі, а в цілісності й контакті з власною тваринною силою. Харизма — це завжди надлишок життєвої енергії, яка не витрачається на внутрішні фільтри й спроби відповідати чужим очікуванням. Дозволяючи собі бути зухвалою, владною, сексуальною, ти перестаєш випромінювати невпевненість, і оточення зчитує це як силу.</p>
+    <p>Щоб забрати цей ресурс собі, не стаючи токсичною, важливо відокремити енергію якості від її деструктивного прояву. У нахабстві закладена енергія пред'явлення себе світу — «я є, ось я тут» — а не грубе витіснення інших заради вигоди. В егоїзмі є енергія самозбереження й вірності власним цілям. Забираючи саму енергію як волю до дії, але зберігаючи моральні цінності, ти твердо заявляєш про себе, не відчуваючи провини й не ображаючи інших. Харизма — це світло, яке випромінює людина, що перестала боротися зі своєю темрявою й навчилася нею освітлювати шлях.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 11. Кар'єрний саботаж -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Чому ти саботуєш власне зростання</h2>
+    <p>Кар'єрний саботаж часто — результат конфлікту між свідомою метою («я хочу стати керівницею») і тіньовим переконанням («влада — це щось погане», «успішні люди самотні», «мені будуть заздрити»). Якщо в тіні живе страх, що успіх зробить тебе поганою чи відкине від інших, психіка зробить усе, щоб провалити важливу співбесіду, забути про дедлайн чи посваритися з ключовою колегою — тінь захищає тебе від того, що здається їй небезпечним, навіть якщо це довгоочікувана перемога.</p>
+    <p>Ще один аспект — пригнічена амбіційність. Якщо з дитинства навіювали «будь скромнішою, чого ти тут вихваляєшся», потяг до масштабу йде в тінь і перетворюється на синдром самозванця: здається, що не маєш права на успіх, хоча об'єктивно заслужила його, — і в результаті або працюєш за копійки, дозволяючи іншим привласнювати заслуги, або нескінченно вчишся, не переходячи до практики, боячись власної «хижої» частини, потрібної для конкуренції й самопрезентації.</p>
+
+    <div class="highlight">
+      <p>Перестань називати свій саботаж лінню чи прокрастинацією — це активний опір власної тіні. Постав собі запитання: «якщо я стану по-справжньому успішною, яку мою погану сторону мені доведеться проявити?» Погана сторона — це бути незручною, викликати чиєсь незадоволення самим фактом свого існування, і це неминуче.</p>
+    </div>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: як тебе назвуть заздрісники</div>
+      <p>Уяви, що досягла важливої мети, і десять разів дай відповідь на запитання «як мене тоді назвуть заздрісники?» («зазвіздилась», «жадібна кар'єристка», «егоїстка, думає тільки про себе»). Легалізуй ці ярлики для себе — дозволь цьому бути, навчись це витримувати, не граючи в гру «цього не повинно статися»: соціальне несхвалення неминуче, і його важливо навчитися витримувати, лишаючись у межах закону й здорового глузду.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 12. Внутрішній саботажник -->
+  <div class="section" style="animation-delay:1.55s">
+    <h2 class="section-title">Домовитися з внутрішнім руйнівником</h2>
+    <p>Внутрішній саботажник бере на себе роль судді й ката щоразу, коли ти намагаєшся вийти за рамки звичного образу «хорошої людини». Образ «хорошої людини» — це маска, професійна роль, а не сама сутність; поза роботою немає обов'язку постійно її підтримувати. Щойно робиш крок до свободи чи благополуччя, внутрішній руйнівник б'є почуттям провини, тривоги чи навіть фізичною хворобою — і це не зла доля, а спроба психіки зберегти стабільність: психіка як орган прагне не щастя, а рівноваги, і тінь боїться, що зміни призведуть до втрати контролю, тому вважає знайоме нещастя комфортнішим за незнайоме щастя.</p>
+    <p>Домовитися з саботажником можна лише через визнання його функції — заткнути його неможливо. Найчастіше це спотворений голос потреби в безпеці: він «руйнує» плани, щоб ти не зіткнулася з можливою відмовою чи критикою в майбутньому. Але відмови й критика — неминуча частина будь-якої роботи. Замість боротьби зроби його союзником: використовуй його критичний потенціал для перевірки слабких місць у проєктах, а не для знищення самооцінки.</p>
+
+    <div class="dialog">
+      <div class="dialog-q">Критик каже: «навіть не сподівайся, у тебе нічого не вийде».</div>
+      <div class="dialog-a">Не сперечайся з ним. Відповідай: «я чую твої побоювання, ти хочеш мене убезпечити? Давай разом подумаємо, де потрібно підстрахуватися, щоб усе вийшло, і подивимось, що з того, про що ти говориш, має право на існування, а що є перебільшенням. Колись така категоричність допомогла мені вижити, але зараз вона, навпаки, може підрізати крила — тож давай по суті».</div>
+    </div>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: питання до саботажника</div>
+      <p>Уяви внутрішнього саботажника як конкретну істоту (можна навіть посадити на стілець предмет, що його символізує) і письмово запитай: «від чого саме ти мене рятуєш, коли зриваєш мої плани? Що станеться найстрашнішого, на твою думку, якщо в мене все вийде? Яку користь ти приносиш мені прямо зараз?» Дай цьому «охоронцю» чітке завдання і займи його руки корисною роботою.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 13. Тінь у стосунках -->
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">Чому ти обираєш «не тих»</h2>
+    <p>У любові тінь — потужний магніт: ти часто закохуєшся в тих, хто відкрито проявляє якості, що в тобі самій перебувають у глибокому підпіллі. Якщо ти втілення відповідальності й порядку, тебе тягнутиме до вільних, спонтанних чи навіть інфантильних людей — ніби ти обираєш їх, щоб через них доторкнутися до власної витісненої спонтанності й хаосу. З часом те, що захоплювало, починає дико дратувати: конфлікти в парі — це майже завжди битва тіней обох партнерів. Поки ти не визнаєш у собі риси, делеговані партнеру, ти лишатимешся в співзалежних стосунках, намагаючись виправити іншого, замість того щоб самій здобути цілісність.</p>
+    <p>Дивись на партнера як на дзеркало власної тіні: якості, які найбільше дратують у ньому, можуть бути твоїми власними відрізаними частинами. Здається занадто егоїстичним — можливо, тобі самій життєво потрібно додати трохи здорового егоїзму, замість того щоб рятувати його й звинувачувати в невдячності. Здається занадто холодним — можливо, ти сама занадто намагаєшся бути теплою на шкоду собі, і варто зігрівати себе, а не намагатися розтопити його.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: він постійно…</div>
+      <p>Випиши три претензії до партнера у форматі «він постійно…» чи «вона постійно…», а тоді переробі у формат «я забороняю собі саме цю якість, і тому мене це так дратує в ньому/ній» (наприклад: «він постійно думає про себе» → «я забороняю собі хоч секунду на рік подумати про себе, тому мене так дратує, що він думає тільки про себе»). Подумай, як додати цю краплинку у власне життя. Стосунки — це не пошук своєї половинки, а шлях до того, щоб самій стати цілою.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 14. Неможливість позбутися -->
+  <div class="section" style="animation-delay:1.65s">
+    <h2 class="section-title">Тінь не можна видалити — тільки інтегрувати</h2>
+    <p>Позбутися тіні повністю неможливо, так само як неможливо позбутися власної тіні на землі, поки світить сонце. Спроба відрізати тінь — шлях до психічного виснаження, хвороб чи раптових зривів. Тінь — органічна частина психічної структури: видали агресію — втратиш здатність захищатися; видали егоїзм — станеш жертвою маніпуляцій; видали печаль — не зможеш відчути радість.</p>
+    <p>Мета — не позбавлення, а інтеграція: усвідомлення тіньових сторін і свідомий вибір, коли і як їх проявляти. Це перехід від «мною керують мої імпульси, я їхній наслідок і пасажир у власному житті» до «я володію своїми імпульсами, я їх відстежую, відчуваю, бачу, працюю з ними». Ти не зобов'язана бути ідеальною. Ті, хто цього вимагають, сприймають тебе не як людину, а як функцію. Ідеальність — це стерильність і мертвотність; цілісність — це життя з усіма його шорсткостями.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: декларація права бути різною</div>
+      <p>Напиши: «Я, [ім'я, прізвище, по батькові], офіційно визнаю своє право бути різною. Я визнаю в собі наявність злості, наявність заздрості, наявність страху, наявність тривоги» — і перерахуй усі ті компоненти, які роблять тебе живою. Постав дату й підпис. Це символічний жест припинення внутрішньої боротьби: ти офіційно даєш собі дозвіл на існування в усій повноті, що миттєво знижує фонову тривогу.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 15. Техніка знайомства -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Безпечне знайомство з тінню</h2>
+    <p>Стань спостерігачкою, а не учасницею внутрішнього хаосу. Завдання не в тому, щоб примусово змусити тінь проявитися, а в тому, щоб створити простір, де вона сама захоче вийти на світло. Уяви свою психіку як будинок, у якому є добре освітлена вітальня (свідоме «я») і замкнені кімнати (тінь). Дивись не на саму лякаючу якість, а на її символічний образ — підсвідомість говорить мовою символів: коли логічно «обчислюєш» свої недоліки, мозок вмикає потужні захисні фільтри, а коли використовуєш уяву, захисти послаблюються.</p>
+    <p>Головне правило безпеки — не судити й не намагатися одразу виправити те, що буде побачено: тінь — не поломка, а частина екосистеми, яку потрібно зрозуміти. Стеж за тілесним станом: сильне стиснення в грудях, нудота, бажання негайно припинити — знак, що ти підійшла до потужного витісненого імпульсу; тоді не тисни на себе, зроби глибокий вдих і на видиху повернись у реальність. Дослідження тіні — марафон, а не спринт.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: лист від замкненої частини</div>
+      <p>Сядь зручно, заплющ очі, глибокий вдих, на видиху розслабся, уявляючи, що в глибині того будинку, де вітальнею є свідоме «я», є ще одні замкнені двері, а за ними хтось живе дуже давно. Відкрий зошит і напиши лист собі від імені цієї істоти, почавши зі слів: «Я та частина тебе, яку ти давно не випускаєш. Я хочу сказати тобі…» — і пиши все, що приходить у голову, не редагуючи. Знайомство з тінню починається з одного простого запитання: що я зараз відчуваю, але дуже не хочу це визнавати?</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 16. Внутрішній критик -->
+  <div class="section" style="animation-delay:1.75s">
+    <h2 class="section-title">Голос критика — переклад</h2>
+    <p>Внутрішня критика — це голос тіні, який засвоїв інтонації вимогливих дорослих чи соціальних стандартів і тепер нападає на найменшу помилку. Психіка ніби намагається захистити тебе від зовнішнього осуду, нападаючи першою: внутрішній критик — система безпеки за старими кресленнями, що колись рятували в дитинстві, а зараз лише ускладнюють життя.</p>
+    <p>Перестань з ним боротися (боротьба лише посилює його) і почни розшифровувати послання: за критикою завжди стоїть тіньове зерно потреби. Якщо критик кричить «ти нічого не досягнеш», за цим — величезний страх невдачі й водночас приховане, потужне бажання досягти успіху. Відокремлюй отруйну форму від цінного наміру — визнаний намір позбавляє критика потреби бути агресивним. Помічай короткі болісні автоматичні думки і замість спроб їх спростувати кажи собі: «о, мій охоронець знову забив тривогу — про що ти насправді хвилюєшся?»</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: три колонки</div>
+      <p>Колонка 1 — найчастіша критична фраза до себе. Колонка 2 — позитивний, хай і спотворений намір цієї фрази, від чого вона захищає («щоб бути уважнішою до людей, щоб спілкування з тобою було не з жалю, а з бажання»). Колонка 3 — фраза підтримки, яка визнає намір, але не принижує («я розумію, що тобі буде неприємно провалитися в цьому проєкті, тому підбираю слова, щоб підтримати і щоб ти була уважнішою до деталей; наступного разу скажу м'якше, але деталі справді мають значення, бо я знаю, що для тебе важливо досягти успіху»).</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 17. Маска -->
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Маска заважає близькості</h2>
+    <p>Соціальна маска (персона) — обличчя, яке ти пред'являєш світові, щоб відповідати очікуванням. Маска потрібна — вона захищає вразливу внутрішню частину від прямих ударів. Проблема починається тоді, коли ти повністю зростаєшся з маскою, забуваючи, що під нею живе складне й часто суперечливе створіння. Коли маска стає єдиним способом взаємодії, щирі стосунки стають неможливими: щирий контакт вимагає ризику показати тіньову частину, слабкість, сумніви. Якщо ти завжди позитивна й успішна, оточення відчуває підступ і тримає дистанцію. Можна бути оточеною сотнями людей і почуватися тотально самотньою, бо люди люблять твою маску, а не тебе.</p>
+
+    <div class="highlight">
+      <p>Практикуй мікрощирість — не обов'язково виливати на колег усі проблеми, а дозволити собі в безпечній обстановці сказати: «мені якось незручно» або «мені неприємно це чути». Маска — інструмент, а не в'язниця; щойно ти знімаєш її хоча б на кілька відсотків, ти даєш іншим дозвіл робити те саме — і саме в цьому просторі без масок народжується близькість.</p>
+    </div>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: ідеальний образ і тінь під ним</div>
+      <p>Опиши свій ідеальний соціальний образ — яким хочеш, щоб тебе бачили («завжди спокійна, завжди мудра, завжди безвідмовна»), а під кожним пунктом напиши, що насправді відбувається в тіні («спокійна на поверхні, а всередині клекоче лють від того, що доводиться постійно комусь підлаштовуватися»).</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 18. Здоровий егоїзм -->
+  <div class="section" style="animation-delay:1.85s">
+    <h2 class="section-title">Здоровий егоїзм</h2>
+    <p>Із дитинства тебе вчили ділитися, поступатися, думати про інших, віддавати останнє — але це часто лише примножує число тих, хто цим користується. Здорове прагнення дбати про себе йде в тінь і перетворюється на токсичний альтруїзм: ти стаєш безвідмовною, допомагаєш усім навколо, але з дефіциту, потай сподіваючись на вдячність, — а коли вдячності немає, тінь вибухає накопиченою образою.</p>
+    <p>Здоровий егоїзм — не використання інших, а розуміння, що ти головна у власному житті, і твоя «батарейка» має бути заряджена першою: лише тоді можна зігрівати інших. Якщо ти недостатньо егоїстична, не зможеш сказати «ні», бо злякаєшся бути поганою. Але по-справжньому віддавати може лише та, хто наповнена: інтегрована егоїстка чесна — допомагає, коли має ресурс, і відмовляє, коли немає, і це робить її передбачуваною і надійною, на відміну від тієї, хто «так старається заради всіх», що будь-якої миті може зірватися в лють від виснаження.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: егоїстичне рішення</div>
+      <p>Зліва — п'ять ситуацій, де ти зазвичай жертвуєш своїми інтересами заради інших. Справа — яким було б «егоїстичне» рішення (замість трьох годин вислуховувати скарги подруги — подбати про себе, прийняти ванну під улюблену музику). Тоді подумай, як це рішення дозволяє подбати і про себе, і про неї (чесно сказати, що вже немає ресурсу щодня по три години слухати скарги, і запропонувати звернутися по професійну допомогу). Здоровий егоїзм — це не коли ти живеш, як хочеш, а коли не змушуєш інших жити так, як хочеш ти.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 19. Психосоматика -->
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">Тіло як екран тіні</h2>
+    <p>Психіка й тіло єдині: імпульс, наприклад гнів, створює електричний розряд у нервовій системі й хімічний «коктейль» у крові. Якщо імпульс блокується («хороші люди не зляться»), енергія нікуди не зникає — вона лишається в тілі як м'язова напруга. Хронічне пригнічення тіні створює «м'язовий панцир»: постійні затиски в шиї, попереку, щелепах. Пригнічена агресія часто живе в проблемах зі шлунком чи шкірою, пригнічене бажання заявити про себе може проявлятися хворобами горла, страх перед майбутнім і заборона рухатися до цілей часто б'ють по ногах і суглобах. Це метафорична, додаткова лінза сприйняття, яка не скасовує потреби звернутися до лікаря й пройти обстеження.</p>
+    <p>Тіло говорить те, що ти заборонила собі промовляти словами. Прислухайся до хронічного болю — тіло зазвичай не бреше. Якщо часто болить спина чи зводить щелепу, запитай себе: на кого я насправді зараз хочу гарикнути, але посміхаюся й роблю вигляд, що все гаразд?</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: діалог із симптомом</div>
+      <p>Обери ділянку тіла, яка непокоїть, і письмово запитай: «якби ти була моєю тіньовою емоцією, що б ти мені сказала прямо зараз?» («я твоя шия, я стискаюся, тому що ти боїшся повернути голову й побачити, що твоє життя тобі не подобається»). Ця практика поступово налагоджує контакт між розумом і тілом, перетворюючи симптом із ворога на союзника, який підказує, яку частину себе пора повернути з вигнання.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 20. Творчість -->
+  <div class="section" style="animation-delay:1.95s">
+    <h2 class="section-title">Внутрішній хаос як матеріал для творчості</h2>
+    <p>Творчість за природою дещо антисоціальна й хаотична — вона вимагає порушення правил, виходу за рамки, готовності бути неправильною. Якщо тінь щільно замкнена, мислення стає шаблонним і стерильним, видаючи лише правильні, але нудні рішення. Тінь зберігає первинну енергію, яка не знає слова «не можна» — саме там народжуються найсміливіші ідеї, бо тінь ще не навчена сорому й страху виглядати нерозумно.</p>
+    <p>Коли ти використовуєш свою злість, пристрасть, навіть абсурдність, творчий продукт починає резонувати з іншими на рівні підсвідомості: ти перестаєш копіювати чуже й починаєш транслювати своє унікальне. Творчий акт — завжди легальний спосіб «випустити тінь погуляти», перетворивши її деструктивний потенціал на творчу форму. Помічай, як часто ідеї відкидаєш, бо здаються занадто дивними, — це працює внутрішній цензор, що охороняє вхід до тіні. Наступного разу докрути ідею до максимуму хоча б в уяві, дозволь найбунтівнішій частині запропонувати найбожевільніший варіант — часто саме в ньому ховається зерно важливих інновацій.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: автоматичне письмо</div>
+      <p>Постав таймер на 15 хвилин і почни письмово формулювати все, що приходить у голову, не вибираючи виразів і не дбаючи про граматику, — уяви, що пише найдикіша, найнепристойніша частина особистості, не перечитуючи в процесі. Ця вправа пробиває затор між свідомістю й тінню, дозволяючи свіжим рішенням просочитися в реальність. Творчість — безпечний ігровий майданчик для тіні.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 21. Сором -->
+  <div class="section" style="animation-delay:2s">
+    <h2 class="section-title">Сором проти провини</h2>
+    <p>Сором — соціальний клей, що утримує в рамках маски. Виявивши в собі тіньову якість, наприклад жадібність чи заздрість, ти починаєш соромитися, бо боїшся: якщо інші побачать тебе такою, тебе відкинуть. Сором паралізує і змушує ще глибше ховати тінь.</p>
+    <p>Різниця: провина говорить функціонально — «я загалом нормальна людина, але тут реально наламала дров, треба щось із цим зробити»; сором каже — «неважливо, що я зробила, я загалом погана». Саме тому зустріч із тінню така болісна: вона здається замахом на цінність тебе як особистості. Але це не так. Робота із соромом — це перехід від оцінки до цікавості: сором зникає там, де з'являється усвідомленість і прийняття людської природи в усій повноті. Наявність темних імпульсів не робить тебе чудовиськом, це робить тебе людиною: усі люди без винятку носять у собі аналогічні тіньові аспекти.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: я боюся, що дізнаються, що я…</div>
+      <p>Запиши 10 продовжень речення «я дуже боюся, що люди дізнаються, що я насправді…» (впиши своє соромне, на твою думку, якість чи думку), а потім допиши «але правда в тому, що ця якість допомагає мені…», знайшовши приховану користь («я боюся, що люди дізнаються, що я лінива, але насправді моя лінь — та якість, яка мотивує мене знаходити оптимальний спосіб розв'язувати непрості задачі, не витрачаючи зайвих ресурсів»).</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 22. Ознаки змін -->
+  <div class="section" style="animation-delay:2.05s">
+    <h2 class="section-title">Як зрозуміти, що це працює</h2>
+    <p>Інтеграція тіні — не одноразова подія, а процес поступового повернення до себе.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">⚡️</span>
+        <div class="card-title">Більше енергії</div>
+        <div class="card-text">Менше втомлюєшся, бо внутрішня «митниця» більше не споживає левову частку сил.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧘</span>
+        <div class="card-title">Емоційна стійкість</div>
+        <div class="card-text">Люди й ситуації, що раніше виводили з рівноваги, перестають так сильно зачіпати — визнаючи ці якості в собі, ти більше не даєш чужим проекціям за що зачепитися.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌿</span>
+        <div class="card-title">Автентичність</div>
+        <div class="card-text">Легко говорити «ні», легко просити про допомогу, легко проявляти свої інтереси й амбіції. Ти перестаєш грати роль і починаєш просто жити.</div>
+      </div>
+    </div>
+
+    <p>Стосунки стають глибшими, бо ти більше не вимагаєш від партнера бути ідеальним — ти дозволила собі самій бути не ідеальною. Зверни увагу на індикатори: наскільки щирий твій сміх, наскільки ти здатна до самоіронії, наскільки готова виглядати кумедно чи безглуздо. Прийняття тіні не робить життя простішим — цей процес робить тебе достатньо сильною, щоб справлятися зі складнощами, гнучкою; щось не вдалося — і це нормально, це не привід вважати все життя катастрофою.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 23. Чужі проекції -->
+  <div class="section" style="animation-delay:2.1s">
+    <h2 class="section-title">Коли на тебе вішають чужу провину</h2>
+    <p>Стаючи цілісною, ти починаєш чітко бачити, як інші намагаються навісити на тебе свої невиражені почуття, використовуючи тебе як «екран». Якщо тебе звинувачують в агресії, хоч ти спокійна, або в егоїзмі, хоч ти просто позначила межу, — це класична проекція: людина, що звинувачує, бореться не з тобою, а зі своєю тінню.</p>
+    <p>Головна помилка — почати виправдовуватися чи доводити, що це не так: це лише підживлює проекцію. Правильна стратегія — не приймати цей «подарунок». Якщо не залучаєшся емоційно, проекція відскакує назад до власника. Можна спокійно сказати: «я бачу, що ти зараз дуже злишся, але це не має відношення до моїх дій». Так ти захищаєш себе й даєш іншому шанс, хоч не факт, що ним скористаються, помітити власну тінь.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: повернути власнику</div>
+      <p>Пригадай несправедливий закид на свою адресу, запиши й додай: «це не моє, це цієї людини, і це говорить про якусь її частину, яку вона поки в собі не бачить. У будь-якому разі я залишаю це їй, я повертаю це власнику. З миром» — і уяви, як цей вантаж фізично залишає плечі. Ти не зобов'язана бути «звалищем» для чужих непереопрацьованих емоцій.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 24. Щоденні практики -->
+  <div class="section" style="animation-delay:2.15s">
+    <h2 class="section-title">Щоденна гігієна цілісності</h2>
+    <p>Психіка прагне до економії енергії й завжди намагатиметься повернути тебе до звичних масок. Підтримання цілісності — щоденна гігієна, як чищення зубів. Основний інструмент — усвідомлена увага до власних реакцій протягом дня: тінь ніби засмоктує назад у підвал, коли живеш на автопілоті.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🪞</span>
+        <div class="card-title">Де сьогодні я була справжньою?</div>
+        <div class="card-text">Раз на день чесно відповідай собі — не для самобичування, а для внутрішнього калібрування. Сам факт визнання не дає енергії піти в глибоке витіснення.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⏱️</span>
+        <div class="card-title">10 хвилин тіньового часу</div>
+        <div class="card-text">Щодня дозволяй собі думати будь-які, навіть найнеприємніші «неналежні» думки — легальний вихід. Коли в тіні є законний час для прояву, у неї немає потреби зламувати життя в найнезручніший момент.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌆</span>
+        <div class="card-title">Вечірні запитання</div>
+        <div class="card-text">Що мене сьогодні дратувало в інших (власні проекції)? У які моменти я надягала надто тісну маску «хорошої»? За який тіньовий імпульс я можу себе сьогодні подякувати?</div>
+      </div>
+    </div>
+
+    <p>Ці практики заземлюють досвід дня і не дають тіньовим аспектам накопичуватися й перетворюватися на майбутні симптоми чи зриви. Внутрішня свобода — це не відсутність тіні, а вміння взаємодіяти з власними внутрішніми силами так, щоб вони «танцювали під твою музику».</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 25. Таблиця трансформації -->
+  <div class="section" style="animation-delay:2.2s">
+    <h2 class="section-title">Таблиця трансформації</h2>
+    <p>Як кожна якість проявляється в пригніченому вигляді, як виглядає після інтеграції — і яку вигоду ця інтеграція приносить.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🗡️</span>
+        <div class="card-title">Агресія</div>
+        <div class="card-text">Пригнічена: спалахи люті, сарказм, психосоматика. Інтегрована: твердість, вміння захищати межі. Вигода: безпека і повага.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🪙</span>
+        <div class="card-title">Егоїзм</div>
+        <div class="card-text">Пригнічений: маніпуляції, приховані образи, жадібність. Інтегрований: здорова турбота про власні інтереси. Вигода: енергія й чесні стосунки.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔥</span>
+        <div class="card-title">Сексуальність</div>
+        <div class="card-text">Пригнічена: сором, затисненість, нав'язливість. Інтегрована: харизма, вітальність, магнетизм. Вигода: задоволення від життя, драйв.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎯</span>
+        <div class="card-title">Амбіції</div>
+        <div class="card-text">Пригнічені: заздрість, знецінення інших, апатія. Інтегровані: лідерство, здатність вести масштабні проекти. Вигода: реалізація талантів, гроші.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">♟️</span>
+        <div class="card-title">Хитрість</div>
+        <div class="card-text">Пригнічена: брехня, інтриги, самообман. Інтегрована: гнучкість, здатність мислити довгостроково. Вигода: ефективність у роботі й бізнесі.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🕊️</span>
+        <div class="card-title">Слабкість</div>
+        <div class="card-text">Пригнічена: скарги, роль жертви, безсилля. Інтегрована: щирість, вміння просити про допомогу. Вигода: близькість і взаємопідтримка у стосунках.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 26. Протокол при зриві -->
+  <div class="section" style="animation-delay:2.25s">
+    <h2 class="section-title">Швидка допомога при зриві</h2>
+    <p>Коли тінь раптово проривається назовні — ти зірвалася, наговорила зайвого, — замість того щоб провалюватися в самобичування:</p>
+
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text">Визнай: «так, це сталося. Так, це була моя тінь. Так, я визнаю цей вчинок своїм і не шукаю винних зовні».</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text">Дай тілу вихід: прорив тіні завжди супроводжується гормональним штормом. Присядь кілька разів, швидко пройдись, подихай активно, умийся прохолодною водою чи прийми душ. Не намагайся заспокоїтися суто інтелектуально, поки тіло в стресі, — спершу попрацюй з тілом.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text">Дослідь послання: про що так голосно кричала моя тінь? Чого мені не вистачало останнім часом — відпочинку, визнання, права голосу?</div></div>
+      <div class="num-row"><div class="num-badge">4</div><div class="num-text">Подумай, як виправити наслідки: як вибачитись, компенсувати шкоду з позиції дорослої, а не «нашкодившої дитини», взявши відповідальність за те, що сталося.</div></div>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:2.3s">
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Наскільки щирий твій сміх, наскільки ти здатна до самоіронії, наскільки готова виглядати кумедно чи безглуздо?</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 27. Насамкінець + глосарій -->
+  <div class="section" style="animation-delay:2.35s">
+    <h2 class="section-title">Насамкінець</h2>
+    <p>Завдання в роботі з тінню — не в тому, щоб замазувати власні тріщини, а в тому, щоб використовувати їх як компоненти власної цілісності. Не «виправляти» себе — нічого виправляти не потрібно, — а ставати цінною у власній автентичності: сила не в тому, що ти якась ідеальна, а в тому, що ти знаєш кожен свій шов, кожну шорсткість і невідповідність, і вмієш перетворювати все це на власні прикраси.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">🌑</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Тінь</div>
+          <div class="card-text">Сукупність витіснених якостей та імпульсів, що не вписуються в образ ідеального «я».</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🎭</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Персона (маска)</div>
+          <div class="card-text">Соціальна роль, яку ти граєш для адаптації в суспільстві.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">📽️</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Проекція</div>
+          <div class="card-text">Механізм приписування власних тіньових якостей іншим людям.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">✨</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Золота тінь</div>
+          <div class="card-text">Витіснений позитивний потенціал — таланти, сила, масштаб.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🧩</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Інтеграція</div>
+          <div class="card-text">Процес усвідомлення й включення тіньових аспектів у структуру особистості.</div>
+        </div>
+      </div>
+    </div>
+
+    <p>Про те, звідки взагалі беруться переконання, що тримають тінь замкненою, — сторінка <a href="belief-scenario.html">Одна й та сама п'єса</a>. Якщо тінь тримається на провині перед собою чи іншими — <a href="self-forgiveness.html">Камінь із душі</a>. Про блискучу протилежність тіні — фасад, що приховує той самий сором, — <a href="grandiose-self.html">Блискуча тюрма</a>. Про прийняття того, що якісь мрії вже не встигнуть здійснитися, — <a href="unlived-dreams.html">Завершення етапу</a>. Про те, як відчувати все, але діяти обдумано, — <a href="feelings-pause.html">Чуттям — так, вчинкам — почекай</a>. Про здоровий егоїзм і межі докладніше — <a href="stop-pleasing.html">«Ні» іншому — «так» собі</a>.</p>
+
+    <div class="final-quote">
+      <div class="final-text">Тінь — не пляма на репутації. Це <strong>необхідна глибина портрета</strong> — без тіней зображення лишається плоским.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>

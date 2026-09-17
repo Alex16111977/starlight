@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Чуттям — так, вчинкам — почекай</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.dialog{margin:26px 0 8px;padding:4px 0 4px 24px;border-left:2px solid rgba(148,103,23,.35)}
+.dialog-q{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18.5px;line-height:1.5;color:#6b4708;margin:20px 0 8px}
+.dialog-q:first-child{margin-top:0}
+.dialog-a{font-size:15px;font-weight:300;line-height:1.85;color:#2b3050;margin:0}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Чуттям — так,<br>вчинкам — почекай</h1>
+  <p class="page-subtitle">Гід по емоціях, паузі й відповідальності</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Почуття не бувають поганими. Поганими бувають вчинки</div>
+      <div class="hero-author">Альберт Сафін</div>
+    </div>
+    <p>Сварки на порожньому місці, емоційні вибухи через дрібниці, хвороби «від нервів», сірість і відчуття «не знаю, чого хочу», сором — проблеми ніби різні, а корінь один: поводження з почуттями. Ти народилась без інструкції до власних переживань.</p>
+    <p>В основі більшості бід — подвійна плутанина. Перша половина: ти судиш себе за те, що відчуваєш («як я могла таке відчути, ось я погана»). Друга половина: ти виправдовуєш вчинки почуттям («я накричала, бо злилась»). Закоханість не вибирають — вона може прийти навіть після багатьох років шлюбу, і сама собою вона не злочин: відповідальності немає за почуття, є повна відповідальність за те, що ти з ним робиш. Крайній випадок тієї самої плутанини звучить так: «я ж тебе люблю, тому й не випускаю з дому» — коли переживанням виправдовують уже не грубість, а руйнування чужого життя.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 1. Чотири дороги + формула -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Чотири дороги з сильним почуттям</h2>
+    <p>Коли накриває злість, образа чи ревнощі, є чотири варіанти.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🤐</span>
+        <div class="card-title">Мовчати</div>
+        <div class="card-text">Терпіти, ковтати, накопичувати.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💥</span>
+        <div class="card-title">Випускати одразу</div>
+        <div class="card-text">На того, хто опинився поруч — «зате чесно, ось такий я справжній».</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">👉</span>
+        <div class="card-title">Шукати винного</div>
+        <div class="card-text">«Це ти мене довів» — призначати зовнішнього відповідального за своє внутрішнє.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⏸️</span>
+        <div class="card-title">Дати час і простір</div>
+        <div class="card-text">Прочитати почуття і вибрати вчинок після, а не раніше. Цій дорозі присвячений увесь урок.</div>
+      </div>
+    </div>
+
+    <p>Коли накриває сильне почуття, що ти робиш найчастіше? У кожної з перших трьох доріг — своя ціна, і про неї нижче.</p>
+
+    <div class="highlight">
+      <p><em>Формула уроку:</em> почуття не бувають поганими, поганими бувають вчинки. Відчувати можна й потрібно весь спектр — за почуття ти не відповідаєш, бо не обираєш його; за дії відповідаєш повністю, бо дії обираєш сама. Коротко: <strong>чуттям — так, вчинкам — почекай.</strong> «Так» — це не вседозволеність, а відмова засуджувати себе за внутрішнє. «Почекай» — не заборона, а пауза, в якій ти повертаєш собі простір вибору.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 2. Два глухих кути -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Два глухих кути</h2>
+    <p>У цьому уроці не буде поради «тримай себе в руках» — це дорога в придушення, а ціна за придушення — проблеми з тілом, здоров'ям і емоційні вибухи. Так само не буде поради «випускай усе назовні, ти нікому нічого не винна» — це дорога в розрядку за чужий рахунок. Культура загалом хитається між цими крайнощами, як маятник: одне покоління вчать терпіти і тримати все в собі, наступне — виражати себе і нічого не стримувати.</p>
+    <p>Мета — не потрапляти в жодну з крайнощів: відчувати все, але виражати по-людськи, а діяти за власним вибором, беручи за це відповідальність.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 3. Почуття трапляється -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Почуття трапляється, а не обирається</h2>
+    <p>Спробуй зрадіти на замовлення, закохатися саме до п'ятниці, вимкнути образу зусиллям волі — не вийде. Це не слабкість, а будова людини. Почуття — подія, яка трапляється з тобою, як погода, і підіймається зсередини раніше, ніж ти встигаєш щось вирішити. Звідси висновок: якщо я не обирала почуття, то за що мені себе за нього судити — суд над собою за почуття завжди несправедливий, безглуздий і безжальний.</p>
+    <p>У цьому уроці слова «почуття» й «емоція» не розрізняються і позначають усе, що переживається, — від скороминущої досади до любові. А ще є три категорії за часом:</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">🌊</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Хвиля</div>
+          <div class="card-text">Піднялося й спало за хвилини — спалах злості, укол заздрості. Цей урок переважно про хвилі.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🌤️</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Настрій</div>
+          <div class="card-text">Фон, що тримається годинами й днями.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🗓️</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Клімат</div>
+          <div class="card-text">Те, що тримається місяцями.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 4. Три склеєні події + зазор -->
+  <div class="section" style="animation-delay:1.15s">
+    <h2 class="section-title">Зазор — адреса свободи</h2>
+    <p>У побуті зазвичай злиті воєдино три компоненти: почуття (те, що піднялося всередині — злість, страх, образа, радість), імпульс (бажання негайно щось зробити — накричати, написати різке повідомлення, гримнути дверима, зникнути) і дія (те, що ти реально вчинила у фізичному світі). Поки вони склеєні, ти живеш за схемою «відчула — значить зробила» і називаєш це темпераментом. Коли вони розведені, з'являється місце, де можна розпорядитися собою. Диявол — це відсутність простору між імпульсом і реакцією.</p>
+
+    <div class="highlight">
+      <p>Зазор — це простір між імпульсом і дією, який завжди існує, навіть якщо триває частку секунди. У чуттів немає рук — руки є в тебе, і вся твоя свобода живе саме в цьому зазорі, бо в неї немає іншої адреси. Дорослішати психологічно означає розширювати цей зазор — не гасити почуття, а подовжувати проміжок між імпульсом і дією.</p>
+    </div>
+
+    <p>За почуття ти не відповідаєш — воно прийшло само. За дії відповідаєш цілком, і це стосується й слів: слова — теж дія, і мовчання в потрібний момент теж дія. Мова — це поведінка, спрямована на зміну поведінки іншого; тому «я ж лише сказала, я нічого не зробила» не працює — сказане є зроблене. Звідси звільняючий висновок: не потрібно «лагодити» свої почуття, ставати людиною без злості, заздрості й страху — таких людей не буває, а спроба вимкнути одну емоцію призводить до пригнічення всього спектра.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 5. Нудьга й тривога назавжди -->
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Нудьга й тривога назавжди — і це хороша новина</h2>
+    <p>Нудьга й тривога будуть із тобою завжди — це невід'ємні компоненти життя, і питання не в тому, як їх позбутися, а в тому, як їх витримувати, не втікаючи. Навіть на концерті улюбленого гурту нудьга — лише питання часу. Завдання не в тому, щоб відмовитися від усього спектра почуттів, а в тому, щоб почати володіти зазором: замість безнадійної боротьби з тим, чого не обираєш, — посильна робота з тим, що обираєш, тобто з вчинками.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 6. Прилад, а не вирок -->
+  <div class="section" style="animation-delay:1.25s">
+    <h2 class="section-title">Прилад, а не вирок</h2>
+    <p>Уяви приладову панель автомобіля: коли загорається лампочка, це не ворог водієві й не поломка сама по собі, а повідомлення — «загляни під капот». Заклеїти лампочку ізолентою можна, стане спокійніше на якийсь час, але двигун це не врятує. Так само й почуття: кожне з них — прилад, що повідомляє про важливе, а не вирок.</p>
+
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">🛡️</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Злість — охорона кордонів</div>
+          <div class="card-text">Вмикається там, де порушено щось важливе: час, домовленість, гідність, територія, цінності. Вимкнеш злість — не станеш доброю, станеш зручною, і по твоїх кордонах ходитиме будь-хто.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🔦</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Страх — розвідник</div>
+          <div class="card-text">Називає ціну майбутнього і вимагає підготовки. Страх каже не «не йди туди», а «подивись, куди йдеш».</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🧭</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Заздрість — компас бажання</div>
+          <div class="card-text">Показує не те, що ти погана, а те, чого хочеш: «я заздрю чужій свободі там, де мені самій не вистачає свободи».</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🤝</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Образа — про нездійснену домовленість</div>
+          <div class="card-text">Ти очікувала, а інший не знав або не погодився з цим очікуванням. Образа запрошує перевірити, чи домовлялися взагалі.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🌧️</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Смуток — про цінність</div>
+          <div class="card-text">Приходить туди, де було щось дороге, що пішло. Сумувати означає вміти цінувати; заборонити собі смуток означає оголосити, що нічого дорогого за плечима не було взагалі.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">😔 Провина</div>
+        <div class="col-text">«Я зробила поганий вчинок» — конкретна, про дію. Кличе виправити: визнати, вибачитись, компенсувати, зробити висновок.</div>
+        <div class="col-note">У розумній дозі — робочий інструмент совісті.</div>
+      </div>
+      <div class="col bad">
+        <div class="col-label">🌑 Токсичний сором</div>
+        <div class="col-text">«Неважливо, що я зробила, я в цілому погана» — про особистість цілком. Кличе не виправити, а зникнути, сховатися.</div>
+        <div class="col-note">У великих дозах — отрута.</div>
+      </div>
+    </div>
+
+    <p>Навіть хороші почуття опиняються під забороною («не радій завчасно — зурочиш», «не прив'язуйся — боляче буде прощатися»), тому ти привчаєшся гасити радість ще на підльоті. Повний спектр почуттів — як клавіатура рояля: музика можлива, коли працюють усі клавіші. І змішані почуття нормальні: одночасно любити людину і злитися на неї, сумувати за тим, хто пішов, і відчувати полегшення, радіти успіху подруги і водночас їй заздрити — усе це нормально й не робить тебе поганою чи дефектною.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 7. Звідки заборона -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Звідки взялася заборона</h2>
+    <p>Ти виросла в домі, де з почуттями поводилися по-своєму, і засвоїла це поводження раніше, ніж навчилася з ним сперечатися: «не реви», «не смій злитися на матір», «немає з чого тут радіти», або почуття просто не помічали. Далі ти називаєш це своїм характером, хоча часто це не характер, а добре завчена заборона, у якої колись був автор. Заборони розподіляються і за ролями: «чоловіки не плачуть» — і замість смутку одразу з'являється злість; «хороші дівчатка не злляться» — і замість злості з'являються сльози, образа або хвороба.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 8. Я ніколи не злюся -->
+  <div class="section" style="animation-delay:1.35s">
+    <h2 class="section-title">«Я ніколи не злюся»</h2>
+    <p>Людей без злості не буває: кордони є в кожної, а отже, є й охорона цих кордонів. Хто каже «я ніколи не злюся», часто просто не знає про свою злість — вона нікуди не зникла, а пішла в обхід: у сарказм, отруйні жарти з виправданням «я ж просто пожартувала», у запізнення до тих, на кого злишся, у забуте обіцяне, у холодність, яку не пред'явиш, в автоагресію. Знати про свою злість — не означає бути злою; це означає тримати охорону на видноті, а не в підвалі.</p>
+
+    <div class="highlight">
+      <p>Вибірково вимкнути одне почуття неможливо. Психіка влаштована як старий приймач, де ручка гучності одна на всі станції одразу: приглушуючи злість, ти приглушуєш і радість, і інтерес, і бажання, і ніжність. Підсумком багаторічного «тримай себе в руках» стає не спокій, а рівна сірість — усе нормально, нічого не радує, нічого не хочеться.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 9. Куди дівається заборонене -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Куди дівається заборонене</h2>
+    <p>Заборонене почуття не зникає, воно змінює адресу.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🦴</span>
+        <div class="card-title">Тіло</div>
+        <div class="card-text">Стиснута щелепа, кам'яні плечі, шлунок, спина, тиск, мігрень — психосоматичний компонент.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💣</span>
+        <div class="card-title">Вибух</div>
+        <div class="card-text">Накопичене проривається на рівному місці, ти сама лякаєшся несподіваного крику.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎲</span>
+        <div class="card-title">Манівці</div>
+        <div class="card-text">«Мова випадковостей»: обмовки, забуті обіцянки, безпричинна втома — коли непрожите всередині проявляється зовні.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💊</span>
+        <div class="card-title">Анестезія</div>
+        <div class="card-text">Їжа не з голоду, чарка «щоб розслабитися», екран телефону до п'ятої ранку, покупки в кредит, робота без вихідних — усе, що глушить сигнал.</div>
+      </div>
+    </div>
+
+    <p>Перевірка: якщо тебе тягне до чогось не тому, що це цікаво чи потрібно, а щоб не відчувати щось інше, — це вже знеболення. Психіка — не сейф без дна: усе, що туди заштовхується, знаходить вихід. Рахунок за непрожите приходить завжди, питання лише в тому, якою валютою за це заплатять — проблемами зі здоров'ям, зривами, манівцями чи анестезією.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 10. Ціна трьох доріг -->
+  <div class="section" style="animation-delay:1.45s">
+    <h2 class="section-title">Ціна трьох доріг</h2>
+    <p>Тіло платить першим у тієї, хто тримає все в собі, — причому не лише хворобами, а й самотністю: поруч із людиною, яка не показує почуттів, інші не відчувають її живою. Стриманість, доведена до глухоти, — це не витримка, а кредит під величезні відсотки. Емоційні вибухи призводять до того, що люди поруч починають берегтися, обирають говорити лише «безпечне», шукають привід не бачитися; репутація складається роками, а закривається однією спалахом при свідках. Манівці змушують оточення ходити навшпиньки. Звичка призначати винних коштує тим, що тобі перестають казати правду, а близькості не буде, бо з «небезпечною» людиною відвертатися ніхто не буде; крім того, призначаючи винних, ти віддаєш управління своїм життям іншим.</p>
+
+    <p>Ці дороги тримаються, бо приносять справжні вигоди: та, хто все тримає в собі, отримує схвалення — «з нею легко, її хвалять за характер»; та, хто вибухає, отримує розрядку і «особливі права» — її зайвий раз не займають; та, хто звинувачує інших, отримує владу і вічне алібі. До анестезії звикають — вона повертає в стан без ваги власного тіла й без поганих почуттів; поруч із залежною людиною завжди є ті, хто потурає цій залежності, отримуючи власну вигоду — відчуття потрібності й важливості, рятуючи її знову і знову.</p>
+
+    <div class="quote-block">
+      <div class="qa">Питання собі</div>
+      <p>Що я втрачу, якщо дозволю собі відчувати все і при цьому почну нести відповідальність за кожну свою дію? Можливо: образ зручної людини, і доведеться комусь не подобатися; право на емоційний вибух і виправдання «ви мене довели»; винних, на кого можна списати власну незадоволеність. Поки ці втрати не названі вголос, є ризик несвідомо чіплятися за старі дороги — адже страждання іншого може давати відчуття потрібності («якщо мій чоловік кине пити, як тоді я відчуватиму себе потрібною й важливою»).</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 11. Три зони відповідальності -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Три зони відповідальності</h2>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">1️⃣</span>
+        <div class="card-title">Почуття</div>
+        <div class="card-text">Прийшло само. Відповідальності за нього немає.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">2️⃣</span>
+        <div class="card-title">Поводження з почуттям</div>
+        <div class="card-text">Середня зона, яку майже ніхто не помічає: те, що ти робиш із почуттям усередині себе, поки зовні ще нічого не сталося.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">3️⃣</span>
+        <div class="card-title">Дія</div>
+        <div class="card-text">Ти вчинила сама. Відповідальність повна.</div>
+      </div>
+    </div>
+
+    <p>Образа прийшла сама, спитати за це не можна, але далі можна дати їй відзвучати, а можна прокручувати цю сцену по двадцятому колу, не спати ночами, підбирати нові докази, піднімати архів минулих образ — і тоді це вже не почуття, а внутрішні дії. Почуття горить, поки в багаття підкладають дрова: хвиля, яку не годують думками, спадає напрочуд швидко, а образа, яку виходжують, як багаття, живе десятиліттями.</p>
+
+    <div class="highlight">
+      <p>Критерій для середньої зони — співмірність. Якщо реакція тягне на дев'ятку за десятибальною шкалою, а привід — лише на двійку, різниця в сім балів прийшла не звідси, а зі старої рани: ти перебуваєш не тут і зараз, а там і тоді. Чоловік спізнився, а піднялося все дитинство, коли забували забрати з садочка. Завдання — не виставляти сьогоднішній людині вчорашній рахунок, а подумки розділити: двійка йому, а сімка взагалі не про нього.</p>
+    </div>
+
+    <p>Мовна граматика теж має значення. «Я злюся» — стан, який прийшов і пройде, ти більша за нього. «Я зла» — уже вирок, ніби характер, доля. «Ти мене бісиш» — перекладання відповідальності, ніби своє кермо над своїм станом ти передала іншому. Одне й те саме почуття, але три формулювання — і три різні життя з них випливають.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 12. Другий поверх -->
+  <div class="section" style="animation-delay:1.55s">
+    <h2 class="section-title">Другий поверх: сором за злість живе довше за злість</h2>
+    <p>Ти злишся на батька і соромишся того, що злишся; радієш і винуватиш себе за це («як я можу, коли в інших погано»); боїшся і зневажаєш себе за боягузтво; втомилася і докоряєш собі за слабкість. Мучить найчастіше не перше почуття, а друге, надбудоване над ним: сама злість минає за хвилини, а сором за неї може гризти тижнями й місяцями. Другий поверх завжди побудований з чужого матеріалу — з домашніх правил про те, кому що можна й не можна відчувати.</p>
+
+    <div class="quote-block">
+      <div class="qa">Формула розбирання надбудови</div>
+      <p>Дозволь первинному почуттю бути: «я відчуваю злість, і це не робить мене поганою»; «я відчуваю нудьгу, і це не означає, що все погано». Загальна формула — «я відчуваю X, і це не означає Y» («я боюся, і це не означає, що я боягузка — це означає, що я жива»; «я радію, і чуже горе моєю радістю не зцілюється, а моя радість чужому горю не шкодить»).</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 13. Пауза: 4 кроки -->
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">Пауза: знайти, назвати, прочитати, вибрати</h2>
+    <p>Придушення каже почуттю «тебе немає, замовкни». Пауза каже «ти є, я тебе чую, я тебе бачу, я тебе відчуваю, а дію виберу я». Зовні це може виглядати однаково (ти мовчиш), але процеси всередині протилежні: там, де придушення, — сигнал глушать; там, де пауза, — сигнал приймають і читають.</p>
+
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text"><strong>Знайти.</strong> Знайди почуття в тілі — тіло помічає раніше за голову: стиснута щелепа, напружені плечі, підтягнуті до вух, клубок у горлі, жар у грудях, холод у животі, стиснуті кулаки. Знайти означає наполовину вийти зі злиття: є я, і є хвиля в мені, і ми не одне й те саме.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Назвати.</strong> Словник почуттів зазвичай бідний: «нормально», «дратує», «втомилась» — три слова на сотні станів. Тренуй здатність називати точніше: не «дратує», а досада, ревнощі, безсилля, азарт, образа, заздрість, туга, розгубленість. Підібране слово — половина роботи: те, що назване, тим уже можна розпоряджатися, а те, що безіменне, розпоряджається тобою.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text"><strong>Прочитати.</strong> Формула: «я відчуваю А, коли Б, тому що мені важливо В». «Я злюся, коли домовленість зі мною скасовують в останній момент, тому що мені важливо покладатися на слова»; «я тривожуся перед виступом, тому що мені важливий результат і зворотний зв'язок»; «я заздрю цій творчості й цій свободі, тому що хочу свою». Прочитавши почуття, ти перестаєш сприймати його як ворога і починаєш сприймати як доповідь про власні цінності.</div></div>
+      <div class="num-row"><div class="num-badge">4</div><div class="num-text"><strong>Вибрати і здійснити.</strong> Відкладена дія повинна відбутися — «почекай» не означає «ніколи». Якщо розмова, відкладена на завтра, так і не відбулася, це була не пауза, а старий заборона в новій упаковці. Обраною дією може бути й «нічого не робити» — але усвідомлено обране, а не проковтнуте. Критерій: якщо після дії всередині тихо й спокійно — це був вибір; якщо проковтнула — усередині продовжує «гудіти».</div></div>
+    </div>
+
+    <p>Якщо не знаєш, що відчуваєш, — це не порожнеча і не дефект, а вивчена глухота, підсумок тієї самої закрученої ручки гучності. Тоді доречне не питання «що я відчуваю», а питання «що зараз із моїм тілом»: стиснуто, тягне, тисне, гаряче, порожньо, сухо, вологло.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🔥</span>
+        <div class="card-title">Родина злості</div>
+        <div class="card-text">Невдоволення → роздратування → досада → злість → гнів → лють.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌫️</span>
+        <div class="card-title">Родина страху</div>
+        <div class="card-text">Побоювання → занепокоєння → тривога → страх → жах.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💧</span>
+        <div class="card-title">Родина смутку</div>
+        <div class="card-text">Жаль → печаль → смуток → туга → горе.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">☀️</span>
+        <div class="card-title">Родина радості</div>
+        <div class="card-text">Задоволення → радість → ніжність → захват → вдячність.</div>
+      </div>
+    </div>
+
+    <p>Шкала важлива: почуття легше зустрічати на двійці за десятибальною шкалою, ніж на дев'ятці, ставши його рабинею. Хто ловить свої «двійки», «трійки», «четвірки», тому рідко доводиться гасити наслідки своїх «десяток» — роздратування ще можна почути й про нього можна поговорити, а лють здебільшого вже не розмовляє взагалі.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 14. Правило, написане кров'ю -->
+  <div class="section" style="animation-delay:1.65s">
+    <h2 class="section-title">Сказати про почуття замість дії з почуття</h2>
+    <p>Ось правило, яке варто пам'ятати завжди: грюкнути дверима так, що аж вікна вилетіли, — це дія з почуття. А сказати «мені зараз хочеться грюкнути дверима і піти» — це повідомлення про почуття. Сказати про почуття означає створити умови, щоб інша людина почула, що з тобою відбувається, і при цьому двері лишаються цілими, а розмова — живою. Мова — перехідник між внутрішнім і зовнішнім: нею почуття отримало вихід, а стосунки не отримали пробоїну.</p>
+
+    <div class="quote-block">
+      <div class="qa">Якщо зазор менший за хвилю</div>
+      <p>«Я зараз занадто злюся, щоб говорити по-людськи. Мені потрібно 30 хвилин, і я повернуся, і ми договоримо». Оголошена пауза — не втеча, а вже дія: ти забрала себе з точки, де ризикувала накоїти справ, і призначила продовження. Обов'язкова умова — повернутися, як обіцяно, і договорити.</p>
+    </div>
+
+    <p>Чим заповнювати паузу: не прокручуванням звинувачувальної промови (інакше повернешся злішою, ніж пішла), а фізичним виходом для заряду — швидка ходьба, сходи замість ліфта, прибирання, вода, умивання, тримання рук під прохолодною водою, глибоке дихання. Сльози, якщо підступили, — не поломка, а штатне завершення хвилі: непролиті сльози лишають клубок у горлі.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 15. Чернетка гніву -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Чернетка гніву — і чому ейфорії теж «почекай»</h2>
+    <p>Якщо хочеться написати щось люте і відправити — спершу пиши все як є, але без адресата, не відправляючи. Гнів — чудовий диктор, але нікудишній редактор. Видихнувши і все написавши, вранці перечитай: зазвичай третина відпаде сама, третина переформулюється, а залишок — суть, яку вже можна відправляти на холодну голову.</p>
+    <p>Для слів, що запускають незворотний ланцюг подій (заява про звільнення, повідомлення про розставання), варто витримати мінімум 24, а краще 48 годин: жодне по-справжньому важливе рішення не зіпсується за добу чи дві, зіпсуватися може лише спалах.</p>
+
+    <div class="highlight">
+      <p>«Чуттям — так, вчинкам — почекай» стосується не лише гніву, а й захвату: на піку ейфорії дають обіцянки, яких не можуть виконати, роблять великі покупки, беруть кредити, вкладаються в чужі проєкти. <em>Радість — прекрасне почуття, але жахливий порадник щодо незворотних рішень</em>, бо вимикає питання «якою ціною». Радіти на повні груди можна й потрібно, а підписувати документи, давати обіцянки, переказувати гроші — варто після паузи, порадившись зі знаючими людьми.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 16. Щеплення -->
+  <div class="section" style="animation-delay:1.75s">
+    <h2 class="section-title">Чотири щеплення від типових пасток</h2>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">1️⃣</span>
+        <div class="card-title">Моє почуття — не істина про іншого</div>
+        <div class="card-text">Ревнощі — не доказ зради, тривога — не доказ біди, образа — не доказ чужої підлості. Почуття повідомляє про тебе саму — досвід, очікування, рани, цінності, — а не про факти; факти перевіряються питаннями й деталями, а не силою переживання. Сильно відчуваю — не означає права.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">2️⃣</span>
+        <div class="card-title">Право відчувати — не право кричати</div>
+        <div class="card-text">«Я маю право злитися» — правда. «І тому маю право ображати» — підміна. Виразити почуття («я злюся») і вивалити його (крик, ярлики, удари по болючому) — різні вчинки. За друге відповідає та, хто це зробила.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">3️⃣</span>
+        <div class="card-title">Приймати почуття — не приймати будь-які вчинки</div>
+        <div class="card-text">«Злитися на мене можна, але хамити мені не можна». Формула повернення чужих проєкцій: «я бачу, що ти відчуваєш X. А скажи конкретно, що саме я зробила Y — про це я готова поговорити». Чужі слова — «погода зовні», а моя дія в цій погоді — моя.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">4️⃣</span>
+        <div class="card-title">Пауза — не поступка</div>
+        <div class="card-text">Пауза не скасовує жорсткої дії, вона робить її точною. Після паузи можна сказати тверде «ні», закінчити розмову, розірвати договір, піти — це буде усвідомлений вибір, а не рефлекторна судома. Рівний голос тримає межу краще за крик: крик видає, що тебе «дістали», а рівний голос повідомляє, що ти у своєму праві.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 17. Сварка в парі, мовчазний іспит -->
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Сварка по-новому і мовчазний іспит</h2>
+
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">🚩 Старий шлях</div>
+        <div class="col-text">«Ти мене бісиш, а ти взагалі», грюкання дверима, дві години мовчання, примирення без вирішення проблеми.</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">✅ Новий шлях</div>
+        <div class="col-text">«Я злюся, коли плани змінюються без попередження, мені дуже важливо покладатися на домовленість» — без «ти поганий», лише «я» і те, що з тобою відбувається.</div>
+        <div class="col-note">Працює спільна рамка: не я проти тебе, а ми разом проти того, що нам заважає.</div>
+      </div>
+    </div>
+
+    <p>Окремий випадок — «мовчазний іспит»: ти відчуваєш, але не говориш, розраховуючи, що «якщо любить — сам здогадається»; інший тим часом живе звичайним життям, навіть не підозрюючи, що складає іспит, а «провал» уже записується йому в докір. Почуття, про яке ти не сказала, не вважається пред'явленим — люди не вміють читати думки, а здогадливість не міра любові.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 18. Розбір при всіх -->
+  <div class="section" style="animation-delay:1.85s">
+    <h2 class="section-title">«Ти мене довів» і «не злися»</h2>
+    <p>Керівник розніс звіт при всіх, усередині все кипить, рука тягнеться написати заяву про звільнення або відповісти різко. Послідовність та сама: пауза, зазор, тіло, слово, сигнал — «я злюся, тому що мені важлива повага до моєї роботи»; чернетка почуттів без адресата, не відправляючи; наступного дня — розмова за формулою: «коли розбір триває при всіх, мені важко це чути; наодинці я візьму з критики більше — як ви дивитеся на те, щоб працювати так?»</p>
+    <p>Коли тебе звинувачують «ти мене довела» — не поспішай ні оплачувати цей «рахунок» цілком, ні відкидати його цілком, а розділяй: почуттю іншого скажи «так» («я бачу, що ти злишся, я справді бачу, що тебе розлютила ця ситуація»), а власним вчинкам влаштуй чесну перевірку («скажи конкретно, що саме я зробила — про це готова поговорити»). Чужу «погоду» повертай власнику: за те, що інша людина зробила зі свого почуття крик, ярлики, розбитий посуд, — відповідає інша людина.</p>
+
+    <div class="highlight">
+      <p>Коли тобі кажуть «не злися, не засмучуйся, заспокойся» — це майже завжди не турбота про тебе, а прохання про комфорт того, кому важко поруч із чужим почуттям. Внутрішня формула (не обов'язково промовлена вголос): «я злюся, я з цим впораюся, тобі нічого не потрібно робити» — почуття лишається при тобі, а інший звільняється від паніки. Коли ж погано близькій людині — не поспішай із «заспокойся» (це теж «заклеювання лампочки», тільки чужої), краще скажи: «я поруч, якщо будеш готовий — розкажи, я поруч».</p>
+    </div>
+
+    <p>Той самий принцип працює й із собою: самозасудження за почуття — це заборона, спрямована на себе («не можна засмучуватися через дрібниці»), через що ти отримуєш і засмучення, і сором за це засмучення — два вантажі за ціною одного. Те, як ти поводишся з собою на людях, — інструкція для оточення, як поводитися з тобою.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 19. Практика на 5 хв + драбина -->
+  <div class="section" style="animation-delay:1.9s">
+    <h2 class="section-title">П'ять хвилин на день і драбина володіння</h2>
+
+    <div class="quote-block">
+      <div class="qa">Щоденна практика</div>
+      <p>Письмово п'ять разів заверши фразу «я відчуваю ___» п'ятьма різними словами без повторів і без оцінки «правильно/неправильно». Увечері — одне чесне питання собі: «яке почуття я сьогодні прожила, не заборонивши його собі і не виваливши на іншого?»</p>
+    </div>
+
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text">Я дізнаюся про свої почуття від інших людей («ти чого кричиш?» — і завдяки цьому дізнаюся, що кричу).</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text">Я розумію заднім числом: увечері стає зрозуміло, що вдень була злість.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text">Я бачу в моменті: хвиля йде, і я вже знаю її ім'я.</div></div>
+      <div class="num-row"><div class="num-badge">4</div><div class="num-text">Я бачу почуття на підході по тілу, на шкалі — наприклад, на два з десяти, — і заздалегідь обираю, що з ним робити.</div></div>
+    </div>
+
+    <p>Соромитися перших сходинок не варто — усі починають з нульової. «Я перестала злитися» — це не прогрес: злість не зникне і не повинна зникати, вона потрібна. Ознака прогресу — між спалахом і вчинком з'явився зазор: спочатку це можуть бути три секунди, коли ти встигла помітити стиснуту щелепу, перш ніж почала кричати; далі — вдих-видих; далі — вибір сказати про почуття замість дії з почуття. Зазор росте, як м'яз, від повторень. Зриви — не тотальний відкат, а частина тренування: зірвалась, помітила, назвала, зробила висновок — і живеш далі.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 20. Де закінчується самодопомога -->
+  <div class="section" style="animation-delay:1.95s">
+    <h2 class="section-title">Де закінчується самодопомога</h2>
+    <p>Є межа, за якою самодопомога перестає працювати і потрібне звернення до лікаря-психіатра чи психотерапевта: якщо хвиля не спадає тижнями й місяцями; якщо дії з почуттів стають небезпечними для тебе чи оточення; якщо після імпульсивних спалахів трапляються провали в пам'яті; якщо туга настільки всеосяжна, що ти не можеш встати з ліжка. Звернення до лікаря може вимагати постановки діагнозу й медикаментозної підтримки — і це вчинок дорослої людини, яка прочитала прилад і вжила заходів.</p>
+  </div>
+
+  <div class="section" style="animation-delay:2s">
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Яке почуття ти сьогодні прожила, не заборонивши його собі і не виваливши на іншого?</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Насамкінець -->
+  <div class="section" style="animation-delay:2.05s">
+    <h2 class="section-title">Насамкінець</h2>
+    <p>Почуття не обирають і за почуття не відповідають; дії обирають і за них відповідають повністю. Те, як ти поводишся з почуттям усередині себе, — твоя зона відповідальності. Старі хвилі не варто пред'являти сьогоднішнім людям — їх краще виразити, сформулювати, «видихнути» в неадресованому листі. Поганих почуттів не буває, кожне — прилад із власним повідомленням. Мета — простір між імпульсом і реакцією, пауза з чотирма кроками: знайти, назвати, прочитати, вибрати.</p>
+    <p>Ця робота впливає на близькість (вона можлива лише там, де можна бути з почуттям), на повагу (поважають тих, хто відповідає за вчинки, а не тих, кого «довели») і на здоров'я (тіло перестає розплачуватися хворобами за мовчання). Про те, звідки взагалі беруться переконання, що заважають собі дозволити почуття, — сторінка <a href="belief-scenario.html">Одна й та сама п'єса</a>. Про витіснені якості, які теж можна повернути собі, — <a href="shadow-resource.html">Тінь як ресурс</a>. Про догоджання й страх не сподобатися — <a href="stop-pleasing.html">«Ні» іншому — «так» собі</a>.</p>
+
+    <div class="final-quote">
+      <div class="final-text">Свобода людини живе саме в зазорі між почуттям і дією — іншої адреси в неї немає. Цей зазор — <strong>твоє власне володіння</strong>.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>

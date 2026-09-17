@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Достатньо хороша</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Достатньо<br>хороша</h1>
+  <p class="page-subtitle">Комплекс неповноцінності — звідки береться і як його подолати</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Впевненість — це не те, що передує дії, а те, що ти починаєш відчувати, здійснивши дію. Чекати впевненості перед дією означає нічого не робити</div>
+      <div class="hero-author">Альберт Сафін</div>
+    </div>
+    <p>Комплекс неповноцінності — це глибоко вкорінене, часто неусвідомлюване переконання у власній недосконалості й перевазі інших, а також у нездатності досягати значущих цілей і заслужити визнання. На відміну від звичайної невпевненості, яка буває ситуативною (хвилювання перед іспитом чи виступом — абсолютно нормально) і минає після позитивного досвіду, комплекс неповноцінності має тотальний, всепоглинаючий характер: він забарвлює сприйняття себе, світу, інших людей, стосунків і майбутнього в негативні тони і формує стійкий сценарій «я недостатньо хороша».</p>
+    <p>Ти можеш компенсувати відчуття неповноцінності через надмірне прагнення до успіху — гіперкомпенсацію, доводити всім, яка я класна, щоб ніхто не запідозрив моєї дефектності, — або, навпаки, уникати будь-яких ситуацій, де твоя недосконалість може бути помічена.</p>
+
+    <div class="highlight">
+      <p>Комплекс неповноцінності — це наче постійно носити спотворювальні окуляри, які змушують бачити себе маленькою, незначною й нікчемною, а інших — великими, всемогутніми, незалежно від реального стану справ.</p>
+    </div>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: спостереження</div>
+      <p>Почни відстежувати ситуації, в яких починаєш почуватися гірше за інших. Записуй думки, що приходять у ці моменти. Пригадай конкретні ситуації у своєму житті, коли почувалася значно гіршою або менш здібною, ніж оточуючі (навіть якщо об'єктивних причин для цього не було), сформулюй думки, які виникають у ці моменти, і «витягни їх зсередини назовні» — запиши. Простеж, як саме ці думки впливають на твої емоції, рішення, поведінку та події твого життя.</p>
+    </div>
+
+    <p>Ти живеш не в реальному світі, а у світі своїх уявлень про нього, і найчастіше взаємодієш не із самими подіями, а з тим, як ти їх інтерпретуєш. Щоб працювати з чимось, корисно вміти назвати це словом — перевести розмите, невизначене відчуття у формат об'єкта, з яким можна щось робити.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 1 -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Звідки береться комплекс</h2>
+    <p>Фундамент часто закладається в дитинстві.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🏠</span>
+        <div class="card-title">Стиль виховання</div>
+        <div class="card-text">Надмірна критика, постійне порівняння з іншими дітьми, завищені очікування батьків, послання «ти завжди недостатньо хороша».</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧊</span>
+        <div class="card-title">Умовне прийняття</div>
+        <div class="card-text">Нестача безумовної любові («п'ятірка — молодець, четвірка — геть звідси»), емоційний холод і відторгнення.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💥</span>
+        <div class="card-title">Негативний досвід</div>
+        <div class="card-text">Цькування в школі, пережите насильство, значущі невдачі, не переосмислені за підтримки дорослих чи фахівця.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🪞</span>
+        <div class="card-title">Зовнішність і статус</div>
+        <div class="card-text">Гостре переживання фізичних вад, хронічних захворювань — особливо якщо ставало об'єктом насмішок; відчуття, що твоя сім'я гірша за інших за достатком.</div>
+      </div>
+    </div>
+
+    <p>У дорослому віці комплекс може посилюватися чи формуватися під впливом професійних невдач (серйозні провали в кар'єрі, втрата роботи — особливо якщо самооцінка сильно прив'язана до успіху), невдалих стосунків (розрив, зрада, досвід знецінювального ставлення партнера) і соціального тиску та порівняння — культури «успішного успіху», яка транслюється через соцмережі.</p>
+    <p>Важливий не сам факт негативного досвіду, а його інтерпретація, внутрішнє опрацювання та відсутність компенсаційних позитивних факторів — не самі події дитинства впливають на життя зараз, а те, як ти їх інтерпретуєш.</p>
+    <p>Ваня виріс у родині, де батьки постійно критикували його за будь-яку помилку й порівнювали зі старшим, «успішнішим» братом. Попри те, що Ваня став шанованим архітектором, він досі постійно відчуває, що «не дотягує», і боїться братися за складні випадки, побоюючись провалу й осуду.</p>
+
+    <div class="highlight">
+      <p>Для несвідомого часу немає — ти перебуваєш тут і зараз, але водночас ти в там і тоді. Якщо в дитинстві зустріч Нового року супроводжувалася криками й з'ясуванням стосунків батьків, то навіть коли батьків давно немає поруч, тривожність перед Новим роком все одно дає про себе знати: свідомо ти вже в теперішньому році, але несвідомо — усе ще десь там.</p>
+    </div>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: лист внутрішній дитині</div>
+      <p>Якщо впізнала себе в цьому описі дитинства — напиши лист самій собі, своїй внутрішній дитині, і вислови їй те прийняття й підтримку, яких їй бракувало. У вільній формі дослідь свою сімейну історію, дитячі переживання й послання, засвоєні з дитинства. Що б тобі не говорили інші — це не про тебе, а про фільтри сприйняття того, хто говорить; дитина не має критичного сприйняття і «сухою губкою» вбирає послання ззовні. Які послання про себе ти часто чула в дитинстві від батьків чи інших значущих дорослих? Чи були періоди, коли ти особливо гостро відчувала свою відмінність чи недостатність порівняно з іншими? Як ти можеш себе підтримати і що означає для тебе безумовно прийняти себе, навіть якщо щось не виходить?</p>
+    </div>
+
+    <p>Ідеться не про позитивне мислення на кшталт «усе було чудово», а про визнання: так, було боляче, було важко, порівнювали, — і водночас це не означає, що соромитися цього потрібно й надалі.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 2 -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Явні й приховані ознаки</h2>
+
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">👁️ Явні</div>
+        <div class="col-text">Самокритика й самоприниження; уникання викликів і нових завдань; постійна потреба у схваленні; порівняння себе з іншими не на свою користь; негативна фільтрація (підкреслювати свої недоліки, ігнорувати хороше); перфекціонізм як компенсація.</div>
+      </div>
+      <div class="col bad">
+        <div class="col-label">🎭 Приховані</div>
+        <div class="col-text">Зверхність і хвастощі; агресивність і критиканство; трудоголізм; заздрість і ревнощі; позиція жертви (звинувачувати обставини); надмірна поступливість, невміння говорити «ні».</div>
+      </div>
+    </div>
+
+    <p>Керівник, який постійно критикує підлеглих за найменші недоліки, вимагає ідеального виконання і часто розповідає про свої минулі грандіозні успіхи, водночас ніколи не береться за справжні виклики й болісно реагує на будь-яку критику на свою адресу, — за таким фасадом може ховатися глибокий комплекс неповноцінності.</p>
+
+    <div class="highlight">
+      <p>Комплекс неповноцінності — це як акторка, яка настільки боїться, що глядачі побачать її справжній страх перед сценою, що або переграє, стаючи карикатурно самовпевненою, або взагалі відмовляється виходити з гримерки.</p>
+    </div>
+
+    <p>Звертай увагу на те, що людина говорить про себе (і що ти сама говориш про себе), а також на її поведінку в різних ситуаціях, реакцію на критику й на успіхи інших. Які з перелічених ознак — явних і прихованих — ти впізнала в собі? Як ці прояви впливають на твої стосунки з оточенням і на досягнення значущих для тебе цілей?</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 3 -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Вплив на стосунки</h2>
+    <p>Переконана у власній недостатності, ти можеш уникати близькості через страх бути відкинутою (якщо партнер дізнається правду про мої недоліки — це призведе до емоційної дистанції). Можеш несвідомо обирати непідходящих партнерів — тих, хто підтверджуватиме твою низьку самооцінку, а також партнерів, на тлі яких можна почуватися рятівницею («я їм допомагаю, отже я не...»), гіперопіку, надмірну ревність і підозрілість через страх, що партнер знайде когось кращого.</p>
+    <p>Далі — надмірна поступливість і жертвування власними інтересами заради того, щоб заслужити любов, уникання конфліктів і відстоювання власних меж; ідеалізація партнера з подальшим знеціненням (спершу він бачиться як порятунок, але коли не виправдовує нереалістичних очікувань, настає розчарування); провокування конфліктів або розриву як несвідоме прагнення підтвердити свій сценарій «я не гідна любові».</p>
+    <p>У дружбі це виявляється в нездатності радіти успіхам друзів, у заздрості, у постійному пошуку підтвердження власної потрібності або, навпаки, в уникненні спілкування через страх бути нецікавою. У ролі матері чи батька — у проєктуванні своїх амбіцій на дітей або надмірній критичності, що повторює патерни власних батьків.</p>
+    <p>Жінка постійно обирає чоловіків, що її не цінують і ставляться до неї зневажливо, — і після кожного розриву переконується: «я так і знала, я нікому не потрібна»; подруги, до яких вона звертається, дають поради, самі того не усвідомлюючи, «ампутуючи» в неї здатність справлятися самостійно.</p>
+
+    <div class="quote-block">
+      <div class="qa">Питання собі</div>
+      <p>Що означає для тебе зміцнювати власну цінність незалежно від наявності чи відсутності стосунків і досягнень — визнати, що ти людина не ідеальна, але сукупність плюсів і мінусів, і що ти цінна сама по собі? Що означає навчитися вибудовувати здорові межі, відкрито говорити про свої потреби й почуття? Як ти обираєш партнерів; які сценарії повторюються у твоїх стосунках; як ти поводишся, коли відчуваєш, що тебе можуть не прийняти або відкинути? Що означає для тебе нарешті повірити й прийняти, що ти безумовно гідна любові, незалежно від того, що з цього приводу думаєш ти сама й що думають інші?</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 4 -->
+  <div class="section" style="animation-delay:1.15s">
+    <h2 class="section-title">Вплив на кар'єру</h2>
+    <p>Комплекс неповноцінності — серйозна перешкода на шляху до професійного успіху: заниження власних здібностей (заважає адекватно претендувати на вищі посади чи зарплату); страх проявляти ініціативу, братися за складні проєкти через страх невдачі та критики; труднощі самопрезентації на співбесідах чи під час обговорення підвищення; прокрастинація через страх не впоратися ідеально; синдром самозванця (навіть досягнувши успіху, ти відчуваєш, що не заслуговуєш на нього, і постійно боїшся викриття); уникнення публічних виступів і лідерських ролей; складнощі у відстоюванні власних ідей, пасивність у дискусіях, згода з думкою більшості навіть тоді, коли вона здається невірною; схильність обирати роботу нижче свого потенціалу.</p>
+    <p>Іноді комплекс, навпаки, штовхає до трудоголізму й відчайдушної гонитви за досягненнями — гіперкомпенсації: постійно демонструвати, як я вмію, щоб ніхто не запідозрив моєї «недостатності». Але це рідко приносить справжнє задоволення, оскільки внутрішнє відчуття недостатності залишається.</p>
+
+    <div class="highlight">
+      <p>Комплекс неповноцінності в кар'єрі — це як невидима стеля, яку ти сама собі встановлюєш, розпоряджаючись власною свободою і відповідальністю; ти бачиш можливості вище, але внутрішній голос регулярно шепоче або кричить: «ти не дотягнеш, навіть не намагайся».</p>
+    </div>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: щоденник досягнень</div>
+      <p>Веди щоденник досягнень, записуючи навіть невеликі професійні успіхи; став собі досяжні цілі, щоб поступово нарощувати впевненість. Які можливості в кар'єрі ти на цей момент упустила через сумніви у власних силах — не для самозвинувачення, а щоб поміркувати про це? Які думки заважають тобі заявляти про свої професійні бажання й інтереси? Що б ти зробила у своїй професійній діяльності, якби була абсолютно впевнена в успіху?</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 5 -->
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Замкнене коло: комплекс, перфекціонізм, прокрастинація</h2>
+    <p>В основі лежить комплекс неповноцінності — глибинне «я недостатньо хороша», певний сором (на відміну від провини — «я хороша, але вчинила погано» — сором звучить як «неважливо, як я вчиняю, я в будь-якому разі погана»). Перфекціонізм — спроба компенсувати цей комплекс: щоб довести свою цінність собі й іншим, ти ставиш нереалістично високі стандарти — якщо я зроблю все ідеально, мене приймуть, мене полюблять, мене не розкритикують. Помилка тоді прирівнюється до повного провалу й підтвердження власної неповноцінності.</p>
+    <p>Прокрастинація постає як наслідок перфекціонізму та страху: страх не відповідати ідеалу (завдання здається настільки складним, що почати його стає страшно) і страх критики (краще відкласти або не робити взагалі, ніж зробити недостатньо ідеально). Перфекціоністка може нескінченно планувати й покращувати деталі, так і не приступивши до основної роботи, бо все ще «недостатньо ідеально продумано».</p>
+
+    <div class="highlight">
+      <p>Комплекс неповноцінності породжує перфекціонізм, завищені вимоги перфекціонізму призводять до страху й прокрастинації, відкладання справ підсилює почуття провини й неадекватності, підживлюючи вихідний комплекс — «змія, що кусає власний хвіст» і рухається по колу, виснажуючи емоційно та заважаючи досягати реальних результатів.</p>
+    </div>
+
+    <p>Корисно внести в своє життя концепт «достатньо хорошого виконання». Знайомство з людиною, яка відповіла відмовою, чи публічний виступ — не мають бути ідеальними, аби вважатися прийнятним досвідом; інша людина має право сказати і «так», і «ні». Комплекс неповноцінності мислить у логіці «або ідеально, або все жахливо», тоді як здоровіше ставлення — привнести «достатньо добре»: є куди зростати, але могло бути й гірше.</p>
+    <p>Дозволь собі помилятися й сприймати помилки як частину процесу навчання (там, де ставки не надто високі), розбивай великі завдання на маленькі виконувані кроки й хвали себе за виконання кожного кроку, а не лише за кінцевий результат.</p>
+
+    <div class="quote-block">
+      <div class="qa">Поведінковий експеримент</div>
+      <p>У яких сферах ти вимагаєш від себе прагнення до ідеалу, і які почуття виникають, коли досягти його не вдається? Які завдання ти найчастіше відкладаєш і які думки цьому передують? Навмисно зроби щось не ідеально або навіть свідомо «погано» — і подивись, що станеться насправді.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 6 -->
+  <div class="section" style="animation-delay:1.25s">
+    <h2 class="section-title">Усвідомлення і практичні кроки</h2>
+    <p>Перший крок — усвідомлення: ти здатна працювати лише з тим, що усвідомлюєш, а неусвідомлюване часто проявляється ззовні, наче доля. Далі важливо визнати й прийняти проблему: так, у мене є ці думки, у мене є ці почуття, і це впливає на моє життя — бодай наодинці із собою.</p>
+
+    <div class="highlight">
+      <p>Якщо велосипедист, що порушив правила, зачепив твоє дзеркало заднього виду, це не твоя провина, але це твоя відповідальність — з цим розібратися. Так само важливо не звинувачувати себе за наявність комплексу, а поставитися до себе зі співчуттям.</p>
+    </div>
+
+    <div class="quote-block">
+      <div class="qa">Формула прийняття</div>
+      <p>«Так, у мене є ці думки, є ці почуття, і це впливає на моє життя; це не моя провина, але це моя відповідальність із цим працювати».</p>
+    </div>
+
+    <p>Далі — спостереження й самоаналіз: відстежувати, в яких ситуаціях активізується відчуття неповноцінності, які думки, емоції, тілесні реакції його супроводжують. Коли з'являється думка на кшталт «я невдаха, у мене нічого не вийде», постав собі запитання: як я взагалі можу бути невдахою? Уже те, що вдалося налити каву й випити її, не проливши, чи відкрутити кришку з пляшки, — доказ того, що ти цілком здатна досягати результату. Що б я сказала другові в аналогічній ситуації? Яким може бути реалістичніший погляд на цю ситуацію?</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">✍️</span>
+        <div class="card-title">Список сильних сторін</div>
+        <div class="card-text">Склади список своїх якостей, навичок, талантів, минулих успіхів, навіть маленьких — масштаб вторинний, звичка первинна. Регулярно перечитуй і доповнюй.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🪜</span>
+        <div class="card-title">Малі досяжні цілі</div>
+        <div class="card-text">Ставити невеликі завдання замість глобальних і лякальних, хвалити себе за кожен крок: я запланувала, я зробила, ось як вийшло, ось які висновки.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🚫</span>
+        <div class="card-title">Не порівнювати себе</div>
+        <div class="card-text">Порівнювати своє закулісся з чужим парадом (тим, що люди демонструють у соцмережах) — невдала затія. Зосереджуйся на власному шляху й прогресі.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌿</span>
+        <div class="card-title">Фізичні й емоційні потреби</div>
+        <div class="card-text">Сон, харчування, відпочинок, приємні заняття — загальне підвищення життєстійкості.</div>
+      </div>
+    </div>
+
+    <p>Чоловік, усвідомивши свій комплекс, почав щовечора записувати три речі, які вдалися за день — не намагаючись примусово в це повірити, а формуючи нову звичку; через місяць він помітив, що став рідше себе лаяти, а помічати свої перемоги стало звичкою.</p>
+
+    <div class="highlight">
+      <p>Подолання комплексу неповноцінності — як прибирання зарослого саду: визнати, що сад занедбаний (усвідомлення), акуратно виривати негативні думки-бур'яни, які не мають жодного відношення до реальності (на відміну від обґрунтованої тривоги — побачивши несправний світлофор, варто бути уважною), удобрювати ґрунт турботою про себе і садити нові квіти — фокусуватися на сильних сторонах не з позиції «доводжу собі й іншим», а з позиції прийняття свого шляху.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 7 -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Зміна внутрішнього діалогу</h2>
+    <p>Зниження самокритики й зміна внутрішнього діалогу відіграють центральну роль, адже твоє життя значною мірою — наслідок історії, яку ти сама собі розповідаєш. У людини з цим комплексом зазвичай є дуже суворий внутрішній критикуючий «батько»; завдання — не намагатися силою «витягнути» цей голос, а поступово вирощувати в собі підтримувального внутрішнього батька.</p>
+    <p>Завдання не в тому, щоб замінити негативний внутрішній діалог на протилежний («я молодець, усі молодці, світ прекрасний»), а в тому, щоб побачити неспроможність самого уявлення про якусь одновимірну шкалу, за якою всіх можна судити як «кращих» чи «гірших».</p>
+    <p>Робота з внутрішнім діалогом: усвідомлення автоматичних негативних думок і вміння ловити їх у момент появи; оцінка реалістичності (чи ця думка правдива на 100%? чи є інші пояснення?); формулювання альтернативних, збалансованіших думок — замість «я повна невдаха, бо провалила цей виступ» сказати: «виступ пройшов не так, як я хотіла, я засмучена, але це не означає, що я в цілому...» — і подумати, які висновки з цього можна витягнути.</p>
+    <p>Розвиток внутрішнього співчутливого спостерігача: уяви мудру подругу чи наставницю і подумай, що б вона сказала в цій ситуації; говори з собою так, як говорила б із близькою людиною, що потрапила в біду. Так, проблема є, але це не робить мене поганою; так, проблема є, але це не означає, що я не можу з нею впоратися.</p>
+    <p>Жінка при кожній помилці на роботі подумки називала себе «тупицею» і «нікчемною»; почавши працювати з внутрішнім діалогом, вона стала зупиняти цей потік самокатування й запитувати себе: чи справді ця помилка робить мене тупою? Це не так, помилки трапляються, і це не робить мене жахливою людиною; які висновки я можу з цього витягнути? У результаті загальна тривожність на роботі знизилася.</p>
+
+    <div class="highlight">
+      <p>Внутрішній діалог — наче радіо, яке постійно грає в голові; якщо воно цілодобово транслює критику й знецінення, то й настрій, і самооцінка будуть відповідними. Завдання — стати «головною редакторкою своєї радіостанції» і змінити платівку не на «позитивчик», а на конструктив і реалістичну картину.</p>
+    </div>
+
+    <div class="quote-block">
+      <div class="qa">Формула</div>
+      <p>Дослідь типові фрази-«обзивання», які використовуєш щодо себе, коли незадоволена собою або припускаєшся помилки, і зупини цю звичку. «Помилка не робить мене нікчемою; які висновки я можу з цього витягнути; життя продовжується».</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 8 -->
+  <div class="section" style="animation-delay:1.35s">
+    <h2 class="section-title">Концепція «достатньо хороша»</h2>
+    <p>Для благополуччя, здоров'я, спокою й радості не потрібно бути ідеальною. Уявлення про «справжню ідеальну» любов чи ідеальність — міфи, вигадані для експлуатації довірливих людей. Достатньо бути «достатньо хорошою».</p>
+    <p>Достатньо хороша мати чи батько — не той, хто ніколи не помиляється, завжди спокійний і знає відповіді на всі запитання, а той, хто забезпечує дитині базові потреби в безпеці, любові й прийнятті, здатний визнавати свої помилки, вибачатися й бути живою людиною зі своїми емоціями — не ідеальний, але стабільно присутній, чуйний, прагне забезпечити дитині умови для розвитку. Достатньо хороша фахівчиня — та, хто компетентно й відповідально виконує обов'язки, прагне розвитку, але приймає, що помилки й недоліки можливі та є частиною процесу.</p>
+    <p>Прийняття концепції «достатньо хороша» дозволяє знизити тривогу й стрес, відмовившись від недосяжних стандартів; підвищити продуктивність, витрачаючи менше часу на надмірний перфекціонізм і прокрастинацію; поліпшити стосунки, ставши терпимішою до себе, інших і світу загалом; звільнити ресурси, час, сили й бажання для творчості й розвитку. Це не заклик до недбалості, а заклик до реалістичного й співчутливого ставлення до себе — визнання того, що людська природа недосконала, світ недосконалий, люди недосконалі, іноді помиляються, — але це не означає, що з ними не варто співпрацювати чи що варто «ставити на собі хрест».</p>
+
+    <div class="highlight">
+      <p>Докладати зусиль варто не з позиції «змушена, тому що я недостатня», а з позиції «обираю, тому що я достатньо хороша — тож що ще хорошого я можу зробити?»</p>
+    </div>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: що для мене «достатньо добре»</div>
+      <p>Визнач, що означає для тебе «достатньо добре» в конкретній сфері життя — робота, стосунки, хобі. Який мінімально прийнятний результат тебе влаштує? Що для тебе справді важливо, а що другорядне? Коли достатньо хороший результат досягнуто — зупинись і не біжи далі за ідеальним; є інші достатньо хороші результати, якими можна зайнятися.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 9 -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Самоспівчуття замість самокритики</h2>
+    <p>Комплекс неповноцінності й самоспівчуття взаємовиключають одне одного: перше — самопокарання на рівному місці, друге — інструмент роботи з комплексом. Самоспівчуття — не жалість до себе, а ставлення до себе з такою добротою, розумінням і підтримкою, які ти виявила б до хорошої подруги, що зіткнулася з труднощами.</p>
+    <p>Складові: доброта до себе замість самокритики (визнаючи, що недосконалість і страждання — частина людського досвіду); загальна людяність замість ізоляції (усвідомлення, що всі люди стикаються з труднощами й помиляються — це знижує сором та ізоляцію); усвідомленість — здатність відстежувати, що ти думаєш і відчуваєш, без навішування ярликів, спостерігаючи за болісними думками з відкритістю, не пригнічуючи їх, але й не дозволяючи їм повністю себе захопити.</p>
+
+    <div class="highlight">
+      <p>Уяви, що ти впала й забилася. Самокритика — це додатково штовхати себе ногою: тобі й так боляче, а ти ще й себе б'єш. Самоспівчуття — дбайливо обробити рану, втішити себе, допомогти собі підвестися й визнати, що падіння трапляються з усіма.</p>
+    </div>
+
+    <p>Чи може комплекс неповноцінності повністю зникнути? Завдання не в тому, щоб повністю стерти комплекс, наче його ніколи не було, а в тому, щоб знизити ступінь його впливу, навчитися ним керувати й трансформувати в стабільнішу самооцінку: послабити віру в негативні переконання, зменшити інтенсивність і частоту негативних емоцій, діяти впевненіше, рідше уникати викликів, розвивати внутрішнього спостерігача й самопідтримку.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 10 -->
+  <div class="section" style="animation-delay:1.45s">
+    <h2 class="section-title">Здоровий розвиток проти невротичної компенсації</h2>
+    <p>Зовні вони можуть виглядати схоже (багато вчишся, працюєш, досягаєш цілей), але внутрішня мотивація й емоційне підґрунтя кардинально різні.</p>
+
+    <div class="compare">
+      <div class="col good">
+        <div class="col-label">🌱 Здоровий розвиток</div>
+        <div class="col-text">В основі — інтерес, допитливість, бажання реалізувати потенціал. Помилки — природна частина навчання. Емоційний фон переважно позитивний: ентузіазм, спокійна впевненість. Самооцінка стабільна. Цілі реалістичні й гнучкі. Здатність радіти успіхам інших.</div>
+      </div>
+      <div class="col bad">
+        <div class="col-label">⚠️ Невротична компенсація</div>
+        <div class="col-text">В основі — страх бути відкинутою, бажання довести свою цінність, щоб заглушити внутрішнє почуття неповноцінності. Помилки — катастрофа. Тривога, напруження, незадоволеність навіть при високих результатах. Цілі завищені, перфекціоністські. Порівняння, заздрість, конкурентність.</div>
+      </div>
+    </div>
+
+    <p>Здоровий розвиток іде з позиції «я в порядку, я хочу зростати», тоді як невротична компенсація — з позиції «я не в порядку, я маю це виправити, приховати через досягнення».</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 11 -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Цінності й сенс як внутрішня опора</h2>
+    <p>Якщо самооцінка надмірно залежить від зовнішніх факторів — схвалення, статусу, — вона крихка; комплекс неповноцінності якраз і виростає з відчуття своєї недостатності за зовнішніми мірками. Тому важливо визначити особисті цінності — що для тебе по-справжньому важливо у житті незалежно від думки оточення (чесність, розвиток, турбота про близьких, творчість, пізнання). Коли живеш відповідно до своїх глибинних цінностей, самовідчуття стає менш залежним від зовнішніх оцінок, а дії, засновані на цінностях, приносять внутрішнє задоволення й відчуття осмисленості.</p>
+    <p>Сенс — це те, що надає життю напрямок і мету, яка виходить за межі суто егоїстичних інтересів: у роботі, у стосунках, у допомозі іншим, у подоланні труднощів, у творчості. Комплекс неповноцінності зациклений на питанні «чи достатньо я хороша», тоді як звільнення від нього — питання: який внесок я можу зробити в цей світ, як реалізувати те, що для мене по-справжньому важливе — не з позиції «змушена», а з позиції «обираю, і це честь для мене».</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: особисті цінності</div>
+      <p>Визнач свої особисті цінності — що для тебе по-справжньому важливо у житті, незалежно від думки оточення. Подумай, який внесок ти хочеш зробити у світ, що для тебе означає справжність і внутрішня свобода, і чому ти обираєш служити цінностям замість того, щоб і надалі служити комплексу неповноцінності.</p>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:1.55s">
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Вивчивши цей матеріал, що саме ти обираєш поступово перестати робити, а що — почати?</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Насамкінець -->
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">Насамкінець</h2>
+    <p>Другорядно, що саме тут сказано, — ключове значення має те, до яких висновків прийшла ти сама, просуваючись цим матеріалом. Про той самий внутрішній критикуючий голос докладніше — сторінка <a href="grandiose-self.html">Блискуча тюрма</a>. Про самоспівчуття й провину — <a href="self-forgiveness.html">Камінь із душі</a>. Про право не бути ідеальною для всіх — <a href="stop-pleasing.html">«Ні» іншому — «так» собі</a>.</p>
+
+    <div class="final-quote">
+      <div class="final-text">Не ідеальна. <strong>Достатньо хороша</strong> — і цього справді достатньо.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>

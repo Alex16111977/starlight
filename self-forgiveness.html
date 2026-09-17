@@ -1,0 +1,646 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Камінь із душі</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.dialog{margin:26px 0 8px;padding:4px 0 4px 24px;border-left:2px solid rgba(148,103,23,.35)}
+.dialog-q{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:18.5px;line-height:1.5;color:#6b4708;margin:20px 0 8px}
+.dialog-q:first-child{margin-top:0}
+.dialog-a{font-size:15px;font-weight:300;line-height:1.85;color:#2b3050;margin:0}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Камінь<br>із душі</h1>
+  <p class="page-subtitle">Провина, сором і вправи, щоб перестати себе карати</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Звичний дискомфорт солодший навіть за незвичний комфорт — тому провину так важко відпустити, навіть коли голова все давно зрозуміла</div>
+      <div class="hero-author">Альберт Сафін</div>
+    </div>
+    <p>Перевір, наскільки ця тема зараз про тебе. Оціни кожне твердження за шкалою від 1 (зовсім не про мене) до 10 (це повністю про мене) і порахуй суму. Чим ближче до 100 — тим актуальніша й корисніша буде ця сторінка. Можна повертатися до тесту раз на тиждень і бачити динаміку.</p>
+
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text">Я часто прокручую в голові події минулого, намагаюся переграти діалоги чи вчинки, хоча розумію, що змінити вже нічого не можна.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text">Мій внутрішній голос звучить жорстоко й звинувачувально — я говорю із собою грубіше, ніж дозволила б собі говорити навіть із найлютішим ворогом.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text">Я відчуваю, що не просто зробила помилку, а що я сама собою — погана, дефектна або взагалі неправильна людина.</div></div>
+      <div class="num-row"><div class="num-badge">4</div><div class="num-text">Я забороняю собі радіти життю, успіху чи відпочинку — ніби не заслуговую на це через своє минуле.</div></div>
+      <div class="num-row"><div class="num-badge">5</div><div class="num-text">Я порівнюю себе з ідеальним образом себе, який ніколи не помиляється, — і завжди програю в цьому порівнянні.</div></div>
+      <div class="num-row"><div class="num-badge">6</div><div class="num-text">Коли трапляється щось хороше, я тривожуся або чекаю розплати, бо вважаю себе винною і не заслуговую на це.</div></div>
+      <div class="num-row"><div class="num-badge">7</div><div class="num-text">Навіть якщо мене давно простили або ситуація забута, я продовжую нести цей тягар і карати себе зсередини.</div></div>
+      <div class="num-row"><div class="num-badge">8</div><div class="num-text">Я впевнена: якщо перестану себе звинувачувати, стану безвідповідальною егоїсткою і накою ще більше бід.</div></div>
+      <div class="num-row"><div class="num-badge">9</div><div class="num-text">У стосунках я часто почуваюся боржницею або гіршою за партнера, намагаюся загладити неіснуючу провину.</div></div>
+      <div class="num-row"><div class="num-badge">10</div><div class="num-text">Думки про минулі невдачі нападають перед сном або в тиші, викликаючи фізичну напругу чи бажання стати маленькою й зникнути.</div></div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 1. Магічне мислення провини -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Чому голова все розуміє, а легше не стає</h2>
+    <p>Раціональне розуміння й емоційне проживання живуть у різних відсіках психіки. Головою ти можеш знати, що помилятися — нормально, що минуле не повернути, що вже досить настраждалася. Але на емоційному рівні працює старий механізм: «якщо я перестану себе звинувачувати — стану поганою людиною; щоб лишатися хорошою, я повинна продовжувати відчувати провину». Або ще: «мій біль — єдиний доказ того, що мені не байдуже; якщо перестану його відчувати — то я якась бездушна тварюка?»</p>
+    <p>Це спосіб магічного мислення: несвідомо здається, що досить сильне страждання зараз якось виправить минуле або задобрить невидимого суддю, щоб запобігти покаранню в майбутньому. «Страждаю — значить, я права; страждаю — значить, я хороша людина» — навіть коли привід вигаданий. Провина створює ілюзію контролю: поки я мучу себе, я ніби впливаю на перебіг подій. Відпустити провину відчувається як стрибок у невідомість без гарантій — а звичний дискомфорт солодший навіть за незвичний комфорт.</p>
+
+    <div class="highlight">
+      <p><em>Прощення — не акт забуття.</em> Прощення — це відмова від претензій до себе за те, що ти не була ідеальною в минулому, володіючи тими ресурсами й знаннями, які маєш зараз. Заднім розумом усі розумні — але в кожен момент часу ти приймала найкраще рішення, виходячи з того, що тоді знала, вміла і мала на руках.</p>
+    </div>
+
+    <p>Самобичування не робить тебе кращою — хай і хочеться вірити, що воно робить тебе тоншою, зворушливішою натурою. Насправді воно лише забирає енергію, яку можна спрямувати на виправлення наслідків.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: вторинна вигода провини</div>
+      <p>Напиши 10 відповідей на питання: у чому вторинна вигода моєї провини? Що хорошого, безпечного я отримую від того, що продовжую себе звинувачувати? («Завдяки тому, що я себе не прощаю, я почуваюся порядною людиною»; «це захищає мене від нових помилок»; «якщо я сама себе караю, мене не покарають інші».) А тоді — якою ціною дається ця безпека? («Те, що я себе не прощаю, дає одну секунду на день відчуття порядності — а решту часу я страждаю, вивертаючись навиворіт».)</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 2. Провина vs сором vs жаль -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Провина, сором і жаль — це не одне й те саме</h2>
+    <p>Плутанина між цими трьома поняттями — головна пастка самопрощення.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">✅</span>
+        <div class="card-title">Здорова провина</div>
+        <div class="card-text">Конкретна, пов'язана з дією: «я зробила погано». Сигнал совісті про порушення власних цінностей. Має початок і кінець: усвідомила, вибачилась, відшкодувала, зробила висновки, пішла далі.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌑</span>
+        <div class="card-title">Токсичний сором</div>
+        <div class="card-text">Глобальне переживання власної дефектності: не «я зробила помилку», а «я і є помилка». Атакує особистість цілком, паралізує, мотивує не до виправлення, а до ізоляції й самопокарання.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌧️</span>
+        <div class="card-title">Жаль</div>
+        <div class="card-text">Смуток про те, що події склалися певним чином. Визнання втрати чи упущеної можливості без самобичування — чиста емоція печалі, що допомагає прийняти реальність.</div>
+      </div>
+    </div>
+
+    <p>Якщо відчуваєш «я повністю погана» — зупинись і спитай: яка саме конкретна дія була неправильною? Те, що ти зараз так думаєш, не робить тебе повністю поганою — навіть якби захотіла, це неможливо: людина складається з нескінченної кількості критеріїв. Помилки — це те, що ти робиш, а не те, ким ти є. Ти більша за свою поведінку.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: три колонки</div>
+      <p>Колонка 1 — фраза внутрішнього критика («ти жахлива мати, раз накричала на дитину»). Колонка 2 — яка це емоція: сором («я взагалі погана»), провина («я загалом хороша людина, але вчинила погано») чи жаль («шкода, що так вийшло»). Колонка 3 — переформулюй у факти без оцінки особистості: «я зірвалась, підвищила голос, була втомлена, це було помилкою, я шкодую про це». Роби цю вправу письмово раз на день, на одній ситуації.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 3. Парадокс контролю -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Парадокс контролю</h2>
+    <p>Поширений страх: якщо я себе прощу — чи не стану безвідповідальною поганою людиною й не повторю помилку? Здається, що жорстка самокритика — єдиний повідець, який утримує від перетворення на чудовисько чи повного невдаху.</p>
+    <p>Насправді механізм працює навпаки. Провина й сором створюють колосальну внутрішню напругу і стрес. У стресі префронтальна кора — та, що відповідає за волю, планування, контроль, — працює гірше: «пристрасть править розумом». Що більше ти себе гнобиш, то вища ймовірність зриву, нової помилки чи бездіяльності через страх.</p>
+
+    <div class="highlight">
+      <p>Прощення себе — не індульгенція на безлад. Це активний акт, активне прийняття відповідальності. Відповідальна людина каже: «я це зламала, я це визнаю, я це полагоджу». Винувата людина сидить над уламками й плаче про власну незграбність — пожалійте мене, і ви ж мене після цього не покараєте.</p>
+    </div>
+
+    <p>Немає обов'язку скидати цей камінь з душі — двері позитивних змін відчиняються зсередини, силою людину до цього не примусиш. Спробуй замінити страх покарання на прагнення до цінностей: «я не роблю поганих вчинків не тому, що боюся якогось внутрішнього поліцейського, а тому, що це суперечить тому, якою я хочу бути». Прощення звільняє ресурс, що йшов на цю внутрішню боротьбу, — і дозволяє спрямувати його на реальні зміни.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: два продовження</div>
+      <p>П'ять разів продовж речення «Якщо я продовжу себе карати, то через рік я буду...» — з погляду енергії, результатів, стану. Потім п'ять разів продовж «Якщо я прийму свою помилку і прощу себе, то звільнену енергію я зможу спрямувати на...» — конкретні творчі дії.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 4. Кола контролю -->
+  <div class="section" style="animation-delay:1.15s">
+    <h2 class="section-title">Кола контролю</h2>
+    <p>Як зрозуміти, реальна твоя провина чи вигадана, нав'язана? Невротична провина виникає там, де ти береш відповідальність за чужі почуття, реакції чи обставини, які від тебе не залежали, — часто це родом із середовища, де тебе змушували почуватися винною за чужий поганий настрій.</p>
+    <p>Реальна провина виникає лише за трьох умов одночасно: ти дійсно вчинила конкретну дію чи бездіяльність; ця дія завдала об'єктивної шкоди; у тебе була реальна можливість вчинити інакше, і ти усвідомлювала наслідки. Якщо хоч однієї умови немає — провина уявна. «Ти не можеш знати майбутнього, але звинувачуєш себе за те, що не запобігла біді» — або: «ти сказала «ні», захищаючи свої межі, а інша людина образилась — це її реакція, а не твоя провина».</p>
+
+    <div class="highlight">
+      <p><em>Кола контролю.</em> Внутрішнє коло — зона твого контролю: твої слова, рішення, вчинки. Зовнішнє коло навколо — зона поза контролем: чужі реакції, випадковості, прихована інформація, погода, настрій інших людей. Розклади елементи своєї ситуації по цих колах. Візуалізація меж відповідальності знімає тягар всемогутності: «я не читаю думок, я не знаю майбутнього, я не керую чужими емоціями». Левова частка того, за що ти себе звинувачуєш, зазвичай лежить у зовнішньому колі — і визнати своє безсилля тут не слабкість, а полегшення.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 5. Розумова жуйка -->
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Як зупинити розумову жуйку</h2>
+    <p>Якщо минуле не відпускає — процес трауру не завершений, або ти застрягла в циклі незавершеної дії. Тривале самопокарання іноді — спосіб зберегти зв'язок із тим, кого чи що втратила: «поки я страждаю, я пам'ятаю». Провина — активне почуття («я мала вчинити інакше»), що дає ілюзію сили; під нею часто ховаються гнів, безпорадність або печаль — почуття пасивні, що визнають незворотність. Психіці іноді легше роками крутити «я винна», ніж один раз зіткнутися з прірвою «цього більше не повернути, і я безсила це змінити».</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: лист собі в минуле</div>
+      <p>«Я бачу тебе там, у минулому. Я знаю, що ти хотіла, як краще. Може, ти не знала, ти була розгублена… Я прощаю тебе за те, що ти не змогла…» — далі перерахуй усі звинувачення, доки не настане відчуття видиху. Заверши: «Я забираю в тебе цей тягар. Тепер я, сьогоднішня доросла, справлятимусь із цим, а ти там можеш відпочивати».</p>
+    </div>
+
+    <p>Мисленнєва жуйка (румінація) — це спроба мозку логічно розв'язати те, що вже не підлягає рішенню: «а якби я сказала це», «а якби пішла туди» — у надії переписати фінал. Кожен повтор лише зміцнює нейронний зв'язок. Забороняти собі думати марно — це як не думати про синю мавпу, яка моргає правим оком і їсть банан.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">⏰</span>
+        <div class="card-title">Відведений час</div>
+        <div class="card-text">Домовся із собою думати про це не 24/7, а у визначений час — наприклад 15 хвилин увечері, з будильником. Не заборона, а межа в часі.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🖐️</span>
+        <div class="card-title">Перемикання на тіло</div>
+        <div class="card-text">Коли думка приходить не у свій час — помий руки прохолодною водою, присядь п'ять разів, порахуй предмети певного кольору навколо.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📓</span>
+        <div class="card-title">Вивантаження на папір</div>
+        <div class="card-text">Коли «платівку заїло» — відкрий зошит і виписуй усі думки потоком, без розділових знаків і цензури, доки в голові не стане порожньо. Наприкінці великими літерами: «На сьогодні засідання суду закрито, думка зафіксована і не потребує повторного обдумування».</div>
+      </div>
+    </div>
+
+    <p>Мозок ніби боїться забути щось важливе, тому й крутить думку. Записавши її на папір, ти подаєш сигнал: інформацію збережено, можна розслабитися, — і цикл переривається.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 6. Внутрішній критик -->
+  <div class="section" style="animation-delay:1.25s">
+    <h2 class="section-title">Роззброєння внутрішнього критика</h2>
+    <p>Голос, що твердить «ти погана», — не твій власний. Це інтроект: голос критикуючих батьків, учителів чи кривдників з минулого, що оселився в голові, хоча ти звикла вважати його голосом совісті. Насправді це внутрішній агресор, мета якого — не допомогти стати кращою, а принизити й пригнітити. Колись у дитинстві він, можливо, допоміг вижити — караючи себе, ти знижувала ймовірність, що накричать інші. Але зараз, коли поряд навіть немає цих «інших», карати себе на рівному місці сенсу немає.</p>
+    <p>Ти не зобов'язана вірити всьому, що звучить у голові з позиції критикуючого батька. Думка — це просто ментальна подія, хмара на небі, а не саме небо, або спам, що прийшов на пошту, — ти ж не віриш кожному листу про виграний мільйон. Цей голос активується сильніше, коли ти вразлива, втомлена або налякана.</p>
+
+    <div class="highlight">
+      <p>Дай внутрішньому критику ім'я — «критикёнок», «буркотунчик», «радіонегатив» — і коли починається атака, кажи собі: «о, знову увімкнулося радіонегатив». Сперечатися з ним марно, краще трохи знешкодити гумором: «розумію твоє бажання мене вберегти й допомогти, але я зараз вчиню по-іншому».</p>
+    </div>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: таблиця відповідей</div>
+      <p>Зліва — репліка внутрішнього критика («ти знову все зіпсувала, ти тупа, ти в усьому винна»). Справа — відповідь підтримувального батька, друга чи безстороннього адвоката: «я чую твою думку, радіонегатив, але я з нею не згодна. Так, була помилка, з цим не сперечаюся, але це не робить мене безнадійною й поганою загалом. Я вчуся, я стараюся, я на своєму боці». Принцип: помилка А не означає, що я в цілому Б.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 7. Перфекціонізм -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Ліки від перфекціонізму</h2>
+    <p>Перфекціонізм — це не прагнення до кращого, а страх перед недосконалістю. Перфекціоністка живе в чорно-білому світі: або ідеально, або провал, і помилка для неї — крах самооцінки, доказ власної непридатності. Бажання бути «гарненькою й класненькою» часто коріниться в переконанні, що любов і прийняття треба заслужити бездоганною поведінкою.</p>
+    <p>Щоб пробачити собі, потрібно зруйнувати ідеалізований образ себе — дозволити собі бути не ідеальною й не жахливою, а достатньо хорошою, із плюсами й мінусами, живою, різною, іноді помилковою. Визнай своє право на егоїзм, на злість, на «не знаю, що сказати», на лінь, на боягузтво, на незручність і недосконалість — намагатися ампутувати ці частини себе означає жити у вічній напрузі.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: список недосконалостей</div>
+      <p>Перерахуй 10 якостей чи вчинків, які тобі в собі не подобаються, а навпроти кожної напиши: «і це робить мене живою людиною, а не роботом». «Я заздрю, і це робить мене живою людиною, а не роботом». «Я буваю дуже лінивою, і це робить мене живою людиною, а не роботом». «Я помиляюся, і це робить мене живою людиною, а не роботом».</p>
+    </div>
+
+    <p>Перестань боротися з реальністю й витрачати сили на підтримання глянцевого фасаду — парадоксально, але саме визнання своїх слабкостей робить сильнішою й стійкішою до критики.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 8. Несправедливе порівняння -->
+  <div class="section" style="animation-delay:1.35s">
+    <h2 class="section-title">Крах несправедливих порівнянь</h2>
+    <p>Порівняння реального «я» з гіпотетичним «я», яке нібито все зробило правильно, — найжорстокіша гра розуму. Ти порівнюєш своє реальне внутрішнє — із сумнівами, втомою, нестачею інформації на той момент — із вигаданим образом, що володіє «пост-фактум-всезнанням». Того ідеального «я» в минулому просто не існувало: у той момент ти була саме тією, ким була, і діяла на межі всіх тодішніх можливостей.</p>
+    <p>Якби ти могла вчинити краще тоді — ти б так і вчинила: ніхто не прокидається з думкою «дай-но я сьогодні спеціально зіпсую собі життя». Раз ти вчинила саме так, значить, тоді діяли інші фактори, які зараз, можливо, не пригадуються, але тоді переважили: страх, стрес, хибні переконання, незнання, тиск оточення. Історія не знає «якби» — є лише те, що сталося. «Реальне я завжди краще за ідеальну фантазію, тому що реальне я, на відміну від ідеальної фантазії, існує».</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: чому я не могла вчинити інакше тоді</div>
+      <p>Перерахуй фактори, що впливали в момент події: фізичний стан, рівень знань на той момент, тиск оточення, емоційний фон, старі травми, побоювання, надії. Це не збирання виправдань, а збирання контексту — вчинків у вакуумі не буває. Людина, що щосили б'є іншого по обличчю, виглядає жахливо — доки не з'ясовується, що вона в такий спосіб не дала тому подавитися отруйною ягодою й урятувала життя. Контекст повністю змінює оцінку вчинку.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 9. Провина у стосунках -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Провина у стосунках</h2>
+    <p>Помилки у стосунках — зрада, розрив, вибір токсичного партнера — б'ють найболючіше: вони зачіпають інших людей і людську потребу в прив'язаності. У будь-яких стосунках беруть участь двоє — навіть якщо твій вчинок був тригером, динаміку створювали обидва учасники (це не стосується лютого кримінала чи патології — у результат взаємин певною мірою вносить внесок кожна сторона). Часто «поганий» вчинок у стосунках — це невмілий, кривий спосіб задовольнити важливу потребу в любові, свободі, визнанні, яку інакше отримати не вдавалося. Це в жодному разі не виправдовує заподіяний біль — йдеться про пояснення мотиву, не про виправдання.</p>
+    <p>Простити себе тут означає зрозуміти, чого тобі так сильно бракувало, що ти пішла на такий крок, — і навчитися давати собі це екологічним способом надалі. Перестань демонізувати себе: визнай завдану шкоду, але не ототожнюй себе з роллю «зрадниці» чи «руйнівниці стосунків» назавжди. Де доречно — вибачся; де неможливо — зроби висновки про свої межі й цінності. Навіть негативний досвід може стати фундаментом для зріліших і чесніших стосунків у майбутньому.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: що стояло за вчинком</div>
+      <p>Десять разів заверши речення: «Здійснюючи цей вчинок, я насправді намагалася отримати що… відчути що… уникнути чого… привнести у своє життя що…». Потім десять разів: «Тепер я знаю, що можу задовольнити цю потребу інакше, наприклад…». Мета — не стати егоїсткою й не заплющити очі на шкоду, а перестати бачити в собі тотальну лиходійку і побачити людину з незадоволеними потребами. Поховати втрати, зафіксувати збитки, витягнути висновки — самобичування лише збільшує втрати.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 10. Батьківська провина -->
+  <div class="section" style="animation-delay:1.45s">
+    <h2 class="section-title">Батьківська провина</h2>
+    <p>Провина за те, що мало приділяла часу, розлучилась, була занадто суворою, не дала потрібного старту, — одна з найстійкіших форм. Ідеальних батьків не існує, попри бажання вірити в цей міф; натомість є поняття «достатньо хороша мати», «достатньо хороший батько». Дитині не потрібен ідеальний батько — їй потрібен живий і реальний. Діти напрочуд адаптивні, і саме подолання труднощів, зокрема через батьківські помилки, формує їхній характер. Провина часто робить батьків слабкими й запобігливими перед дитиною в моменті — а це шкодить стосункам більше, ніж самі минулі помилки. Дітям потрібні не вибачення, а стійкий, дорослий, стабільний, передбачуваний родич поруч.</p>
+    <p>Якщо діти вже дорослі — поговори з ними чесно: «я знаю, що тоді помилилась, мені шкода, я любила вас так, як уміла», не чекаючи миттєвого прощення і давши їм право на власні почуття. Якщо діти ще маленькі — почни змінювати поведінку зараз: любов і прийняття сьогодні зцілюють минулі рани. Найкраще, що можна зробити для дітей, — стати достатньо щасливою і пробачити собі, показуючи їм приклад здорового ставлення до помилок.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: що я дала своїй дитині хорошого</div>
+      <p>Мінімум 20 пунктів — від дрібниць (годувала, гуляла) до глобального (підтримка у важку хвилину). Наприкінці: «я зробила все, що могла на той момент часу, і мій внесок цінний». Провина викликає тунельний зір, де видно лише провали, — ця вправа розширює фокус і повертає відчуття власної цінності.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 11. Втрачений час -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Алхімія втраченого часу</h2>
+    <p>«Навіщо я витратила 10 років на цю роботу, на цю людину, якби почала раніше» — це горе за непрожитим життям. Але бездарно витраченого часу не існує: увесь цей досвід був потрібен, щоб ти стала тією, ким є зараз, — тією, хто відчуває й розуміє цінність часу. Ти не могла прокинутися раніше, ніж прокинулась — плід не дозріває швидше покладеного, дев'ять жінок за місяць дитину не народять. Роки, які здаються застоєм, могли бути періодом накопичення ресурсу, внутрішнього переопрацювання травм — регенерацією, а не застоєм.</p>
+    <p>Жаліти про минуле — означає знецінювати шлях, що привів до сьогоднішньої мудрості. Переназви ярлик «втрачені роки» на «роки навчання» чи «роки підготовки», подякуй собі за те, що вижила й дійшла до цієї точки усвідомлення. «Найкращий час, щоб посадити дерево, був 20 років тому. Другий найкращий час — зараз».</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: лінія часу</div>
+      <p>Намалюй лінію часу свого життя, познач на ній нібито втрачений період і напиши мінімум три-п'ять навичок, якостей чи усвідомлень, винесених із нього, навіть якщо через біль («завдяки цьому періоду я точно зрозуміла, чого я не хочу»). Нижче: «цей досвід оплачений моїм часом. Я забираю цей досвід і йду далі, щоб не платити двічі».</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 12. Провина вцілілого -->
+  <div class="section" style="animation-delay:1.55s">
+    <h2 class="section-title">Провина того, хто вижив</h2>
+    <p>Провина за те, що живеш краще за інших, — ірраціональне, але потужне почуття: побачивши чуже страждання, здається несправедливим, що в тебе самої все добре. Несвідомо хочеться «зрівняти рахунок», заборонивши собі радіти, бути успішною, щасливою — «як я можу пити каву й сміятися, коли десь щось відбувається».</p>
+    <p>Це хибна солідарність: твоє страждання не зменшує страждань інших. Якщо погасиш своє світло — у світі стане лише темніше. Здатність жити, радіти, творити — це ресурс, яким можна ділитися: зламані не можуть допомагати живим, турбота про себе є передумовою турботи про інших. Заміни «мені соромно, що в мене це є» на «я вдячна, що в мене це є, і я використовую це на благо».</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: право на радість</div>
+      <p>Напиши фразу «я маю право жити і бути щасливою, навіть якщо іншим погано» непровідною рукою (лівою, якщо ти правша) 10 разів повільно — зміна руки додатково знімає опір. Тоді напиши одну конкретну дію допомоги чи творення, яку зробиш сьогодні саме завдяки тому, що маєш на це ресурс.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 13. Лист без адреси -->
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">Коли адресат недоступний</h2>
+    <p>Коли людина, перед якою є провина, вже пішла з життя або контакт неможливий, — такі незавершені процеси мучать найбільше: здається, що прощення отримати нема від кого. Але прощення — процес внутрішній, і фізична присутність людини не потрібна, щоб розв'язати конфлікт усередині власної психіки: стосунки продовжуються всередині нас, доки ми про них думаємо. Часто провину перед тими, хто пішов, тримають як єдиний спосіб зберегти зв'язок — здається, ніби відпустити її означає зрадити пам'ять. Це не так: світла пам'ять, любов і вдячність — набагато міцніший зв'язок, ніж провина й біль.</p>
+    <p>Можна використати символічні ритуали завершення: зробити щось хороше в пам'ять про людину, допомогти комусь у схожій ситуації, реалізувати те, про що вона мріяла, присвятити їй свій успіх — коли сама для цього дозрієш.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: лист без адреси</div>
+      <p>Вилий на папір усе невисловлене — прохання про прощення, виправдання, зізнання в любові, образи, вдячність, — пиши до повного спустошення. Заверши словами прощання: «Я буду пам'ятати тебе з теплом, але я відпускаю свою провину. Мир твоєму праху, мир моїй душі». Зроби глибокий вдих і видих, а лист спали або порви — символ завершеної трансформації.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 14. Формула 4П -->
+  <div class="section" style="animation-delay:1.65s">
+    <h2 class="section-title">Формула «4П» — як просити пробачення</h2>
+    <p>Спроба вибачитися часом перетворюється на нову вимогу: «я вибачилась, тепер ти зобов'язаний мене пробачити, щоб мені стало легше» — таке вибачення не приносить полегшення, бо інша людина відчуває тиск і може відхилити його, що лише посилить провину.</p>
+
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text">Визнання фактів — що саме сталося, конкретно.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text">Усвідомлення почуттів іншого — «розумію, що тобі було боляче, прикро, неприємно».</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text">Пропозиція компенсації або зміни поведінки — «у майбутньому я буду… або як я можу виправити ситуацію зараз?»</div></div>
+      <div class="num-row"><div class="num-badge">4</div><div class="num-text">Готовність прийняти будь-яку реакцію, навіть відмову у прощенні, — бо це робиться, щоб очистити власну совість, а не щоб керувати іншою людиною.</div></div>
+    </div>
+
+    <p>Прочитай написане вголос і перевір, чи звучить воно щиро, без прихованого «але ти сам винен». Зніми фокус із результату («мене повинні пробачити») і перенеси на процес — «я зробила все достатньо добре зі свого боку». Якщо ти щиро розкаялась і зробила все можливе для відшкодування шкоди, ти можеш пробачити собі, навіть якщо інша людина не пробачила, — прощати чи ні є її правом.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 15. Жертва vs Автор -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Позиція Жертви й позиція Автора</h2>
+    <p>Межа між прийняттям відповідальності й самобичуванням проходить через напрям уваги. Відповідальність спрямована на майбутнє: що я можу зробити зараз, як виправити, чого навчитися. Вона діяльна, спокійна, дає сили; її позиція — «я авторка своїх вчинків, і я впораюся з наслідками». Самобичування спрямоване в минуле: «навіщо я так зробила, яка ж я ідіотка» — пасивне, емоційне, забирає сили; його позиція — «я жертва власної дурості, я заслуговую на страждання».</p>
+
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">🚩 Самобичування</div>
+        <div class="col-text">«Чому я такий тупий?»</div>
+        <div class="col-note">Питання в минуле. Пасивне, емоційне, забирає сили.</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">✅ Відповідальність</div>
+        <div class="col-text">«Як це виправити, що з цим робити конкретно?»</div>
+        <div class="col-note">Питання в майбутнє. Діяльне, спокійне, дає сили.</div>
+      </div>
+    </div>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: дві колонки</div>
+      <p>Зліва — «моє самобичування»: думки, почуття, втрати енергії, як ти це відчуваєш. Справа — «моя відповідальність»: конкретні кроки, план дій, висновки — навіть відчуваючи страх, я обираю діяти. Спочатку опиши проблему, за яку себе звинувачуєш, у лівій колонці, тоді обведи те, що написано праворуч, як план дій.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 16. Самоспівчуття -->
+  <div class="section" style="animation-delay:1.75s">
+    <h2 class="section-title">Самоспівчуття — не жалість до себе</h2>
+    <p>Жалість до себе робить маленькою й безпорадною — «бідна я, нещасна я, світ жорстокий, я нічого не можу» — це позиція дитини. Співчуття до себе — позиція доброго, справедливого дорослого: «мені зараз боляче, я це не заперечую; мені важко, я це бачу; я підтримаю себе, щоб впоратися». Співчуття визнає страждання, але не застрягає в ньому — воно шукає спосіб подбати про себе й зцілитися. Саме самоспівчуття, а не самокритика, — найкращий мотиватор для змін: коли ти підтримуєш себе після невдачі, у тебе більше сил пробувати знову, ніж коли ти б'єш себе лежачу.</p>
+
+    <div class="dialog">
+      <div class="dialog-q">Уяви: найкраща подруга потрапила в біду, схожу на твою.</div>
+      <div class="dialog-a">Ти не скажеш їй «ну ти тупа, так тобі й треба».</div>
+      <div class="dialog-q">Ти обіймеш її, наллєш чаю і скажеш:</div>
+      <div class="dialog-a">«Подруго, це, звісно, провал, але загалом тебе це поганою не робить. Я з тобою, я підтримаю тебе, щоб вирулити цю тему».</div>
+      <div class="dialog-q">Спробуй стати таким другом самій собі.</div>
+    </div>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: лист підтримки</div>
+      <p>Напиши собі лист від імені підтримувального батька чи друга, звертаючись на ім'я: «Дорога… я бачу, що тобі зараз непросто, і хочу тобі сказати ось що…» — далі слова втіхи і віри у власні сили. Носи цей лист із собою і перечитуй, коли ловиш себе на самобичуванні.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 17. Сенс у помилці -->
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Золото кінцугі</h2>
+    <p>Помилка стає досвідом лише тоді, коли осмислена й інтегрована: поки ти тікаєш від її болю, він тебе наздоганяє. Щойно повертаєшся до нього обличчям і питаєш «слухай, помилко, а ти тут навіщо для мене прийшла, чого мене вчиш?» — помилка перетворюється на вчительку. До цього кроку не варто переходити одразу — він доречний тільки тоді, коли попередня робота вже зроблена.</p>
+
+    <div class="highlight">
+      <p>Тріщини в кінцугі не маскують — їх підкреслюють золотом. Саме це надає унікального візерунка тому, що сталося, і робить життя ціннішим. Твої історії, твої шрами, твої подолання роблять тебе глибшою, мудрішою й емпатичнішою; люди, які ніколи не падали, часто поверхневі й жорстокі. Твої помилки — це золото твого життя.</p>
+    </div>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: завдяки цій помилці я…</div>
+      <p>Десять разів заверши речення «Завдяки цій помилці я…» — знайди щонайменше 10 пунктів: дізналась, хто мені по-справжньому дорогий; навчилась говорити «ні»; стала уважнішою до деталей; перестала так люто засуджувати інших. Нижче напиши: «ціна висока, звісно, але урок я засвоїла, дякую».</p>
+    </div>
+
+    <p>Страждання вже відбулися, сперечатися з цим марно, — завдання в тому, щоб знайти в них сенс. Поки ти шукаєш сенс і користь, біль нікуди не зникає, але перестає бути безглуздою мукою і стає платою за навчання.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 18. Відкати -->
+  <div class="section" style="animation-delay:1.85s">
+    <h2 class="section-title">Океан і хвиля</h2>
+    <p>Процес прощення себе нелінійний — це не так, що прокинулась і все раптом стало чистим. Це спіраль, і відкати нормальні, вони будуть: схожа ситуація, втома, дата в календарі, стара пісня чи запах здатні повернути провину. Те, що вона повернулась, не означає, що вся робота була марною, — це просто новий виток, перевірка на міцність. Не лякайся відкату — зустрінь його як старого знайомого: «це знову ти, це знову ти, почуття провини, заходь, посидимо». Просто визнай: «так, сьогодні мені трохи сумно і соромно — і це минеться; це хмари на небі, а не все небо».</p>
+
+    <div class="highlight">
+      <p><em>Ти — океан, а не хвиля.</em> Океан більший за хвилю, і будь-яка хвиля теж мине. Друга метафора: ти — екран, а не фільм, що на ньому крутиться; фільми бувають різні, це емоційний стан, але жоден фільм не означає, що ти ним є. Ти — саме полотно екрана.</p>
+    </div>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: графік хвилі</div>
+      <p>Намалюй хвилю й познач на ній піки: гостра провина, спокій, прийняття, знову гостра провина, знову спокій, знову прийняття — щоб побачити, де ти зараз, і побачити, що навіть найдовший день невдовзі минає.</p>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:1.9s">
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Єдина людина, з якою тобі судилося прожити все життя до кінця, — це ти сама. Які стосунки із собою ти обираєш будувати далі?</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Фінал -->
+  <div class="section" style="animation-delay:1.95s">
+    <h2 class="section-title">Насамкінець</h2>
+    <p>Не варто вимагати від себе миттєвих результатів — важливо бути терплячою до себе так само, як просиш терпіння в інших. Про те, звідки взагалі беруться переконання, що тримають у провині, і як їх переписати, — сторінка <a href="belief-scenario.html">Одна й та сама п'єса</a>. Про конкретну техніку самопідтримки день у день — <a href="beliefs.html">Ключ до змін</a>. Про витіснені якості, які теж можна повернути собі, — <a href="shadow-resource.html">Тінь як ресурс</a>. Про жаль за нереалізованими мріями окремо — <a href="unlived-dreams.html">Завершення етапу</a>. Про перфекціонізм і концепцію «достатньо добре» — <a href="good-enough.html">Достатньо хороша</a>.</p>
+
+    <div class="final-quote">
+      <div class="final-text">Камінь, який ти носиш, — не покарання. Це просто <strong>вага, яку більше не треба тримати</strong>.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>

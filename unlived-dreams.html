@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Завершення етапу</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Завершення<br>етапу</h1>
+  <p class="page-subtitle">Як змиритися з тим, що час минає, і не всі мрії встигнуть здійснитися</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Ти не провалила мрію — ти завершуєш певний етап свого життєвого шляху</div>
+      <div class="hero-author">Альберт Сафін</div>
+    </div>
+    <p>Біль від нереалізованої мрії — не просто розчарування, а форма символічної смерті. Ти оплакуєш не конкретну кар'єру чи спосіб життя, а саме ту частину своєї ідентичності, яка була пов'язана з цією мрією. Мрія — це обіцянка певного майбутнього і певної версії себе; коли час робить цю мрію неможливою, ти стикаєшся не лише з втратою потенційного досвіду, а й з втратою того «я», яким так сподівалася стати. Це активує ті самі механізми горювання, що й втрата близької людини, — бо втрачена частина себе і є цим близьким.</p>
+    <p>Жінці 45 років, вона працює бухгалтеркою, а в юності мріяла стати відомою художницею. Вона не малює вже 20 років, але кожна новина про успіх колишніх однокурсниць викликає в неї тугу й апатію — нагадування про поховану в ній «ту саму велику художницю». Це схоже на фантомний біль: мрії, від якої довелося відмовитися, вже немає, але вона продовжує «боліти» й відчуватися як реальна жива частина особистості, вимагаючи уваги й енергії на своє існування.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: лист прощання</div>
+      <p>Напиши листа своїй нереалізованій мрії. Подякуй їй за надію та натхнення, які вона давала. Визнай, що час для її реалізації в первісному вигляді вже минув, і символічно відпусти її — так, як відпускають дорогого друга, що назавжди виїжджає. Не обов'язково вірити, що вправа спрацює, — достатньо просто її зробити.</p>
+    </div>
+
+    <p>Яку важливу частину твоєї особистості ця мрія мала виразити світові? Що найстрашніше може статися, якщо визнаєш, що цього ніколи не буде? Уяви версію себе, яка гіпотетично реалізувала цю мрію в паралельній реальності, — як би вона на тебе подивилась, що б відчула, як би підтримала? Не поспішай із відпусканням, якщо мрія — фундаментальна частина тебе: краще дослідь, які твої сильні якості й цінності жили в цій мрії, і як сьогодні ти можеш дати їм нове гідне життя за межами цієї мрії.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 1 -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Чому важко відпустити старі мрії</h2>
+    <p>Старі мрії утримуються у свідомості кількома «гачками». По-перше, емоційні інвестиції: якщо у щось вкладено роки надії, фантазій і реальних зусиль, відмова від цього сприймається як знецінення цих інвестицій. По-друге, мрія часто є частиною звичного життєвого сценарію — внутрішньої історії про те, хто я і куди йду, — і відмова від неї вимагає переписування всього сценарію. По-третє, мрія слугує захисним механізмом від недосконалості теперішнього: вона дозволяє подумки втекти у світ, де ти успішніша, щасливіша й реалізованіша.</p>
+    <p>Ти тримаєшся не за саму мрію, а за ту функцію, яку вона виконує у внутрішній системі — виправдовує минуле, надає сенс сценарію, захищає від болю в теперішньому. Молодий чоловік завжди мріяв переїхати в інше місто, але так і не зробив цього, знаходячи для цього причини. Не реалізувавши мрію, він отримав можливість критикувати своє теперішнє життя й звинувачувати інших у своїх невдачах — нереалізована мрія стала зручним способом пояснювати собі й іншим свої невдачі.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: аудит мрії</div>
+      <p>Розділи аркуш на три колонки. Перша — що мені давала ця мрія (надія, статус, мета). Друга — у що мені обходиться утримання цієї нереалізованої мрії (упущені можливості, тривога, самокритика, можливість себе звинувачувати). Третя — як я можу отримати важливе з першої колонки іншими способами прямо зараз.</p>
+    </div>
+
+    <p>Уяви, що повністю відпустила цю мрію — яка тоді утворюється порожнеча на її місці, і що тобі страшніше за все побачити в цій порожнечі? Від чого неприємного у твоєму сьогоднішньому житті ця мрія дозволяє тобі відволікатися?</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 2 -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Здорове прийняття проти пасивної покірності</h2>
+    <p>Неусвідомлюване всередині проявляється зовні як доля. Ключова відмінність між здоровим прийняттям і пасивною покірністю — у позиції авторства свого життя. Пасивна покірність — позиція жертви: «від мене нічого не залежить, усе найкраще вже позаду, мені залишається лише доживати». Це не пасивна, а активна позиція, в якій ти досконало володієш навичкою спрямовувати свою енергію на підтримку цього стану — апатії, образи на світ і фокусу на минулому.</p>
+    <p>Здорове прийняття, навпаки, — активна позиція: ти визнаєш об'єктивні обмеження й втрати, горюєш про них, але зберігаєш за собою право обирати своє ставлення до цього і діяти в доступних тобі межах. Свобода — це не відсутність обмежень (обмеження є в усіх), а вибір дій з урахуванням цих обмежень.</p>
+
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">😔 Пасивна покірність</div>
+        <div class="col-text">Травма коліна ставить хрест на спортивній кар'єрі. Перестає займатися будь-якою активністю, постійно говорить про своє невезіння, набирає вагу.</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">🌊 Здорове прийняття</div>
+        <div class="col-text">Та сама травма. Горює про втрату, але потім знаходить радість у плаванні і стає тренером для дітей, перенаправивши любов до спорту в нове русло.</div>
+      </div>
+    </div>
+
+    <p>Боротьба з тим, що вже відбулося, забирає сили, які могли б піти на побудову майбутнього. Прийняття — не про згоду з тим, що «все було марно», а про активний процес звільнення рук, щоб узяти нові інструменти. Чи є протягом дня моменти, коли відчуваєш себе жертвою обставин, а чи є моменти, коли відчуваєш себе авторкою своєї реакції? Спробуй сприйняти нереалізованість своїх мрій не як трагедію, а як даність, факт — так само, як завтра зійде сонце. Яким тоді був би твій перший крок?</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 3 -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Машина часу, що їде лише назад</h2>
+    <p>Жаль — це ментальна машина часу, яка працює лише в одному напрямку, у бік минулого, а паливом для неї є повторювані думки в умовному способі: «якби ж тільки». Це створює когнітивну ілюзію контролю над тим, що вже безповоротно. Жаль про минуле виснажує ментальні ресурси, які могли б піти на поточні завдання, і підживлює токсичне почуття провини й сорому, формуючи ідентичність «я людина, яка припустилася фатальної помилки». Це паралізує волю до нових дій через страх знову помилитися. Жаль — не аналіз помилок заради майбутнього, а емоційне застрягання в ілюзії, що минуле можна переграти.</p>
+    <p>Підприємець, чий бізнес прогорів 10 років тому, досі щодня прокручує в голові свої рішення, звинувачуючи себе, — і це заважає йому почати нову справу, бо він упевнений, що знову помилиться.</p>
+
+    <div class="highlight">
+      <p>Людина, яка постійно шкодує про минуле, — наче водійка, яка їде вперед, дивлячись лише в дзеркало заднього виду: рухається повільно, ризикує потрапити в аварію і бачить лише пейзаж, що віддаляється, замість дороги попереду.</p>
+    </div>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: витягнути урок</div>
+      <p>Замість «чому я так вчинила» (і самобичування) запитай: виходячи з тих знань і ресурсів, які в мене були тоді, чи було моє рішення зрозумілим і навіть неминучим, з огляду на тодішню картину світу, ресурси, у що я вірила, що знала, вміла і могла? Ти в кожен момент часу робиш найкраще, на що здатна там, де перебуваєш зараз. Який один важливий урок я можу витягнути з цієї історії для свого майбутнього? Як я можу подякувати своєму минулому досвіду за цей урок і нарешті залишити його в спокої?</p>
+    </div>
+
+    <p>Не поспішай прощатися з жалем — подивись, яку позитивну функцію він виконує (часто драма, проблеми й жаль — єдине, що робить людину «живою», бо без цього доводиться зіткнутися лицем до лиця з порожнечею). Завдання не в тому, щоб забути чи знецінити серйозність наслідків, а в тому, щоб перестати платити за одну помилку знову і знову своїм теперішнім і майбутнім.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 4 -->
+  <div class="section" style="animation-delay:1.15s">
+    <h2 class="section-title">Ознаки руйнівної прив'язаності до минулого</h2>
+    <p>Проявляється в кількох сферах.</p>
+
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">💧</span>
+        <div class="card-title">Емоційна</div>
+        <div class="card-text">Хронічне відчуття гіркоти, заздрості, апатії, які стають фоновим настроєм.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔁</span>
+        <div class="card-title">Когнітивна</div>
+        <div class="card-text">Нав'язливе повторення думок про минуле («ментальна жуйка») й ідеалізація того, «як могло б бути», на шкоду сприйняттю реальності зараз.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🚫</span>
+        <div class="card-title">Поведінкова</div>
+        <div class="card-text">Уникнення нового досвіду через страх і відчуття, що вже пізно, і самосаботаж у теперішньому, який знову й знову «доводить», що найкраще позаду.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🚪</span>
+        <div class="card-title">Соціальна</div>
+        <div class="card-text">Звуження кола спілкування, оскільки розмови про теперішнє й майбутнє викликають дискомфорт.</div>
+      </div>
+    </div>
+
+    <p>Головна ознака: коли історії про минуле перестають бути джерелом досвіду і стають притулком від теперішнього. Розлучена жінка через 5 років після розлучення продовжує жити минулими стосунками, уникає нових знайомств, постійно порівнює потенційних партнерів з колишнім чоловіком, ідеалізуючи його, і проводить вечори, переглядаючи старі фотографії замість того, щоб зайнятися своїм життям чи хобі.</p>
+
+    <div class="highlight">
+      <p>Уяви будинок, у якому ніколи не відчиняють вікна — усередині стає дедалі задушливіше й запиленіше, речі лежать на своїх старих місцях, а свіже повітря й сонячне світло (нові враження) не можуть проникнути всередину.</p>
+    </div>
+
+    <div class="quote-block">
+      <div class="qa">Чек-лист самодіагностики (1–10)</div>
+      <p>Я частіше думаю про те, що втратила, ніж про те, що маю. Успіхи інших викликають у мене смуток або заздрість. Я відмовляюся від нових пропозицій (зустріч, проєкт, поїздка), бо «це вже не те». Більшу частину вільного часу я проводжу у спогадах. Я відчуваю, що мій «золотий вік» уже минув. Високі бали — привід продовжувати вивчати цю тему.</p>
+    </div>
+
+    <p>Яку ціну ти платиш за те, що так міцно тримаєшся за минуле? Що втрачаєш прямо зараз через це? Якби твоє минуле було людиною, з якою ти сидиш в одній кімнаті, — якими були б ваші стосунки: дружніми, ворожими, токсичними? Де ностальгія слугує для тебе джерелом сили, а де вона починає працювати як гальмо, що заважає рухатися і дихати на повні груди в сьогоднішньому житті?</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 5 -->
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Від провалу до завершення етапу</h2>
+    <p>Ключ — у зміні рамки сприйняття: з «провалу» на «завершення етапу». Ти не провалила мрію — ти завершуєш певний етап свого життєвого шляху. Важливо відокремити свою внутрішню цінність як особистості від конкретного зовнішнього досягнення. Успішно відпустити — це не ампутувати частину себе, а інтегрувати отриманий досвід: визнати цінність пройденого шляху, уроків, які він приніс, і якостей, які завдяки йому розвинулися, навіть якщо фінальна точка маршруту виявилася не тією, що планувалася спочатку.</p>
+    <p>Молода людина все життя мріяла заснувати надуспішний ІТ-стартап, що змінить світ, але не заснувала його, а натомість влаштувалася програмісткою у велику компанію. Розвилка: вважати себе тотальною невдахою або подивитися на цей досвід як на «інтенсивний курс виживання в бізнесі та в житті» — і завдяки цьому стати цінною співробітницею у своєму відділі.</p>
+
+    <div class="highlight">
+      <p>Завершення походу: ти прагнула дістатися вершини гори, але через негоду дійшла лише до базового табору; це не робить тебе невдахою — ти досвідчена альпіністка, яка пройшла складний маршрут, навчилась виживати в нових умовах, побачила неймовірні краєвиди і тепер може використати цей досвід для нових вражень. Життя — не іспит, який або складено, або провалено.</p>
+    </div>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: інвентаризація активів</div>
+      <p>Склади список усього, що ти отримала завдяки своїй мрії, навіть не реалізувавши її повністю: навички (дисципліна, вміння спілкуватися, професійні знання), особистісні якості (сміливість, наполегливість, стійкість) і мудрість/досвід, здобутий завдяки цьому шляху. Приклад автора: колись мріяв стати затребуваним барабанщиком, який збирає стадіони, — цього не сталося, але завдяки шести рокам занять здобув дисципліну, ритмічність і структурний підхід, які використовує й сьогодні.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 6 -->
+  <div class="section" style="animation-delay:1.25s">
+    <h2 class="section-title">Цінність реального недосконалого шляху</h2>
+    <p>Цінність реального шляху відкривається через зміщення фокусу з пункту призначення на сам процес подорожі. Базовий момент — тренувати м'яз вдячності за те, що є, а не скорботи за тим, чого немає. Саме незаплановані повороти, кризи й помилки формують унікальність особистості і надають їй глибину. Ідеальний сценарій зазвичай плоский і передбачуваний, тоді як саме в тріщинах і вигинах реального життя міститься сила життя. Стережись порівняння свого життя з уявним ідеалом або «глянцевими» версіями життя інших людей у соцмережах — парадний фасад чужого життя порівнювати зі своєю «кухнею» в моменти вразливості не найкраща затія.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: лінія життя</div>
+      <p>Намалюй лінію свого життя і познач на ній ключові поворотні моменти, особливо ті, де все пішло не за планом. Подивись, яку несподівану силу, знання, зустріч чи досвід ти отримала завдяки тому, що звернула з наміченого шляху (або тебе звернуло обставинами). Які якості, якими ти сьогодні дорожиш, ніколи б не розвинулися, якби твоє життя йшло за ідеальним планом? Якби твоє життя було книгою, які розділи, що здаються тобі невдалими, насправді можуть бути цікавими для читача, і чому?</p>
+    </div>
+
+    <p>Біль від цих «шрамів» реальний, і не варто його ігнорувати чи прикрашати — ніхто добровільно не обирає біль. Але оскільки він уже став частиною історії, є вибір: дозволити йому визначати тебе через нескінченні жалі, або знайти спосіб вбудувати його в особистість так, щоб він став джерелом не лише болю, а й співчуття та глибини.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 7 -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Сенс — це те, що ти створюєш, а не знаходиш</h2>
+    <p>Нові цілі не знаходяться шляхом інтелектуального пошуку заміни старій мрії — вони виростають із цінностей, які ти починаєш практикувати у своєму реальному житті. Покликання — не про те, щоб робити щось нове, а про те, щоб робити те, що ти й так робиш, але привносити в це більшу людяність. Замість пошуку однієї великої всепоглинаючої цілі можна почати з малих, але осмислених дій, які відповідають глибинним цінностям (турбота, творчість, пізнання, допомога іншим). Нова велика мрія може з'явитися пізніше як природний наслідок цього процесу, а може і не з'явитися — і це другорядно.</p>
+    <p>Колишній професійний спортсмен, чия кар'єра обірвалася через травму, довго не міг знайти собі місця, поки не почав як волонтер допомагати в місцевій спортивній секції для дітей — і поступово ця робота захопила його настільки, що він здобув відповідну освіту й знайшов нове покликання, яке здалося йому ще більш осмисленим, ніж попередня кар'єра.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: три експерименти на тиждень</div>
+      <p>Визнач цінність, яка для тебе важлива (наприклад, допитливість), і сплануй на тиждень три невеликі, малозатратні експерименти, пов'язані з цією цінністю (відвідати виставку в музеї, про яку нічого не знаєш, прочитати статтю на абсолютно нову тему, поговорити з колегою про його хобі), спостерігаючи за рівнем енергії та залученості. Якби ти на один тиждень забула про якусь велику надціль чи мрію, чому б присвятила час, що звільнився, просто заради задоволення й інтересу? Яка маленька дія сьогодні могла б дати відчуття, що день прожито не марно?</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 8 -->
+  <div class="section" style="animation-delay:1.35s">
+    <h2 class="section-title">Криза середнього віку проти зустрічі зі скінченністю</h2>
+    <p>Криза середнього віку — соціально-культурний конструкт, пов'язаний із переоцінкою зовнішніх досягнень (кар'єра, статус, сім'я): на «екваторі» життя питаєш себе, чи справді хотіла того, чого досягла, чи тебе просто навчили цього хотіти. Екзистенціальне зіткнення зі скінченністю — глибший, фундаментальніший процес, пов'язаний з усвідомленням незворотності часу; ключове питання: як мені жити осмислено у відведений мені термін, знаючи, що він скінченний і багато можливостей уже закриті.</p>
+    <p>Криза середнього віку — про те, що я встигла зробити; екзистенціальна криза — про те, ким я стала і як мені з цим жити далі. Двоє «за 40»: перший, переживаючи кризу середнього віку, йде з посади директора, щоб відкрити школу малювання, про яку завжди мріяв; другий, переживаючи екзистенціальну кризу, залишається на тій самій роботі, але починає задаватися питаннями про її реальну цінність, шукає способи бути корисним там, де перебуває зараз, поглиблює стосунки з колегами, сім'єю, клієнтами.</p>
+
+    <div class="highlight">
+      <p>Двоє мандрівників: один, дивлячись на карту, панікує, що пройшов половину шляху не за тим маршрутом; другий не дивиться на карту, а дивиться на призахідне сонце і вперше по-справжньому усвідомлює, що день скінченний, — і починає цінувати кожну годину світла, що залишилася, незалежно від маршруту.</p>
+    </div>
+
+    <p>Думка про скінченність життя може лякати, але, як не парадоксально, саме усвідомлене зіткнення з нею може стати джерелом життєвої енергії — саме усвідомлення, що час не безкінечний, змушує перестати відкладати на потім найважливішу зустріч — зустріч із самою собою і своїми цінностями.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: два описи життя</div>
+      <p>Склади два описи свого життя. Перший — яким би воно було, якби ти продовжувала жити виключно з фокусом на зовнішніх досягненнях. Другий — яким воно було б, якби відображало твої глибинні цінності (доброта, любов, внесок, мудрість тощо — визнач свій список). Різниця між ними і є вектором твоїх змін. Уяви, що тобі залишилося прожити рівно 10 років у фізичному й психічному здоров'ї, — що б ти тоді почала робити інакше, а що б припинила? Подивись на ролі й досягнення, що складають структуру твого життя: які з них значущі виключно для інших, а які важливі саме для тебе?</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 9 -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Злість як компас</h2>
+    <p>Злість і образа — потужні джерела енергії, які психіка виділяє у відповідь на фрустрацію й відчуття несправедливості. Завдання не в тому, щоб придушити ці почуття, а в тому, щоб перенаправити їх з режиму руйнування в режим дії. Злість, спрямована всередину, стає самокритикою; злість, спрямована назовні без мети, стає цинізмом. Конструктивне використання злості — коли ти визнаєш: «ситуація несправедлива» або «я припустилася помилки», і саме тому спрямовуєш цю енергію на те, щоб змінити те, що можеш змінити прямо зараз. Злість — сигнал про порушені цінності, і не варто заглушувати цей сигнал — його можна використовувати як компас, що вказує, що саме для тебе важливо захистити чи створити у своєму житті.</p>
+    <p>Жінка присвятила 15 років догляду за хворим родичем і втратила молодість і кар'єру; коли родич помер, вона відчула сильну злість. Варіанти: впасти в самобичування, або спрямувати енергію на створення групи підтримки для людей у подібній ситуації, перетворюючи цей біль на осмислений внесок.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: претензія → потреба → дія</div>
+      <p>Збери свої претензії — до себе, до інших, до світу. Переформулюй кожну: «несправедливо, що…» → «моя потреба в … не задоволена» → «моя дія, виходячи з цього, — …». Приклад: «несправедливо, що я не отримала підвищення» → «моя потреба у визнанні й зростанні не задоволена» → «я готую аргументи, поговорю з керівництвом або почну шукати нову роботу». Якби твоя злість могла говорити, що найціннішого вона намагається сказати про твої цінності? Уяви, що твоя злість — це якась сила: на захист чого ти б спрямувала цю силу в першу чергу?</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 10 -->
+  <div class="section" style="animation-delay:1.45s">
+    <h2 class="section-title">Прийняти вік і прийняти нереалізовані мрії — одне й те саме</h2>
+    <p>Прийняття свого віку і прийняття нереалізованих мрій — дві сторони однієї медалі: прийняття реальності своєї життєвої траєкторії. Приймати вік — визнавати зміни в тілі, в енергії, в соціальних ролях і в часовій перспективі. Приймати нереалізовані мрії — визнавати, що деякі гілки життєвого сценарію вже «відсохли». Обидва процеси вимагають проживання горя за молодістю, що минає, і за втраченими можливостями. Спроби заперечувати вік (наприклад, у 49 років намагатися поводитися як у 20) часто йдуть пліч-о-пліч з чіплянням за юнацькі мрії. Не можна по-справжньому змиритися з нереалізованими мріями, не прийнявши свій реальний вік, і не можна з гідністю прийняти свій вік, не відпустивши мрії, які йому вже не відповідають.</p>
+    <p>Акторка, яка в 45 років продовжує пробуватися на ролі молодих героїнь і страждає від кожної відмови; прийнявши свій вік, вона відкриває для себе світ характерних ролей, які виявляються глибшими й цікавішими, і переживає новий виток кар'єри.</p>
+
+    <div class="highlight">
+      <p>Осінь, яка вдає із себе весну, виглядає неправильно — в осені є своя краса і своє завдання (збір урожаю, свої кольори); спроба утримати весняне цвітіння восени призводить лише до розчарування й відчуття фальші.</p>
+    </div>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: десять переваг теперішнього віку</div>
+      <p>Склади список із десяти переваг, які дає тобі теперішній вік порівняно з тим, коли тобі було 20 років, — серйозні речі (фінансова стабільність, досвід) і дрібниці (право лягати спати, коли хочеться; уміння говорити «ні»). У старінні є реальні втрати — здоров'я, краси, можливостей, — заперечувати це було б нечесно; проте зацикленість на втратах заважає помітити те, що ти набуваєш. Спробуй відкласти список своїх втрат і, як експеримент, пошукати хоча б одну, навіть найменшу, цінність, набуту завдяки віку.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 11 -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Переписати сценарій: від невдачі до унікального шляху</h2>
+    <p>Переписування сценарію починається з усвідомлення, що ти не персонажка в чужій п'єсі — навіть якщо захочеш, ти приречена бути авторкою власної. Важливо деконструювати старий сценарій, виявити ключові переконання, що лежать у його основі (наприклад, «я мала досягти…»), знайти альтернативні, більш підтримувальні інтерпретації подій свого життя і створити новий наратив — нову нитку, на яку нанизуються «намистинки» твого життя, об'єднані спільним сенсом, у якому ти перестаєш бути жертвою обставин і стаєш героїнею, яка впоралася з труднощами, проявила стійкість і накопичила унікальну мудрість. Цей новий сценарій важливо не просто вигадати, а підкріплювати щоденними діями, адже людина — це те, що вона робить, а не тільки те, що вона думає. Ти не можеш змінити події минулого, але маєш владу над тим, який сенс їм надаєш і яку історію про них розповідаєш собі сьогодні.</p>
+    <p>Вчений, який присвятив життя науці, але не здійснив того проривного відкриття, про яке мріяв. Старий сценарій: «я просто невдаха, що змарнував життя». Новий сценарій: «я був чесним трудівником науки, вніс свій внесок у спільне знання, підготував ґрунт для майбутніх відкриттів, був наставником для нового покоління дослідників».</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: історія життя від третьої особи</div>
+      <p>Опиши своє життя від третьої особи як головна героїня. Де ти перебуваєш, як живеш, до яких пригод і змін прагнеш? Що тебе не влаштовує? Що являє собою твій повсякденний світ? Що для тебе означає «перехід через поріг»? Які союзники й супротивники чекають на твоєму шляху і як ти з ними впоралася? У чому було твоє головне випробування і як ти його подолала? Що завдяки цьому здобула, і яку ще більшу нагороду, окрім тієї, за якою вирушила в цю подорож, отримала? Якою ти тепер стала і який у цьому внесок у життя інших людей? Напиши про себе казку — історію свого життя — і подивись, про що вона тобі розповість і як вплине на рішення, які прийматимеш найближчим часом.</p>
+    </div>
+
+    <p>Ідеться не про вигадування того, чого не було, — усі факти лишаються на місці, і їх не можна скасувати чи забути. Ідеться про зміну оптики — пошук того сенсу, який теж був насправді, але залишався в тіні звичнішої й критичнішої інтерпретації.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 12 -->
+  <div class="section" style="animation-delay:1.55s">
+    <h2 class="section-title">Ціна того, щоб і далі це ігнорувати</h2>
+    <p>Хронічне застрягання в оплакуванні нереалізованих мрій — стан постійного стресу з реальними наслідками. На психічному рівні — нездатність відчувати радість і тривожні стани. На когнітивному — знижена концентрація уваги й здатність планувати майбутнє. На поведінковому — формування залежностей (алкоголь, ігроманія) як спосіб сховатися від теперішнього. На фізичному — хронічний стрес послаблює імунну систему і може провокувати захворювання, проблеми з травленням, хронічний біль. Непрожите горе за минулим отруює теперішнє й руйнує фізичну основу для майбутнього — це не просто душевні терзання, а реальна загроза здоров'ю.</p>
+    <p>Чоловік у свої 40 з чимось років так і не змирився з тим, що не став професійним музикантом, і в результаті до 62 років страждає від проблем зі здоров'ям, слухаючи музику своєї молодості й уявляючи, як міг би її виконувати.</p>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: ціна бездіяльності</div>
+      <p>Розділи аркуш на дві колонки. Ліворуч опиши, яким буде твоє життя через 5 років, якщо нічого не зміниш у своєму ставленні до минулого (настрій, здоров'я, стосунки, активність). Праворуч сформулюй, яким могло б бути твоє життя, якби проробила роботу зі здорового прийняття замість пасивної покірності і знайшла нові сенси.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 13 -->
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">Маяк на найнебезпечніших скелях</h2>
+    <p>Трансформація твого болю в мудрість відкриває шлях до зростання, важливим компонентом якого може бути служіння іншим людям. Унікальний досвід подолання кризи, у якому ти зараз перебуваєш, дає ресурс, який неможливо отримати ззовні «готовим» — ти народжуєш його зсередини власною внутрішньою роботою. Це може стати можливістю передавати свій життєвий і професійний досвід молодшим, стати волонтерством, допомогою тим, хто перебуває у вразливому становищі, творчістю — вираженням історії свого життя через текст, музику, живопис, — або вплинути на якість твоєї присутності в житті близьких, роблячи тебе більш емпатичною, співчутливою і приймаючою — не з позиції «як я стараюся заради вас», а з позиції надлишку, а не дефіциту.</p>
+
+    <div class="highlight">
+      <p>Маяк будують на найнебезпечніших скелях — саме там, де кораблі найчастіше зазнають аварії. Ти пережила свої «корабельні аварії» і в цьому місці збудувала маяк, який світить іншим і допомагає їм уникнути небезпеки або знайти шлях у темряві.</p>
+    </div>
+
+    <div class="quote-block">
+      <div class="qa">Вправа: мій досвід навчив мене…</div>
+      <p>Заверши речення «Мій досвід болю і мій досвід прийняття навчив мене того, що…». Опиши, хто ті люди, яким ця мудрість могла б бути особливо корисною. Сформулюй один конкретний крок, який можеш зробити найближчим часом (у цьому місяці), щоб поділитися цим досвідом. Цінна підтримка часто приходить не від якогось «суперексперта», а від того, хто просто пройшов на один крок попереду тією самою нелегкою дорогою — ідеться не про те, щоб повчати інших, а про те, щоб ділитися; твоя історія і твоя проста людська присутність та розуміння можуть бути ціннішими за багато книг.</p>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:1.65s">
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Якби твоє життя було книгою, які розділи, що здаються тобі невдалими, насправді можуть бути найцікавішими для читача?</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Насамкінець -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Насамкінець</h2>
+    <p>Про той самий процес прощання зі сценарієм і переписування його — сторінка <a href="belief-scenario.html">Одна й та сама п'єса</a>. Про провину, яка теж любить триматися за минуле, — <a href="self-forgiveness.html">Камінь із душі</a>. Про злість як ресурс докладніше — розділ у <a href="shadow-resource.html">Тінь як ресурс</a>.</p>
+
+    <div class="final-quote">
+      <div class="final-text">Ти дійшла не до вершини, яку планувала. Але маршрут, яким ти йшла, — <strong>справжній</strong>, і краєвиди з нього — теж.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
