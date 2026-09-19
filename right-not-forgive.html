@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Право не прощати</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Право<br>не прощати</h1>
+  <p class="page-subtitle">Коли прощати шкідливо — і мистецтво здорового прощення</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Здорове прощення — не «пробачити і забути», а «опрацювати і пам'ятати»</div>
+      <div class="hero-author">Альберт Сафін</div>
+    </div>
+    <p>Хибне прощення — це акт імітації прощення без внутрішнього емоційного звільнення: ти на рівні розуму вирішуєш «пробачити», але насправді пригнічуєш гнів, образу і біль. Це відбувається через страх конфлікту, страх відторгнення, почуття провини або засвоєні з дитинства установки на кшталт «хороші люди завжди прощають». Своє невміння говорити «ні» і програму «я хороша, коли догоджаю» часто називають добротою.</p>
+    <p>Небезпека хибного прощення в тому, що воно не вирішує проблему, а заганяє її вглиб: пригнічені емоції перетворюються на хронічну напругу, тривожність, психосоматичні симптоми і пасивну агресію («я ж тебе пробачила, чого ти дмешся»). Це повільне саморуйнування зсередини і руйнування самоповаги, бо ти систематично зраджуєш власні справжні почуття.</p>
+    <p>Віолетта каже, що пробачила своєму хлопцю постійні саркастичні зауваження про свою зовнішність: вона продовжує жити з ним, посміхається, уникає сварок і обговорення цього — але в неї розвивається мігрень, вона почала уникати близькості і постійно відчуває незрозумілу втому. Це прощення — механізм виживання, а не зцілення.</p>
+    <div class="quote-block">
+      <div class="qa">Вправа: журнал чесності</div>
+      <p>Записуй свої почуття щодо кривдника без самоосуду і без осуду іншої людини — мета не в дії, а у визнанні правди для самої себе: що я відчуваю, як я можу це назвати, і які внутрішні правила змушують мене вдаватися до хибного прощення. Коли ти змушуєш себе когось пробачити, яке відчуття виникає у твоєму тілі?</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 1 -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Прощення, примирення й виправдання</h2>
+    <p>Три різні процеси, які легко плутають.</p>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🕊️</span>
+        <div class="card-title">Прощення</div>
+        <div class="card-text">Виключно внутрішній акт — одностороннє рішення звільнитися від емоційного боргу. Не потребує участі другої людини.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🤝</span>
+        <div class="card-title">Примирення</div>
+        <div class="card-text">Міжособистісний акт, відновлення стосунків — потребує обох сторін, взаємного бажання і відновленої довіри.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🚫</span>
+        <div class="card-title">Виправдання</div>
+        <div class="card-text">Визнання неприпустимого вчинку нормою («вона не хотіла») — знімає відповідальність із кривдника.</div>
+      </div>
+    </div>
+    <p>Можна пробачити, але не примирятися; можна пробачити, але не виправдовувати. Івана обдурив на гроші бізнес-партнер Федя: Іван може з часом пробачити Федю — перестати відчувати пекучу ненависть і бажання мститися, — але не буде з ним примирятися, відновлювати ділові стосунки, і ніколи не виправдає це шахрайство.</p>
+    <div class="highlight">
+      <p><em>Бухгалтерія.</em> Прощення — це коли ти списуєш безнадійний борг заради власного фінансового здоров'я. Примирення — це коли вирішуєш видати цій самій людині новий кредит. Виправдання — це коли переписуєш свої бухгалтерські правила, щоб вважати крадіжку законною операцією.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Вправа: я можу пробачити</div>
+      <p>Напиши фразу «я можу пробачити», маючи на увазі: відпустити свій біль, не примиряючись (не відновлюючи небезпечні стосунки) і не виправдовуючи (не називаючи зло добром). Що змінилося б, якби ти знала, що можеш відпустити свій біль, не будучи зобов'язаною знову довіряти цій людині? Що мало б статися у твоєму житті, щоб ти щиро захотіла відновити стосунки? Чи є частина вчинку іншого, яку ти, можливо непомітно для себе, намагаєшся виправдати?</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 2 -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Міф «прости і забудь»</h2>
+    <p>Ця порада шкідлива, бо пропонує дві неможливі й небезпечні дії. «Прости» тут означає «негайно скасуй свої почуття» — але емоції, особливо такі сильні, як гнів чи біль від зради, не підкоряються прямому наказу; спроба просто пробачити веде до пригнічення, а не до реальної роботи з почуттями. «Забудь» також не працює, бо пам'ять — частина системи психологічної безпеки: забути про завдану шкоду означає зробити себе вразливою для повторення подібної ситуації, адже біль від досвіду вчить, яким людям не можна довіряти і які ситуації небезпечні; стерти цей «файл» — все одно що вимкнути систему оповіщення про пожежу.</p>
+    <div class="highlight">
+      <p>Здоровий процес — це не «пробачити і забути», а <em>«опрацювати і пам'ятати»</em>: опрацювати біль, щоб він перестав керувати тобою, і пам'ятати урок, щоб захистити себе в майбутньому. Це схоже на опік руки об гарячу плиту: сказати собі «забудь, що плита гаряча» — небезпечно; здоровий підхід — вилікувати опік і назавжди пам'ятати, що ця плита буває гарячою.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Вправа: лист досвіду</div>
+      <p>Опиши, що сталося, і сформулюй, якого цінного уроку про межі, довіру і людей ти завдяки цьому навчилась — переформулюй травматичний досвід із «що зі мною сталося» на «чого я завдяки цьому навчилась». Якби твій біль від цієї ситуації був твоїм учителем, який головний урок він намагався б до тебе донести? Що страшніше — пам'ятати про біль чи, забувши його, дозволити цьому повторитися?</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 3 -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Гнів і образа як сигнали</h2>
+    <p>Якщо ти не прощаєш одразу, це не робить тебе поганою. Гнів і образа — не «погані» емоції, а найважливіші психологічні сигнали, природна й здорова реакція на порушення меж і несправедливість. Гнів — енергія, спрямована на захист: він сигналізує «так зі мною не можна, мої межі порушені» і мобілізує психіку й тіло, щоб зупинити агресію та відстояти себе. Придушення здорового гніву — відмова від самозахисту. Образа — більш пасивна і тривала реакція, яка фіксує факт завданої шкоди: «мені завдали шкоди, і цей баланс не відновлено». Ці почуття стають токсичними лише тоді, коли застрягають надовго і перетворюються на руйнівну ненависть чи саможаління.</p>
+    <p>Колега на нараді привласнює твою ідею: миттєвий спалах гніву — сигнал «мої права порушені», і ця енергія дає сили коректно заявити про своє авторство; якщо цього не зробити, гнів може перейти у тривалу образу.</p>
+    <div class="highlight">
+      <p>Гнів — як гострий біль від порізу, що змушує негайно відсмикнути руку й зайнятися раною. Образа — як ниючий біль після, що нагадує: рана ще не загоєна і потребує догляду.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Вправа: про що сигналізує</div>
+      <p>Коли відчуваєш гнів чи образу, запитай себе: про яке порушення моїх меж чи цінностей сигналізує ця емоція прямо зараз? Якби твій гнів міг говорити, яке важливе послання про твої потреби він би передав? Яке правило чи цінність твого життя було порушено в ситуації, де ти відчула образу?</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 4 -->
+  <div class="section" style="animation-delay:1.15s">
+    <h2 class="section-title">Емоційний борг</h2>
+    <p>Емоційний борг — внутрішнє відчуття, що інша людина завдала тобі моральної, психологічної чи фізичної шкоди, яка не була компенсована; відчуття несправедливості й незавершеності ситуації. Борг може виражатися в очікуванні вибачень, визнання провини, каяття або конкретних дій з відшкодування шкоди. Поки цей борг не погашений через реальні дії кривдника або не списаний через внутрішній акт прощення, він продовжує пов'язувати тебе з кривдником невидимим ланцюгом, і ти витрачаєш колосальну кількість психічної й фізичної енергії на підтримку цього «рахунку» — це виснажує і заважає рухатися далі.</p>
+    <p>Дорослий син Артем тримає образу на батька, що в дитинстві його ніколи не хвалив і пішов з родини; син чекає, що батько колись визнає свою неправоту й попросить пробачення — але цього ніколи не станеться, і поки він чекає виплати цього боргу, він не може побудувати власну самооцінку і шукає схвалення в інших людей.</p>
+    <div class="quote-block">
+      <div class="qa">Вправа: аудит емоційних боргів</div>
+      <p>Склади список людей (живих чи вже покійних), від яких ти чогось чекаєш (вибачень, визнання), і напроти кожного імені напиши, що саме ця людина, на твою думку, тобі винна. Чи готова я чекати цього вічно? Яку ціну я плачу щодня, поки чекаю виплати цього боргу? Що означає для мене прийняти рішення списати цей емоційний борг — не заради іншої людини, а заради власного стану?</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 5 -->
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Межі проти копання в образах</h2>
+    <p>Ключова різниця між здоровим відстоюванням меж і руйнівним копанням в образах — у векторі спрямованості енергії. Здорове відстоювання меж спрямоване в майбутнє, і його мета — запобігти повторенню шкоди: «я бачу, що сталося, це було неприйнятно, щоб захистити себе, відтепер я робитиму так і так». Руйнівне копання в образах спрямоване в минуле; його мета — подумки переживати біль знову, шукати винних і самовиправдовуватися: «як вони могли так зі мною вчинити, це несправедливо, я нещасна через них» — фокус на ролі жертви і власній безпорадності.</p>
+    <div class="highlight">
+      <p><em>Дірявий човен.</em> Відстояти межі — означає викинути камінь за борт, залатати пробоїну і плисти далі. Копирсатися в образах — залишити камінь, розглядати дірку, жонглювати цим каменем і скаржитися на його вагу, поки човен повільно тоне.</p>
+    </div>
+    <p>Матір дорослої доньки постійно дає непрохані поради щодо виховання дітей: здорове відстоювання меж — сказати прямо «мамо, я дуже тебе ціную, але прошу більше не коментувати мої методи виховання, якщо це повториться, я буду змушена завершити розмову»; копання в образах — мовчки слухати, а потім годинами скаржитися подрузі чи чоловікові, як мати руйнує її життя, або писати натяки в соцмережах, сподіваючись, що мати сама здогадається.</p>
+    <div class="quote-block">
+      <div class="qa">Вправа: дорожній знак</div>
+      <p>Проаналізуй свою реакцію на образу: твої думки і дії спрямовані на те, щоб змінити майбутнє, чи на те, щоб пережовувати минуле? Що означає змістити фокус із питання «чому вона так вчинила» на питання «що я можу зробити наступного разу, щоб себе захистити»? Яке одне конкретне правило ти могла б внести у спілкування з цією людиною? Подивись на свою образу як на дорожній знак — що на ньому написано: «глухий кут» чи «поворот на нову дорогу»?</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 6 -->
+  <div class="section" style="animation-delay:1.25s">
+    <h2 class="section-title">Чотири умови зцілюючого прощення</h2>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">1️⃣</span>
+        <div class="card-title">Визнання шкоди й почуттів</div>
+        <div class="card-text">Не можна пробачити те, що не було назване: «мені завдали болю, я злюся, це було несправедливо».</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">2️⃣</span>
+        <div class="card-title">Відновлена безпека</div>
+        <div class="card-text">Прощення можливе лише тоді, коли ти більше не під загрозою — дистанція, жорсткі межі або доказ зміненої поведінки.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">3️⃣</span>
+        <div class="card-title">Фокус на собі</div>
+        <div class="card-text">Метою стає не звільнення іншого, а власне зцілення: не «чи заслуговує він прощення», а «чи потрібно мені й далі нести цей тягар».</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">4️⃣</span>
+        <div class="card-title">Усвідомлений вибір</div>
+        <div class="card-text">Здорове прощення — вільне рішення дорослої людини, а не слідування нав'язаному правилу.</div>
+      </div>
+    </div>
+    <p>Віктор пережив емоційне насильство з боку колишньої дружини Вікторії (постійні порівняння з іншими чоловіками, звинувачення в недостатньому заробітку, провокування почуття провини) і зміг по-справжньому пробачити її лише через кілька років після розлучення, коли зрозумів, що образа лише забирає в нього енергію.</p>
+    <div class="highlight">
+      <p><em>Хірургічна операція.</em> Спочатку точно діагностувати проблему (визнати шкоду), потім створити стерильні умови (забезпечити безпеку), і лише тоді провести саму операцію — акт прощення з ясною метою поліпшити здоров'я пацієнтки, тобто себе.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Вправа: оцінка чотирьох умов</div>
+      <p>Оціни кожну з чотирьох умов за шкалою від 1 до 10 і подумай, що можна зробити в напрямку кожної з них. Прощення — це кінцева точка довгого шляху, а не стартова лінія, і важливо поважати свій темп, не підганяючи себе.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 7 -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Якщо кривдник не визнає провину</h2>
+    <p>Очікування каяття від людини, яка не здатна або не бажає його проявляти, — глухий кут, який тримає тебе в заручниках чужої волі; у людини може просто не бути «зони мозку, яка відповідає за каяття», а часто саме каяття — це виставa. Шлях до звільнення лежить у площині внутрішньої роботи: оплакати втрату (визнати скорботу за нездійсненою надією на справедливість), самій стати тим, кого чекаєш (дати собі те визнання й співчуття, яке марно чекаєш від іншого), і прийняти одностороннє рішення — «я більше не чекаю вибачень, я забираю свою емоційну енергію з цих стосунків і вкладаю її у своє життя».</p>
+    <div class="highlight">
+      <p>Очікування чужих вибачень — як очікування прибуття круїзного лайнера на залізничному вокзалі: можна витратити все життя, чекаючи на вокзалі корабель, який ніколи туди не прийде. Докладніше про цей самий вокзал і про очікування, зверненого саме до батьків, — на сторінці <a href="parent-resentment.html">Потяг, який не прийде</a>.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Вправа: два листи</div>
+      <p>Напиши два листи, які ніколи не будуть відправлені: перший — лист гніву, де висловлюється весь біль і претензії до кривдника; другий — лист прощання з надією, де прощаєшся з очікуваннями («я перестаю чекати від тебе вибачень, розуміння, каяття — я розумію, що ти не можеш мені цього дати, і відтепер даватиму це собі сама»).</p>
+    </div>
+  </div>
+
+  <!-- 8 -->
+  <div class="section" style="animation-delay:1.35s">
+    <h2 class="section-title">Прощення себе</h2>
+    <p>Самобичування і почуття провини за минуле часто бувають руйнівнішими, ніж образи на інших. Коротко: відповідальність без саморуйнування (взяти відповідальність за вчинок, не таврувати себе загалом — «я вчинила некоректно», а не «я гнида»); врахувати контекст, у якому тоді перебувала, не для виправдання, а зі співчуттям; спокута через дії — що я можу зробити сьогодні, щоб стати людиною, яка більше так не вчинить; і вольове рішення — «мій минулий вчинок — частина моєї біографії, а не мій вирок». Повний покроковий розбір цієї теми, з усіма вправами, — на сторінці <a href="self-forgiveness.html">Камінь із душі</a>.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 9 -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Мудре терпіння проти мазохістської самопожертви</h2>
+    <p>Різниця між мудрою підтримкою партнера і мазохізмом — у динаміці й результаті. Мудре терпіння — усвідомлений вибір дати людині чи ситуації час на зміни, бачачи при цьому реальні, хай навіть повільні, позитивні зрушення; воно базується на повазі до себе і розумінні, що зростання потребує часу — ти зберігаєш межі, але проявляєш гнучкість. Мазохістська самопожертва — циклічне повторення того самого болісного сценарію без жодних ознак поліпшення, коли постійно сподіваєшся на диво, ігноруючи факти, і жертвуєш своїми потребами, енергією й самоповагою в марних спробах заслужити любов чи виправити іншого.</p>
+    <div class="highlight">
+      <p>Терпіння — як інвестиція в паросток, що тягнеться до сонця й пускає нове листя. Самопожертва — як щоденне поливання сухої палиці, встромленої в землю, у надії, що вона одного дня зацвіте.</p>
+    </div>
+    <p>Чоловік-алкоголік: мудре терпіння дружини — це коли він визнав проблему, пішов лікуватися, можуть бути зриви, але він повертається до лікування, а періоди тверезості стають довшими, і вона його підтримує, але чітко окреслює межі («покривати тебе, коли ти пропускаєш роботу, я не буду»); мазохістська самопожертва — коли він роками обіцяє кинути «завтра», звинувачує дружину у своїх зривах, не робить реальних кроків, а вона продовжує його «відпоювати», позичати гроші на похмілля і закладає квартиру батьків, вірячи, що любов його зцілить.</p>
+    <div class="quote-block">
+      <div class="qa">Вправа: аудит реальності</div>
+      <p>За останній рік запиши конкретні факти: що змінилося на краще, що залишилося тим самим, а що погіршилося. Спирайся не на обіцянки, а на дії — слова, що не відповідають поведінці, не мають ваги; відділяй надію, засновану на фактах, від магічного мислення «любов усе зцілить».</p>
+    </div>
+  </div>
+
+  <!-- 10 -->
+  <div class="section" style="animation-delay:1.45s">
+    <h2 class="section-title">Прощення батьків</h2>
+    <p>Зрілість полягає не у формальному акті прощення батьків, а в емоційній сепарації і прийнятті реальності: побачити в батьках не тільки дитячі проєкції всемогутніх фігур, а звичайних людей зі своїми травмами й обмеженнями; відмовитися від надії на ідеальне минуле; взяти відповідальність за своє життя на себе. У разі криміналу чи патологічного насильства жодний ступінь спорідненості не виправдовує насильство батьків — тут доречна чітка дистанція заради самозбереження, а не прощення.</p>
+    <div class="highlight">
+      <p>Дитинство — як погода, в якій ти зростала (посуха чи постійні дощі). Зрілість полягає не в тому, щоб продовжувати скаржитися на минулу погоду, а в тому, щоб навчитися будувати власний дім з надійним дахом і опаленням для себе в теперішньому. Повний практикум звільнення від образи на батьків, крок за кроком, — на сторінці <a href="parent-resentment.html">Потяг, який не прийде</a>.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 11 -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Відновлення довіри після зради</h2>
+    <p>Пробачити зраду як акт внутрішнього звільнення можливо, але відновлення довіри — зовсім інший, значно складніший і не завжди можливий процес, оскільки довіра — це не почуття, а оцінка надійності, заснована на досвіді, і зрада цей досвід обнуляє. Для відновлення довіри потрібні не слова, а тривалі, послідовні дії з боку того, хто зрадив: повне й чесне визнання провини без виправдань, видиме каяття й емпатія до твого болю, конкретні й вимірні кроки щодо зміни поведінки, яка призвела до зради, і абсолютна прозорість. Повне відновлення «сліпої» довіри, яка була раніше, часто неможливе — натомість може сформуватися нова, усвідомлена довіра, заснована на знанні про вразливість, але підкріплена доказами реальних змін.</p>
+    <p>Не варто плутати своє бажання пробачити з обов'язком довіряти — це різні процеси, і варто дати собі право на сумніви й спостереження, не впадаючи в ілюзію швидкого відновлення довіри.</p>
+    <div class="quote-block">
+      <div class="qa">Питання собі</div>
+      <p>Якщо відкинути слова й обіцянки, які конкретні дії іншої людини за останній місяць показали, що вона справді змінюється? Що для тебе страшніше — знову довіритися і бути обманутою, чи більше ніколи не довіряти цій людині й, можливо, втратити стосунки?</p>
+    </div>
+  </div>
+
+  <!-- 12 -->
+  <div class="section" style="animation-delay:1.55s">
+    <h2 class="section-title">Образа на померлих</h2>
+    <p>Образа на померлого — важкий якір, оскільки діалог неможливий, а емоційний борг ніколи не буде виплачений фізично; звільнення тут відбувається через внутрішню роботу, яка проходить односторонньо, всередині психіки: дати образі голос, написавши невідправний лист померлому; уявити діалог з цією людиною і її відповідь, щоб побачити ситуацію з іншого боку; і завершити стосунки символічно — через ритуал (поїздка до значущого місця, спалення листа, розмова з фотографією).</p>
+    <p>Віктор усе життя злився на батька-трудоголіка, що помер, коли син був підлітком: він написав батькові довгого листа з докорами, прийшов на могилу, прочитав листа вголос і сказав: «я відпускаю свою образу, я беру собі твою цілеспрямованість, але залишаю в минулому твоє невміння бути близьким».</p>
+    <div class="highlight">
+      <p>Образа на померлого — як незакінчена телефонна розмова, де на іншому кінці дроту вже ніхто ніколи не відповість, а ти продовжуєш тримати слухавку. Сказати в слухавку все необхідне і покласти її — щоб звільнити руки й вуха для звуків справжнього життя. Ширше про саму роботу горя — <a href="grief.html">Рубець, що не болить</a>.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Практика · Порожній стілець</div>
+      <p>Уяви на порожньому стільці померлу людину, вислови все без цензури (це самостійна робота без свідків), а потім спробуй сісти на цей стілець і відповісти від її імені, спираючись на те, якою ти цю людину знала.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 13 -->
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">Розрив як здорове рішення</h2>
+    <p>Культура не відображає реальність, а програмує її, наполягаючи «терпи, терпи, терпи», через що розрив часто сприймається як поразка — але це в корені невірно. Остаточний розрив є не провалом, а актом найвищої самоповаги і здорового глузду в таких випадках: систематичне насильство (фізичне, емоційне, сексуальне, економічне) — тут безпека понад усе; відсутність каяття і змін; руйнування твоїх базових цінностей — коли для збереження стосунків доводиться систематично зраджувати власні фундаментальні принципи; і тотальне виснаження — коли подальше перебування у стосунках буквально «пожирає» тебе фізично. У таких випадках розрив — це не втеча, а евакуація з токсичного середовища.</p>
+    <p>Жінка роками намагалася допомогти партнеру із гральною залежністю (оплачувала борги, брехала його роботодавцям, вірила обіцянкам), але зрештою опинилася в боргах і хронічній тривозі — її рішення піти було не провалом у порятунку його, а успіхом у порятунку себе.</p>
+  </div>
+
+  <!-- 14 -->
+  <div class="section" style="animation-delay:1.65s">
+    <h2 class="section-title">Якщо біль повертається</h2>
+    <p>Повернення болю і гніву після прощення — абсолютно нормально, бо зцілення від рани — не лінійний процес, а щось на кшталт загоєння перелому: ти вже можеш ходити, але при зміні погоди нога ниє. Це не означає, що прощення було несправжнім — це означає, що спрацював тригер, або спливає новий, глибший шар досвіду, до контакту з яким психіка тепер готова.</p>
+    <div class="highlight">
+      <p>Не борися з почуттям, а визнай його присутність і м'яко перенаправ увагу: «о, це знову ти, стара боль, привіт, я бачу, що ти прийшла — ти нагадала мені про те, що я пережила і чого навчилась, дякую, можеш побути тут трохи, а я поступово повертаюся до свого теперішнього життя».</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 15 -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Право не прощати</h2>
+    <p>Прощення — це інструмент для добробуту людини, а не універсальний обов'язок: існують ситуації, де вимога прощення є недоречною і навіть шкідливою — наприклад, тяжкі навмисні злочини, спрямовані на знищення гідності людини. У таких випадках відмова прощати — не прояв слабкості, а позиція моральної цілісності: відмовляючись прощати, ти свідчиш, що існує межа, за якою вчинки не підлягають нормалізації. Якщо акт прощення вимагає переступити через базові цінності й почуття справедливості настільки, що це може зруйнувати ядро особистості, ціна такого прощення надто висока.</p>
+    <div class="highlight">
+      <p>Не прощати не означає жити в ненависті — це може бути спокійне і холодне рішення: «я не витрачатиму енергію на ненависть, але я ніколи не спишу цей борг; цей вчинок перебуває за межею того, що я можу і готова внутрішньо прийняти й відпустити». Так ти зберігаєш пам'ять і свідчиш про заподіяне тобі зло. Право на непрощення є в кожної, і важливо не нав'язувати собі універсальну користь прощення, а знайти осмислену для себе позицію.</p>
+    </div>
+  </div>
+
+  <!-- 16 -->
+  <div class="section" style="animation-delay:1.75s">
+    <h2 class="section-title">Розмова з дітьми і гнів як паливо</h2>
+    <p>Щоб не закласти дитині шкідливі установки, головне завдання — навчити її не пригнічувати почуття, а розуміти їх і керувати ними, поважаючи і себе, і інших. Замість жорсткого правила «ти повинен пробачити» — підхід на основі емпатії й меж: валідувати почуття («я бачу, що ти засмутився і розлютився, бо Кирило зламав твою іграшку, це справді дуже прикро»), відділити людину від вчинку («Кирило вчинив нехороше, але це не означає, що він поганий хлопчик»), сфокусуватися на відновленні, а не покаранні («що могло б тобі допомогти почуватися краще — може, разом полагодимо машинку?»), навчити межам («ти не зобов'язаний зараз грати з Кирилом, якщо тобі ще образливо»).</p>
+    <p>Відмова від прощення може стати джерелом творчої чи соціальної енергії, коли гнів через несправедливість трансформується з особистого болю в енергію дії: багато найвеличніших творів мистецтва народилися з глибокого болю й незгоди зі світом. Батьки, чия дитина загинула через п'яного водія, не прощають те, що сталося, і систему, яка дозволяє таким водіям легко уникати відповідальності, — натомість спрямовують біль і гнів на створення громадської організації, що домагається жорсткіших законів: особиста трагедія стає джерелом позитивних соціальних змін.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 17 -->
+  <div class="section" style="animation-delay:1.8s">
+    <h2 class="section-title">Внутрішній компас: самоповага як звичка</h2>
+    <p>Зроби самоповагу головним пріоритетом: у будь-якій ситуації питай себе, який вибір зміцнить мою самоповагу, а який зруйнує її. Практикуй емоційну чесність: регулярно проводь внутрішню інвентаризацію — що я насправді відчуваю, які мої потреби незадоволені, які межі порушені — не дозволяючи хибному прощенню й самообману пускати коріння. Сприймай конфлікти як дані, а не катастрофу: будь-яка образа чи непорозуміння — цінна інформація про себе, іншу людину і систему стосунків. Розвивай внутрішню опору й самодостатність, коли відчуття благополуччя дедалі менше залежить від того, вибачаться перед тобою чи ні.</p>
+    <div class="highlight">
+      <p>Головна мета здорового прощення — особиста свобода, свобода від тягаря минулого і влади кривдника над твоїми емоціями; при кожному рішенні пробачити чи не пробачити варто запитувати себе: що зробить мене вільнішою в довгостроковій перспективі?</p>
+    </div>
+    <p>Людина, яка раніше вибухала гнівом або замовчувала образи, тепер, зіткнувшись із неприємною поведінкою колеги, бере паузу і запитує себе «що я зараз відчуваю, яка моя межа порушена», а потім спокійно каже: «коли ти робиш X, я відчуваю Y, прошу тебе діяти інакше».</p>
+  </div>
+
+  <!-- 18 -->
+  <div class="section" style="animation-delay:1.85s">
+    <h2 class="section-title">Колективна травма, провина вцілілого, формули розмов</h2>
+    <p>Щодо колективної травми й провини груп варто говорити не про прощення, а про подолання минулого — рішення не дозволяти минулому визначати теперішні й майбутні стосунки: зцілення історичної пам'яті, функціональне примирення де це можливо, вилучення сенсу, запобігання повторенню трагедій.</p>
+    <p>«Провина того, хто вижив» — ірраціональне почуття сорому за те, що людині пощастило більше, ніж іншим у травматичній події. Важливо визнати ірраціональність цього почуття і змістити фокус з питання «чому пощастило мені» на питання «що тепер». Найкращий спосіб вшанувати пам'ять тих, кому пощастило менше, — не страждати через власну удачу, а жити осмисленим життям: радість у твоєму житті не зрада їхньої пам'яті, а найкраще її утвердження. Підприємець, який виріс у бідності, досяг успіху і відчуває сором перед менш успішними друзями дитинства, замість того щоб приховувати успіх, створює освітній фонд для талановитих дітей зі свого рідного району.</p>
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">🤍</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Формула емпатичної відмови</div>
+          <div class="card-text">«Я розумію, що тобі важлива ця потреба, і водночас для мене неприйнятна ця межа, давай подумаємо про інше рішення».</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">📐</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Формула межі</div>
+          <div class="card-text">«Коли відбувається А, я відчуваю Б, у зв'язку з цим прошу тебе В» — прибирає зі спілкування звинувачення і перевoдить діалог у конструктивне русло.</div>
+        </div>
+      </div>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Вправа: карта образ</div>
+      <p>Визнач, яка образа зараз забирає найбільше енергії, оціни її за шкалою від 1 до 10, підбери для неї метафору (камінь, отрута, болото, ланцюг, іржа), подумай, що страшно втратити, відпустивши цю образу, який головний урок вона могла б викласти, якби була вчителькою, і який маленький крок до звільнення від неї можна зробити вже зараз.</p>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:1.9s">
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Що зробить тебе вільнішою в довгостроковій перспективі — пробачити чи не пробачити?</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Насамкінець -->
+  <div class="section" style="animation-delay:1.95s">
+    <h2 class="section-title">Насамкінець</h2>
+    <p>Про прощення себе покроково — <a href="self-forgiveness.html">Камінь із душі</a>. Про образу на батьків окремим практикумом — <a href="parent-resentment.html">Потяг, який не прийде</a>. Про саму роботу горя — <a href="grief.html">Рубець, що не болить</a>.</p>
+    <div class="final-quote">
+      <div class="final-text">Прощення — не подарунок кривднику. Це <strong>рахунок, який ти списуєш собі на користь</strong> — і маєш повне право не списувати його теж.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>

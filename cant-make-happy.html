@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Світло, що не спалює</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Світло,<br>що не спалює</h1>
+  <p class="page-subtitle">Зробити батьків чи дорослих дітей щасливими неможливо — як пережити цей біль</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Близькість народжується не в злитті, а в дистанції</div>
+      <div class="hero-author">Альберт Сафін</div>
+    </div>
+    <p>Зробити щасливими своїх батьків або своїх дорослих дітей неможливо. Цей текст — про те, як пережити біль від цього усвідомлення, не втрачаючи себе в почутті провини чи сорому, і як визнати власне безсилля, не забороняючи іншим страждати чи вибирати власний життєвий шлях. Мова тут виключно про повнолітніх і дієздатних людей.</p>
+
+    <div class="quote-block">
+      <div class="qa">Тест: пізнай себе (1–10)</div>
+      <p>Фонове почуття провини, коли у батьків чи дорослих дітей поганий настрій або життєва криза. Звичка братися розв'язувати їхні проблеми ще до прямого прохання про допомогу. Постійне відкладання власного життя, бо «зараз ресурси потрібніші близьким». Пошук «правильних слів», які змусять батьків пишатися, а дітей — бути вдячними. Сильне роздратування чи відчай, коли поради ігноруються. Таємна віра, що ще трохи зусиль — і близькі нарешті стануть щасливими. Тривога, коли близькі приймають рішення, які здаються помилковими. Відчуття себе поганою донькою чи матір'ю, якщо не вдається забезпечити близьким повний комфорт. Звичка брати на себе роль миротворця в сімейних конфліктах. Відчуття, що власне право на щастя жорстко залежить від благополуччя батьків чи дорослих дітей.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 1 -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Звідки береться гостра провина за чуже нещастя</h2>
+    <p>Гостре почуття провини при спогляданні нещастя батьків або дорослих дітей виникає через несвідому віру у власне всемогутність — через відчайдушну спробу уникнути зіткнення з болісним відчуттям абсолютного безсилля перед чужою долею.</p>
+    <p>Психіка з раннього дитинства формує ілюзію контролю над навколишнім світом: немовля плаче — і з'являється їжа чи заспокоєння, тож у дитячому сприйнятті саме дії дитини напряму керують станом значущих дорослих. Якщо батько чи мати сумує або злиться, дитяча психіка бере відповідальність на себе («це я зробила щось не так»), бо дитині ще не під силу уявити, що причини можуть бути з нею не пов'язані. Відчуваючи цю провину, дитина водночас отримує ілюзію: «якщо я винна, значить, я можу це виправити». Дорослішаючи, ти часто не розлучаєшся з цим архаїчним механізмом: опинившись поруч із нещасним близьким, миттєво провалюєшся в дитячий стан всемогутності, який диктує жорстке правило — стан іншої людини нібито напряму залежить від докладених мною зусиль. Докладніше про цю саму ілюзію контролю та роль рятівниці — <a href="codependency-triangle.html">Трикутник співзалежності</a>.</p>
+    <div class="highlight">
+      <p>Як би багато зусиль ти не докладала, ти не можеш тотально впливати на те, наскільки щаслива інша людина, навіть коли йдеться про батьків чи повнолітніх дітей — <em>це ніколи так не було і ніколи так не буде.</em></p>
+    </div>
+    <p>Провина в цьому контексті — не мірило совісті, а потужний захисний механізм: визнати, що не можеш прожити життя за іншого, не можеш вберегти нікого від болю, розчарувань, хвороб чи наслідків його власних виборів, — нестерпно страшно, бо означає зустріч із фундаментальною самотністю кожної істоти. Відчувати провину парадоксальним чином безпечніше за визнання безсилля: провина вселяє надію («якщо я винна, значить, просто недостатньо старалась; знайду правильні слова — і ситуація виправиться»), тоді як безсилля говорить сувору правду — контролю тут немає. Коли береш на себе провину за чуже нещастя, ти несвідомо відмовляєш іншому в праві на власний досвід — на страждання, кризи й біль як невіддільні частини людського існування, через які відбувається дорослішання. Намагаючись «врятувати» близьких від наслідків їхніх виборів, ти позбавляєш їх можливості спиратися на власні сили.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 2 -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Розділити співчуття і провину</h2>
+    <p>Співчуття: «я бачу твій біль, я поруч, і мені шкода, що тобі доводиться через це проходити». Провина: «мені нестерпно бачити твій біль, тому я мушу негайно його усунути, щоб самій відчути себе доброю». Перехід від провини до співчуття вимагає внутрішньої сміливості — залишатися в контакті з нещасною людиною, не кидаючись її рятувати і не руйнуючись самій.</p>
+    <div class="quote-block">
+      <div class="qa">Вправа: два кола</div>
+      <p>Намалюй великий круг, а всередині нього — менший. У внутрішньому колі випиши все, що реально піддається твоєму контролю у стосунках із нещасним близьким (власні реакції, суму грошей, частоту дзвінків, власний розклад, слова підтримки) — 10 пунктів. У зовнішньому колі — все, що контролю не підлягає (настрій мами чи тата, вибір партнерів близьких, їхнє ставлення до власного здоров'я, їхні образи на життя, риси характеру, здатність чи нездатність радіти й бути вдячними) — теж 10 пунктів. Мета — побачити межу між своїм і чужим, визнати, що навіть батьки й дорослі діти — окремі суб'єкти, що мислять, відчувають і розпоряджаються власним життям.</p>
+    </div>
+    <p>Коротка практика: зроби глибокий вдих і на видиху подумки визнай своє безсилля зробити іншого щасливою, дозволивши собі «хоча б одну секунду на рік» це відпустити.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 3 -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Де закінчується відповідальність за дієздатних близьких</h2>
+    <p>Відповідальність однієї людини за іншу закінчується рівно в тій точці, де в іншого є базова здатність усвідомлювати свої потреби, робити вибір і — що найголовніше — стикатися з наслідками цих рішень. Здорова відповідальність — це «авторство власного життя», здатність сказати «я роблю цей вибір і готова за нього заплатити». Коли йдеться про малих дітей, важкохворих чи недієздатних людей, відповідальність справді лежить на тому, хто про них піклується; але щойно людина набуває когнітивної й фізичної самостійності, зона відповідальності кардинально змінюється. Розмивання меж відбувається тоді, коли одна людина починає відповідати не за власні дії щодо близького, а за емоційні реакції й життєві результати цього близького.</p>
+    <p>Дружина чоловіка-алкоголіка через контроль над ним намагається впоратися з власною тривогою, тим самим «ампутуючи» в нього здатність справлятися самостійно. Здорова межа відповідальності: можна надати інформацію, запропонувати допомогу один раз, побути поруч у важку хвилину, але не можна виконувати дії замість іншої людини, якщо вона фізично здатна зробити це сама.</p>
+    <div class="highlight">
+      <p>Кожна доросла людина має «священне право» на власне, хай навіть руйнівне чи нелогічне життя — право на помилку, бідність, поганий настрій і навіть право бути нещасною; визнання цього права — вища форма поваги до чужої автономії.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Вправа: контракт реальностей</div>
+      <p>Розділи аркуш на дві колонки: ліворуч — «моя зона відповідальності у стосунках із [ім'я]», праворуч — «її зона відповідальності за своє життя». У ліву вписуй лише те, що залежить винятково від тебе (подзвонити раз на тиждень, говорити правду, відмовляти в грошах, давати пораду лише на прохання). У праву — все, що зазвичай викликає тривогу, але насправді належить іншій людині (її реакція на мої слова, її фінансова стабільність, її вибір лікуватися чи ні, її вибір партнера чи спосіб виховання власних дітей). По 10 пунктів у кожну колонку.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 4 -->
+  <div class="section" style="animation-delay:1.15s">
+    <h2 class="section-title">Гра «так, але» — хронічні скарги без дій</h2>
+    <p>Коли дорослий близький регулярно скаржиться, вимагає емоційної чи матеріальної участі, але систематично саботує всі запропоновані рішення, — це класична пастка ролей «вічний страждалець» і «рятівниця». Хронічні скарги без дій завжди мають вторинну вигоду — увагу, турботу, підтвердження власної значущості й легальне право не стикатися з реальністю дорослого життя.</p>
+    <p>Батько пропонує вихід — «влаштуйся на роботу» — і чує «так, але там мало платять»; пропонує інше — і знову «так, але...»; у результаті батько відчуває роздратування й виснаження, а дитина йде з відчуттям, що її проблема унікальна й нерозв'язна, отримавши при цьому чергову порцію уваги.</p>
+    <div class="highlight">
+      <p>Перестань бути «контейнером для чужого негативу» і «генератором рішень», повертаючи фокус співрозмовниці питаннями: «Як ти плануєш із цим справлятися? Які варіанти вже розглядала? Чим конкретно я можу допомогти, окрім того, щоб просто вислухати?» Якщо у відповідь звучить «не знаю» — не підхоплюй проблему, а скажи: «Розумію, це складний вибір, сподіваюся, ти знайдеш вірний шлях».</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Вправа: сценарій повернення відповідальності</div>
+      <p>Письмово зафіксуй типову фразу-скаргу, яку найчастіше вимовляє близька людина («у мене знову немає грошей до зарплати», «мене всі дістали на роботі», «я не справляюся»), і запиши п'ять нових варіантів відповіді, які висловлюють розуміння, але не містять жодної поради чи пропозиції розв'язати чужу проблему («співчуваю, справді ситуація непроста, що думаєш робити далі?»). Проговорюй ці фрази вголос по півгодини на день, аж доки вони не стануть звичними.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 5 -->
+  <div class="section" style="animation-delay:1.2s">
+    <h2 class="section-title">Коли турбота зчитується як напад</h2>
+    <p>Спроби нав'язати родичам благополуччя, оточити їх непрошеною турботою, «навчити правильно жити» майже завжди призводять до сварок і відчуження: це зчитується як напад на самостійність, знецінення життєвого досвіду і порушення сімейної ієрархії, яка складалася десятиліттями. В основі прагнення зробити батьків щасливими часто лежить зміна ролей (парентифікація): дорослий, досягнувши певного успіху, починає дивитися на батьків згори вниз, робити їм непрошені ремонти, нав'язувати обстеження здоров'я, критикувати їхній спосіб життя — і хоча послання «я хочу, щоб ви жили довше й краще» саме собою позитивне, на емоційному рівні батьки часто зчитують його як «ви нездатні самі розібратися зі своїм життям». Втрата відчуття власної дієздатності — важкий удар по гідності; спротив, впертість чи навіть відкрита агресія батьків у відповідь на таку «турботу» — не прояв невдячності, а природний захист їхніх психологічних меж.</p>
+    <p>Нав'язливе бажання ощасливити батьків часто продиктоване не стільки любов'ю, скільки нестерпністю власної тривоги перед екзистенційним жахом старіння і смерті: купуючи батькам путівки й вітаміни, ти насправді заспокоюєш себе.</p>
+    <div class="quote-block">
+      <div class="qa">Вправа: аудит прихованих мотивів</div>
+      <p>Письмово, протягом 10 хвилин, безперервно продовжуй речення: «Коли я наполягаю на тому, щоб батьки змінили своє життя, насправді я хочу уникнути почуття...», чесно записуючи все, що спадає на думку, навіть якщо це здається егоїстичним чи соромним (страх, що вони помруть; сором перед друзями за їхню бідність; почуття провини, що я живу краще за них). Мета — не відмовитися від допомоги, а усвідомити, яка її частка насправді обслуговує власні внутрішні дефіцити, а не потреби батьків.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 6 -->
+  <div class="section" style="animation-delay:1.25s">
+    <h2 class="section-title">Коли близька людина обирає руйнівний шлях</h2>
+    <p>Пережити біль від того, що близька людина обирає руйнівний шлях, а зупинити це неможливо, можна лише через свідоме проходження процесу горювання за втраченою ілюзією власного контролю і визнання безумовного права іншої людини на власну долю, навіть якщо ця доля веде до краху. Віра в те, що любов здатна все врятувати, — ілюзія, яка лише тимчасово знижує тривогу. Спроба силоміць витягнути близького з його сценарію лише посилює опір і відтягує момент, коли людина зіткнеться з реальними наслідками своїх виборів.</p>
+    <div class="highlight">
+      <p>Єдиний фактор, здатний запустити справжні зміни, — «дно», об яке людина вдариться сама. Заважаючи іншому дійти до цього дна, можна створити умови, за яких він занурюється ще глибше. Відмова від рятівництва не означає байдужість — вона означає перехід у позицію свідка: залишатися поруч фізично й емоційно, зберігаючи тепло, але не пом'якшувати удари, яких людина завдає собі сама.</p>
+    </div>
+    <p>Чітко визнач для себе обсяг руйнування, який можеш безпечно витримувати («ти можеш розмовляти по телефону, але я не сплачуватиму чужі борги», «можу вислухати, але не терпітиму агресивні нападки на свою адресу»).</p>
+    <div class="quote-block">
+      <div class="qa">Вправа: лист про визнання безсилля</div>
+      <p>Письмово склади текст офіційної відмови від ролі рятівниці: визнай своє повне безсилля перед вибором конкретної людини («я визнаю своє повне безсилля перед вибором мого батька пити щодня», «я визнаю, що кожен із них має право руйнувати своє життя, здоров'я і майбутнє»), додай конкретні факти реальності, і заверши фразою «я знімаю з себе відповідальність за фінал цієї історії», повторивши її кілька разів. Тоді кілька разів, від руки: «я обираю зберегти власне життя».</p>
+    </div>
+  </div>
+
+  <!-- 7 -->
+  <div class="section" style="animation-delay:1.3s">
+    <h2 class="section-title">Сенс визнання власного безсилля</h2>
+    <p>Сенс визнання безсилля — у тому, щоб виявити непереборну межу між людьми і визнати, що сенс і радість не можуть бути «імплантовані ззовні», бо народжуються лише в результаті унікальної внутрішньої роботи самої людини. В основі прагнення зробити іншого щасливим часто лежить неусвідомлений страх екзистенційної самотності: забезпечивши батькам спокійну старість чи дитині успішне майбутнє, ти ніби намагаєшся довести власну значущість. Проте щастя — суб'єктивне переживання осмисленості власного буття, а не набір зовнішніх умов; коли одна людина намагається «подарувати» щастя іншій, вона несвідомо ставиться до неї як до об'єкта, порожньої посудини, яку можна наповнити правильними речами. Кожна людина народжується і вмирає в самотності свого суб'єктивного досвіду: ніхто не може пробачити за іншого старі образи, пережити за іншого кризу сенсів чи знайти за іншого привід прокидатися вранці.</p>
+    <div class="quote-block">
+      <div class="qa">Вправа: дві радості</div>
+      <p>Розділи аркуш на дві колонки: ліворуч напиши, що приносить радість і сенс людині, яку ти намагалась чи намагаєшся «рятувати» (навіть якщо це здається дивним чи незрозумілим); праворуч — що приносить радість і сенс особисто тобі. Мета — побачити, що інша людина не є продовженням твоїх внутрішніх органів, а джерела життєвої сили в різних людей можуть відрізнятися, і визнати право іншого не ставати щасливим за чужим сценарієм.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 8 -->
+  <div class="section" style="animation-delay:1.35s">
+    <h2 class="section-title">Перестати бути емоційним контейнером для батьків</h2>
+    <p>Коли дорослий стає для батьків «жилеткою для сліз» чи суддею в їхніх сварках, слухаючи скарги на здоров'я, сусідів чи одне одного, — це порушення природної сімейної ієрархії, за якої підтримка має текти від старших до молодших. Така роль вимушує тебе переробляти тривогу й агресію старшого покоління власними ресурсами, які мали б піти на побудову кар'єри, пошук партнера, виховання власних дітей; утримують у цій ролі сором і провина («якщо відмовишся слухати мої скарги, ти жорстока і невдячна»). Вихід — м'яко, але непохитно зупиняти потік скарг нейтральними фразами, за потреби переходячи до фізичного дистанціювання (зміна теми, завершення розмови).</p>
+    <div class="quote-block">
+      <div class="qa">Вправа: словник особистих меж</div>
+      <p>Склади список із п'яти конкретних фраз-амортизаторів для моментів, коли батьки намагаються «злити» на тебе свій негатив («я тебе дуже ціную, але цю тему обговорювати не готова і не буду», «звучить важко, що ти плануєш із цим робити?», «давай цю тему закриємо, поговорімо про щось приємне»). Запиши ці фрази від руки, розіграй уголос і поступово адаптуй під свій стиль спілкування.</p>
+    </div>
+  </div>
+
+  <!-- 9 -->
+  <div class="section" style="animation-delay:1.4s">
+    <h2 class="section-title">Чому відпускати дорослих дітей так боляче</h2>
+    <p>Процес відпускання дорослих дітей супроводжується гострим болем, бо змушує матір чи батька зіткнутися з втратою головної соціальної ролі й екзистенційною порожнечею: турбота про дитину, забезпечення її безпеки й контроль над її розвитком становили стрижень батьківської ідентичності, а коли дитина виростає, цей «проєкт» завершується. Тривога за дорослу дитину часто маскує страх самого батька перед питанням «хто я тепер, якщо більше не потрібен щохвилини?». Помилки, кризи й падіння дорослої дитини — не ознака батьківського фіаско, а необхідний біологічно й психологічно інструмент формування дорослої особистості; лише зіткнення з наслідками власних рішень формує психологічний імунітет і справжню відповідальність. Намагаючись «підстелити соломку», батько транслює приховане послання: «світ надто небезпечний, а ти надто слабкий, щоб упоратися без мене».</p>
+    <div class="quote-block">
+      <div class="qa">Вправа: моє життя після батьківства</div>
+      <p>Склади список щонайменше з 10 пунктів під заголовком «Моє життя після батьківства: відкладені бажання» — все, що відкладалося чи вважалося неважливим (нові хобі, подорожі, зміна професії, ремонт, турбота про здоров'я), записуючи швидко, без критики, протягом 15 хвилин. Мета — перенаправити «прожектор уваги» із життя дитини на власну реальність.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 10 -->
+  <div class="section" style="animation-delay:1.45s">
+    <h2 class="section-title">Здорові межі при сімейному злитті</h2>
+    <p>Злиття — стан, коли в стосунках немає чіткого розуміння, де закінчується один і починається інший, і емоції одного члена родини миттєво «заражають» решту (якщо матері тривожно, донька має тривожитися разом із нею). Будь-яка спроба відокремитися — не відповісти на дзвінок одразу, ухвалити самостійне рішення — сприймається системою як загроза й зрада, тому перші кроки сепарації завжди наштовхуються на колосальний спротив. Поширена помилка — довгі пояснення і виправдання: межі не обговорюються, а запроваджуються в односторонньому порядку через зміну власної поведінки, починаючи з малого й конкретного (не відповідати на дзвінки в неробочий час, не звітувати про власні покупки).</p>
+    <div class="quote-block">
+      <div class="qa">Вправа: аудит відкритих дверей</div>
+      <p>Ліворуч запиши п'ять ситуацій, де межі зараз повністю відкриті всупереч власному бажанню («мама має ключі від дому і приходить, коли хоче», «син дзвонить вночі зі скаргами», «батьки регулярно критикують моє життя за спільним столом»); праворуч навпроти кожного пункту — одну просту фізичну чи словесну дію, яку можна здійснити вже сьогодні, щоб цю «двер» прикрити (забрати ключі, поставити телефон на авіарежим після певної години, мовчки вставати з-за столу при знецінюючих коментарях), за потреби озвучивши за формулою «коли відбувається А, я відчуваю B, мені важливо C, і прошу вас D».</p>
+    </div>
+  </div>
+
+  <!-- 11 -->
+  <div class="section" style="animation-delay:1.5s">
+    <h2 class="section-title">Коли чуже щастя стає головною метою</h2>
+    <p>Коли ти робиш щастя батьків чи дорослих дітей своєю головною життєвою метою, власне життя «заморожується», перетворюючись на функцію обслуговування чужих дефіцитів, що неминуче веде до втрати особистих сенсів і глибокої екзистенційної кризи. Спочатку атрофується здатність розпізнавати власні бажання (забуваєш, яку їжу любиш, про що мріяла), потім приходять хронічна втома і психосоматичні захворювання, і зрештою виникає глуха токсична образа на тих, заради кого приносилася жертва — при повній відсутності вдячності, бо неможливо компенсувати комусь його непрожите життя.</p>
+    <div class="quote-block">
+      <div class="qa">Вправа: лист нереалізованому</div>
+      <p>Під заголовком «Що точно ніколи не станеться в моєму житті, якщо я і далі житиму лише заради [ім'я]» напиши чесний список із п'яти пунктів (нереалізовані професійні амбіції, нездійснені подорожі, невибудовані стосунки, відсутність спокійних вихідних), описавши це як доконаний факт втрати. Мета — зіткнутися з екзистенційною фрустрацією, яка може стати паливом для змін.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 12 -->
+  <div class="section" style="animation-delay:1.55s">
+    <h2 class="section-title">Страх осуду за «егоїзм»</h2>
+    <p>Страх виявитися «поганою донькою» в очах оточення вкорінений у базовому інстинкті виживання (належність до групи історично гарантувала життя, а вигнання означало смерть). Суспільство часто використовує концепцію «повинна» як зручний механізм контролю, а ті, хто найгучніше звинувачує інших в егоїзмі, найчастіше проєктують власний біль: людина, що поклала своє життя на обслуговування капризів батьків, підсвідомо ненавидить ту, яка наважилася цього не робити, бо чужа свобода знецінює її власну жертву. Справлятися зі страхом осуду слід не через спроби переконати звинувачувачів (це марно), а через відокремлення фактів від їх емоційної інтерпретації і формування внутрішньої опори на власну правду.</p>
+    <div class="quote-block">
+      <div class="qa">Вправа: адвокатська промова на свій захист</div>
+      <p>Напиши ім'я людини, чийого осуду боїшся найбільше, і конкретну фразу, якою тебе можуть звинуватити («ти егоїстка, думаєш лише про себе»). Тоді напиши «промову захисту» виключно із сухих фактів («факт перший: я оплачую ліки; факт другий: приїжджаю навідати щосуботи; факт третій: маю право на відпочинок у неділю, щоб продовжувати заробляти на ці ліки»).</p>
+    </div>
+  </div>
+
+  <!-- 13 -->
+  <div class="section" style="animation-delay:1.6s">
+    <h2 class="section-title">Теплі стосунки на свободі, а не на провині</h2>
+    <p>По-справжньому теплі стосунки з рідними можливі лише тоді, коли взаємодія переходить із обтяженої провиною парадигми «рятівниця-жертва» чи «батько-дитина» в площину контакту двох самостійних дорослих людей, які добровільно обирають бути поруч, нічого не вимагаючи і не намагаючись одне одного переробити. Перехід до свободи починається з відмови від функціонального сприйняття близьких: батько — не просто «апарат для видачі схвалення», доросла дитина — не інвестиційний проєкт, а окремі особистості зі своїм світом, недоліками й правом прожити власне життя так, як уміють.</p>
+    <div class="quote-block">
+      <div class="qa">Вправа: п'ять якостей</div>
+      <p>Напиши ім'я близької людини і, забувши на час про її сімейну роль, склади список із п'яти якостей чи рис характеру, які викликали б повагу й симпатію, навіть якби це була просто стороння знайома людина (чудове почуття гумору, вміння готувати, стійкість перед життєвими труднощами). Мета — навчитися бачити за ярликом («проблемна мати», «непутящий син») складну багатогранну особистість.</p>
+    </div>
+    <div class="highlight">
+      <p>Близькість народжується не в злитті, а в дистанції — лише коли між людьми з'являється простір, вільний від докорів і провини, любов перестає бути тяжким тягарем і стає тихим, надійним світлом, здатним зігріти обох, нікого не спопеливши.</p>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:1.65s">
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Що точно ніколи не станеться в твоєму житті, якщо ти й далі житимеш лише заради того, щоб зробити іншого щасливим?</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Насамкінець -->
+  <div class="section" style="animation-delay:1.7s">
+    <h2 class="section-title">Насамкінець</h2>
+    <p>Безсилля — не слабкість, а визнання неможливості зробити іншого щасливим є актом сміливості й поваги до чужої долі. Почуття провини за нещастя близьких часто маскує інфантильну ілюзію всемогутності. Постійне вислуховування чужих скарг без повернення відповідальності позбавляє людину мотивації змінюватися. Злиття знищує близькість, тоді як справжнє тепло можливе лише між автономними дорослими людьми з чіткими особистими межами. І нарешті: власне життя — єдиний проєкт, за який ти відповідаєш, а неможливість врятувати іншого не звільняє від обов'язку прожити своє життя осмислено й, наскільки це можливо, радісно.</p>
+    <p>П'ять ключових термінів цього тексту: <em>сепарація</em> — психологічний процес відокремлення від родини, здобуття емоційної, фінансової і функціональної незалежності; <em>злиття</em> — порушення психологічних меж, за якого стирається різниця між «я» та «інший»; <em>емоційне контейнування</em> — здатність витримувати сильні емоції без паніки і метушливих спроб від них позбутися; <em>парентифікація</em> — спотворення сімейної системи, за якого діти психологічно стають батьками для власних батьків; і модель <em>«рятівник-жертва-переслідувач»</em> — дисфункційна модель спілкування, у якій учасники постійно міняються ролями, уникаючи реальної відповідальності за своє життя.</p>
+    <p>Про саму модель рятівника, жертви й переслідувача докладніше — <a href="codependency-triangle.html">Трикутник співзалежності</a>. Про образу, що росте з іншого боку цих самих стосунків, — <a href="parent-resentment.html">Потяг, який не прийде</a>.</p>
+    <div class="final-quote">
+      <div class="final-text">Ти не можеш зробити іншого щасливим. Але можеш <strong>перестати заважати йому</strong> — і прожити власне життя.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
