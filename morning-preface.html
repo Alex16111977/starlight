@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Передмова дня</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Передмова<br>дня</h1>
+  <p class="page-subtitle">Мистецтво усвідомленого ранкового старту</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Ранок — це не перша глава дня. Ранок — це передмова, яка визначає, як буде прочитана вся книга</div>
+      <div class="hero-author">Альберт Сафін</div>
+    </div>
+    <p>Ранок з психологічної точки зору — не календарне й не часове поняття. Це фазовий перехід свідомості з пасивного несвідомого стану (сну) в активне, цілеспрямоване неспання — унікальне вікно можливостей, коли мозок найбільш пластичний і сприйнятливий до налаштування. Перші дії, думки й емоції після пробудження працюють як камертон, що задає домінуючу частоту всьому подальшому дню. І або це буде частота метушні й тривоги, або фокусу й спокою.</p>
+    <p>Анечка, прокидаючись, одразу хапає телефон і починає читати робочі листи, накидані їй у скриньку на ніч, — і весь її день минає у відчутті, ніби вона гасить пожежі й постійно спізнюється. Змінивши лише перші 15 хвилин ранку — присвятивши їх собі, а не потоку листів, — вона почала підходити до тих самих завдань із більшим відчуттям контролю, а не паніки.</p>
+    <div class="quote-block">
+      <div class="qa">Вправа: одне слово на ранок</div>
+      <p>Запитай себе: «А як я хочу, щоб пройшов мій день сьогодні?» — і дай відповідь одним словом: «спокійний день», «продуктивний день», «уважний день». Хай це слово стане твоїм першим усвідомленим вибором із самого ранку.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Мета ритуалу -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title"><span class="rule-num">01</span>Мета ранку — не встигнути більше</h2>
+    <p>Фундаментальна мета ранкового ритуалу — не в тому, щоб встигнути зробити якомога більше справ. Забудь про те, щоб змушувати себе робити якомога більше. Успіх і продуктивність — це не мета, це побічний ефект застосування цих принципів.</p>
+    <p>Справжня мета — стабілізувати внутрішній стан і здійснити усвідомлений акт самоствердження перед лицем денної невизначеності. Людина, прокидаючись, входить у тут-і-зараз із нізвідки й ніколи, і завдання ранку — не зробити більше справ, а сказати собі й світові: є речі, які я не контролюю. Є речі, які я контролюю. І перше, що я контролюю, — це мій вибір, як починати свій день.</p>
+    <div class="highlight">
+      <p>Ритуал створює передбачувані безпечні психологічні буфери між сном і зовнішнім світом, дозволяючи входити в день не з порожньою, а бодай трохи наповненою внутрішньою батареєю. Мета — не мегаефективна продуктивність, а усвідомлене я. <em>Я є, я бачу.</em></p>
+    </div>
+    <p>Федя, після того як його покинула дівчина Наташа, відчував, що життя розвалилося на частини. Єдине, на що вистачало сил, — щоранку заварювати каву, суворо дотримуючись усіх етапів. Маленький, повністю підконтрольний йому процес став для нього щоденним нагадуванням, що він усе ще здатний керувати бодай частиною своєї реальності.</p>
+    <p>Звідси «ритуал мінімального старту»: обери одну гранично просту дію, яку гарантовано можна виконувати щоранку (випити склянку води, зробити три глибокі вдихи, подивитись у вікно), і тренуй не користь від самої дії, а м'яз навмисного вибору. Мале, просте дійство має стати особистим символом початку дня — знаком того, що в тебе є ти.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Острівець передбачуваності + свіжозоране поле -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title"><span class="rule-num">02</span>Острівець передбачуваності</h2>
+    <p>На заперечення «це схоже на якесь обмеження, я не хочу жити за розкладом» — інший образ: ранковий ритуал — це створення особистого острівця передбачуваності в океані денного хаосу. Уяви день як океан денного хаосу, а ранок — маленький острівець передбачуваності. Одна й та сама маленька дія щоранку дає підтвердження: є стабільність, є передбачуваність, є острівець, на якому я стою, я відчуваю опору.</p>
+    <p>Перша година після пробудження — мозок перебуває в унікальному стані: префронтальна кора, яка відповідає за свідомий контроль і силу волі, ще не повністю активна, тоді як лімбічна система вже працює — це робить людину особливо вразливою для автоматичних реакцій. Уранці твій мозок — це як свіжозоране поле. І перші насінини, які ти в нього кинеш, дають найпотужніші сходи.</p>
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">Реактивність</div>
+        <div class="col-text">Занурення в пошту, соцмережі, стрічку новин одразу після пробудження тренує мозок працювати в режимі «стимул-реакція» на весь день.</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">Проактивність</div>
+        <div class="col-text">Легка зарядка, планування дня активують нейронні шляхи, що відповідають за фокус, цілепокладання й самоконтроль.</div>
+      </div>
+    </div>
+    <p>Петя не може зосередитись на складних завданнях протягом дня, бо ранок починається з читання новинних каналів, які вже зранку починають лякати, викликаючи стрес і переводячи мозок у режим пошуку загроз, а не в режим творчих рішень.</p>
+    <div class="highlight">
+      <p>Головне правило: спочатку створюй, потім споживай. «Я вранці, наприклад, спочатку створюю навчальні матеріали, потім я їх споживаю» — це означає накласти на себе заборону на споживання будь-якого зовнішнього цифрового контенту, доки не зробиш щось для себе: зарядку, один запис у щоденнику, сніданок у тиші, склянку води, душ.</p>
+    </div>
+    <p>На заперечення «а якщо пропущу щось термінове по роботі» — чесно запитай себе: як часто за останній місяць у першу годину твого дня траплялося щось, що вимагало абсолютно негайної реакції й не могло почекати бодай 30 хвилин? А чого ти насправді боїшся втратити?</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Пастка ідеального ранку -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">03</span>Пастка «ідеального ранку»</h2>
+    <p>Образ «ідеального ранку» — підйом о 3–4 ранку, «просвітлена людина», медитація, йога, смузі, щоденник на 28 сторінок — це пастка перфекціонізму й чорно-білого мислення: коли людина ставить собі нереалістично високу планку, будь-яку невдачу — проспала, немає настрою — сприймає як провал, запускаючи цикл самокритики: «я безвольна, у мене нічого не виходить».</p>
+    <p>Ніякого ідеального ранку не існує. Успішний ранковий ритуал будується не на складності, не на викликах, не на зусиллях і не на силі волі. Силу волі можна порівняти з «відібрати в школяра мобілку» — такий самий обман. Якщо ти себе змушуєш, ти почнеш це ненавидіти й вдавати, що тобі це подобається.</p>
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">Ідеальний ранок</div>
+        <div class="col-text">Виглядає ідеально в соцмережах. Будується на складності, зусиллях і силі волі — і тому рано чи пізно ламається.</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">Достатньо хороший ранок</div>
+        <div class="col-text">Стабільно є турботою про нервову систему, а не насильством над собою. Без ідеалу — просто без насильства над собою.</div>
+      </div>
+    </div>
+    <div class="highlight">
+      <p>«Покатати козявку 5–7 секунд» — приклад-приказка, який варто розуміти буквально: між нулем і одиницею відстань не кількісна, а якісна. Одна, але непохитна мікродія. Визнач «недоторканний ранковий мінімум» — одну-дві ключові дії, які повертають контроль: «я це роблю». Усе, що зробиш понад це, — вже якийсь бонус.</p>
+    </div>
+    <p>Що для тебе означає достатньо хороший ранок? Не ідеальний. Достатньо хороший ранок без насильства над собою — не про грандіозні досягнення, а про базове відчуття «я живий, я функціоную».</p>
+  </div>
+
+  <!-- Маленькі дії як докази собі -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title"><span class="rule-num">04</span>Маленькі дії як докази собі</h2>
+    <p>Сенс ранкових мікродій — не в негайному фізичному результаті, а в довгостроковому психологічному ефекті. Ти працюєш не заради фізичного ефекту, ти працюєш заради психологічного ефекту. Завдання ранку — щодня, виконуючи найпростіші дії, отримувати докази того, що ти здатна виконати дану собі обіцянку.</p>
+    <p>Важлива умова — обіцянка має бути легкою, без спокуси її не виконати: важко змусити себе робити віджимання вранці — легко почистити зуби й прийняти душ. Саме такі легкі дії й варто обирати як ранковий мінімум, а не боротьбу з собою.</p>
+    <div class="highlight">
+      <p>Завдання — зібрати сотню таких маленьких доказів, бо вони впливають на впевненість у довгостроковій перспективі. Погоня за ідеальним ранком приводить до зворотного результату — організм зрештою «відіграється», бо те, як людина живе зараз, — це не той спосіб життя, під який проєктувалося її тіло мільйони років.</p>
+    </div>
+  </div>
+
+  <!-- Сон — фундамент -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title"><span class="rule-num">05</span>Сон — фундамент, ранок — будівля</h2>
+    <p>Якість сну й сила ранку — це дві частини єдиної системи. Сон — це фундамент. Ранок — це будівля на цьому фундаменті. Неможливо побудувати міцну будівлю на тріснутому фундаменті. Ніякі ранкові ритуали ніколи не компенсують хронічний недосип чи низьку якість сну. Пріоритет завжди за сном.</p>
+    <p>Водночас зв'язок двосторонній: те, яким був сьогоднішній ранок, впливає на те, якою буде подальша якість сну (наприклад, ранкове денне світло допомагає налаштувати внутрішній годинник). Сильний ранок починається не з будильника, а з моменту, коли ти вирішила лягти спати напередодні.</p>
+    <div class="highlight">
+      <p>Запас ранкової енергії — це криниця. Ранкові ритуали — це відро, яким ти черпаєш воду. Але якщо криниця порожня — відром дістанеш лише мул і бруд.</p>
+    </div>
+    <p>Витя намагався додати собі вранці фізичну активність, але лягав спати о третій ночі — і почувався розбитим, вважаючи це браком сили волі. Щойно він переніс час відходу до сну раніше — з'явилися і сили, і бажання.</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text">Вимкнути екрани за годину до сну.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text">Скинути ментальний вантаж — виписати на папір незавершені справи й тривоги, що крутяться в голові: вивалюючи їх на папір, ти контейнуєш цю напругу в папері, а не в собі.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text">Створити комфортне середовище — провітрити кімнату, приглушити світло, задернути штори.</div></div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Коли немає сил -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">06</span>Коли немає сил і мотивації</h2>
+    <p>Відсутність сил і мотивації вранці — це не ознака слабкості, це важливий сигнал від нервової системи, який потрібно не ігнорувати, а розшифрувати. Причини можуть бути і фізичні (недосип), і емоційне вигорання, і внутрішній конфлікт (наприклад, людина запланувала те, що сама не вважає важливим, — і це пожирає енергію, заважаючи відновленню).</p>
+    <p>Замість того щоб ламати себе, — «принцип масштабування зусилля»: замість повного ранкового ритуалу виконати найпростішу, майже символічну версію. Ключове зміщення фокуса — з «я повинна» на «я можу зробити бодай це». Став простіше, став коротше, став добріше до себе.</p>
+    <div class="highlight">
+      <p>Мотивація — це не двигун внутрішнього згоряння, який можна запустити ключем запалювання. Це вітрило. Якщо вітру немає — тобто немає сил, — то безглуздо стояти й чекати урагану. Завдання тут — упіймати бодай слабке дихання вітру.</p>
+    </div>
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">Потакання лінощам</div>
+        <div class="col-text">Уникати важливе без причини.</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">Акт самоспівчуття</div>
+        <div class="col-text">Адаптація з підтримкою й турботою до свого реального стану, щоб зберегти сили для свого довгого шляху.</div>
+      </div>
+    </div>
+    <p>Якщо сил немає геть — людина є біопсихосоціодуховною істотою, і причина може бути в самому стані здоров'я. Це вагома причина подбати про себе й перевірити, що з тілом, а не тільки звинувачувати себе у відсутності сили волі.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Цифровий шум -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title"><span class="rule-num">07</span>Цифровий шум і потрійний удар</h2>
+    <p>Цифровий шум зранку завдає потрійного удару по психіці людини.</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text">Миттєво перемикає мозок у режим споживання й порівняння, а не творення й саморефлексії.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text">Викликає викид дешевого дофаміну, формуючи залежність і знижуючи мотивацію до виконання складніших, але важливих завдань.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text">Потік новин і чужих життів затоплює нервову систему інформацією, спричиняючи когнітивне перевантаження й емоційне виснаження ще до того, як день почався.</div></div>
+    </div>
+    <p>Якщо анонім в інтернеті кричить на тебе й погрожує, свідомий розум розуміє, що це просто пікселі на екрані, але тіло переживає це так, ніби зазнає реальної фізичної загрози — несвідоме вважає, що перед ним справжня людина, яка може завдати шкоди.</p>
+    <div class="highlight">
+      <p>Не заряджай телефон біля ліжка. Ідеальне місце — інша кімната; заміни будильник на телефоні звичайним окремим будильником — ця проста дія може створити цей мікрозазор.</p>
+    </div>
+    <p>Новини й соцмережі переслідують мету продажу рекламного часу — чим гучніший заголовок, тим більше грошей можна заробити, тож перевіряючи цифровий шум зранку, людина добровільно віддає ключ від свого психологічного стану зацікавленим особам. Занурюючись у чуже цифрове життя, ти починаєш порівнювати свою кухню з чужим фасадом. Чи не ризикуєш ти таким чином випасти з власного життя — твого справжнього, твого єдиного, яке розгортається просто зараз у твоєму ранку?</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Незалежно від хронотипу -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">08</span>Незалежно від хронотипу</h2>
+    <p>Чи означає те, що ти сова, що концепція сильного ранку не для тебе? Ні. Ранок, про який ідеться, — це не про те, щоб вставати о 5:00. Це про те, щоб усвідомлено керувати першою годиною свого неспання, коли б вона не починалася. Важливо не те, коли починається твій ранок, важливо те, як він починається.</p>
+    <p>Мариночка, дизайнерка-фрилансерка, довго картала себе за те, що не може прокидатись рано, вважаючи себе лінивою. Прийнявши свій хронотип «сови», вона почала прокидатись о 10:00 і присвячувати першу годину своїм ритуалам (гімнастика, планування дня), не торкаючись робочих завдань, — це дало можливість самовідчуттю вирости в рази, підвищивши якість і продуктивність теж.</p>
+    <div class="highlight">
+      <p>Намагатися змусити сову вставати рано — це як намагатися змусити кішку гавкати. З кішки не зробиш собаку, а лише отримаєш нещасну й дезорієнтовану тварину.</p>
+    </div>
+    <p>«У скільки б я не ліг спати, у мене організм о 8:00 ранку робить ось так, пау — прокидається... це діапазон 8 — 8:20 незалежно від того, коли я ліг спати», — тому важливо лягати до першої, у крайньому разі до другої ночі.</p>
+    <p>Зовнішні обставини (робота, сім'я) часто нав'язують рамки — тож питання в іншому: як організувати всередині цих рамок простір для маневру? Чи можеш ти бодай цей ранній ранок зробити хоч трохи підтримувальним, дбайливим, а не насильницьким, щоб зберегти енергію для продуктивного часу?</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Рутина проти ритуалу -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title"><span class="rule-num">09</span>Рутина проти ритуалу</h2>
+    <p>Відмінність лежить у площині наміру й усвідомленості. Рутина — це автоматична послідовність дій, часто виконувана бездумно, з метою просто зробити й закінчити. А ритуал — та сама послідовність дій, але наповнена смислом, увагою й наміром.</p>
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">Рутина</div>
+        <div class="col-text">Економить енергію. Виконується бездумно, з метою просто зробити й закінчити.</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">Ритуал</div>
+        <div class="col-text">Примножує енергію. Та сама дія, але наповнена смислом, увагою й наміром.</div>
+      </div>
+    </div>
+    <p>Чищення зубів чи заварювання чаю можуть бути і рутиною, і ритуалом — залежно від вкладеного смислу; душ для однієї людини — просто спосіб прокинутись, а для іншої — потужний ритуал очищення й перезавантаження, коли людина уявляє, що змиває залишки сну і якусь думкову лушпайку.</p>
+    <p>Для автора запис уроків — принципово ритуал, а не рутина: записати урок у форматі рутини неможливо, потрібна пильна свідомість — неможливо записувати урок і думати про щось інше. Він згадує власний досвід гри на барабанах у 19–25 років, де так само важливо було утримувати увагу на примарних нотах лівою рукою, а не грати механічно.</p>
+    <div class="quote-block">
+      <div class="qa">Вправа: заправити ліжко як ритуал</div>
+      <p>Візьми одну автоматичну, «нудну» дію ранку — наприклад, заправляння ліжка — і протягом тижня виконуй її не як рутину, а як ритуал: з максимальною концентрацією на відчутті дотику пальців до тканини, ніби це найважливіше завдання у світі.</p>
+    </div>
+  </div>
+
+  <!-- Зробити проти бути -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title"><span class="rule-num">10</span>Дієслово «зробити» проти дієслова «бути»</h2>
+    <p>Ранок, спрямований на продуктивність, будується навколо дієслова «зробити». Його мета — викреслити якомога більше пунктів зі списку справ — такий ранок забарвлений тривогою й поспіхом. Ранок, спрямований на присутність, будується навколо дієслова «бути». І головний парадокс: саме присутність формує основу для продуктивності. Перш ніж ефективно щось робити, потрібно спершу просто бути.</p>
+    <p>Гонитва за продуктивністю з перших хвилин дня веде до вигорання. Ранок для продуктивності — це спроба якомога швидше випустити всі стріли в бік мішені: не влучиш у жодну. Ранок для присутності — це час, коли ти спокійно й зосереджено натягуєш тятиву — саме це забезпечує влучність.</p>
+    <div class="quote-block">
+      <div class="qa">Вправа: п'ять відчуттів лежачи в ліжку</div>
+      <p>Назви послідовно: п'ять речей, які ти бачиш (стеля, світло, тіні); чотири речі, які відчуваєш тілом (ковдра, подушка волоссям, температура повітря, як повітря проходить крізь ніздрі); три речі, які чуєш; дві речі, які можеш понюхати; одну річ, за яку ти вдячна. Мета — змістити фокус уваги із зовнішньої ефективності й продуктивності на внутрішню присутність.</p>
+    </div>
+    <p>Яке зазвичай ранок у тебе домінує — поспіх чи спокій? Людина поспішає не тому, що спізнюється. Людина спізнюється, щоб поспішати, підтверджуючи тим самим звичні переконання про себе.</p>
+    <div class="highlight">
+      <p>Присутність зранку замість продуктивності — це не розкіш, це виробнича необхідність. Ці 10 хвилин присутності — не втрачений час, а інвестиція в якість подальших годин.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Конструктор тіло, розум, дух -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">11</span>Конструктор «тіло, розум, дух»</h2>
+    <p>Усвідомлений ранок — це не жорсткий список, це гнучкий конструктор, з якого кожна людина збирає свою унікальну комбінацію, спираючись на три сфери.</p>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🌊</span>
+        <div class="card-title">Тіло</div>
+        <div class="card-text">Елементи, спрямовані на пробудження з фізіологічної точки зору: склянка води, розтяжка, легка зарядка, душ.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🗂️</span>
+        <div class="card-title">Розум</div>
+        <div class="card-text">Елементи для впорядкування думок і фокуса: ранкові сторінки-щоденник із запитаннями «що буде для мене найкращим досвідом сьогоднішнього дня? що мені важливо сьогодні відчути?», або кілька сторінок надихаючої книги.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🕯️</span>
+        <div class="card-title">Дух</div>
+        <div class="card-text">Елементи для з'єднання з власними цінностями й смислом: практика вдячності або запитання собі — чи роблю я це так, яким сама хотіла б це бачити збоку.</div>
+      </div>
+    </div>
+    <p>Не намагайся охопити все одразу: якби ти могла привнести у своє життя лише одну дію, спираючись на цей урок, — що б це було? Почни просто з неї.</p>
+  </div>
+
+  <!-- Діагностика точок витоку енергії -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title"><span class="rule-num">12</span>Точки витоку енергії</h2>
+    <div class="quote-block">
+      <div class="qa">Вправа: ранковий щоденник спостереження</div>
+      <p>Протягом тижня веди ранковий щоденник, максимально чесно фіксуючи свої дії в перші 60 хвилин після пробудження, і навпроти кожної дії відзначай, чи вона дає енергію, забирає її, чи нейтральна. Ти не намагаєшся нічого міняти — ти просто записуєш.</p>
+    </div>
+    <p>Людина не може змінити те, чого не усвідомлює. Перший крок до сильного ранку — чесно побачити своє слабке ранок.</p>
+    <p>Чоловік думав, що енергію забирає перевірка пошти вранці, а насправді виявилося, що щоранку виснажує суперечка з дружиною про те, хто відведе дитину в садок, — усвідомлення цього дало їм привід обговорити це разом.</p>
+    <div class="highlight">
+      <p>Завдання — не в тому, щоб критикувати себе в черговий раз, а в тому, щоб із ролі жертви жахливого ранку перейти в роль дослідниці свого ранку. Дослідниця не оцінює, вона збирає дані.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Адаптація ритуалу до обставин -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title"><span class="rule-num">13</span>Адаптація до обставин</h2>
+    <p>Ключ до стійкості ранкового ритуалу — в його гнучкості й у можливості змінювати його інтенсивність. Жорстка негнучка система зламається за першої ж зміни обставин. Замість повної відмови від ритуалу — треба вміти міняти його агрегатний стан: у поїздці ритуал стискається до портативної версії (замість розлогих записів — одне-два слова в блокноті); під час хвороби ритуал перетворюється на акт максимальної турботи про себе — просто полежати в тиші.</p>
+    <div class="highlight">
+      <p>Ранок як ритуал — це не крихкий кришталь, це вода, яка здатна набувати будь-якої форми, яку диктують обставини. Головне — не ідеальне виконання, а сам сигнал собі: «я пам'ятаю про тебе, я з тобою» — цей сигнал набагато важливіший за саму фізичну дію.</p>
+    </div>
+  </div>
+
+  <!-- Ранок і самооцінка -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title"><span class="rule-num">14</span>Ранок і самооцінка</h2>
+    <p>Зв'язок між ранковим ритуалом і самооцінкою прямий і дуже потужний. Щоразу, коли ти виконуєш свій маленький ранковий ритуал, — такий акт самоствердження: «я є, я контролюю не все, але я контролюю те, як проходять перші секунди мого ранку» — ти здійснюєш мікроакт самоповаги. Накопичення цих маленьких перемог формує фундамент самоефективності — віри у власну здатність досягати своїх цілей, а також підтримує відчуття авторства й контролю: «я не просто реагую на обставини, я сам їх створюю».</p>
+    <div class="highlight">
+      <p>Самооцінка — це не те, що людина про себе думає, це те, що вона для себе робить. Мозок не бачить різниці між виконанням маленької й великої обіцянки. Він просто фіксує: завдання виконано. Навіть заправлене ліжко надсилає мозку сигнал: «я сказала, що зроблю. Я зробила».</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Вечірня підготовка -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Вечір як фундамент ранку</h2>
+    <p>Сильний ранок неможливий без спокійного вечора, який цей ранок передує. Вечірня підготовка — акт стратегічного спрощення завтрашнього дня: головна мета — знизити когнітивне навантаження, прибравши дрібні мікрорішення (що вдягнути, що з'їсти на сніданок, що покласти в сумку), які крадуть вольовий ресурс. Воля — це ресурс, який витрачається при кожному застосуванні себе. Завдання з вечора — організувати ранок так, щоб він не пожирав твій обмежений вольовий ресурс.</p>
+    <div class="highlight">
+      <p>Якщо ввечері зовсім немає сил на планування — знайди бодай мікродію на 2 хвилини, яка стане турботою про себе-завтрашню: сьогодні ввечері ти — та, хто з минулого допомагає собі майбутній.</p>
+    </div>
+  </div>
+
+  <!-- Ранок як переговорний процес -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Ранок як переговори з іншими</h2>
+    <p>Якщо людина живе не сама, ранковий ритуал перетворюється на переговорний процес, а спроба впровадити його потайки чи в ультимативній формі приречена на провал. Потрібні ясні й шанобливі психологічні й фізичні межі через я-повідомлення — пояснюючи не лише що робиш, а навіщо, що це не егоїзм, а внесок у спільне благополуччя.</p>
+    <p>Олег («жайворонок») і Світлана («сова») — його ранкова музика в навушниках дратувала її, поки вони не домовились, що цей час для неї стає часом тиші. Сумісність — це не про те, що партнери вже сумісні, а про те, що в них є намір іти одне одному назустріч.</p>
+    <div class="quote-block">
+      <div class="qa">Приклад я-повідомлення</div>
+      <p>«Я помітив, що наш ранковий час минає метушливо в останню мить. Я з цього приводу почуваюся розбитим і роздратованим... запрошую тебе обговорити ці моменти».</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Коли ритуал набрид -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Коли ритуал набрид</h2>
+    <p>Якщо твій ранковий ритуал став нудним, це не ознака невдачі, це симптом успіху. Це означає, що ти виросла з його поточної форми. Принцип сезонності: у природи немає поганої погоди, і так само у внутрішньому житті є періоди, що потребують різного ставлення до себе.</p>
+    <div class="highlight">
+      <p>Ритуал є живим — а якщо він не змінюється, він може перетворитися на мертвий пам'ятник самому собі. Переглянь, чого йому бракує: новизни, глибини чи, навпаки, простоти, спираючись на власний стиль, а не на чужу універсальну формулу.</p>
+    </div>
+  </div>
+
+  <!-- Підсумок від автора -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Підсумок</h2>
+    <p>Ранок — фазовий перехід свідомості, камертон, що визначає психологічний тон дня. Мета ритуалу не в продуктивності взагалі, а в стабілізації внутрішнього стану й здійсненні акту самоствердження. Це формує психологічний буфер між сном і зовнішнім світом, запускаючи усвідомлене я. Перша година після пробудження — час, коли мозок найбільш вразливий до того, що в нього посієш. Розвінчано концепт ідеального ранку (йога о 4-й ранку, медитація, смузі): якість сну — пріоритет номер один, бо сила ранку — це будівля, яку зводиш на фундаменті сну, але ранок водночас впливає на те, яким буде наступний сон.</p>
+    <div class="highlight">
+      <p>Ранок — це не комунікація з іншими. Ранок — це комунікація <em>з собою</em>. І цього досить.</p>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:1.1s">
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Яке одне мікродіяння ти могла б зробити своїм недоторканним ранковим мінімумом — уже завтра?</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Насамкінець -->
+  <div class="section" style="animation-delay:1.15s">
+    <h2 class="section-title">Насамкінець</h2>
+    <p>Систематичне ігнорування якості ранку накопичує стрес і формує глибинні переконання про власну безпорадність, тоді як навіть найменше, символічне ранкове дійство — і 365 днів такого дійства поспіль — робить людину авторкою свого життя, а не просто реакцією на обставини.</p>
+    <p>Про те, як маленькі виконані обіцянки собі перетворюються на щоденник досягнень, — <a href="mastery-journal.html">Щоденник майстерності</a>. Про решту дев'ятнадцять ранкових і не тільки правил цього ж автора — <a href="rules-100.html">100 правил</a>. Про те, звідки береться відчуття власної вартості й чому воно тримається на діях, а не на думках про себе, — <a href="self-esteem.html">Самооцінка</a>.</p>
+    <div class="final-quote">
+      <div class="final-text">Між нулем і одиницею відстань <strong>не кількісна, а якісна</strong>.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
