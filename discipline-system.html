@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Архітектор власного життя</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Архітектор<br>власного життя</h1>
+  <p class="page-subtitle">Ясність, стратегія, гнучкість — система самодисципліни без боротьби з собою</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Самодисципліна — це не гребець, який із усіх сил бореться з течією. Це капітан корабля</div>
+      <div class="hero-author">Альберт Сафін</div>
+    </div>
+    <p>Самодисципліна — не вроджений талант і не нескінченна містична сила волі, а навик усвідомленого управління своїми діями відповідно до довгострокових цілей і цінностей, особливо в моменти, коли миттєві бажання чи дискомфорт тягнуть у протилежному напрямку. Замість того щоб сприймати самодисципліну як внутрішню боротьбу, варто бачити в ній систему з трьох ключових елементів: ясність — розуміння, що і навіщо я роблю; стратегія — уміння керувати енергією, увагою та середовищем; гнучкість — здатність коригувати курс і підтримувати себе після невдач, не вимагаючи від себе бути ідеальною щохвилини.</p>
+    <p>Анна вважала себе безвольною, бо не могла змусити себе ходити в спортзал. Проаналізувавши ситуацію, вона зрозуміла, що річ не в слабкості, а в тому, що їй бракувало всіх трьох компонентів: мета «почуватися краще» була занадто розмита (немає ясності), не було системи й ритуалів (немає стратегії), і вона картала себе за кожен пропуск, що вбивало мотивацію (немає гнучкості).</p>
+    <div class="highlight">
+      <p>Капітан не може змінити напрям вітру (внутрішні імпульси) чи течію (зовнішні обставини), але може грамотно налаштувати вітрила — свої навички та оточення, — щоб рухатися до наміченого порту.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Вправа: три компоненти на 10 балів</div>
+      <p>Оціни по 10-бальній шкалі три компоненти дисципліни — ясність мети, наявність стратегії, гнучкість і самопідтримку — стосовно одного конкретного актуального завдання. Найнижчий бал показує, з якого компонента почати.</p>
+    </div>
+    <p>На заперечення «зрештою треба просто змусити себе»: можна зрушити камінь голими руками з неймовірним зусиллям, а можна використати важіль. Обидва варіанти — зусилля, але друге розумніше й ефективніше. Завдання — знайти свої персональні «важелі», а не просто виснажувати сили; мета не в тому, щоб страждати, а в тому, щоб виконувати велику роботу за мінімальних витрат зусиль.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Точка 2: механізм у мозку -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title"><span class="rule-num">02</span>Директор і дитина в мозку</h2>
+    <p>Самоконтроль можна уявити як взаємодію двох систем (метафора, а не строга нейрофізіологія): префронтальна кора — «внутрішній генеральний директор», що відповідає за планування, довгострокові цілі й стримування імпульсів, і лімбічна система — «внутрішня дитина», яка прагне негайного задоволення й уникає дискомфорту. Самоконтроль — це здатність «директора» керувати «дитиною».</p>
+    <div class="highlight">
+      <p>Цей ресурс вичерпний і працює як м'яз — префронтальна кора втомлюється від постійного контролю над лімбічною системою. Порівняй його із зарядом батареї телефона: вранці він на 100%, але кожне прийняте рішення, кожна стримана емоція, кожен акт вольового зусилля — як запущений застосунок, що витрачає заряд; а перемикання між багатьма задачами, як перемикання телефона між вишками зв'язку, витрачає заряд ще швидше.</p>
+    </div>
+    <p>Федя весь день приймав складні рішення на роботі, стримувався з важкими клієнтами, відмовляв собі в солодкому. Увечері він планував працювати над власним проєктом, але замість цього виявив себе за безглуздим переглядом серіалу вп'яте поспіль із пачкою чипсів — ресурс самоконтролю був повністю витрачений на денні завдання.</p>
+    <div class="quote-block">
+      <div class="qa">Вправа: куди витікає заряд</div>
+      <p>Протягом дня відмічай завдання, які вимагають найбільшого вольового напруження, щоб побачити, куди витікає заряд, і подумай, які з цих завдань можна автоматизувати (перетворити на звичку), делегувати або спростити.</p>
+    </div>
+    <p>Сила волі — обмежений і вичерпний ресурс, і успішна самодисципліна полягає не в тому, щоб напружувати цей «м'яз» сильніше, а в тому, щоб витрачати його економніше.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Точка 3: саботаж -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">03</span>Чому ми саботуємо власні цілі</h2>
+    <p>Саботаж власних цілей — це не ознака лінощів чи слабкості, а результат внутрішнього конфлікту, коли приховані вигоди від бездіяльності переважують усвідомлювані вигоди від досягнення мети. Мозок уникає загрози, а загрозою він може сприймати не лише фізичну небезпеку, а й психологічний дискомфорт.</p>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🚫</span>
+        <div class="card-title">Страх невдачі</div>
+        <div class="card-text">Якщо не спробувати, то й не провалишся.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📈</span>
+        <div class="card-title">Страх успіху</div>
+        <div class="card-text">А раптом вийде, і доведеться справлятися з новими вимогами й відповідальністю.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💯</span>
+        <div class="card-title">Перфекціонізм</div>
+        <div class="card-text">Якщо неможливо зробити ідеально, краще не починати взагалі.</div>
+      </div>
+    </div>
+    <p>Прокрастинація в цьому розумінні стає захисним механізмом, що оберігає від очікуваного болю. Фрилансер-дизайнер Фьодор постійно зриває терміни здачі важливого проєкту. Свідомо він хоче його завершити заради грошей і репутації, але на несвідомому рівні боїться завершення, бо після успішного проєкту на нього посипляться нові, ще складніші замовлення, з якими, як він побоюється, він не впорається, — і це може призвести до вигорання.</p>
+    <div class="highlight">
+      <p>Внутрішній конфлікт схожий на автомобіль, у якого одночасно натиснуті педаль газу (свідоме бажання досягти мети) і педаль гальма (приховані страхи й вигоди від бездіяльності): двигун реве, паливо витрачається, а машина майже не рухається.</p>
+    </div>
+    <div class="compare">
+      <div class="col good">
+        <div class="col-label">Плюси від досягнення мети</div>
+        <div class="col-text">Те, що свідомо хочеться отримати.</div>
+      </div>
+      <div class="col bad">
+        <div class="col-label">Плюси від того, щоб не робити</div>
+        <div class="col-text">Уникнення критики, можливість відпочивати, відчуття безпеки — друга колонка часто оголює справжні причини саботажу.</div>
+      </div>
+    </div>
+    <p>Яку важливу потребу задовольняє моя бездіяльність чи відкладання? Від чого мене захищає це відкладання? Що найгірше може статися, якщо я досягну важливої мети?</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Точка 4: дисципліна проти перфекціонізму -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title"><span class="rule-num">04</span>Дисципліна проти токсичного перфекціонізму</h2>
+    <p>Самодисципліна — не вроджена риса характеру, а тренований навик усвідомленого управління, що спирається на три стовпи (ясність, стратегія, гнучкість) і є не придушенням бажань, а мудрим калібруванням у відповідності до довгострокових цілей. Різниця між справжньою дисципліною й токсичним перфекціонізмом — у фокусі уваги та у ставленні до помилок.</p>
+    <div class="compare">
+      <div class="col good">
+        <div class="col-label">Справжня дисципліна</div>
+        <div class="col-text">Орієнтована на процес і послідовність; мета — регулярний рух вперед, нехай і невеликими кроками («швидко — це повільно, але без зупинок»); помилка — цінний зворотний зв'язок.</div>
+      </div>
+      <div class="col bad">
+        <div class="col-label">Токсичний перфекціонізм</div>
+        <div class="col-text">Сфокусований виключно на бездоганному результаті; будь-яке відхилення від ідеального плану чи найменша помилка сприймається як катастрофа й доказ власної неповноцінності.</div>
+      </div>
+    </div>
+    <div class="highlight">
+      <p>Дисципліна служить росту, а перфекціонізм — уникненню сорому. Дисципліна каже: «Я робитиму це регулярно, щоб стати кращою; навіть якщо не виходить ідеально, це не робить мене поганою». Перфекціонізм каже: «Я мушу зробити ідеально з першого разу, інакше я нікчема».</p>
+    </div>
+    <p>Двоє людей вивчають іноземну мову. Перша, дотримуючись підходу справжньої самодисципліни, займається по 30 хвилин щодня, радіє прогресу й спокійно ставиться до помилок у вимові — і поступово опановує навичку. Другий, перфекціоніст, завантажує десятки застосунків, купує багато підручників, намагається займатися по кілька годин на день і після першої ж помилки кидає все, відчуваючи себе нездібним.</p>
+    <p>Самодисципліна — це садівник, який щодня доглядає сад (поливає, пропалює, підрізає), знаючи, що не все насіння зійде, і фокусується на щоденній турботі; перфекціонізм — це «божевільний архітектор», що намалював ідеальний палац і відмовляється покласти перший камінь, доки не буде впевнений, що кожна цеглинка ляже абсолютно ідеально, — і в підсумку його палац так і лишається на папері.</p>
+    <p>Спробуй привнести у своє життя поняття «достатньо хорошого результату»: робити не на 100% ідеально, а на 70% достатньо добре, зміщуючи фокус із недосяжного ідеалу на реальне завершення дії.</p>
+  </div>
+
+  <div class="section" style="animation-delay:1s">
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Чий голос звучить у твоїй голові, коли ти помиляєшся у важливій справі, — підтримувальний тренер чи суворий суддя? Що було б, якби ти дозволила собі бути не відмінницею, а послідовною «трієчницею»?</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Точка 5: самопідтримка -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">05</span>Дисципліна і самопідтримка</h2>
+    <p>Поширена думка полягає в тому, що самодисципліна й самоспівчуття — протилежності: перша про жорсткість, друге про м'якість. Насправді ж це дві сторони однієї медалі, які не можуть ефективно існувати одна без одної: самодисципліна без співчуття до себе перетворюється на самобичування й тиранію, що веде до вигорання й внутрішнього бунту; самоспівчуття без дисципліни вироджується в потурання своїм слабкостям і застій.</p>
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">Жалість до себе</div>
+        <div class="col-text">«Я бідна, нещасна, світ несправедливий, я нічого не можу вдіяти».</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">Самоспівчуття</div>
+        <div class="col-text">«Мені зараз важко, я визнаю свій біль саме тому, що дбаю про себе й своє майбутнє, і допоможу собі повернутися на свій шлях».</div>
+      </div>
+    </div>
+    <p>Самоспівчуття — це не виправдання бездіяльності, а ефективний інструмент відновлення після невдачі; саме воно живить самодисципліну в довгостроковій перспективі.</p>
+    <div class="quote-block">
+      <div class="qa">Вправа: рефреймінг невдачі</div>
+      <p>Після зриву чи помилки письмово дай відповідь на три запитання: що б я сказала близькій людині, яка опинилася в такій самій ситуації, з максимальною добротою й підтримкою? Які об'єктивні фактори (втома, стрес, зовнішні обставини) могли сприяти цій невдачі — не для виправдання, а для розуміння? Який один маленький крок я можу зробити зараз, щоб повернутися на свій шлях?</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Точка 6: ознаки виснаження -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title"><span class="rule-num">06</span>Неочевидні ознаки виснаження</h2>
+    <p>Виснаження ресурсу самоконтролю не завжди проявляється як очевидна прокрастинація — часто воно маскується під інші симптоми в сферах життя, що на перший погляд не пов'язані з основною діяльністю.</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text">Підвищена дратівливість через дрібниці — ресурс, що йшов на стримування емоцій, вичерпано.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text">Імпульсивні рішення в сферах, не пов'язаних з основною діяльністю (наприклад, незаплановані покупки).</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text">Потяг до простих і швидких задоволень як спосіб швидко поповнити енергію.</div></div>
+      <div class="num-row"><div class="num-badge">4</div><div class="num-text">«Синдром відкладеного життя» — думка «ось закінчу цей проєкт, тоді і заживу».</div></div>
+      <div class="num-row"><div class="num-badge">5</div><div class="num-text">Втрата відчуття радості від діяльності, яка раніше подобалася.</div></div>
+    </div>
+    <p>Програміст, що працює над складним проєктом, який «пожирає» його ресурс самоконтролю, помітив, що почав частіше зриватися на дружину через побутові дрібниці й витрачати великі суми на онлайн-ігри вечорами. Він вважав, що в нього проблеми з керуванням гнівом і грошима, хоча насправді весь його «вольовий м'яз» витрачався на робочу концентрацію, а на інші сфери життя його вже не залишалося.</p>
+    <div class="highlight">
+      <p>Виснажена самодисципліна схожа на греблю з мікротріщинами — вода (імпульсивна поведінка) починає просочуватися не там, де найбільший тиск (основна робота), а в найслабших і найнесподіваніших місцях.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Вправа: щоденник вольових витоків</div>
+      <p>Упродовж тижня веди щоденник, відмічаючи не лише моменти, коли вдалося проявити самоконтроль, а й моменти раптової дратівливості, імпульсивних учинків чи гострого потягу до швидкого задоволення, а потім проаналізуй, які вольові зусилля передували цим «витокам».</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Точка 7: цінності -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">07</span>Цінності як основа стійкої дисципліни</h2>
+    <p>Самодисципліна, побудована на цінностях, найстійкіша, бо живиться не силою волі, а глибинним смислом. Замість запитання «як мені змусити себе це зробити?» варто запитувати: «як ця дія допомагає мені бути тим, ким я хочу бути?»</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text">Визначити свої ключові цінності (розвиток, турбота, свобода, майстерність, чесність, довіра) — які важливі саме для тебе і який сенс ти в них вкладаєш.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text">Перетворити цінність на конкретну поведінку (турбота про здоров'я — на регулярні тренування й масаж раз на тиждень).</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text">Звірятися з цінностями як з компасом перед ухваленням рішень — наскільки те, що я збираюся зробити, суголосне з моїми цінностями.</div></div>
+    </div>
+    <div class="highlight">
+      <p>Дисципліна, заснована на примусі («я мушу»), виснажує й може працювати лише в короткій перспективі; дисципліна, заснована на цінностях, надихає й наповнює енергією, бо кожна дія стає актом самоповаги.</p>
+    </div>
+    <p>Студент не міг змусити себе готуватися до іспитів, доки не усвідомив, що його цінність — не в оцінці, а в майстерності й майбутній професійній свободі; підготовка перестала бути каторгою й стала сприйматися як інвестиція у свободу й компетентність.</p>
+    <p>Цінності — це полярна зірка для корабля. Вони не роблять шлях легшим гарантовано, але роблять його осмисленішим, а це дає сили долати перешкоди — і саме як наслідок цього, а не як самоціль, шлях стає легшим.</p>
+    <p>Якщо твоя мета — просто заробити грошей чи схуднути, — що насправді дає тобі це на глибшому рівні (легкість, впевненість, контроль, радість)? Саме це і є цінності, що можуть стати паливом на шляху до мети.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Точка 8: коли мотивація зникла -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title"><span class="rule-num">08</span>Коли мотивація зникла</h2>
+    <p>Покладатися лише на мотивацію — все одно, що будувати дім на піску, бо мотивація — це емоційний стан, нестабільний за своєю природою. У моменти відсутності мотивації на перший план мають виходити не почуття, а заздалегідь побудовані системи й ритуали.</p>
+    <p>Ключова стратегія — відокремити рішення діяти від самої дії. Рішення ухвалюється один раз («відвідувати тренування тричі на тиждень»), а далі увага переноситься на запуск поведінкового ланцюжка — ритуалу — незалежно від того, чи є натхнення.</p>
+    <p>Письменник не чекає натхнення, щоб почати працювати. У нього є ритуал: о 9:00 він сідає за стіл із кавою й відкриває документ; перші 15 хвилин може просто дивитися на екран або писати будь-що — але цей ритуал неминуче запускає робочий процес, і мотивація найчастіше з'являється вже після початку дії, а не до нього.</p>
+    <div class="highlight">
+      <p>Мотивація — це як стартер автомобіля, що іноді (особливо «на холоді») може не спрацювати одразу. А дисципліна — це механічна коробка передач: навіть якщо стартер не спрацював, можна завести машину «з поштовху», доклавши невелике початкове зусилля й почавши ритуал, — і тоді процес роботи заведеться сам.</p>
+    </div>
+    <p>Розроби просту й конкретну послідовність із трьох-чотирьох кроків, яка передує потрібній дії (ритуал запуску), щоб зробити початок дії майже автоматичним.</p>
+    <div class="highlight">
+      <p>Дія породжує мотивацію, а не навпаки. Дія — причина, мотивація — наслідок. Людина, яка все життя чекає на мотивацію, щоб почати діяти, часто так нічого й не робить.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Точка 9: архітектура вибору -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title"><span class="rule-num">09</span>Архітектура вибору: оточення</h2>
+    <p>Поведінка людини значною мірою визначається не силою волі, а контекстом і оточенням. Найефективніший спосіб бути дисциплінованою — створити середовище, у якому бажана поведінка стає легкою й очевидною, а небажана — важкою й непомітною.</p>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🪑</span>
+        <div class="card-title">Фізичний простір</div>
+        <div class="card-text">Прибрати з очей те, від чого ти відмовляєшся, і залишити на видноті те, що для тебе важливо.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">👥</span>
+        <div class="card-title">Соціальне оточення</div>
+        <div class="card-text">Спілкуватися з тими, хто підтримує тебе в твоїх цілях і цінностях.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📱</span>
+        <div class="card-title">Цифрове середовище</div>
+        <div class="card-text">Керувати тим, що постійно перехоплює увагу.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🗓️</span>
+        <div class="card-title">Структура часу</div>
+        <div class="card-text">Заздалегідь планувати в календарі час для важливих справ.</div>
+      </div>
+    </div>
+    <p>Замість того щоб постійно боротися зі спокусами, ефективніше один раз витратити енергію на те, щоб прибрати ці спокуси з оточення. Працюй із «тертям» — ускладнюй небажану дію (залишати телефон в іншій кімнаті перед сном) і спрощуй бажану (готувати рюкзак для тренування заздалегідь і ставити його біля вхідних дверей). Особистий приклад автора: він заздалегідь оплачує тренування навіть у разі можливого пропуску та узгоджує з тренером конкретний часовий слот — це і є спосіб роботи із тертям.</p>
+    <div class="highlight">
+      <p>Мета роботи з оточенням не в тому, щоб обманути себе, а в тому, щоб створити коротку паузу між імпульсом і дією — навіть кілька секунд дають свідомій частині шанс запитати себе «я точно цього хочу?».</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Точка 10: довгострокові наслідки -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">10</span>Ціна відсутності дисципліни</h2>
+    <p>Окрім очевидних наслідків (нереалізовані кар'єрні цілі, проблеми зі здоров'ям), є глибші внутрішні наслідки:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text">Ерозія самоповаги — кожна невиконана обіцянка собі є «мікрозрадою», що підточує віру у власні сили.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text">Вивчена безпорадність — стан, коли людина перестає навіть намагатися щось змінити, бо заздалегідь упевнена в провалі.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text">Звуження життєвого простору — уникнення будь-яких викликів, що вимагають зусиль, і поступове стискання світу до зони миттєвого комфорту, що веде до застою, апатії та втрати сенсу життя.</div></div>
+    </div>
+    <p>Головна ціна відсутності самодисципліни — не втрата зовнішніх благ, а повільна втрата віри в себе, своєї волі та здатності бути авторкою власного життя.</p>
+    <p>Талановитий художник через відсутність дисципліни ніколи не завершував своїх картин; з роками він не просто перестав заробляти мистецтвом, а й почав уникати виставок і зустрічей із колегами, і зрештою взагалі перестав малювати, бо вигляд чистого полотна викликав у нього не передчуття, а тривогу й спогади про минулі невдачі.</p>
+    <div class="highlight">
+      <p>Відсутність самодисципліни схожа на повільний витік повітря з шини — спочатку майже непомітний, але з часом шина спускає повністю, і їхати стає неможливо.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Вправа: два листи з майбутнього</div>
+      <p>Напиши собі два листи з майбутнього (через 5 років) — один у сценарії, де життя продовжується так само, як зараз, зі сподіванням на силу волі та натхнення, і другий у сценарії, де вдалося побудувати систему самодисципліни у важливій сфері. Мета — максимально яскраво й емоційно відчути різницю між цими двома траєкторіями та усвідомлено обрати, як далі розпоряджатися своїми виборами.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Точка 11: увага -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title"><span class="rule-num">11</span>Дисципліна уваги</h2>
+    <p>Найцінніше, чим володіє людина, — це її увага, оскільки з неї випливає все інше (час, значною мірою й гроші). У сучасному світі самодисципліна — це передусім дисципліна уваги: здатність діяти відповідно до цілей і цінностей напряму залежить від уміння утримувати фокус на важливому й не відволікатися на потік зовнішніх стимулів. Якщо людина не керує своєю увагою свідомо, її захоплюють алгоритми соціальних мереж (завдання яких — утримувати увагу заради продажу реклами), чужі прохання та миттєві тривоги.</p>
+    <div class="highlight">
+      <p>Увага — це потужний ліхтар у темній кімнаті. Можна безладно розмахувати ним, вихоплюючи випадкові предмети (сповіщення, чужі думки), а можна свідомо направити промінь на один конкретний об'єкт і розглянути його в деталях.</p>
+    </div>
+    <p>Розвиток самодисципліни неможливий без тренування «м'яза уваги» — практики усвідомленості (що я думаю, що відчуваю, для чого я це роблю), свідомого створення «інформаційної дієти» та блоків сфокусованої роботи, які захищають від переривань.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Точка 12: дисципліна проти рутини -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title"><span class="rule-num">12</span>Дисципліна проти рутини</h2>
+    <div class="compare">
+      <div class="col good">
+        <div class="col-label">Дисципліна</div>
+        <div class="col-text">Свідоме вольове зусилля, що вимагає енергії й є вичерпним ресурсом.</div>
+      </div>
+      <div class="col bad">
+        <div class="col-label">Рутина</div>
+        <div class="col-text">Автоматична поведінка, яка виконується з мінімальними витратами волі, часто «на автопілоті» — сама по собі не погана, а мета дисципліни.</div>
+      </div>
+    </div>
+    <p>Ключова стратегія стійкої самодисципліни: використовувати дисципліну не для виконання самого завдання, а для формування рутини. Мета дисципліни — зробити так, щоб дисципліна стала непотрібною. Чищення зубів для дитини — акт дисципліни, що вимагає нагадувань і контролю з боку батьків, а для дорослого це автоматична рутина, яка не вимагає вольових зусиль.</p>
+    <div class="quote-block">
+      <div class="qa">Вправа: не розірвати ланцюг</div>
+      <p>Заведи календар і відмічай кожен день, коли виконано цільову дію; мета не в тому, щоб ніколи не пропускати, а в тому, щоб створити безперервний ланцюжок і візуалізувати прогрес.</p>
+    </div>
+    <p>Рутина не скасовує спонтанність, а навпаки — створює для неї простір, бо коли базові важливі речі (здоров'я, сон, робота) виконуються на автопілоті, це вивільняє велику кількість енергії, яку можна спрямувати на творчість. Особистий приклад автора: записувати навчальний матеріал у вже придуманому форматі — це для нього рутина, а вигадувати нові формати подачі матеріалу — це дисципліна; дисципліна й рутина чергуються залежно від рівня новизни завдання.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Точка 13: ознаки токсичної цілі -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">13</span>Ознаки токсичної цілі</h2>
+    <p>Дисципліна часто дає збій не через слабку волю, а через неякісно поставлену мету.</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text">Ціль нав'язана ззовні (батьками, суспільством) і не відгукується внутрішньо.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text">Ціль занадто велика й абстрактна («стати успішною»), що викликає параліч і нерозуміння, з чого почати.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text">Ціль сформульована в негативному ключі («перестати лежати на дивані» замість «привнести таку-то фізичну активність»).</div></div>
+      <div class="num-row"><div class="num-badge">4</div><div class="num-text">Ціль перебуває поза зоною прямого контролю (кількість підписників каналу залежить від багатьох факторів, тоді як якість і кількість підготовлених матеріалів — те, що залежить від автора).</div></div>
+    </div>
+    <div class="highlight">
+      <p>Неправильно поставлена мета — це спроба залізти драбиною, приставленою до прірви: можна бути надзвичайно дисциплінованою й витрачати масу сил, але кожен крок віддалятиме від того місця, де насправді хочеться опинитися.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Питання для переформулювання мети</div>
+      <p>Чи це справді моя мета, чи я намагаюся відповідати чиїмось очікуванням? Що конкретно я робитиму для її досягнення і як зрозумію, що досягла її? Вона сформульована позитивно (про набуття чогось хорошого, а не про уникнення поганого)? Вона перебуває в зоні мого контролю?</p>
+    </div>
+    <p>Багатство й успіх — це результат, побічний ефект процесу, а не сама мета; завдання людини — знайти свій унікальний шлях до результату з урахуванням власних інтересів і здібностей, рух яким сам по собі даватиме енергію долати перешкоди.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Відпочинок -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Відпочинок як стратегічний інструмент</h2>
+    <p>Поширена помилка — сприймати відпочинок як прояв слабкості чи нагороду. Якісний відпочинок — не протилежність роботі, а її невіддільна частина, необхідна для відновлення ресурсу самоконтролю. Стратегічний відпочинок має бути активним і контрастним стосовно основної діяльності (якщо робота розумова — відпочинок фізичний, і навпаки), а також запланованим у календарі нарівні з робочими завданнями, а не за залишковим принципом.</p>
+    <div class="highlight">
+      <p>Вигорання — це не результат того, що людина забагато працює, а результат того, що вона замало відновлюється. Дисциплінований відпочинок — основа дисциплінованої роботи.</p>
+    </div>
+    <p>Психіка й тіло — не машина, яка може працювати без зупинок, а сад: не можна постійно тільки сіяти й вимагати врожаю — саду потрібні спокій, полив і зміна сезонів, щоб ґрунт відновився і зміг дати новий щедрий урожай.</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">·</div><div class="num-text"><strong>Мікровідпочинок</strong> (кілька хвилин) — подихати, подивитися у вікно.</div></div>
+      <div class="num-row"><div class="num-badge">··</div><div class="num-text"><strong>Середній відпочинок</strong> (година) — прогулянка, хобі, короткий сон.</div></div>
+      <div class="num-row"><div class="num-badge">···</div><div class="num-text"><strong>Макровідпочинок</strong> (кілька годин чи днів) — поїздка на природу, повноцінний вихідний.</div></div>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Вправа: 30 хвилин</div>
+      <p>В експериментальному порядку знайди у своєму розкладі хоча б 30 хвилин на якісний відпочинок.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Точка 15: гострий напад прокрастинації -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title"><span class="rule-num">15</span>Гострий напад прокрастинації</h2>
+    <p>У момент гострого нападу прокрастинації логічні доводи не працюють, бо владу перехоплює емоційний («лімбічний») мозок — потрібні швидкі поведінкові й когнітивні техніки.</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text">Правило двох хвилин — не братися одразу за велике завдання, а просто відкрити потрібну програму й попрацювати перші кілька хвилин: початок є найскладнішою частиною, а після невеликого першого кроку інерція наростає.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text">Змінити фізіологію — встати, зробити кілька присідань, випити склянку холодної води, щоб «перезавантажити» нервову систему.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text">Зробити завдання скінченним і менш лячним — виділити один сфокусований відрізок часу (годину чи навіть 20 хвилин), а далі вирішити, як рухатися.</div></div>
+    </div>
+    <p>Студенту треба почати писати дипломну роботу, і сама думка про це викликає паніку. Рятівне правило: сісти за стіл і знайти лише одну статтю за темою, більше нічого не зобов'язаний робити. Після знаходження цієї статті зазвичай з'являється інтерес, і людина сама починає робити нотатки й писати.</p>
+    <div class="highlight">
+      <p>Прокрастинація — це трясовина; що більше людина в ній «борсається» й лається на себе, намагаючись побороти прокрастинацію силою, то глибше вона загрузає. Стратегія порятунку — не боротися, а знайти найближчу тверду купину (найпростішу дію) і перенести на неї ногу.</p>
+    </div>
+    <p>П'ять хвилин зосередженої дії не розв'яжуть усіх завдань, але вони розв'язують головну проблему цього моменту — проблему паралічу й бездіяльності. Різниця між нулем і п'ятьма хвилинами не кількісна, а якісна — це різниця між заціпенінням і рухом.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Точка 16: будівля -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">16</span>Особиста система як будівля</h2>
+    <p>Уяви особисту систему самодисципліни як будівлю з кількох взаємопов'язаних рівнів.</p>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🪨</span>
+        <div class="card-title">Фундамент — цінності</div>
+        <div class="card-text">Чітке розуміння глибинних мотивів, невичерпне джерело енергії.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧱</span>
+        <div class="card-title">Несучі стіни — ритуали</div>
+        <div class="card-text">Ключові звички в сферах здоров'я, сну, харчування, роботи, планування, фокусу уваги й відновлення, що автоматизують успіх.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🏠</span>
+        <div class="card-title">Дах — цілі</div>
+        <div class="card-text">Довгострокові й короткострокові, конкретні, вимірні орієнтири, що перекладають цінності на мову дій.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🚪</span>
+        <div class="card-title">Вікна й двері — оточення</div>
+        <div class="card-text">Продумані фізичний простір, коло спілкування, цифрове середовище, які підтримують, а не заважають.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔥</span>
+        <div class="card-title">Опалення — самоспівчуття</div>
+        <div class="card-text">Навички справлятися з невдачами, стресом і відсутністю мотивації, не руйнуючи всю систему.</div>
+      </div>
+    </div>
+    <div class="highlight">
+      <p>Ефективна самодисципліна — це не окремий навик, а результат гармонійної взаємодії всіх елементів життя; мета не в тому, щоб стати «роботом», а в тому, щоб стати головною архітекторкою власного життя. Не намагайся контролювати все одразу — обери один найважливіший зараз елемент і почни будувати з нього: покращення одного елемента системи часто автоматично підтягує решту.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Точка 17: тіло -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title"><span class="rule-num">17</span>Роль тіла і фізіології</h2>
+    <p>Волю часто сприймають як суто ментальний феномен, хоча вона нерозривно пов'язана з тілом. Стан тіла напряму визначає доступний рівень ментальної енергії: якість сну, збалансованість харчування й регулярна фізична активність — це не просто корисні звички, а фундаментальна біохімічна основа для стійкого ресурсу самоконтролю.</p>
+    <div class="highlight">
+      <p>Ігнорування сигналів тіла (втома, голод, напруження) — це спроба їхати на автомобілі з порожнім баком, покладаючись лише на силу бажання.</p>
+    </div>
+    <p>Особистий приклад автора: перед виступами в інших містах він ніколи не прилітає в день виступу, а закладає для перельоту й повноцінного відпочинку день заздалегідь — і враховує цей час навіть у своєму гонорарі, бо турбота про тіло дає змогу якісно взаємодіяти з учасниками заходу.</p>
+    <p>Що ефективніше — вісім годин виснаженої непродуктивної роботи чи шість годин сфокусованої роботи, що стала можливою завдяки додатковій годині, вкладеній у відновлення? Іноді потрібно сповільнитися, щоб прийти до цілей швидше.</p>
+  </div>
+
+  <!-- Соціальні зв'язки -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Соціальні зв'язки як опора</h2>
+    <p>Самодисципліна — це не лише особиста, а й соціальна змінна, бо поведінка людини значною мірою залежить від очікувань і дій оточення.</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text">Публічна обіцянка — розповісти про свою мету значущим людям, що підвищує «ціну» відмови від неї (важливо, щоб це були люди, які підтримують, а не ті, хто прагне побачити провал).</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text">Партнерка для взаємної звітності — регулярно звірятися з кимось, хто робить те саме, обмінюючись прогресом.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text">Включення в спільноту однодумців — середовище, де бажана поведінка є нормою, що суттєво знижує потребу в особистому вольовому зусиллі.</div></div>
+    </div>
+    <p>Мова не про те, щоб перекласти відповідальність на інших чи хвалитися, а про те, щоб просити підтримку — часто для близьких людей можливість допомогти й долучитися до нашого успіху є не тягарем, а радістю.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Парадокс капітуляції -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Парадокс капітуляції</h2>
+    <p>Є вища форма дисципліни, що включає парадоксальне прийняття: визнання того, що ресурс волі людини не безмежний, що кожна буде втомлюватися, зазнавати невдач і не завжди відповідати власним ідеалам — і це нормально. Боротьба з цими фактами, спроба бути «ідеальним роботом продуктивності» — колосальна витрата енергії.</p>
+    <p>«Здатися» тут означає перестати боротися з реальністю власної людської природи; це звільняє енергію, яку раніше людина витрачала на самобичування, і дозволяє спрямувати її на досягнення важливих цілей.</p>
+    <div class="highlight">
+      <p>Воля людини — не сталева балка, яка або витримує навантаження, або ламається назавжди, а бамбук: він сильно гнеться під вітром (невдачі, спокуси), майже торкаючись землі, але завдяки своїй гнучкості не ламається, а повертається у вихідне положення, щойно вітер стихає.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Практика прийняття</div>
+      <p>У момент невдачі зроби паузу і замість самокритики просто констатуй факт із прийняттям («я відчуваю розчарування, провину, злість на себе»), назви й нормалізуй емоцію, а потім запитай себе з добротою: що мені зараз потрібно, щоб подбати про себе і мати сили повернутися на свій шлях завтра?</p>
+    </div>
+    <div class="compare">
+      <div class="col good">
+        <div class="col-label">Прийняти факт</div>
+        <div class="col-text">«Зараз іде дощ» — це дозволяє ухвалити мудре рішення взяти парасольку й продовжити шлях.</div>
+      </div>
+      <div class="col bad">
+        <div class="col-label">Змиритися з бездіяльністю</div>
+        <div class="col-text">«Лягти в калюжу» — зовсім інше, ніж прийняття факту.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Емоції як паливо -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Емоції як паливо</h2>
+    <p>Емоції (тривога, нудьга, втома) часто сприймають як ворогів дисципліни, які треба пригнічувати, хоча насправді вони є навігаційною системою — цінними даними про потреби людини. Тривога перед завданням може сигналізувати не про лінощі, а про брак ресурсів чи ясності; нудьга може вказувати на те, що діяльність не пов'язана з цінностями людини. Ключовий момент — створювати паузу між емоційним імпульсом і поведінковою реакцією, щоб вибір був усвідомленим, а не продиктованим миттєвим почуттям.</p>
+    <div class="highlight">
+      <p>Людина — це не її думки, почуття й поведінка, а простір, у якому вони виникають; людина — небо, а думки й емоції — лише хмари на цьому небі. Боротьба з емоцією лише посилює її хватку, як спроба утримати надувний м'яч під водою; натомість варто дати їй простір і з цікавістю дослідити — тоді вона втрачає інтенсивність.</p>
+    </div>
+  </div>
+
+  <!-- Ідентичність -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Ідентичність та історії про себе</h2>
+    <p>Поведінка людини значною мірою визначається не фактами, а історіями, які людина сама собі розповідає. Якщо внутрішній сценарій звучить як «я лінива, мені бракує сили волі, я завжди все кидаю на півдорозі», людина буде несвідомо шукати в житті підтвердження цій історії.</p>
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">Спроба</div>
+        <div class="col-text">«Я намагаюся бути дисциплінованою людиною».</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">Ідентичність</div>
+        <div class="col-text">«Я просто дисциплінована людина, це моя норма життя, я виконую угоди, які укладаю». Тоді кожна, навіть найменша дія відповідно до цілей стає не просто кроком до результату, а вибором на користь нової ідентичності.</div>
+      </div>
+    </div>
+    <p>Це не самообман, а усвідомлене перенавчання. Людина не народжується «лінивою» — вона навчилася бути такою через багаторазове повторення певних дій і думок, а отже, так само може навчитися бути іншою, поступово, крок за кроком накопичуючи новий досвід.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Зриви як експеримент -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Зриви як науковий експеримент</h2>
+    <p>Не варто сприймати зриви й невдачі як фінал чи доказ власної неспроможності. Натомість варто бачити в кожній невдачі не вирок, а цінний масив даних для аналізу — і замість самобичування зайняти позицію дослідниці: зрив — це результат експерименту, який просто пішов не за планом.</p>
+    <div class="quote-block">
+      <div class="qa">Питання для аналізу невдачі</div>
+      <p>Що я планувала зробити і який результат очікувала? Що сталося насправді? У чому причина розбіжності між очікуваним і реальним (не пошук винних, а пошук причин)? Які тригери спрацювали? Що я зроблю інакше і які висновки можу з цього зробити?</p>
+    </div>
+    <p>Перша реакція на невдачу завжди емоційна, і це нормально — варто дати собі час побути з цими почуттями, а вже наступного дня, з «холодною головою», повернутися до ситуації не як її жертва, а як дослідниця. Мета — не скасувати ці почуття, а не дати їм стати кінцевою точкою.</p>
+    <div class="highlight">
+      <p>Невдача — не протилежність успіху, а невіддільна частина й найшвидший учитель успіху; здатність до самодисципліни зростає не від відсутності зривів, а від здатності отримувати з них уроки.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1.1s">
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Що ти обираєш тепер у своєму житті поступово припиняти робити, і що ти обираєш поступово почати робити?</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Насамкінець -->
+  <div class="section" style="animation-delay:1.15s">
+    <h2 class="section-title">Насамкінець</h2>
+    <p>Не кожна з цих ідей обов'язково виявиться корисною й суголосною для кожної. Але якщо хоча б одна з них буде застосована в житті — це вже цінний результат.</p>
+    <p>Про те, як маленькі виконані обіцянки собі перетворюються на щоденник досягнень, — <a href="mastery-journal.html">Щоденник майстерності</a>. Про перший ритуал, з якого варто почати день, перш ніж будувати всю систему, — <a href="morning-preface.html">Передмова дня</a>. Про решту правил того самого автора — <a href="rules-100.html">100 правил</a>.</p>
+    <div class="final-quote">
+      <div class="final-text">Різниця між нулем і одною дією — <strong>не кількісна, а якісна</strong>.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
