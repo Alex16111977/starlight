@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Три кити</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Три<br>кити</h1>
+  <p class="page-subtitle">Мовчання, сором, контроль — опора дисфункційної сімейної системи</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Мовчання, сором і контроль — це не риса характеру конкретної людини в родині, а несуча опора цілої сімейної конструкції</div>
+      <div class="hero-author">Альберт Сафін</div>
+    </div>
+    <p>Це питання атмосфери й «свинцю», розчиненого в цій атмосфері, — властивість дисфункціональної сімейної системи в цілому. Матеріал можна вивчати одночасно в двох позиціях: як людина, що сама виросла в дисфункціональній родині (тоді урок має підтримувальний характер), і як людина, яка зараз перебуває в такій сімейній системі чи будує її.</p>
+    <div class="highlight">
+      <p>Людина — це не лише сукупність тіла, а й явище смислове, мовне; те, якою системою значень людина наповнена, безпосередньо впливає на те, що вона бачить і чує.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Три ілюстрації -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Три ілюстрації для самоперевірки</h2>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🍽️</span>
+        <div class="card-title">Стіл, за яким мовчать</div>
+        <div class="card-text">Є тема, про яку не сказано жодного слова роками (чиєсь пияцтво, чийсь відхід, чиясь хвороба, стара історія, після якої все змінилося), про яку всі знають, але яку ніхто не називає. Ти ловиш себе на тому, що підбираєш слова, аби випадково не зачепити невидиму стіну.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">✉️</span>
+        <div class="card-title">Переписане вдев'яте</div>
+        <div class="card-text">Ти пишеш повідомлення в чат і переписуєш його вдев'яте не тому, що думка не була готова з першого разу, а тому, що узгоджуєш текст із якоюсь невидимою інстанцією. Фраза з дитинства «що люди скажуть» давно живе не зовні, а всередині — і працює без вихідних.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📍</span>
+        <div class="card-title">Контроль-турбота</div>
+        <div class="card-text">Доросла людина у свої 50+ щовечора звітує батькам, де була, з ким, скільки витратила; перевірку чужого телефону називають турботою й близькістю. Близькість — це коли людині щось хочуть розповісти. Коли зобов'язані доповідати про кожен крок — це вже нагляд, а не близькість.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Не про поганих людей -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Це урок не про поганих людей</h2>
+    <p>У дисфункціональних сім'ях зазвичай живуть не лиходії, а втомлені люди, які самі виросли в подібних умовах і передають далі те, що отримали. Розуміння не виправдовує чужих провин, але воно потрібне насамперед для того, хто вивчає тему, а не для інших. Варто розбирати не людей, а систему — «влаштування», яке працює незалежно від чиїхось намірів.</p>
+    <div class="highlight">
+      <p>На будь-якій сімейній фотографії, крім видимих членів родини, завжди є «п'ятий» — сімейна система, атмосфера дому, структура стосунків.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що таке дисфункціональна сім'я -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Що таке дисфункціональна сім'я</h2>
+    <div class="compare">
+      <div class="col good">
+        <div class="col-label">Функціональна родина</div>
+        <div class="col-text">Людина первинна, а правило вторинне — сорочка служить людині: я сама вирішую, коли й яку носити.</div>
+      </div>
+      <div class="col bad">
+        <div class="col-label">Дисфункціональна родина</div>
+        <div class="col-text">Правило первинне, а людина вторинна — сорочка сама витягує тебе з ліжка і вимагає, щоб ти носила її завжди, хоч би що з тобою відбувалося: «будь завжди зручним сином», «будь завжди терплячою дружиною», «будь завжди сильним батьком».</div>
+      </div>
+    </div>
+    <div class="highlight">
+      <p>Дисфункціональна сім'я — це сім'я, де проблеми не вирішують, а ховають, бо визнати проблему страшніше, ніж роками жити, вдаючи, що її немає. У цьому визначенні немає ні слова про наявність чи відсутність любові й почуттів — почуттів там може бути багато, просто їм не дають права голосу.</p>
+    </div>
+    <p>Функціональність — це не відсутність проблем, а спосіб поводження з ними. Сімей без труднощів не існує; різниця в тому, що в порівняно функціональній родині труднощі називають вголос, обговорюють і вирішують, а якщо вирішити не можна — разом витримують, перетворюючи те, що малося на увазі, на явне. У дисфункціональній — труднощі ховають і охороняють мовчанням. Перша сім'я витрачає сили на життя, друга — на підтримання фасаду; діти з дисфункціональної сім'ї виносять у доросле життя не досвід вирішення проблем, а досвід їх маскування.</p>
+  </div>
+
+  <!-- Три кити як один механізм -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Три кити як один механізм</h2>
+    <p>Мовчання, сором і контроль — це не три окремі біди, а один механізм, до якого можна підійти з трьох боків: мовчання ховає (прибирає з мови все, що загрожує фасаду), сором охороняє (стоїть на кордоні й не випускає приховане назовні — розповісти соромно), контроль утримує (стежить, щоб ніхто не наблизився до межі, за якою починаються запитання, здатні поставити під сумнів звичний устрій).</p>
+    <div class="highlight">
+      <p>Разом їхнє завдання — зберегти систему незмінною за будь-яку ціну, і плата за це — чиєсь живе життя, здоров'я, час і нерви. Ця конструкція нікому свідомо не спроєктована — вона складається сама зі спадку, страху, втоми і навіть із найкращих спонукань («я ж заради тебе стараюся»).</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Кит перший: мовчання -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Кит перший: мовчання</h2>
+    <p>Мовчання — не порожнеча, а дуже активна дія: не робити вибір — це теж вибір, бездіяльність — це теж дія. Сімейне мовчання — активна, щоденна дія, що вимагає зусиль усіх учасників; це заборона на називання. Дім при цьому може бути гучним, зі святами й суперечками — шум не заважає мовчанню: сім'я може говорити багато й голосно, але так і не сказати нічого головного. Перевіряється це не кількістю слів, а списком тем, при наближенні до яких розмова «звертає», як машина перед закритим переїздом.</p>
+    <div class="highlight">
+      <p>Модель дисфункціональної сім'ї можна побачити в фільмі «Шоу Трумена» — де є заборонені теми, є сором за спробу щось змінити і є тотальний контроль.</p>
+    </div>
+    <div class="compare">
+      <div class="col good">
+        <div class="col-label">Приватність</div>
+        <div class="col-text">Людина сама вирішила не виносити тему назовні — здорове право на межу.</div>
+      </div>
+      <div class="col bad">
+        <div class="col-label">Замовчувана таємниця</div>
+        <div class="col-text">Те, про що всередині сім'ї знають усі, але про що не можна говорити одне з одним, — це не межа, а стіна.</div>
+      </div>
+    </div>
+    <p>У мовчання є свої «охоронні фрази»: «не винось сварок з хати», «не при дітях» (навіть коли дітям уже за 40), «менше знаєш — міцніше спиш».</p>
+  </div>
+
+  <!-- Дитяче сприйняття мовчання -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Як мовчання пише дитину</h2>
+    <p>Дитина відчуває, що щось не так (повітря густіє, розмова уривається при її появі), але коли запитує, чує у відповідь «тобі здалося». Виникає розвилка: не вірити дорослим або не вірити власним очам — і дитина майже завжди обирає друге, бо дорослі потрібніші за правду. Так закладається звичка сумніватися у власному сприйнятті; дитина починає вважати себе причиною того, що відбувається в родині (магічне мислення).</p>
+    <div class="highlight">
+      <p>Таємниця не зникає — вона змінює носія, передаючись у спадок, як меблі, які не видно: те, про що мовчали дід із бабою, несуть батьки, те, про що мовчать батьки, — вже дорослі діти, часто навіть не знаючи змісту таємниці, але безпомилково відчуваючи її вагу.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Вправа: «У моїй родині колись було прийнято, щоб…»</div>
+      <p>Письмово (і навіть уголос наодинці з собою) 10 разів дай відповідь: яка тема у вашій родині згортала будь-яку розмову? Яка тема замовчувалася, хоча всі про неї знали? Якої теми ви уникали торкатися навіть побіжно?</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Сліди мовчання -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Сліди мовчання в дорослому житті</h2>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text"><strong>Бідний словник внутрішнього життя</strong> — слова для почуттів «видають удома, як посуд»; якщо не видали, полиці залишаються порожніми, і на запитання «як справи» відповідаєш лише «нормально», хоча всередині може вирувати ціла буря.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Тіло промовляє те, чого не сказав рот</strong> — напруження, якому не дали слів, шукає обхідні канали (безсоння перед сімейними святами, біль у животі чи спині після дзвінка батькам). Не будь-яка хвороба — про мовчання, і про фізичне здоров'я варто дбати окремо й серйозно, але варто поставити собі запитання: де саме болить тоді, коли щось сказати не можна.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text"><strong>Недовіра власному сприйняттю</strong> — дорослий, якому в дитинстві регулярно «перейменовували реальність» («тобі здалося», «ти вигадав»), сам продовжує цю роботу над собою; хто не вірить власним очам, той вірить чужим словам — а таким легко керувати.</div></div>
+      <div class="num-row"><div class="num-badge">4</div><div class="num-text"><strong>Надія на «читання думок»</strong> у стосунках — хто виріс там, де про важливе не говорять, чекає, що близький сам здогадається без слів; просити соромно, бо «справжня любов і так усе розуміє без слів» — і людина ображається на те, що сама ж вигадала.</div></div>
+    </div>
+    <div class="highlight">
+      <p>Гірка деталь: того, кого навчили мовчати, сама ж родина потім і докоряє за скритність — хоча скритність була способом вижити під тиском.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Вправа: «не мій список»</div>
+      <p>Візьми аркуш і назви три (або більше) теми, про які у вашій родині не говорили, хоча всі про них знали й страждали, вдаючи, що все гаразд, — лише для себе, наодинці, не для викриття когось. Ця робота — перший акт повернення собі мови.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Кит другий: сором -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Кит другий: сором</h2>
+    <div class="compare">
+      <div class="col good">
+        <div class="col-label">Вина</div>
+        <div class="col-text">Про вчинок: я загалом хороша людина, але це зробила погано. Має «адресу» і вихід — визнати, вибачитися, виправити, компенсувати. Кличе до дії й виправлення.</div>
+      </div>
+      <div class="col bad">
+        <div class="col-label">Сором</div>
+        <div class="col-text">Неважливо, що я зробила, — я вся, цілком погана. Немає виходу через виправлення, бо себе як тотальну помилку не виправити, тож залишається лише сховатися, зникнути. Кличе до зникнення.</div>
+      </div>
+    </div>
+    <p>У дисфункціональній родині сором — не випадкове почуття, а робочий інструмент управління: дешевий і швидкий («як тобі не соромно», «що люди скажуть», «не ганьби сім'ю»). Фрази з «прицілом сорому» б'ють не по вчинку, а по людині цілком («ти — ганьба», а не «ти вчинила погано»).</p>
+  </div>
+
+  <!-- Сором продовження -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Умовна любов і клімат сорому</h2>
+    <p>Поруч із засоромленням майже завжди живе умовна любов — дитину люблять, лише коли вона зручна, успішна, відповідає очікуванням; крок убік — і тепло вимикають. Типовий дитячий висновок: «мене справжнього любити не можна, люблять лише відредаговану, зручну версію мене» — і доросла людина все життя пред'являє світові цю «маску», тихо тужачи, що люблять не її.</p>
+    <p>Сором стоїть на межі системи й діє в обидва боки: назовні він не дозволяє внутрішньому проявитися (про заборонені теми навіть подумати соромно), а всередину — виправдовує контроль («ти безтолкова, тому за тобою потрібен нагляд»).</p>
+    <div class="highlight">
+      <p>Сам по собі сором — не ворог. Здоровий сором — регулятор доречності й близькості: точковий сигнал («відчула незручність за вчинок — виправила — живу далі»). Проблема починається, коли сором із короткочасного сигналу перетворюється на клімат — коли соромно не за вчинок, а за саме існування, тіло, походження, бажання.</p>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:1.05s">
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Якого сорому у тебе більше — сорому за вчинок чи сорому за себе в цілому?</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Сліди сорому -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Сліди сорому в дорослому житті</h2>
+    <p>Формування внутрішнього «перевіряючого» — голос, що колись соромив ззовні, «переїжджає» всередину і працює без вихідних (перевіряння повідомлення вдев'яте, фото — по кілька десятків разів перед публікацією). Не варто намагатися заглушити цей голос — краще розглянути його й запитати: «ти взагалі чий?»</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text">Дві стратегії життя поруч із засоромленням: <strong>бездоганність</strong> (відмінниця, ідеальна працівниця — не з любові до справи, а зі страху і техніки безпеки) або <strong>невидимість</strong> («якщо мене взагалі не видно, ніхто нічого поганого не скаже»). Обидві коштують того самого — власного, невиправленого життя.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text">Перекошена внутрішня «бухгалтерія» — хороше про себе не приймається (комплімент «відбивається як м'яч»), погане ж лягає рівно і глибоко, бо органічно вписується в стійкий внутрішній запис «зі мною щось не так».</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text">Вибір партнерів — знайоме, навіть якщо це біль, психіка зчитує як безпечне; людина, вихована соромом, може сплутати тривогу від партнера, що соромить, зі «метеликами в животі» та любов'ю з першого погляду; рівне поважне тепло, навпаки, здається прісним.</div></div>
+      <div class="num-row"><div class="num-badge">4</div><div class="num-text">Сором перед іншими — не приводиш друзів додому, не розповідаєш історію свого життя, ховаєш себе справжню.</div></div>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Вправа: «поруч із ким?»</div>
+      <p>Письмово п'ять разів дай відповідь: поруч із ким у дитинстві тобі не можна було бути звичайною, живою, втомленою людиною? Саме відкриття, що цей голос — не твій власний, а чужий, уже послаблює його хватку. Продовження вправи зі списком замовчуваного: обери одну (не найважчу) тему зі складеного раніше списку і наодинці із собою вимов її вголос простими словами, після чого прислухайся, як на це відповідає тіло (горло, плечі, живіт).</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Кит третій: контроль -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Кит третій: контроль</h2>
+    <p>Контроль можна уявити як «протез довіри»: там, де люди довіряють одне одному, — питають і розповідають; там, де довіри немає, — перевіряють, вистежують і оглядають.</p>
+    <div class="highlight">
+      <p>За контролем стоїть не сила, а тривога, одягнена у форму влади: «я не переживу невідомості, отже, маю знати все достеменно». Контролер не насолоджується владою — він рятується цим контролем від власного страху, тільки за чужий рахунок.</p>
+    </div>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🔍</span>
+        <div class="card-title">Тотальна поінформованість</div>
+        <div class="card-text">Допити, читання переписки, вимоги геолокації. Підміна: таким контролем можна знати кожен крок близької людини й водночас не знати, чим вона живе і чого боїться — це про те, щоб дуже багато дивитися й так нічого й не побачити.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">✈️</span>
+        <div class="card-title">Контроль проти домовленості</div>
+        <div class="card-text">«Напиши, як долетиш» — це не нагляд, а двостороння, комфортна для обох сторін домовленість. Нагляд — односторонній і тримається на страху.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧤</span>
+        <div class="card-title">Гіперопіка</div>
+        <div class="card-text">«Жорсткий кулак у м'якій рукавичці», турбота, яка не запитує згоди й ухвалює рішення за дорослу людину. Під гіперопікою не виростає власний досвід спроб і помилок. Легко перетворюється на відвертий контроль («ти ж живеш на мої гроші») і на погрози здоров'ям заради провини.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚖️</span>
+        <div class="card-title">Подвійні послання</div>
+        <div class="card-text">Дві вимоги виключають одна одну, а виконати треба обидві («будь самостійною» і водночас «роби, як тобі кажуть»). Будь-який крок дитини оголошується помилкою, і психіка виучує єдину безпечну відповідь — завмерти, не обирати, не рухатися.</div>
+      </div>
+    </div>
+    <p>Арифметика системи: чим більше в домі мовчання й сорому, тим більше потрібно нагляду — і тим менше залишається того, заради чого все це затівалося.</p>
+  </div>
+
+  <!-- Сліди контролю -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Сліди контролю в дорослому житті</h2>
+    <p>«Завмирання», вивчене під градом подвійних послань, звучить у дорослому житті як ступор у конфлікті (людина відповідає мовчанням, а точна відповідь приходить значно пізніше) або як прокрастинація — прихована форма відмови там, де відкрито відмовити було не можна: замість «не хочу», «не буду» людина просто не робить, забуває, відкладає.</p>
+    <p>Оскільки кермо керування власним життям завжди було зовні, доросле життя вибудовується навколо цієї порожнечі двома шляхами:</p>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🤝</span>
+        <div class="card-title">Здатися контролю</div>
+        <div class="card-text">Знайти, кому здатися, — контролюючого партнера, стосунки з яким викликають «метеликів у животі», бо це той самий спосіб, у який колись бралися за все твої тривожні дорослі.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔥</span>
+        <div class="card-title">Вічний бунт</div>
+        <div class="card-text">Боротьба з будь-якими правилами, яка лише на перший погляд є свободою, бо це той самий повідець, тільки натягнутий в інший бік: бунтівниця так само звіряє кожен крок із чужою волею, просто ставить мінус там, де вимагали плюс.</div>
+      </div>
+    </div>
+    <div class="highlight">
+      <p>Бажання — як м'яз: воно не видається готовим при народженні, а розвивається завдяки тисячам дрібних виборів. Якщо роками вибір за людину робили інші, на запитання «чого ви хочете» виникає порожнеча — це не дефект характеру, а просто нерозвинений м'яз, який можна тренувати в будь-якому віці малими кроками.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Вправа: п'ять правил</div>
+      <p>Подивись на своє життя збоку і сформулюй п'ять правил, луною яких є твоє сьогоднішнє життя («не можна відпочивати, поки не все зроблено», «про гроші не говорять», «спершу всім, потім собі» тощо). Для кожного правила дослідь: це моє правило чи чуже, наліплене на мене? Уяви, що ти це правило порушила, і прислухайся до голосу, який зазвучить усередині, — упізнай, чия це насправді інтонація. Далі — рішення: залишити правило, бо воно підходить сьогоднішній тобі, або повернути його «власнику» («колись це правило дозволяло мені вижити, але зараз воно вже заважає — дякую за турботу, тепер буду по-іншому»).</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- П'ять ролей -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Ролі в дисфункціональній сім'ї</h2>
+    <p>Ролі роздає не характер людини, а нужда системи; з посади можна «звільнитися» — роль це посада, а не характер, і носити їх можна по дві, змінюючи з часом.</p>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🏆</span>
+        <div class="card-title">Герой</div>
+        <div class="card-text">Вітрина досягнень, тими перемогами якого закривають тріщини фасаду («як у нас може бути погана сім'я, якщо в нас росте такий відмінник»). У дорослому житті — переконання, що життя — вічний іспит, який не можна провалити.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎯</span>
+        <div class="card-title">Козел відпущення</div>
+        <div class="card-text">Громовідвід, на якому сходиться все напруження; у сім'ю ніби немає проблем, є лише «один проблемний». Часто ця роль дістається найчутливішій і найчеснішій — тій, хто відмовлялася мовчати. У дорослому житті — звичка бути винною заздалегідь.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">👻</span>
+        <div class="card-title">Невидимка</div>
+        <div class="card-text">Тиха, безпроблемна, сама себе обслуговує; про неї говорять із гордістю «з нею ніколи не було клопоту», але правда в тому, що з нею ніколи не було й її самої — її потреби система просто не враховує. Виучене правило: «зручніше, коли мене немає взагалі».</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎭</span>
+        <div class="card-title">Шут</div>
+        <div class="card-text">Розряджає грозове повітря сміхом, перетворює скандал на анекдот — корисна, але дорога посада. У дорослому житті такій людині складно бути серйозною там, де боляче їй самій, бо про її біль завжди жартували, зокрема вона сама.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧸</span>
+        <div class="card-title">Маленький дорослий</div>
+        <div class="card-text">Дитина, якій видали дорослі справи: втішати матір, миритися батьків, доглядати молодших. У дорослому житті звучить як «я всім маю служити, просити для себе не вмію» і схильність обирати партнерів, яких треба рятувати.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Збірка -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Як три кити тримають один одного</h2>
+    <p>Контроль створює те, що доводиться приховувати (під наглядом заводять «таємне життя»); мовчання копичить ці таємниці, і тиск зростає, як у герметично закритій каструлі на вогні; сором не дає випустити пар (розповісти — означає зганьбити себе й сім'ю); а це вимагає ще більшого контролю, щоб «не рвонуло». Прибрати одного кита не виходить — двоє інших відрощують його заново.</p>
+    <div class="highlight">
+      <p>Побач цю систему разом за святковим столом: «мовчання при параді» (розмова їде лише перевіреними маршрутами), «сором при параді» (усі при ролях, усі пристойні прилади в руках), «контроль при параді» (сценарій розписаний до дрібниць — хто що готує, хто де сидить). Якщо після таких «свят» ти почуваєшся не відпочилою, а вичавленою, як лимон, — ти була не в гостях, а на робочій зміні.</p>
+    </div>
+    <p>Ці правила зазвичай не обирали свідомо, а успадкували — були покоління, де мовчання буквально рятувало життя, де контроль над кожним шматком хліба був не тиранією, а обліком у голодні роки. Умови давно змінилися, а правила лишилися й передаються далі за звичкою, без пояснень.</p>
+    <p>Вигоди системи, які варто визнати чесно: передбачуваність (ролі розписані, сюрпризів не буде), згуртованість (проти «чужих», перед якими тримають фасад), ілюзія безпеки (поки мовчимо — ніби нічого поганого не сталося), готові відповіді на всі питання (не треба думати, все вже вирішено).</p>
+    <div class="quote-block">
+      <div class="qa">Вправа: ціна мовчання</div>
+      <p>Дай відповідь на два запитання: що моя сім'я втратить, якщо про це сказати вголос (образ ідеальної сім'ї, чиюсь репутацію, звичний розподіл ролей)? І що втрачаю я, поки це не сказано (близькість, здоров'я, роки, право на власне життя)? Побачена, названа ціна мовчання перетворює його з долі на вибір.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Межі теми -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Межі теми</h2>
+    <p>Урок присвячено «звичайному, але важкому сімейному повітрю» в межах умовної норми. Якщо в родині йдеться про фізичне чи сексуальне насильство — це не питання стилю виховання, а питання закону, і тут потрібні не психологія, а захист, дистанція й правоохоронні органи.</p>
+    <div class="highlight">
+      <p>Якщо йдеться про важкий стан (туга, тривога, спустошеність), який триває місяцями як клімат, а не тимчасова погода, — це територія психотерапевта чи професійної підтримки, оскільки може знадобитися діагностика й, за потреби, медикаментозна допомога. Цей урок не замінює ні правового захисту, ні професійного лікування.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Практичний інструментарій -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Куди не варто йти</h2>
+    <p>Не в викриття сім'ї, не в очну ставку зі списком претензій за 40 років, не в вимагання визнання провини — суд над минулим не виграти. Мета цілком лежить на території самої людини: повернути собі три речі, які забрали кити. Мовчання забрало мову — завдання повернути собі мову. Сором забрав право бути звичайною — завдання повернути собі це право. Контроль забрав внутрішнє кермо — завдання повернути собі це кермо.</p>
+    <div class="highlight">
+      <p>Для всіх трьох повернень згода родини не потрібна: ця робота робиться наодинці.</p>
+    </div>
+    <p>Повернення мови відбувається малими дозами. Перший ступінь — уже складений «не мій список». Другий ступінь — одна замовчувана річ, сказана вголос безпечній людині, яка здатна вислухати, не заткнувши розмову фразою «навіщо ворушити минуле». Навіть якщо ти вирішиш щось озвучити в сімейному колі, будь готова до опору ззовні — зустріч з опором означає не те, що ти неправа, а те, що чинить опір саме система, намагаючись повернути тебе в стару роль. Починати варто з малих слів — великі підтягнуться.</p>
+  </div>
+
+  <!-- Право бути звичайною -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Право бути звичайною</h2>
+    <p>Відповідь на сором: розділяти вину і сором — якщо йдеться про конкретний вчинок і є підстава, готова визнати й виправити (це відомство провини), але дозволяти соромити себе цілком більше не варто; уточнювати в конкретики: «про який саме вчинок ідеться?». Треба бути готовою витримувати незадоволення інших — ти не можеш заборонити іншій людині страждати чи зробити її щасливою.</p>
+    <div class="quote-block">
+      <div class="qa">Подяка і межа</div>
+      <p>Внутрішньо (навіть якщо реальних батьків уже немає в живих чи ти їх не знала — можна звертатися до образів у психічній реальності) промов подяку і межу: «за минуле я вдячна, але оплачувати власним життям твої старання не буду».</p>
+    </div>
+    <p>Важлива практика — тренувати звичайність: робити не ідеально, не жахливо, а «достатньо добре», по-середньому, кожного дня потроху, відкинувши фантазії про унікальність і супергеройство.</p>
+  </div>
+
+  <!-- Повернення керма -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Повернення керма</h2>
+    <p>Самих осяянь недостатньо — потрібні дії: вести щоденник нових дрібних виборів (що з'їсти, що вдягнути, яким маршрутом іти) без запиту дозволу в оточення — це і є підхід до тренажера «м'яза бажання». Якщо ти сама контролюєш близьких — тренуй навичку запитувати замість перевіряти.</p>
+    <div class="highlight">
+      <p>Зміни починаються не з каяття й показових вистав перед рідними («я більше не буду замовчувати, соромити й контролювати» — сказане на публіку, це вже нова форма того самого), а з нових дій у житті.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Прощання з сім'єю -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Прощання з сім'єю, якої не було</h2>
+    <p>Багато людей роками чекають, що батьки колись скажуть слова визнання й любові — але ці слова часто фізично не можуть пролунати, бо тим, хто мав би їх сказати, самим ніколи не видали таких слів. Чекати на них — тримає міцніше за образу.</p>
+    <div class="quote-block">
+      <div class="qa">Вправа: лист сумуванню</div>
+      <p>Письмово виклади «мені так хотілося», «мені було важливо», дай собі час поплакати й повернися до цього запису через тиждень, спостерігаючи, як інтенсивність переживання поступово слабшає.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Вечірня вправа на місяць</div>
+      <p>Щовечора одним рядком письмово дай відповідь на три запитання без оцінок «поганий/хороший»: я сьогодні говорила чи мовчала по-старому, і як це виглядало? Я сьогодні розбиралася в устрої чи соромила себе або інших, і наскільки? Я сьогодні запитувала чи перевіряла себе й інших, і наскільки? Через місяць перечитай записи й побач збоку еволюцію власного внутрішнього світу; зриви й повернення до старого — нормальні, без самокатування.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Опір системи -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Коли система опирається</h2>
+    <p>Коли людина починає змінюватися, система (зокрема викарбувана у психічній реальності, навіть якщо фізично рідних поруч немає) намагатиметься повернути її на стару посаду — можуть почастішати образи, дзвінки, пасивна агресія, мовчанка або навіть погіршення самопочуття в значущий момент як спосіб тиску.</p>
+    <div class="highlight">
+      <p>Зустріч з опором — ознака того, що робота йде, а не що ти щось робиш не так. Мета цієї роботи — не змусити систему змінитися (це лише можливий побічний ефект), а змінитися самій.</p>
+    </div>
+    <p>Ознаки прогресу: те, про що раніше було немислимо сказати, стає просто фактом біографії, який можна озвучити без сильного трепету; переглядаючи щоденникові записи через певний час, можна здивовано й з теплим сумом помітити, наскільки легшим стало те, що раніше давалося важко.</p>
+  </div>
+
+  <div class="section" style="animation-delay:.95s">
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Яку з трьох речей — мову, право бути звичайною чи внутрішнє кермо — тобі найважче повернути собі саме зараз?</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Насамкінець -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Насамкінець</h2>
+    <p>Ключовим є не те, що сказав автор, а ті висновки, до яких прийшла сама слухачка, — це її життя, її свобода і її відповідальність.</p>
+    <p>Про те, чому хороші люди живуть гірше через сором, з іншого погляду, — <a href="shame.html">Податок на сором</a>. Про турботу й контроль у тих самих словах — <a href="care-or-control.html">Ті самі слова</a>. Про образу на батьків, з якої часто виростають і мовчання, і сором, — <a href="parent-resentment.html">Потяг, який не прийде</a>.</p>
+    <div class="final-quote">
+      <div class="final-text">На кожній сімейній фотографії є «п'ятий» — <strong>сама система</strong>. Ти можеш вийти з кадру.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
