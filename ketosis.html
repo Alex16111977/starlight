@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Кетоз</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,180,120,.20) 0%,rgba(60,150,100,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#2f8f5e,#4caf7d,#1f6b48,#a9772e,#3a9d6f);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#2f8f5e,#4caf7d,#1f6b48,#a9772e,#3a9d6f);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#7ecfa0;box-shadow:0 0 12px #7ecfa0}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#1f7a4d;text-decoration:none;border-bottom:1px solid rgba(47,143,94,.35)}
+.section p a:hover{color:#155c3a}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#2f8f5e,#4caf7d,#1f6b48,#a9772e,#3a9d6f);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(126,207,160,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(126,207,160,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.09);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:#1f4a37;margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(47,143,94,.08),rgba(148,103,23,.07));border:1px solid rgba(52,58,94,.16);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(126,207,160,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(178,60,46,.06);border-color:rgba(178,60,46,.20)}
+.col.good{background:rgba(31,122,77,.07);border-color:rgba(31,122,77,.22)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#9c2f22}
+.col.good .col-label{color:#146239}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(47,143,94,.08),rgba(148,103,23,.06));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(126,207,160,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#2f8f5e,#4caf7d,#1f6b48,#a9772e,#3a9d6f);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(126,207,160,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-top:20px}
+.stat{background:rgba(52,58,94,.04);border:1px solid rgba(52,58,94,.12);border-radius:14px;padding:20px 18px;text-align:center;transition:all .3s}
+.stat:hover{background:rgba(52,58,94,.08);border-color:rgba(52,58,94,.2)}
+.stat-num{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:36px;color:#1f7a4d;display:block;margin-bottom:6px}
+.stat-label{font-size:11px;font-weight:400;letter-spacing:.1em;color:rgba(52,58,94,.65);line-height:1.5}
+
+.steps-grid{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.step-card{background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:24px;align-items:flex-start}
+.step-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(126,207,160,.4),transparent);opacity:0;transition:opacity .4s}
+.step-card:hover{background:rgba(52,58,94,.09);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.step-card:hover::before{opacity:1}
+.step-num{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:48px;color:rgba(47,143,94,.35);line-height:1;flex-shrink:0;width:40px;text-align:center}
+.step-body{flex:1}
+.step-body .card-title{margin-bottom:8px}
+
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#1f7a4d;background:rgba(126,207,160,.18);border:1px solid rgba(126,207,160,.5)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Кетоз</h1>
+  <p class="page-subtitle">Чому тіло любить спалювати жир замість цукру</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Тіло насправді обожнює працювати саме на кетонах: це набагато здоровіше паливо з меншою кількістю відходів, воно ефективніше і містить більше енергії</div>
+      <div class="hero-author">Ерік Берг</div>
+    </div>
+    <p>Кетогенна дієта — це вживання певних продуктів у певних поєднаннях, щоб змусити тіло працювати на «кетонах». Спалюючи жир, тіло виробляє кетони, які можна використовувати як альтернативне паливо.</p>
+    <div class="stat-row">
+      <div class="stat"><span class="stat-num">90–100 тис.</span><div class="stat-label">калорій у жирових запасах середньостатистичної людини</div></div>
+      <div class="stat"><span class="stat-num">~1700</span><div class="stat-label">калорій у запасах цукру (глікогену)</div></div>
+    </div>
+    <div class="highlight">
+      <p>Що логічніше — щоб тіло працювало на накопичених ста тисячах калорій чи на цьому невеликому запасі?</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Головна перевага -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Головна перевага перед іншими дієтами</h2>
+    <p>Почавши спалювати жир, людина отримує можливість набагато довше не відчувати голод, і в неї зникає тяга до вуглеводів. Саме в цьому одна з ключових переваг кето-дієти перед іншими: людина перестає відчувати голод і тягу до певної їжі, а отже, з легкістю може дотримуватися цієї дієти довгий час.</p>
+    <p>Низькокалорійна чи низькожирова дієта пов'язана з високим споживанням вуглеводів, а саме вуглеводи заважають спалювати жир. Ті, хто сидить на низькожировій або низькокалорійній, але водночас високовуглеводній дієті, відчувають труднощі: вони залежать від фізичних вправ, тимчасово втрачають водну вагу, але зрештою, найімовірніше, здаються.</p>
+    <div class="stat-row">
+      <div class="stat"><span class="stat-num">98%</span><div class="stat-label">дієт зазнають невдачі — їх неможливо дотримуватися довго</div></div>
+      <div class="stat"><span class="stat-num">15%</span><div class="stat-label">результату схуднення дають фізичні вправи</div></div>
+    </div>
+    <div class="highlight">
+      <p>Як щось дотримуватися, якщо постійно відчуваєш голод? Це просто неможливо. Люди зазвичай звинувачують у невдачі відсутність сили волі — але річ не в силі волі, а в постійному голоді й тязі до їжі, які створює сама дієта.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Як тіло входить у кетоз -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Як тіло входить у кетоз</h2>
+    <p>У кето-дієті людина переходить у стан кетозу — тобто починає виробляти кетони — за рахунок зниженого споживання вуглеводів. Варто знизити вуглеводи до 20–50 грамів: чим менше вуглеводів, тим глибше кетоз. Кетогенну дієту можна вважати жиросжигальною дієтою — а якщо мета схуднути, то логічно саме спалювати жир.</p>
+    <div class="highlight">
+      <p>Кількість вуглеводів знижується, білка споживається небагато (це середньобілкова дієта), а щодо жиру — поширений міф про його шкідливість не витримує критики: якщо знизити вуглеводи, вживання великої кількості жиру не несе жодної загрози.</p>
+    </div>
+    <p>Коли людина входить у кетоз, вона просто перемикається з цукру на жир — і це займає три дні. Щоб цього досягти, потрібно знизити вуглеводи: це змушує тіло шукати інші джерела енергії, і таким джерелом стають жирові запаси.</p>
+  </div>
+
+  <!-- Водна вага -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Водна вага проти реального жиру</h2>
+    <p>Типова пастка: перші тиждень-два людина втрачає водну вагу і тішиться — «супер, спрацювало, я почав худнути», — але це саме водна вага. Навіщо скидати водну вагу, щоб за два тижні опинитися на плато, так і не запустивши процес спалювання жиру?</p>
+    <div class="highlight">
+      <p>Між втратою води і втратою жиру — велика різниця. Дотримуючись здорової кетогенної дієти, людина спочатку теж втрачає водну вагу, але після цього починається реальне спалювання жиру, і чим менше вживається вуглеводів, тим ефективніше воно відбувається.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Інсулін, голод і дратівливість -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Інсулін, голод і дратівливість</h2>
+    <p>Щойно людина споживає забагато вуглеводів на звичайних дієтах, рівень цукру в крові знижується через сплеск інсуліну — інсулін пригнічує цукор у крові. А коли цукор у крові низький, людина стає дратівливою, злиться і постійно голодна.</p>
+    <div class="highlight">
+      <p>На противагу цьому, дотримуючись здорової кетогенної дієти, людина спалює справжній жир. Зникає відчуття голоду, зникає тяга до їжі — і саме завдяки цим двом факторам людина може довго залишатися на цій дієті. Якщо немає голоду і тяги до їжі, якщо немає проблеми низького цукру в крові, дотримуватися дієти легко, а сама людина стає енергійнішою.</p>
+    </div>
+  </div>
+
+  <!-- Період адаптації -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Період адаптації та ефекти кетозу</h2>
+    <p>Адаптація займає від 2 до 3 днів — клітинам потрібно звикнути спалювати жир. Якщо в цей час приймати достатньо електролітів і вітамінів групи B, перехідних симптомів («кето-грипу») можна уникнути.</p>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🧠</span>
+        <div class="card-title">Ясність розуму</div>
+        <div class="card-text">Людина стає енергійнішою, кмітливішою, уважнішою, покращується пам'ять — мозок обожнює кетони.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔥</span>
+        <div class="card-title">Менше запалення</div>
+        <div class="card-text">Якщо десь болить чи є напруження, це теж слабшає.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">✨</span>
+        <div class="card-title">Стан шкіри</div>
+        <div class="card-text">Покращується стан шкіри, зменшується висип.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Кетоз і здоровий кетоз -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">«Кетоз» і «здоровий кетоз»</h2>
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">Просто кетоz</div>
+        <div class="col-text">Зазвичай, коли рекомендують кето-дієту, нічого не кажуть про якість їжі, яку варто споживати.</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">Здоровий кетоз</div>
+        <div class="col-text">Дотримання низьковуглеводної дієти в поєднанні зі споживанням корисних продуктів, багатих на поживні речовини.</div>
+      </div>
+    </div>
+    <p>Худнучи таким чином, людина почне виглядати краще і відчувати себе здоровішою; крім того, сам факт перебування в кетозі зі зниженими вуглеводами вже має величезну кількість переваг незалежно від якості їжі.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Головна мета: інсулін -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Головна мета: інсулін</h2>
+    <p>Весь сенс перебування в кетозі й використання альтернативного джерела енергії — знизити і нормалізувати рівень інсуліну.</p>
+    <div class="stat-row">
+      <div class="stat"><span class="stat-num">80%</span><div class="stat-label">населення мають проблеми з інсуліном (інсулінорезистентність)</div></div>
+      <div class="stat"><span class="stat-num">5–7×</span><div class="stat-label">більше інсуліну виробляє тіло людини з інсулінорезистентністю, ніж потрібно</div></div>
+    </div>
+    <p>Інсулінорезистентність — це коли рецептори не поглинають інсулін так, як мають, тому тіло змушене виробляти дедалі більше інсуліну, щоб це компенсувати. Підвищення вуглеводів веде до надлишку інсуліну, а той, своєю чергою, — до інсулінорезистентності, оскільки інсулін буквально «атакує» тіло, і тіло перекриває потік. Звичайна людина з інсулінорезистентністю — а це вже переддіабет.</p>
+    <div class="highlight">
+      <p>Такий величезний надлишок інсуліну веде до діабету, порушення обміну речовин (жир на животі, проблеми з цукром у крові й холестерином). У людей із хворобою Альцгеймера спостерігається високий рівень інсуліну та інсулінорезистентність. Через високий інсулін внутрішня оболонка артерій сильно піддається окисненню, артерії буквально «іржавіють», у судинах формуються бляшки, тромби, відкладення кальцію, що може призвести до серцевого нападу і навіть інсульту; затвердіння артерій — теж наслідок високого інсуліну. Інсулінорезистентність також пов'язана з порушеннями настрою, тривожністю, депресією, а зрештою це веде до жирної печінки і навіть раку — адже ракові клітини, по суті, живляться цукром.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Розподіл калорій -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Що можна їсти: розподіл калорій</h2>
+    <div class="stat-row">
+      <div class="stat"><span class="stat-num">5%</span><div class="stat-label">калорій — вуглеводи (овочі рахуються окремо)</div></div>
+      <div class="stat"><span class="stat-num">20%</span><div class="stat-label">калорій — білок, 85–170 г за прийом їжі</div></div>
+      <div class="stat"><span class="stat-num">70%</span><div class="stat-label">калорій — жир</div></div>
+    </div>
+    <p>Овочі не входять до вуглеводів окремою статтею: по-перше, в овочах не так уже й багато калорій, по-друге, їх, навпаки, варто додавати в раціон, а не зменшувати їхній обсяг. Глікемічна реакція на овочі дуже слабка — вони майже не викликають стрибка цукру і не надто підвищують інсулін; а клітковина, якою овочі дуже багаті, хоч технічно і належить до вуглеводів, не викликає інсулінової реакції. Овочі становлять близько 5% від загальних калорій, і це відповідає семи-десяти склянкам на день.</p>
+    <div class="highlight">
+      <p>Кажучи «85–170 грамів» білка, йдеться не власне про грами білка в продукті, а про вагу самого шматка м'яса чи риби, якщо зважити його цілком — адже, наприклад, у рибі, крім білка, є ще й колаген тощо, тож 80 грамів риби — це не те саме, що 80 грамів білка.</p>
+    </div>
+    <p>70% жиру виглядає багато лише тому, що на одиницю об'єму жир містить більше калорій — тобто йдеться про розподіл саме калорій, а не обсягу порції. Якщо поділити тарілку навпіл, одну половину заповнюють овочами (наприклад, салатом), чверть тарілки — білками, і ще чверть — жирами.</p>
+  </div>
+
+  <!-- Уточнення щодо вуглеводів -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Що саме вважається «вуглеводами» тут</h2>
+    <p>Йдеться не про хліб, крупи, макарони чи крекери і не про сік, а про вуглеводи, які містяться, наприклад, в горіхах або насінні (в яких є й білки, і жири, але водночас і вуглеводи, і саме ці вуглеводи слід рахувати), у хумусі (в ньому мало цукру, але є вуглеводи; водночас хумус готують з оливковою олією і часником, тож у ньому є й жири) та в ягодах (у них дуже низький глікемічний індекс, але вуглеводи в них усе одно варто враховувати).</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Джерела -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Джерела білка, жиру та овочів</h2>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🥩</span>
+        <div class="card-title">Білок</div>
+        <div class="card-text">М'ясо, риба, морепродукти, яйця, сир — у більшості цих продуктів білок і жир присутні разом, їх рідко вживають окремо.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🫒</span>
+        <div class="card-title">Чистий жир</div>
+        <div class="card-text">Масло, кокосове масло, оливкова олія. Авокадо, попри високий вміст жиру, містить і трохи вуглеводів.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🥬</span>
+        <div class="card-title">Овочі</div>
+        <div class="card-text">Листова зелень, хрестоцвіті та інші овочі. Листовий салат краще їсти сирим, хрестоцвіті — готувати на пару. Від 7 до 10 склянок на день.</div>
+      </div>
+    </div>
+    <div class="highlight">
+      <p>В ідеалі варто споживати від 7 до 10 склянок овочів на день: може здатися, що це багато, але це дає багато поживних речовин, антиоксидантів, вітамінів і мікроелементів, а в хрестоцвітих особливо багато цінних мікроелементів і вітамінів.</p>
+    </div>
+  </div>
+
+  <!-- Чого уникати -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Чого слід уникати</h2>
+    <p>Будь-яких зернових продуктів, як цільних, так і очищених: хліб, макарони, крупи, крекери, печиво, вафлі, млинці й оладки. Навіть якщо в продукті немає глютену, це все одно зернові — тож уникати варто будь-яких зернових, зокрема й рису.</p>
+    <p>Крохмалі — картопля, батат, рис (він теж крохмаль): їх варто виключити, оскільки крохмаль дуже швидко перетворюється на цукор. Власне цукор у будь-якому вигляді: тростинний цукор, нектар агави, мед, фруктоза, кукурудзяний сироп з високим вмістом фруктози. Натомість допускаються замінники цукру: стевія, архат (плід архата), ксиліт, еритритол — так звані цукрові спирти, чий глікемічний індекс значно нижчий, ніж у звичайного цукру.</p>
+    <div class="highlight">
+      <p>Варто уникати ГМО-продуктів, зокрема таких олій, як соєва, кукурудзяна й рапсова — хоча якщо їсти органічну їжу, ГМО зазвичай не загрожує. Сік — це цукор, якого слід уникати, так само як і газованих напоїв, — окрім тих, у яких використовується стевія: вони прийнятні.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Якість продуктів -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Якість продуктів</h2>
+    <p>Щодо риби — не варто їсти вирощену штучно (на фермах), промислова (дика) риба набагато корисніша. Яйця найкраще обирати органічні, від курей, вирощених на природних кормах. Купуючи органічний бекон, можна бути впевненою, що свиней не годували ГМО-зерном; крім того, бекон краще обирати без цукру і без нітратів. Якщо вживати сир, сметану, вершки чи масло — краще, щоб вони були від корів, вигодуваних травою і сіном. А купуючи каву, варто обирати органічну, оскільки каву обробляють хімікатами більше, ніж майже будь-який інший продукт.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Насамкінець -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Насамкінець</h2>
+    <p>Тіло обожнює кетони — і саме тому кето-дієта дається легше за більшість інших: без голоду й тяги до їжі не потрібна сила волі, щоб її дотримуватися.</p>
+    <p>Про сам покроковий план переходу на кето — <a href="keto-start.html">Кето-старт</a>.</p>
+    <div class="final-quote">
+      <div class="final-text">Тіло обожнює кетони — це паливо з <strong>меншою кількістю відходів</strong> і більшою енергією.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
