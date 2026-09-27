@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Небо, не хмаринка</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Небо,<br>не хмаринка</h1>
+  <p class="page-subtitle">35 запитань і відповідей про впевненість і невпевненість у собі</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Ця думка — лише хмаринка на небі; ти не хмаринка, ти небо</div>
+      <div class="hero-author">Альберт Сафін</div>
+    </div>
+    <p>Впевненість у собі — це спокійне внутрішнє знання своїх прав, своїх якостей, своїх можливостей і своїх обмежень, яке дозволяє діяти й ухвалювати рішення з опорою на себе, а не лише на зовнішні оцінки. Це не гучні заяви про власну крутість, а швидше тиха переконаність у своєму праві бути, у своєму праві помилятися і у своєму праві пробувати знову. Людина з адекватною впевненістю не прагне нічого доводити іншим, бо її самооцінка не залежить від миттєвого схвалення чи миттєвого осуду — хоча вони, звісно, мають значення в житті кожного, але не визначають, ким людина себе загалом вважає.</p>
+    <p>Вона може визнавати свої слабкі сторони й зони росту, і це не руйнує її цілісного уявлення про себе: вона вміє говорити «так» тому, що їй підходить, і «ні» тому, що не підходить, не відчуваючи паралізуючого почуття провини й страху; може попросити про допомогу, не вважаючи це проявом слабкості; може витримати критику й відділити конструктивне зерно від емоційного шуму.</p>
+    <div class="highlight">
+      <p>Внутрішній стрижень, який гнеться під тиском обставин, але ніколи не ламається, завжди повертаючись у вихідне положення. Внутрішня впевненість зростає з визнання власної цінності, яка є в кожного за замовчуванням, а не за якісь заслуги — людина цінна просто через факт свого народження.</p>
+    </div>
+    <p>Щоб краще це відчути, спробуй протягом дня відстежувати, скільки разів ти подумки чи вголос вибачаєшся за дії, які нікому не завдали шкоди, і як часто шукаєш схвального погляду, перш ніж озвучити думку, — це вже початкове розуміння того, наскільки твої дії продиктовані внутрішньою опорою, а наскільки зовнішньою.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Це проблема з упевненістю чи просто поганий настрій?</h2>
+    <p>Проблема з упевненістю — це стійкий патерн мислення й поведінки, тоді як поганий настрій ситуативний і минає. Головний маркер — те, як людина пояснює собі невдачі й успіхи. Якщо при будь-якій помилці перша думка — «я невдаха, так і знав», а будь-який успіх сприймається як випадковість або заслуга інших («це все вони, я тут ні до чого»), це явна ознака системної невпевненості.</p>
+    <div class="compare">
+      <div class="col good">
+        <div class="col-label">Погане самопочуття</div>
+        <div class="col-text">«Сьогодні був важкий день, у мене не вийшло».</div>
+      </div>
+      <div class="col bad">
+        <div class="col-label">Невпевненість</div>
+        <div class="col-text">«У мене не вийшло, тому що я в принципі на це не здатна».</div>
+      </div>
+    </div>
+    <p>Ще один важливий аспект — вплив на ухвалення рішень: людина в поганому настрої може відкласти рішення, але загалом розуміє, чого хоче; невпевнена людина відчуває хронічні труднощі з вибором, відкладає його до останнього, мучиться страхом помилитися і відчайдушно шукає поради збоку, щоб перекласти відповідальність, постійно зважуючи «а що подумають інші» — і це питання стає важливішим за питання «а чого хочу я».</p>
+    <p>Варто запитати себе: як часто ти відмовляєшся від цікавих можливостей (виступ, новий проєкт, знайомство) через страх не впоратися або виглядати смішно, як часто подумки прокручуєш діалоги, картаючи себе за невдалі слова. Якщо це відбувається постійно й заважає жити, працювати й будувати стосунки — йдеться не про тимчасовий спад, а про глибоко вкорінену невпевненість, яка не минає сама по собі після хорошого сну чи чашки кави.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Приховані ознаки невпевненої в собі людини</h2>
+    <p>Приховані ознаки невпевненості часто маскуються під інші риси характеру, тож їх непросто розпізнати.</p>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🃏</span>
+        <div class="card-title">Іронія й сарказм у свою адресу</div>
+        <div class="card-text">Спосіб знецінити себе раніше, ніж це зроблять інші: «я вже сам посміявся з того, який я смішний і незграбний, тож мене вже не засміють».</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">📣</span>
+        <div class="card-title">Вихваляння в соцмережах</div>
+        <div class="card-text">Часто не прояв сили, а відчайдушна спроба отримати зовнішнє підтвердження значущості, якої не вистачає всередині.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🙅</span>
+        <div class="card-title">Нездатність приймати допомогу й компліменти</div>
+        <div class="card-text">«Та просто повезло, нічого особливого» — комплімент іззовні конфліктує з внутрішнім образом себе; прийняти його означало б поставити під сумнів переконання у власній нікчемності.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚙️</span>
+        <div class="card-title">Трудоголізм</div>
+        <div class="card-text">Спроба заслужити право на існування через надзусилля, постійно доводячи собі й світу, що ти чогось варта.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🛡️</span>
+        <div class="card-title">Агресивний захист своєї думки</div>
+        <div class="card-text">Будь-яка критика, навіть мінімальна, сприймається як атака на особистість загалом, і людина кидається захищати не ідею, а своє крихке «я».</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Чому з одними впевнено, а з іншими — ні</h2>
+    <p>Це абсолютно нормальне явище, яке вказує на те, що впевненість сильно залежить від зовнішнього контексту й оцінок. З близькими друзями у звичному оточенні людина почувається в безпеці, знає, що її приймають і не осудять за помилки, — і в цьому підтримувальному середовищі внутрішня опора міцна. Але коли людина потрапляє в ситуацію, де її можуть оцінювати начальство, незнайомі люди чи публічна аудиторія, активується страх не відповідати очікуванням, і опора зміщується з внутрішньої на зовнішню.</p>
+    <div class="highlight">
+      <p>Людина, яка здається статусною чи авторитетною, може несвідомо нагадувати батьківську фігуру чи вчителя, чиєї похвали колись домагались, — і в присутності такої людини людина автоматично провалюється в дитячу роль, де треба заслужити похвалу й уникнути покарання будь-якою ціною, починає сканувати реакцію, підбирати слова, втрачати контакт із собою.</p>
+    </div>
+    <p>Щоб це змінювати, у момент спілкування з «важкою» людиною варто зміщувати фокус уваги: замість «як я виглядаю в її очах» запитувати себе «а що я думаю про цю людину? що мені в ній цікаво, що подобається, а що ні, чого можу в ній навчитися, а чого — навпаки, точно не повторювати». Корисно також нагадувати собі, хто я, де я і коли я, — про свої компетенції й успіхи в інших сферах життя, щоб відновити внутрішній баланс і усвідомити, що твоя цінність не визначається думкою конкретно взятої людини.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Чи впевнена людина відчуває страх?</h2>
+    <p>Так, і це одна з головних відмінностей здорової впевненості від токсичної самовпевненості. Впевненість — це не відсутність страху й сумнівів, а здатність діяти, попри них, крізь них. Страх — природна реакція на невідомість і ризик, дивно було б його не відчувати, а сумнів — ознака працюючого критичного мислення.</p>
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">Невпевнена людина</div>
+        <div class="col-text">Сприймає страх як сигнал «стій, у тебе не вийде, ти не впораєшся» і, найімовірніше, відступить або прокрастинуватиме.</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">Впевнена людина</div>
+        <div class="col-text">Відчує той самий страх, але інтерпретує його інакше: «звісно, я хвилююся — я ж хочу зробити це добре; які нюанси варто врахувати на етапі підготовки, щоб підготуватися не ідеально, але достатньо добре».</div>
+      </div>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Вправа: діалог зі страхом</div>
+      <p>Коли з'являється думка «а раптом я не впораюся», не варто її проганяти («ти справді можеш не впоратися»), а поставити зустрічне запитання: «добре, а що я можу зробити, щоб підвищити свої шанси на успіх бодай трохи? який найменший крок я можу зробити просто зараз у цьому напрямку?» — це дозволяє змістити фокус із глобального страху невдачі на конкретні керовані дії.</p>
+    </div>
+    <div class="highlight">
+      <p>Впевненість — не броня від життя, від страхів чи від інших людей (це радше надкомпенсація внутрішньої ущербності), а гнучкість — уміння рухатися вперед разом зі своїми переживаннями, ніби запрошуючи хвилювання, страх, сором і збентеження «сісти поруч» і рухаючись разом із ними, а не тікаючи від них і не придушуючи їх.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Впевненість, самовпевненість і нахабство</h2>
+    <p>Різниця — у джерелі самооцінки й у ставленні до інших людей. Впевненість спирається на реалістичне знання своїх сильних і слабких сторін; самовпевненість — на завищену, часто нереалістичну оцінку своїх здібностей; а нахабство — це самоствердження за рахунок порушення меж і прав інших людей.</p>
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">🧭</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Впевненість</div>
+          <div class="card-text">«Я можу це зробити, у мене є досвід із цим справлятися; ось тут у мене менше досвіду й кваліфікації, знадобиться допомога й підтримка таких-от людей із такими-от знаннями; ось це зробити можу, а ось це — ні».</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">🎭</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Самовпевненість</div>
+          <div class="card-text">«Я зроблю краще за всіх, мені ніхто не потрібен, у мене не буває помилок, я все роблю чудово».</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">⚔️</span>
+        <div class="phrase-body">
+          <div class="phrase-said">Нахабство</div>
+          <div class="card-text">«Мені все одно, іди геть, дай мені свої гроші швидко» — зневага до інших заради власної мети.</div>
+        </div>
+      </div>
+    </div>
+    <div class="highlight">
+      <p>В основі впевненості лежить внутрішня опора: людині не потрібно постійно доводити свою перевагу, тому вона спокійна, відкрита до діалогу й поважає чужу думку. Самовпевненість же, як не парадоксально, часто є маскою для тотальної глибокої невпевненості: людина створює навколо себе фасад непогрішності, бо боїться, що варто показати найменшу слабкість — і вся конструкція розвалиться; вона нетерпима до критики й схильна знецінювати інших, щоб на їхньому тлі виглядати краще.</p>
+    </div>
+    <p>Практично відрізнити одне від одного найкраще за реакцією людини на власну помилку: впевнена людина визнає помилку, зробить висновки й піде далі — це не зруйнує її внутрішню конструкцію; самовпевнена — заперечуватиме помилку, шукатиме винних або доводитиме, що насправді все було геніально заплановано; а нахабна людина просто проігнорує наслідки своїх дій для інших. Здорова впевненість завжди супроводжується повагою, тоді як самовпевненість і нахабство живляться зневагою.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Вроджена невпевненість чи набута?</h2>
+    <p>Невпевненість у собі майже завжди є набутою якістю, яка формується під впливом життєвого досвіду, а не вродженою рисою характеру. Тип нервової системи й темперамент, дані від народження, можуть впливати на чутливість до критики й на схильність до тривожності, але не визначають самооцінку напряму.</p>
+    <div class="highlight">
+      <p>Якщо дитина отримує достатньо підтримки, прийняття й любові, у неї формується базове відчуття «я достатньо хороший, зі мною все достатньо гаразд». Якщо ж вона постійно стикається з критикою, порівнянням не на свою користь, завищеними очікуваннями та емоційним холодом чи ігнором, вона засвоює ідею «зі мною щось не так, любов і прийняття треба заслуговувати». Дитина в силу особливостей розвитку мозку не думає «у батьків, мабуть, є проблеми і психологічна незрілість» — вона приймає це на свій рахунок: «мабуть, я недостатньо хороший, тому вони від мене відгородилися».</p>
+    </div>
+    <p>Крім сім'ї, на самооцінку впливають шкільний досвід, булінг, ставлення вчителів, перші романтичні стосунки, соціальне оточення й культурні стандарти. Невдача в одній важливій сфері життя може «заразити» й інші сфери, формуючи загальне відчуття власної неспроможності. Але оскільки це набута якість — цьому можна й перевчитися: можна навчитися бачити світ і себе без цих спотворювальних окулярів, поступово формуючи нові, здоровіші й реалістичніші переконання про себе.</p>
+  </div>
+
+  <!-- Q8 -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Дитячі образи й критика батьків</h2>
+    <p>Дитяча критика й образи вбудовуються, вростають у структуру особистості й починають працювати як внутрішній голос, що продовжує звучати навіть тоді, коли батьків уже немає поруч. У дорослому віці цей голос перетворюється на внутрішнього критика, який автоматично вмикається в ситуаціях оцінювання, змушуючи людину відчувати сором і страх ще до того, як вона щось зробила. Людина починає несвідомо шукати підтвердження цим старим установкам, фокусуючись на найменших помилках і ігноруючи успіхи, — це працює як своєрідне самоздійснюване пророцтво. Докладніше про саму дисфункціональну сімейну систему, з якої часто ростуть такі установки, — <a href="three-whales.html">Три кити</a>.</p>
+    <div class="highlight">
+      <p>Дуже важливо поступово відокремлювати цей старий батьківський голос від власного дорослого голосу, ставлячи собі запитання: «чиїм голосом я зараз себе картаю? це справді моя думка про себе, чи я просто звик це чути з дитинства й тепер це в себе вговорюю?» Можна спробувати подумки чи на папері відповісти цьому голосу з позиції дорослого, який захищає внутрішню дитину, — показавши собі, що конкретна дрібниця не робить людину ні поганою, ні хорошою. Це не про звинувачення батьків, а про повернення собі права на власну об'єктивну оцінку себе і своїх учинків.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q9 -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Чому голос внутрішнього критика такий гучний</h2>
+    <p>Спочатку функція внутрішнього критика була захисною: він допомагав відповідати правилам сім'ї й суспільства, щоб уникнути покарання й відторгнення. Згодом цей механізм із засобу пересторог перетворюється на токсичного тирана, який критикує постійно й з будь-якого приводу. Докладніше про сам цей голос і дует «раб і хазяїн» — <a href="grandiose-self.html">Блискуча тюрма</a> і <a href="ink-dot.html">Крапка на аркуші</a>.</p>
+    <div class="highlight">
+      <p>Щоб зробити цей голос тихішим, важливо перестати з ним сперечатися — і водночас безоговорочно йому вірити теж не варто, адже те, що він каже, — не факт, а лише думка одного джерела, яке не має стосунку до дійсності. Можна почати ставитися до нього як до заїждженої платівки чи набридливого радіо, навіть дати йому ім'я — це створює дистанцію й допомагає зрозуміти, що ти — не твій внутрішній критик, ти лише той, хто його чує, і можеш вибирати, наскільки голосно його слухати, ніби регулюючи гучність на мікшері.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q10 -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Чому я постійно порівнюю себе з іншими</h2>
+    <p>Постійне порівняння себе з іншими — це звичка мислення, яка виростає з невпевненості та відсутності чіткого розуміння власної цінності. Коли в людини немає внутрішньої системи координат для оцінки себе, вона починає шукати її ззовні, використовуючи інших людей як мірило.</p>
+    <div class="highlight">
+      <p>Проблема в тому, що це порівняння майже завжди некоректне: людина порівнює власні закулісні будні з чужим відполірованим фасадом, тож завжди програватиме в такому порівнянні. Наприклад, людина бачить у колеги блискучу кар'єру, але не помічає власних чудових стосунків у сім'ї; захоплюється чиєюсь фізичною формою, ігноруючи власні інтелектуальні досягнення, — це вибіркова увага, яка завжди працює проти людини, підживлюючи глибинне переконання «зі мною щось не так».</p>
+    </div>
+    <p>Якщо тебе навчили вважати себе нічим не вартою, це не означає, що ти маєш продовжувати так вважати все життя. Щоб вийти з цієї пастки, важливо трохи змістити фокус з інших на себе й почати порівнювати себе сьогоднішню із собою вчорашньою, помічаючи власний прогрес, навіть найнезначніший.</p>
+    <div class="quote-block">
+      <div class="qa">Вправа: щоденник досягнень</div>
+      <p>Заведи щоденник досягнень, куди фіксуй не лише глобальні перемоги, а й маленькі кроки, не лише результати, а й процеси: «сьогодні я це зробила», «сьогодні над цим працювала», «сьогодні в цій ситуації сказала „ні", хоча мені було незручно». Докладніше про такий щоденник — <a href="mastery-journal.html">Щоденник майстерності</a>.</p>
+    </div>
+    <div class="highlight">
+      <p>Впевненість — це не те, що я спочатку відчуваю, а потім дію; впевненість — це те, що я починаю відчувати, коли вже почала діяти. Так само й мотивація — це не те, чого чекаєш, а потім починаєш діяти, а те, що з'являється вже після того, як почав діяти. Докладніше про цю саму послідовність дій, якій довіряєш, — <a href="right-to-doubt.html">Право на сумнів</a>.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q11 -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Чому минулі невдачі лякають пробувати нове</h2>
+    <p>Минулі невдачі створюють у пам'яті потужні емоційні якорі, які пов'язують певні дії (наприклад, публічний виступ чи запуск нового проєкту) із почуттями сорому, приниження й розчарування. Коли людина стикається зі схожою ситуацією в теперішньому, мозок миттєво активує цю стару зв'язку — «дія дорівнює біль» — і вмикається захисна реакція: щоб не відчути болю, я не виконуватиму цю дію.</p>
+    <div class="highlight">
+      <p>У цього страху є позитивний намір — уберегти від повторення болючого досвіду. Але це призводить до надузагальнення: одна невдала спроба виступити на нараді може перетворитися на тотальне переконання «я поганий публічний спікер, я взагалі не вмію говорити»; одна помилка в роботі — на «я загалом некомпетентна нікчема». Людина починає уникати ситуацій, де потенційно може помилитися, а таких ситуацій — переважна більшість у житті, тож світ звужується до безпечної, але дуже обмеженої зони комфорту.</p>
+    </div>
+    <p>Щоб розірвати цей зв'язок, важливо формувати новий досвід саме діями, а не фантазіями, — рухаючись маленькими керованими кроками. Кожен успішний маленький крок, навіть якщо він видається незначним, створює новий позитивний якір і доводить мозку, що дія не завжди дорівнює біль.</p>
+    <div class="highlight">
+      <p>Принцип «існування передує сутності»: те, ким людина є зараз як сутність, є наслідком; причиною ж є те, чим було саме її існування — сукупність дій, рішень, виборів і поведінки. Роблячи нове, здобуваючи новий досвід, людина тим самим змінює те, ким вона є: сутність людини не статична, вона змінюється завдяки змінам у її існуванні.</p>
+    </div>
+  </div>
+
+  <!-- Q12 -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Перфекціонізм як причина невпевненості</h2>
+    <p>Перфекціонізм є одночасно й головною причиною, і проявом глибокої невпевненості в собі. Переконання звучить так: «якщо я зроблю щось не ідеально, усі побачать, що я самозванка і ні на що не здатна» — тож людина воліє взагалі нічого не робити, але подавати надії, що колись зробить щось ідеальне. Перфекціоніст живе в чорно-білій системі «все або нічого», без жодної середини — це створює величезне внутрішнє напруження й призводить до прокрастинації. Докладніше про дует «раб і хазяїн» і принцип «достатньо добре» — <a href="ink-dot.html">Крапка на аркуші</a> і <a href="good-enough.html">Достатньо хороша</a>.</p>
+    <div class="quote-block">
+      <div class="qa">Вправа</div>
+      <p>Свідомо тренуватися залишати дрібні недосконалості — навмисно допускати маленькі помилки, здавати звіт без потреби перечитувати його десятки разів, надіслати лист із незначною одруківкою, якщо вона не критична, — це вправа на досвід, яка переконує, що світ не руйнується від твоєї недосконалості й що твоя цінність як людини від цього не змінюється.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q13 -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Як невпевненість заважає кар'єрі</h2>
+    <p>Невпевненість діє як невидима скляна стеля в кар'єрі, яку людина зводить сама для себе. Вона боїться проявляти ініціативу, бо страх помилки й критики переважує потенційну вигоду; не пропонує нові ідеї на обговореннях і нарадах, наперед знищуючи власні шанси на успіх; не береться за складні, амбітні проєкти, бо заздалегідь переконана, що не впорається. У результаті людина лишається непоміченою, а просування іноді отримують не завжди компетентніші, але впевненіші й активніші колеги.</p>
+    <div class="highlight">
+      <p>Коли йдеться про підвищення посади, кар'єрне зростання чи підвищення зарплати, вмикається синдром самозванця: «хто я така, я ж насправді нікчема, спасибі їм, що мене ще не викрили». Людина знецінює свої досягнення, вважаючи, що їй просто пощастило або що це заслуга команди.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Вправа: облік досягнень</div>
+      <p>Заведи окремий зошит чи документ і записуй туди все: успішно завершені проєкти, позитивні відгуки клієнтів, розв'язані проблеми, освоєні навички, дипломи й сертифікати. Це дає більш об'єктивну опору в переговорах про зарплату. Перед важливим діалогом чи професійною активністю варто звертати увагу на цей список, а не грати у «все або нічого»: наявність якогось мінусу не означає, що плюсів немає взагалі. Почати можна з малого — висловити одну ідею на наступній нараді, проявити ініціативу, написати й опублікувати статтю.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q14 -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Страх висловити свою думку</h2>
+    <p>Страх висловити свою думку при низькій самооцінці пов'язаний із глибоким переконанням, що ваша думка неважлива, невірна або може викликати несхвалення й відторгнення, з якими ви не впораєтеся. В основі лежить ототожнення своєї особистості зі своїми ідеями та діями: якщо думку розкритикують, здається, що розкритикують і знецінять людину загалом. Це такий собі екзистенційний страх бути відторгнутим зграєю, що дістався нам від предків і досі дуже сильний, просто не встигає еволюціонувати так само швидко, як технічний прогрес.</p>
+    <div class="highlight">
+      <p>Що б людина не зробила, комусь щось завжди не сподобається, а комусь сподобається, і було б дивно, якби було інакше.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Вправа: сила маленьких кроків</div>
+      <p>Почни з безпечної обстановки — спробуй висловити свою думку про щось незначне (наприклад, про фільм чи книгу) у колі близьких друзів, звертаючи увагу, що у тебе є думка, яку можна озвучити, не вимагаючи від оточення обов'язково з нею погодитися. Потім можна поступово розширювати коло ситуацій — на роботі почати з письмового формату, пропонуючи ідеї електронною поштою.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q15 -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Прокрастинація і невпевненість</h2>
+    <p>Прокрастинація є прямим наслідком невпевненості в собі, а не лінощів — лінощів як таких узагалі не існує, це лише слово, яким людина затикає собі можливість дослідити проблему глибше. Коли людина відкладає важливе завдання, річ зазвичай не в тому, що їй не хочеться його робити, а в тому, що вона боїться результату — страх невдачі, страх успіху, страх недосконалості, властивий перфекціоністам.</p>
+    <div class="highlight">
+      <p>Прокрастинація стає способом уникнути цих неприємних відчуттів: поки завдання не почато — не можна провалитися. Відкладання справ створює ілюзію контролю й тимчасове полегшення, але в довгостроковій перспективі лише посилює проблему: терміни підступають, тривога наростає, додається почуття провини за бездіяльність — і виходить замкнене коло, де невпевненість породжує прокрастинацію, а прокрастинація з наступним авралом укріплює віру в власну неорганізованість і некомпетентність.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Правило двох хвилин і «швейцарський сир»</div>
+      <p>Якщо завдання можна виконати менш ніж за дві хвилини, зроби його негайно, не відкладаючи. Для більших завдань корисний прийом «швейцарського сиру»: не намагатися зробити все одразу, а «прогризати» кілька маленьких дірочок потроху — наприклад, спочатку просто підготувати документ і написати назву, потім повернутися й продовжити роботу трохи згодом, дозволяючи собі невеликі паузи.</p>
+    </div>
+    <p>Маленькі, не страшні, послідовні крочки знижують поріг входу, допомагають подолати початковий опір і на практиці доводять, що можна діяти, попри страх, — і саме діючи, людина переходить зі стану невпевненості в стан впевненості.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q16 -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Страх ухвалювати рішення</h2>
+    <p>Страх ухвалювати рішення часто пов'язаний з ілюзією, що існує одне-єдине, те саме правильне й найвигідніше рішення, а будь-яка помилка буде фатальною і незворотною. Щоб послабити цей страх, корисно змінити саме ставлення до помилки: помилка — це не вирок вашій особистості, а зворотний зв'язок від світу, цінна інформація для подальших дій. Більшість рішень у житті людини не є незворотними.</p>
+    <div class="quote-block">
+      <div class="qa">Вправа: декартові координати</div>
+      <p>Досліди можливий варіант рішення крізь призму чотирьох запитань: що хорошого станеться, якщо я це зроблю; що поганого станеться, якщо я це зроблю; що хорошого станеться, якщо я цього не робитиму; і що поганого станеться, якщо я цього не робитиму. Сам процес пошуку відповідей допомагає структурувати думки й побачити, що в кожного рішення є свої плюси й мінуси, і не існує ідеальних рішень із самими лише перевагами — як і нерішення теж є рішенням.</p>
+    </div>
+    <div class="highlight">
+      <p>Добре, але вчасно ухвалене рішення часто краще за ідеальне, яке так ніколи й не було ухвалено.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q17 -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Чому я не можу приймати компліменти</h2>
+    <p>Нездатність приймати компліменти — класична ознака низької самооцінки, невпевненості в собі й роботи внутрішнього критика, який ніби кричить: «вони з тебе знущаються, ти не можеш бути таким хорошим, яким тебе бачать інші, бо насправді ти нікчема». Коли хтось каже щось приємне, ця інформація вступає в різкий конфлікт зі сталим негативним уявленням про себе — і цей дисонанс викликає сильний дискомфорт, від якого психіка намагається позбутися найпростішим способом: знецінити комплімент, почати шукати в ньому підступ або одразу применшити свої заслуги.</p>
+    <div class="quote-block">
+      <div class="qa">Вправа: «дякую, прийняла»</div>
+      <p>Почни з найпростішого: коли тебе хвалять, замість звичного знецінення просто скажи «дякую, прийняла» — без «але» чи «та ну». Це може відчуватися незручно й неприродно спочатку, але це важлива поведінкова навичка. Після цього можна поспостерігати за своїми відчуттями й дозволити собі бодай на кілька секунд припустити думку: а що, якщо людина сказала це щиро, і в її словах є частка правди?</p>
+    </div>
+  </div>
+
+  <!-- Q18 -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Невпевненість і фінанси</h2>
+    <p>Невпевнена людина не бачить і не використовує можливості для зростання доходу, а іноді навіть свідомо чи опосередковано шукає спосіб понизити свій дохід, щоб підтвердити переконання у власній нікчемності. Вона боїться ініціювати питання кар'єрного зростання, підвищення зарплати, соромиться називати адекватну вартість своїх послуг, якщо працює на себе, і часто погоджується на менше, аби лише не отримати відмову.</p>
+    <div class="highlight">
+      <p>Невпевненість заважає ефективно керувати грошима: людина може здійснювати імпульсивні покупки, щоб на короткий час підняти собі настрій або справити враження статусної людини, — або, навпаки, панічно боятися витрачати гроші навіть на необхідне. Страх ухвалювати фінансові рішення призводить до того, що гроші або лежать мертвим вантажем, або вкладаються в ризиковані авантюри в надії на швидке збагачення, яке нібито вирішить усі проблеми (хоча швидких збагачень і надвигідних умов, по суті, не буває — це, як правило, обман).</p>
+    </div>
+    <p>Щоб розірвати цей зв'язок, важливо почати з визнання власної цінності як фахівчині: провести ревізію своїх навичок, досвіду й досягнень, вивчити ринок — скільки в середньому заробляють фахівці твого рівня, у чому полягають твої конкурентні переваги. Корисно також почати відстежувати свої доходи й витрати, щоб питання грошей не було несподіванкою, і формувати фінансову подушку безпеки.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q19 -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Страх знайомитися й виступати публічно</h2>
+    <p>Соціальна тривожність укорінена в страху негативної оцінки з боку інших людей. Насправді людина боїться не самих людей, а того, що вони побачать її недосконалість, помітять, як вона хвилюється, почують якусь дурницю з її вуст і одразу вважатимуть її нецікавою. Цей страх змушує фокусуватися не на спілкуванні, а на собі й своїх ймовірних недоліках — людина починає відстежувати кожен свій рух і кожне слово, що тільки посилює напругу й скутість.</p>
+    <div class="highlight">
+      <p>Завдання тут — змістити фокус уваги з себе на інших і на саму задачу. При знайомстві варто проявити щирий інтерес до співрозмовника — заповнити простір, який могла б заповнити тривога, цікавістю до людини: ставити запитання, слухати відповіді, дивитися на людину, кивати; коли ти захоплена іншою людиною, у тебе просто не залишається ресурсів на самокопання. При підготовці до публічного виступу важливо зосередитися не на тому, як ти виглядатимеш, а на тій цінності, яку хочеш донести до слухачів.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Вправа</div>
+      <p>Почни з малого: заговори з продавцем у магазині, ввічливо запитай дорогу в перехожого. Кожен такий досвід доводить мозку, що соціальна взаємодія не небезпечна.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q20 -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Невпевненість, ревнощі й страх бути покинутою</h2>
+    <p>Невпевненість у собі є живильним ґрунтом для ревнощів і страху відторгнення. Якщо людина в глибині душі не вірить, що гідна любові й хорошого ставлення просто так, без потреби щось доводити чи заслуговувати, вона постійно шукатиме підтвердження своєї «дефектності» — і, дивлячись на партнера, не може зрозуміти, що той у ній знайшов. Звідси народжується думка: «він, напевно, зі мною лише доки не зустріне когось кращого» — і тоді будь-яка людина на горизонті автоматично сприймається як загроза, активуючи ревнощі й бажання надконтролю.</p>
+    <div class="highlight">
+      <p>Ревнощі в цьому разі — не про любов, а про страх; це відчайдушна спроба утримати контроль над ситуацією, щоб запобігти, як здається, неминучій катастрофі — відходу партнера. Людина починає перевіряти телефон, влаштовувати допити, вимагати постійних доказів любові, але це не приносить полегшення, тому що проблема не в поведінці партнера, а у внутрішній порожнечі, у самооцінці, — і жодні зовнішні підтвердження не можуть заповнити цю порожнечу надовго.</p>
+    </div>
+    <p>Робота з цим починається з усвідомлення, що джерело проблеми — всередині, а не зовні, і зі зміщення фокусу з контролю над партнером на турботу про себе й своє життя: що хорошого є у твоєму житті, як ти можеш про себе подбати, які у тебе є інтереси й захоплення поза стосунками. Що наповненішим і цікавішим буде власне життя людини, то менше в ньому залишиться місця для тривоги й ревнощів — твоя цінність не залежить від того, чи є у тебе партнер, і не залежить від ставлення партнера до тебе.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q21 -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Чому складно говорити «ні»</h2>
+    <p>Складність з відмовою й відстоюванням меж напряму пов'язана зі страхом відторгнення й бажанням бути хорошою для всіх і кожного: «я хороша, коли догоджаю, я хороша, коли безвідмовна». Не вміючи сказати «ні», людина ставить потреби й почуття інших вище за власні, — це призводить до накопичення внутрішньої напруги, яка рано чи пізно проривається у вигляді пасивної агресії, запізнень, забудькуватості, психосоматичних симптомів або раптових спалахів гніву. Докладніше про саме право говорити «ні» — <a href="right-to-no.html">Право на «ні»</a> і <a href="stop-pleasing.html">«Ні» іншому — «так» собі</a>.</p>
+    <div class="highlight">
+      <p>Відмова — це не відторгнення людини, а захист власних ресурсів, часу, енергії й емоцій; кажучи «ні», людина не завдає шкоди іншому, а проявляє турботу про себе.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Вправа: низькі ставки</div>
+      <p>Тренуватися варто в ситуаціях із низькими ставками: відмовитися від брошури, яку пропонує промоутер на вулиці, використовуючи це як безпечну тренувальну ситуацію. Можна користуватися ввічливими, але твердими формулюваннями на кшталт: «дякую за пропозицію, але зараз мені це не підходить». Якщо відмовити одразу складно, можна дозволити собі взяти паузу — «я зважу всі за і проти й відповім тобі протягом дня», спочатку відпрацьовуючи це письмово, а потім плавно переносячи в усну мову.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q22 -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Як перестати постійно вибачатися</h2>
+    <p>Людина, яка вибачається за те, що поставила запитання, висловила думку чи просто увійшла в кімнату, несвідомо транслює ідею, що сама її присутність чи дії можуть бути недоречними й завдавати незручності — це такий спосіб сказати: «будь ласка, не сердься на мене, я не хочу створювати проблем, насправді я хороша, хоча вважаю навпаки».</p>
+    <div class="quote-block">
+      <div class="qa">Вправа: заміна формулювань</div>
+      <p>Протягом дня відстежуй, скільки разів ти кажеш «вибачте, пробачте», і в кожному випадку запитуй себе — «я справді зробила щось не так і завдала шкоди, чи я просто заздалегідь боюся реакції іншої людини й хочу її задобрити?» Спробуй замінювати недоречні вибачення іншими формулюваннями: замість «ой, вибачте, що турбую вас» — «скажіть, у вас є хвилинка на таку тему?»; замість «вибачте за дурне запитання» — «у мене є уточнювальне запитання, яке дозволить нам заощадити час далі».</p>
+    </div>
+    <div class="highlight">
+      <p>Таке просте мовне зрушення допомагає поступово змінювати внутрішнє самовідчуття з винуватого на рівноправне: «я не гірша за інших, я не краща за інших — я людина, і ти людина; десь ми можемо збігатися, десь ні».</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q23 -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Чому я вступаю в токсичні стосунки</h2>
+    <p>Люди з низькою самооцінкою й невпевненістю в собі часто несвідомо обирають партнерів і будують стосунки, які підтверджують їхнє внутрішнє переконання про себе. Якщо людина в глибині душі вважає себе не гідною любові й поваги, здорові, стабільні стосунки з турботливим партнером викликатимуть у неї тривогу й дискомфорт — увага й гарне ставлення здаватимуться незаслуженими й підозрілими. Партнер, який критикує, знецінює чи емоційно дистанціюється, ідеально вписується в цю картину світу — його поведінка підтверджує глибинну установку «зі мною щось не так».</p>
+    <div class="highlight">
+      <p>Вихід із цього циклу починається з усвідомлення цього патерну й зі зміщення фокусу з намагань змінити партнера на роботу з власною самооцінкою — важливо визнати своє безсилля змінити будь-кого: ти не можеш змінити іншу людину, можна лише попросити, озвучити прохання, а погодиться людина змінитися чи ні — вже її відповідальність. Коли людина починає сама себе цінувати, стосунки, де її не цінують, стають для неї нестерпними — вона просто перестає в них «грати».</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q24 -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Як реагувати на критику спокійно</h2>
+    <p>Болісна реакція на критику виникає тоді, коли зауваження щодо конкретної дії людина сприймає як оцінку своєї особистості загалом. Якщо тобі кажуть «слухай, у цій роботі є помилка», можна почути це як «ти пусте місце, дарма ти народилася» — хоча наявність помилки в роботі не означає, що ти народилася даремно. В основі лежить хибна зв'язка «дія дорівнює особистість», хоча насправді особистість завжди більша за дію.</p>
+    <div class="quote-block">
+      <div class="qa">Пауза й перевірка джерела</div>
+      <p>Почувши критику, зроби паузу, не відповідай одразу, вдихни й видихни — це дає кілька секунд, щоб переключитися з емоційної реакції на раціональний аналіз, і постав собі запитання: про що конкретно йде мова, це про мене загалом чи про мої дії, чи є в цих словах конструктивне зерно? Важливо враховувати ще й джерело критики: інформація без указаного джерела — завжди дезінформація; чи є ця людина взагалі експертом у цьому питанні, які в неї мотиви.</p>
+    </div>
+    <p>Ти маєш право не погоджуватися з критикою: «гаразд, подумаю над твоїми словами» або «у тебе є право на думку, а в мене є право погоджуватися з нею чи ні». Твій співрозмовник — не чергове втілення батьківської фігури, яка тебе відкидає, це просто інша людина з іншою думкою.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q25 -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">З чого почати роботу над впевненістю</h2>
+    <p>Найперший і найважливіший крок — почати помічати й фіксувати свої успіхи, навіть найдрібніші. Невпевненість підживлюється звичкою розуму фокусуватися на невдачах і знецінювати досягнення; щоб зламати цю зв'язку, важливо свідомо перенаправити увагу.</p>
+    <div class="quote-block">
+      <div class="qa">Вправа: три речі щовечора</div>
+      <p>Заведи зошит і щовечора записуй туди мінімум три речі, які сьогодні вдалися, — масштаб абсолютно неважливий, звичка первинна, а масштаб вторинний: вчасно встала, попри те що не дуже хотілося, приготувала собі сніданок, завершила одну справу зі списку, усміхнулася адміністраторці спортзалу, утрималася від їдкого коментаря, який не потрібен був ні розуму, ні серцю, — тобто створила простір між стимулом і реакцією.</p>
+    </div>
+    <p>Такий щоденник поступово стає особистою збіркою фактів, своєрідним протиотрутою проти голосу внутрішнього критика. Коли настане черговий напад невпевненості, можна відкрити й перечитати ці записи — це дає можливість, ухвалюючи подальші рішення, спиратися не на емоційні імпульси, а на об'єктивні дані про свої, нехай маленькі, але реальні перемоги.</p>
+  </div>
+
+  <!-- Q26 -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Як не знецінювати свої досягнення</h2>
+    <p>Знецінення досягнень — це захисний механізм, який допомагає уникнути розчарування: якщо не вважати це успіхом, то й не засмутишся, якщо наступного разу не вийде. Щоб перестати так робити, потрібно навчитися розділяти факт досягнення і його оцінку: факт — те, що ти зробила; оцінка — те, що ти про це думаєш.</p>
+    <div class="quote-block">
+      <div class="qa">Вправа «присвоєння успіху»</div>
+      <p>Коли ти щось завершила, не поспішай одразу перемикатися на наступну справу — зупинись на три хвилини й промов вголос чи подумки три речі. Перше: «я це зробила» — просто констатація факту. Друге: «для цього мені знадобилися такі-от якості, навички, ресурси» — це допомагає побачити, що результат не випадковий, а є наслідком твоїх зусиль і здібностей. Третє: «я відчуваю з цього приводу...» — це дозволяє поєднати досягнення з позитивними емоціями.</p>
+    </div>
+    <div class="highlight">
+      <p>Можна ділитися своїми успіхами, але лише з тими, хто вас справді підтримує, — для більшості людей почути про чужий успіх буває нестерпно, і сприйняти успіх іншого як особисту поразку — доволі поширена людська реакція; тож не варто вимагати від оточення того, чого воно не може дати.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q27 -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Проста вправа для щоденного зміцнення самооцінки</h2>
+    <p>Практика вдячності, зміщена з фокусу самокритики на фокус вдячності до себе. Це не якийсь езотеричний компонент, а цілком конкретна дія, що займає лише три хвилини.</p>
+    <div class="quote-block">
+      <div class="qa">Вправа: подяка собі перед сном</div>
+      <p>Увечері перед сном, у тихому місці, де вас ніхто не турбує, сядь зручно, заплющ очі й подумки подякуй собі за три речі, які ти зробила сьогодні для себе або для інших, нічого не вимагаючи натомість: подбала про своє тіло, приготувавши собі їжу; організувала собі комфортний сон; проявила краплинку любові, вдячності й турботи щодо інших людей; влаштувала собі відпочинок, коли відчула, що тілу це потрібно.</p>
+    </div>
+    <div class="highlight">
+      <p>Регулярне виконання цієї вправи формує новий внутрішній голос — підтримувальний, добрий і приймальний, — який стає противагою внутрішньому критику й закладає основу для здорової, стабільної впевненості в собі та самооцінки, для якої зовнішнє досягнення — не мета, а побічний ефект.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q28 -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Мова тіла й постава</h2>
+    <p>Зв'язок між мовою тіла й внутрішнім станом двосторонній: не лише емоції впливають на позу, а й поза впливає на емоції та думки. Коли людина почувається невпевнено, вона інстинктивно приймає закриту позу — сутулиться, опускає плечі й голову, схрещує руки, намагається зайняти якомога менше місця, ніби вже почуваючись винною, — це поза підкорення й захисту.</p>
+    <div class="highlight">
+      <p>Тривале перебування в такій позі надсилає в мозок сигнали «я вразлива, тут є загроза, я з нею не впораюся», що стимулює вироблення гормонів стресу й створює біохімічні умови, які заважають упевненості в собі. І навпаки, прийняття сильнішої, впевненішої пози може змінити самовідчуття.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Вправа</div>
+      <p>Перед важливою подією (співбесідою, зустріччю, публічним виступом) зверни увагу на своє дихання і прийми впевнену позу: стань прямо, ноги на ширині плечей, руки в боки або підняті вгору в жесті перемоги — кому як зручніше. Природність такої пози — наслідок багаторазового повторення, так само як музичний інструмент спочатку здається штучним у руках новачка, а згодом «вростає» в тіло й звучить органічно завдяки постійним тренуванням.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q29 -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Гострий напад невпевненості й самокритики</h2>
+    <p>У момент гострого нападу невпевненості важливо не намагатися силою придушувати ці почуття, а застосовувати техніки заземлення й когнітивної переоцінки.</p>
+    <div class="quote-block">
+      <div class="qa">Вправа «5-4-3-2-1»</div>
+      <p>Спершу переведи фокус уваги в теперішній момент, у своє тіло: назви подумки п'ять предметів, які бачиш, чотири відчуття, які відчуваєш шкірою, три звуки, які чуєш, два запахи й один смак. Поки ти це робиш, тривога вже або забудеться, або значно знизиться за інтенсивністю; можна також зробити ковток води чи вмити обличчя прохолодною водою.</p>
+    </div>
+    <p>Лише після того, як ти трохи заземлилася, можна працювати з думками, не раніше. Випиши на папір ту думку, яка застрягла нав'язливою румінацією («я повна невдаха», «я тупа») — і подивись на неї не як на абсолютну істину: жодна думка не може бути істиною, реальність сама по собі непізнавана людською думкою — це лише думка окремо взятої людини в окремий період часу, зумовлена її біохімією та досвідом.</p>
+    <p>Далі постав собі запитання: «які докази того, що я не тотальна невдаха? Як би я підтримала близьку людину, яка опинилася б у цій ситуації? Наскільки ця думка взагалі корисна — вона просуває мене вперед чи навпаки?»</p>
+    <div class="highlight">
+      <p>Ця думка — лише хмаринка на небі; ти не хмаринка, ти небо. Можна визнати думку, законспектувавши її як «мені прийшла думка, що...», не приймаючи її за об'єктивну істину. Так формується клин між стимулом і реакцією, який розмикає цю сліпу автоматичну реакцію.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q30 -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Як ставити цілі, щоб мотивували, а не лякали</h2>
+    <p>Невпевненість часто змушує ставити або надто глобальні й розмиті цілі (наприклад, «стати успішною» — без розуміння, що це взагалі означає), або, навпаки, надто жорсткі й нереалістичні цілі, що заздалегідь прирікають на провал. Правильна постановка мети — це перетворення великої лякливої мрії на серію маленьких конкретних і керованих кроків, які людина виконує тому, що сам процес їй подобається, а досягнення результату — лише побічний ефект.</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">К</div><div class="num-text"><strong>Конкретна</strong> — не «стати впевненішою», а «навчитися висловлювати свою думку на робочих заходах».</div></div>
+      <div class="num-row"><div class="num-badge">В</div><div class="num-text"><strong>Вимірювана</strong> — висловитися хоча б один раз за дві зустрічі.</div></div>
+      <div class="num-row"><div class="num-badge">Д</div><div class="num-text"><strong>Досяжна</strong> — почати не з презентації для ради директорів, а з короткого коментаря на регулярних нарадах.</div></div>
+      <div class="num-row"><div class="num-badge">З</div><div class="num-text"><strong>Значуща</strong> — розуміти, навіщо це тобі потрібно.</div></div>
+      <div class="num-row"><div class="num-badge">Ч</div><div class="num-text"><strong>Обмежена в часі</strong> — наприклад, практикувати це протягом двох місяців.</div></div>
+    </div>
+    <div class="highlight">
+      <p>Ключовий момент — фокусуватися не на кінцевому результаті, а на процесі: замість мети «отримати підвищення» поставити мету щотижня робити одну дію, яка сприяє кар'єрному зростанню. Зовнішній успіх (гроші, слава, вплив) залежить не тільки від тебе, тоді як внутрішній успіх — те, що ти сьогодні робила у злагоді зі своїм баченням, цінностями й пріоритетами, — залежить тільки від тебе. Докладніше про цю саму різницю — <a href="space-between.html">Простір між</a>.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q31 -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Здорова самокритика проти токсичного самознецінення</h2>
+    <div class="compare">
+      <div class="col good">
+        <div class="col-label">Здорова самокритика</div>
+        <div class="col-text">«Цього разу я могла б підготуватися до цієї роботи краще, ось точки зростання — і наступного разу я це врахую; але це не означає, що я загалом поганий фахівець». Сфокусована на конкретній дії, визнає сильні сторони, спрямована конструктивно в майбутнє й мотивує до розвитку.</div>
+      </div>
+      <div class="col bad">
+        <div class="col-label">Токсичне самознецінення</div>
+        <div class="col-text">«Я провалила презентацію, тому що я нездібна і дурна, немає сенсу нічого робити». Атакує особистість загалом, глобальне, звернене в минуле й веде до апатії й сорому.</div>
+      </div>
+    </div>
+    <p>Здорова самокритика може викликати легкий жаль чи прикрість, але зберігає відчуття контролю й можливості щось виправити, тоді як самознецінення занурює у важке, в'язке почуття провини, сорому й безнадії, не пропонуючи виходу.</p>
+    <div class="quote-block">
+      <div class="qa">Перевірка думки</div>
+      <p>Запитай себе: «ця думка, яку я зараз проганяю в голові, допомагає мені стати кращою чи просто змушує почуватися нікчемою?» Спробуй свідомо переформулювати токсичне твердження в конструктивне: замість «я така неорганізована людина» сказати собі «є факт, я з ним не сперечаюся, є така-то проблема, я її визнаю — а це означає, що мені потрібно попрацювати з навичками планування».</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q32 -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Право на помилку і право бути недосконалою</h2>
+    <p>Право на помилку — це внутрішній дозвіл бути недосконалою, пробувати й терпіти невдачу в житті, не руйнуючи при цьому свою самооцінку повністю. Визнання цього права означає розуміння, що помилка — не показник твоєї нікчемності, а природна й невід'ємна частина будь-якого процесу навчання й розвитку: ніхто не навчився ходити, жодного разу не впавши.</p>
+    <div class="quote-block">
+      <div class="qa">Вправа: свідома недосконалість</div>
+      <p>Свідомо роби те, в чому ти не ідеальна, і спостерігай за наслідками: привнеси в життя нове хобі, у якому ти новачок (малювання, танці, спів), дозволь собі бути невправною і смішною, роблячи помилки, — і помітиш, що світ від цього не руйнується. Можна хвалити себе не лише за результат, а й за саму спробу, за сміливість пробувати.</p>
+    </div>
+    <div class="highlight">
+      <p>У тебе неможливо відібрати право на помилку — тебе лише змусили повірити, що такого права немає, щоб зробити слухнянішою через почуття провини й сорому. Докладніше про саме це право — <a href="ink-dot.html">Крапка на аркуші</a>.</p>
+    </div>
+  </div>
+
+  <!-- Q33 -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Як розвивати внутрішню опору</h2>
+    <p>Розвиток внутрішньої опори — це процес зміщення центру оцінки із зовнішнього світу всередину себе, тобто навчитися довіряти власним почуттям, цінностям і рішенням більше, ніж схваленню чи осуду оточення. Перший крок — краще пізнати себе: виділити час, щоб подумати й письмово відповісти на запитання «що для мене насправді важливо в житті? які мої головні цінності?» Докладніше про ціннісно орієнтоване мислення — <a href="space-between.html">Простір між</a>.</p>
+    <div class="highlight">
+      <p>Невпевненість у собі — ніби мішок, що теліпається на вітрі, прив'язаний до палиці, а впевненість — це коли ти обростаєш власною вагою, гравітацією, власним баченням і системою координат.</p>
+    </div>
+    <p>Другий крок — практикувати ухвалення рішень на основі цього компаса: стикаючись із будь-яким вибором, запитувати себе «який варіант більше відповідає моїм цінностям?» Третій крок — уміти витримувати дискомфорт від несхвалення й невдоволення інших людей: реакція іншої людини — це відповідальність іншої людини, моя відповідальність — це мої реакції й моє життя в злагоді із собою.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q34 -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Ставитися до себе зі співчуттям, а не з осудом</h2>
+    <p>Самоспівчуття — це вміння ставитися до себе в моменти труднощів і невдач так само, як ти б поставилась до хорошого друга — з добротою, розумінням і підтримкою, а не з жорсткою критикою. Це не жалість до себе й не потурання слабкостям, а визнання того, що бути людиною — означає бути недосконалою і водночас означає відчувати біль.</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text">Помітити, що тобі боляче, не ігноруючи й не перебільшуючи свої почуття, і сказати собі «так, мені зараз важко, мені зараз непросто».</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text">Нагадати собі, що помилки, невдачі й біль — частина життя всіх людей, це спільний людський досвід.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text">Проявити доброту до себе — коли лаєш себе, зупинитися й запитати: «а що б я сказала близькій людині в такій самій ситуації?» — і, знайшовши слова підтримки, спрямувати їх на себе.</div></div>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Вправа</div>
+      <p>Поклади руку собі на серце як підтримувальний жест, обійми себе, зроби десять глибоких вдихів і видихів, проявляючи турботу про себе; фізичний контакт активує в мозку центр, що відповідає за заспокоєння.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q35 -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Полюбити себе на практиці</h2>
+    <p>Полюбити себе — це не абстрактне почуття, а сукупність конкретних щоденних дій і виборів, спрямованих на турботу про своє фізичне, емоційне й ментальне благополуччя; це дієслово, а не іменник — не те, що робиться один раз і назавжди, а постійне ставлення до себе як до людини, за яку ти несеш відповідальність і якій бажаєш добра.</p>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🫀</span>
+        <div class="card-title">Фізичний план</div>
+        <div class="card-text">Достатньо спати, їсти якісну їжу, рухатися, не ігнорувати сигнали тіла про втому чи хворобу, вчасно подбати про своє здоров'я.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💙</span>
+        <div class="card-title">Емоційний план</div>
+        <div class="card-text">Дозволяти собі відчувати всі емоції, не ділячи їх на «хороші» й «погані», уміти говорити «ні», щоб захищати свої ресурси й енергію, оточувати себе людьми, поруч із якими почуваєшся добре, а не спустошено.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧠</span>
+        <div class="card-title">Ментальний план</div>
+        <div class="card-text">Свідомо обирати підтримувальний внутрішній діалог замість самокритики, прощати собі помилки, визнаючи право на недосконалість, вкладати час і ресурси у свій розвиток.</div>
+      </div>
+    </div>
+    <div class="highlight">
+      <p>Легко знущатися над собою — питання в тому, що означає для тебе в ці ж моменти обрати натомість турботу про себе. Саме це і є впевненість у собі — вона є наслідком турботи про себе.</p>
+    </div>
+  </div>
+
+  <div class="section" style="animation-delay:1s">
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Яку з 35 звичок невпевненості ти впізнала в собі найточніше — і яку одну вправу спробуєш першою?</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Насамкінець -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Насамкінець</h2>
+    <p>Тридцять п'ять запитань і відповідей про впевненість і невпевненість у собі — усе це різні боки однієї й тієї самої турботи про себе.</p>
+    <p>Про сам внутрішній критик і дует «раб і хазяїн» докладніше — <a href="grandiose-self.html">Блискуча тюрма</a> і <a href="ink-dot.html">Крапка на аркуші</a>. Про щоденник маленьких доказів собі в розгорнутому вигляді — <a href="mastery-journal.html">Щоденник майстерності</a>. Про право говорити «ні» й не догоджати — <a href="right-to-no.html">Право на «ні»</a>.</p>
+    <div class="final-quote">
+      <div class="final-text">Ти не хмаринка. <strong>Ти небо</strong>.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
