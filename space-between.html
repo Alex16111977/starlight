@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Простір між</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Простір<br>між</h1>
+  <p class="page-subtitle">14 інструментів мислення, саморегуляції, комунікації та системного погляду</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Людину відрізняє від тварини саме простір між подразником і реакцією — простір вибору, в якому неминуче народжується інтерпретація</div>
+      <div class="hero-author">Альберт Сафін</div>
+    </div>
+    <p>Наскрізна ідея всього виступу — перехід від автоматичних реакцій до усвідомлених рішень, від хаосу до архітектури, від безпорадності до зрілості. Формулюється вона й так: мислити довгостроково і діяти точно — це основа процвітання і людини, і сім'ї, і компанії.</p>
+    <div class="highlight">
+      <p>Чотирнадцять прийомів лектор об'єднує в чотири великі теми: бачення і сенси (інструменти 1 і 12), емоційна саморегуляція (2, 3, 5, 11), комунікація (4, 6, 7, 8) і системність (9, 10, 13, 14). Кожен інструмент описаний за однією схемою: назва, коротке пояснення, шкода від ігнорування, користь від застосування і вправа для життя.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Інструмент 1 -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title"><span class="rule-num">01</span>Факт теперішнього визначається баченням майбутнього</h2>
+    <p>Сьогоднішній день людини — це немов відлуння того майбутнього, у яке вона повірила. У фізичному світі те, що людина сидить у певному взутті, тримає в руках ручку — наслідок минулих фізичних дій. Але у світі психіки причиново-наслідковий зв'язок начебто розвертається: факт теперішнього багато в чому визначається не минулим, а тим, яким людина бачить своє майбутнє. Те, що вигравіювалося у дитини щодо того, чого вона заслуговує, а чого ні, яка вона є і якою має стати, — впливає на рішення, які ця людина, вже доросла, приймає зараз.</p>
+    <div class="highlight">
+      <p>Постановка цілей працює не тому, що «так треба» чи «так написано в книжках», а тому, що людина, яка попрацювала над баченням майбутнього, і людина, яка цього не зробила, — це два різні суб'єкти, що входять у різний завтрашній день. Мета в такому розумінні — це не «куди», а швидше «звідки»: усвідомлюючи бажаний образ майбутнього, людина неминуче по-іншому діє в теперішньому, синхронізує свої дії з ним.</p>
+    </div>
+    <p>Лектор наводить приклад із військовою історією: командир, за легендою, домагався, щоб кожен солдат заздалегідь уявляв бажаний результат бою і свої дії після нього, — і це впливало на злагодженість дій уже в теперішньому моменті.</p>
+    <div class="quote-block">
+      <div class="qa">Вправа</div>
+      <p>Уявіть, що ви зустрічаєтеся самі з собою за два роки, і, озираючись назад, відчуваєте, що ці два роки прожиті якнайкраще, і ви щиро пишаєтеся своїм прогресом. Опишіть відкритими питаннями: яким є ваше життя в цій точці з погляду заробітку, оточення, щоденних справ, відчуттів; які цілі, недосяжні два роки тому, тепер видаються само собою зрозумілими. Людина, яка присвятила хоча б двадцять хвилин дослідженню відповідей на ці відкриті запитання, — інша людина, ніж та, що цього не зробила: це позначається на дрібних рішеннях, які приймаються щодня.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Інструмент 2 -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">02</span>Модель «Подія — Мислення — Реакція»</h2>
+    <p>Людину ранить не сама реальність, а те, як вона цю реальність тлумачить. Людину відрізняє від тварини саме простір між подразником і реакцією — простір вибору, в якому неминуче народжується інтерпретація. Навіть якщо вибору немає, людина все одно обирає вважати, що вибору немає, — вибирати вона приречена завжди.</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text"><strong>Подія</strong> — об'єктивний факт: наприклад, ліфт зупинився, стілець порожній, людина прийшла на двадцять хвилин пізніше запланованого.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Мислення</strong> — внутрішній монолог-інтерпретація: «це катастрофа», «я нікому не потрібен», «вони мене зневажають».</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text"><strong>Реакція</strong> — складається з тілесного компонента (тремтіння, піт), емоційного (образа, сором, тривога) і поведінкового (виправдовування, суперечка, втеча).</div></div>
+    </div>
+    <p>Один і той самий факт п'ятеро різних людей інтерпретують по-різному і, відповідно, по-різному на нього реагують — гарантії єдиної «правильної» реакції немає.</p>
+    <div class="highlight">
+      <p>Розмежування мислення і реакції — умовна, фрактальна модель, зручна для практичного аналізу, а не сувора наукова істина; насправді ці рівні взаємопроникні. Усвідомлення певного явища не гарантує, що людина більше в нього не потрапить, — але дає змогу хоча б поступово помічати сам момент «потрапляння», і з часом інтенсивність емоційної реакції на ту саму подію знижується: там, де раніше був лютий сором, з часом лишається легке зніяковіння.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Вправа</div>
+      <p>Раз на день, завершуючи день, заповнювати просту таблицю з колонками: яка була подія; яке мислення (інтерпретація) виникло; яка була реакція (хоча б емоційна); які висновки з цього напрошуються; що робити далі. Приклад із власного досвіду лектора: помітивши, що трясуться пальці й крутиться думка «я тупий, не знайшов що відповісти на складне запитання», — розписати це саме за цією схемою (подія: поставили гостре запитання і не всі лишилися захопленими виступом; мислення: «я поганий спікер»; реакція: сором, тривога; висновок: не всі мають бути в захваті, і це не означає, що зустріч була марною; що робити: заздалегідь на початку виступу вводити «шкалу згоди», легалізуючи право слухачів реагувати по-різному).</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Інструмент 3 -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title"><span class="rule-num">03</span>Людина як біо-психо-соціо-духовна істота</h2>
+    <p>Неможливо полагодити кран чи складний годинниковий механізм, старанно протираючи лише циферблат. Людина — система з чотирма вимірами.</p>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🫀</span>
+        <div class="card-title">Тіло (біо)</div>
+        <div class="card-text">Сон, харчування, фізична активність, стан здоров'я.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">💭</span>
+        <div class="card-title">Психіка</div>
+        <div class="card-text">Сприйняття, переконання, когнітивні викривлення.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">👥</span>
+        <div class="card-title">Соціум</div>
+        <div class="card-text">Оточення, яке постійно й непомітно впливає на те, що людина хоче, думає і робить.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🕯️</span>
+        <div class="card-title">Дух</div>
+        <div class="card-text">Сенси і цінності, зміст, який людина вкладає у форму своїх дій.</div>
+      </div>
+    </div>
+    <div class="highlight">
+      <p>Людині, яка регулярно вживає алкоголь не після роботи, а замість роботи, можна поставити крапельницю й зняти абстинентний синдром — але це не гарантує, що вона більше не питиме, бо, повернувшись у звичне соціальне середовище друзів, для яких спільне пияцтво — головна тема розмов (соціальний вимір), і не маючи внутрішньої віри, що можна витримати реальність тверезим (психічний вимір), і сприймаючи вживання як сенс свого життя (духовний вимір), людина повертається до старого патерну. Тому будь-яка спроба змінити щось в одному вимірі, ігноруючи інші три, приречена на нестійкий результат: раннє вставання заради заробітку, яке супроводжується недоїданням, недосипом і швидкими вуглеводами замість повноцінної їжі, «просяде» саме на тілесному рівні.</p>
+    </div>
+    <p>Практичний висновок: будь-яку проблему чи бажану зміну варто розглядати одразу з чотирьох боків — що з тілом, що з переконаннями і сприйняттям, хто в оточенні і як воно впливає, і який сенс/цінність стоїть за цією зміною. Один зі слухачів влучно назвав це «колесом балансу».</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Інструмент 4 -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">04</span>Голод — гачок — клювання — насичення</h2>
+    <p>Найважчий серед перших чотирьох інструментів, бо він зачіпає патерни, закорінені в дитинстві. Модель метафорично побудована як «харчова».</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text"><strong>Голод</strong> — якщо людина давно не переживала звичну для себе емоцію (ревнощі, тривогу, роздратування, образу), у неї накопичується своєрідний голод — і чим довше він накопичується, тим менший привід потрібен, щоб його розрядити («при нужді і чорт муху з'їсть»).</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Гачок</strong> — будь-яка репліка чи ситуація, яка може зачепити, наприклад критичне зауваження.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text"><strong>Клювання</strong> — якщо голод накопичений, людина емоційно чіпляється за гачок, і відбувається перемикання ролей за драматичним трикутником (переслідувач — рятівник — жертва).</div></div>
+      <div class="num-row"><div class="num-badge">4</div><div class="num-text"><strong>Насичення</strong> — людина отримує підтвердження своїх звичних переконань про себе, інших і світ («усі навколо дурні», «мене ніхто не розуміє», «світ несправедливий») разом зі звичними емоціями.</div></div>
+    </div>
+    <div class="highlight">
+      <p>Людина часто не стільки страждає через дії іншого, скільки шукає привід для звичного страждання, бо страждання для неї — звичний стан, який дає відчути щось знайоме і підтвердити звичну картину світу. Психіка як орган прагне не щастя, а стабільності й передбачуваності: звичний дискомфорт суб'єктивно «солодший» за незвичний комфорт.</p>
+    </div>
+    <p>Це не «іспит», який можна раз і назавжди скласти, — це шлях довжиною в життя. Якщо раніше інтенсивність «клювання» на певний тип гачків була, умовно, на позначці 87 з можливих 100, а тепер людина помічає, що те, що раніше «зачіпало», стало прісним, — це вже прогрес, навіть якщо повне звільнення від патерну не настало.</p>
+    <div class="quote-block">
+      <div class="qa">Вправа</div>
+      <p>Помічати і називати про себе: яка подія стала гачком, який голод у мене був напередодні, у яку роль я перемкнувся(лася) і яке підтвердження звичних переконань я в підсумку отримав(ла). Ознака того, що людина «заковтнула гачок» і потрапила в гру, — емоції високої інтенсивності, що виникають так, наче все відбувається вперше, хоча насправді сценарій повторюється.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Інструмент 5 -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title"><span class="rule-num">05</span>Двері втечі</h2>
+    <p>Чотири типи психологічного опору перед змінами.</p>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🌫️</span>
+        <div class="card-title">Бездумна двер</div>
+        <div class="card-text">«Не впораюся», «це занадто складно» — уникнення навіть спроби подумати над задачею. Сама здатність сформулювати вголос думку вже свідчить про когнітивні здібності, достатні впоратися з чим завгодно.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🗡️</span>
+        <div class="card-title">Агресивна двер</div>
+        <div class="card-text">Перекладання провини на інших — «вони винні», «мене використовують».</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔪</span>
+        <div class="card-title">Аутоагресивна двер</div>
+        <div class="card-text">Напад на себе, надмірне самозвинувачення, яке насправді є ілюзією відповідальності, а не реальною дією.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🚪</span>
+        <div class="card-title">Пасивна двер</div>
+        <div class="card-text">Фактичне уникнення — вихід із ситуації, відхід. Якщо людина регулярно тікає саме через цю двер, це може бути приводом звернутися по професійну допомогу.</div>
+      </div>
+    </div>
+    <div class="highlight">
+      <p>Жодна з цих дверей сама по собі не «погана» — важливо просто знати, які саме двері для вас найбільш «змащені», щоб заздалегідь підстелити соломку там, де є ризик впасти, а не заколочувати ці двері, вдаючи, що опору не існує. Легалізація права на помилку знижує ймовірність зайвого емоційного застрягання: можна дозволити собі якийсь час позлитися, покотити бочку на себе чи посумніватися в своїх силах — і після цього рухатися далі.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Інструмент 6 -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">06</span>Закон домовленостей</h2>
+    <p>Закон виживання команди чи стосунків: людина живе в океані домовленостей так само, як риба у воді, і ці домовленості поділяються на явні й негласні (ті, що маються на увазі, але не проговорені) — а простір саме негласних домовленостей є передумовою більшості серйозних конфліктів.</p>
+    <div class="highlight">
+      <p>Людина, яка виконує домовленості лише зі страху покарання, діє як раб; людина, яка виконує їх, бо вірить у їхню цінність і сама б повторила цей вибір, діє з позиції вибору.</p>
+    </div>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text">Укладати лише ті домовленості, які реально готовий(а) і хочу виконати, навіть якщо покарання за невиконання не буде.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text">Не укладати домовленість, якщо заздалегідь знаю, що не виконаю і не хочу виконувати, навіть якщо відмовити незручно — і що більша незручність перед відмовою, то швидше варто казати «ні», бо ця незручність є ознакою зашморгу гри, яка щойно починається.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text">Перетворювати мовчазно мається на увазі — на явне, не сподіваючись на «читання думок».</div></div>
+      <div class="num-row"><div class="num-badge">4</div><div class="num-text">Укладати лише ті домовленості, шкоду від невиконання яких я реально здатен(на) витримати.</div></div>
+      <div class="num-row"><div class="num-badge">5</div><div class="num-text">Якщо домовленість порушено іншою стороною — озвучувати цей факт, а не замовчувати: замовчування привчає іншого, що обманювати можна.</div></div>
+      <div class="num-row"><div class="num-badge">6</div><div class="num-text">Якщо домовленість порушив(ла) я сам(а) — ініціювати перемовини, компенсувати завдану шкоду, а не вдавати, що нічого не сталося.</div></div>
+      <div class="num-row"><div class="num-badge">7</div><div class="num-text">Якщо форс-мажор — перепогоджувати умови.</div></div>
+      <div class="num-row"><div class="num-badge">8</div><div class="num-text">Якщо інша людина дотримала слова — це варто окремо відзначити (акт визнання).</div></div>
+    </div>
+    <p>Окремим пунктом іде принцип «анти-рятівництва і анти-милиці»: допомогти іншому у виконанні його домовленості можна, але не більш ніж один раз — інакше стаєш для нього милицею, і в людини атрофується здатність робити це самостійно (використовуване еволюціонує, невикористовуване атрофується). Керівник, який постійно прощає прострочення, сам виконує роботу за підлеглих і затримується через них, — насправді формує залежні, дитячо-батьківські стосунки в колективі, і робота з командою тоді часто починається зі зміни саме керівного підходу.</p>
+    <div class="highlight">
+      <p>Спізнення чи інші «незручні» звички можуть несвідомо ставати стабілізаторами стосунків — якщо більше нічого людей не об'єднує, система тяжіє до гомеостазу і може підтримувати навіть небажані елементи поведінки, аби лишень зберегти зв'язок між людьми.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Інструмент 7 -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">07</span>Внутрішній захист від гачків</h2>
+    <p>Психогігієна у відповідь на маніпулятивні репліки.</p>
+    <div class="highlight">
+      <p>«Я чую гачок, який запрошує мене подумати те-то, відчути те-то і слухняно зробити те-то» — назвати цей механізм подумки вже означає розірвати автоматичний зв'язок між чужою реплікою і власною реакцією.</p>
+    </div>
+    <div class="phrases">
+      <div class="phrase">
+        <span class="phrase-icon">📢</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Без цього браслета у вас будуть проблеми зі здоров'ям»</div>
+          <div class="card-text">Гачок запрошує подумати, що без покупки станеться біда, відчути тривогу і побігти купувати. Людина з критичним сприйняттям натомість подумки визнає прийом («ось який рекламний хід») і спокійно перемикає увагу.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">💬</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Ви погано робите свою роботу» (під час перемовин про ціну)</div>
+          <div class="card-text">Гачок запрошує відчути ніяковість і поступитися. Внутрішній захист дозволяє впізнати спробу торгу через тиск і відповісти спокійно, не поступаючись автоматично.</div>
+        </div>
+      </div>
+      <div class="phrase">
+        <span class="phrase-icon">👥</span>
+        <div class="phrase-body">
+          <div class="phrase-said">«Якщо не приєднаєшся до нас, ти не свій»</div>
+          <div class="card-text">Гачок б'є на сором виключення. Внутрішній захист дає змогу побачити механізм індоктринації (нав'язування картини світу, спираючись на яку людина стає слухняною) і зберегти власну позицію.</div>
+        </div>
+      </div>
+    </div>
+    <p>Манера, у якій формулюється відповідь, важлива не менше за самі слова — якщо внутрішньо людина тремтить і сприймає ситуацію як загрозу, будь-які «правильні» слова прозвучать фальшиво.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Інструмент 8 -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title"><span class="rule-num">08</span>Вода — земля — повітря</h2>
+    <p>Техніка відповіді на словесний випад (метафорично названий «язиком полум'я»), яка гаситься трьома «стихіями» по черзі.</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">💧</div><div class="num-text"><strong>Вода</strong> — не погоджуватися з думкою співрозмовника, а погодитися з тим, що в нього може бути така думка («можливо, у вас склалося саме таке враження»), тобто визнати право на реальне сприйняття, не капітулюючи перед самим твердженням.</div></div>
+      <div class="num-row"><div class="num-badge">🪨</div><div class="num-text"><strong>Земля</strong> — тверда констатація власної позиції, спираючись на факти, дані, домовленості чи документи («за моїми даними...», «я застосовую це в ситуаціях А, В і С»).</div></div>
+      <div class="num-row"><div class="num-badge">💨</div><div class="num-text"><strong>Повітря</strong> — зустрічне запитання, що запрошує співрозмовника розкрити свою логіку («поділіться, будь ласка, який у вас досвід, з якого випливає це твердження?»), яке за потреби підсилюється уточненням («я запитую тому, що, можливо, не всі дані у вас є — можемо ввести вас у курс справи»).</div></div>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Приклад</div>
+      <p>На репліку «такі речі, як у вас, купують лише найбідніші» — «вода»: «можливо, справді може скластися таке враження»; «земля»: «але за нашими даними це достатньо якісний товар, у нас є декілька сотень відгуків із високим середнім балом»; «повітря»: «поділіться, будь ласка, що саме створило у вас таке враження? — мені цікавий погляд із боку клієнта, адже гірше було б, якби ви просто мовчки пішли».</p>
+    </div>
+    <p>Лектор радить тренувати цю послідовність у парах і трійках, програючи реальні гачки з власного досвіду.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Інструмент 9 -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">09</span>Модель «РВД+»: тіло — цінності — актив</h2>
+    <p>Пов'язана із трьома психологічними позиціями «батько — дорослий — дитина», кожна з яких має свою захисну функцію, — і на цій основі будується перевірка будь-якого рішення за трьома критеріями.</p>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🫀</span>
+        <div class="card-title">Тіло</div>
+        <div class="card-text">Чи це рішення є турботою про тілесний, енергетичний компонент, не перетворює задум на виснаження. Приїхати на важливий захід голодним і невиспаним — це не турбота про себе, а тортури.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧭</span>
+        <div class="card-title">Цінності</div>
+        <div class="card-text">Чи це рішення співзвучне з цінностями людини — чи вона в нього вірить, чи змогла б обґрунтувати причини та навести приклади з життя, а не просто повторює модні слова.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🏗️</span>
+        <div class="card-title">Актив</div>
+        <div class="card-text">Чи це рішення будує актив, що працює й надалі («водогін»), а не одноразове виснажливе зусилля («носіння відер руками»): виступ, який записується на відео, публікується і згодом стає розділом книги, — це вже не просто витрачений вечір, а внесок у щось стійке.</div>
+      </div>
+    </div>
+    <div class="highlight">
+      <p>Лише рішення, у яких усі три складові узгоджені між собою, описується образом «попутного вітру».</p>
+    </div>
+    <p>До цього ж інструменту прилягає коротке зауваження про дитячу прив'язаність: якщо материнська турбота в дитинстві була хаотичною, недоступною, різко зникала, дитина схильна формувати тривожний тип прив'язаності — і в дорослому житті підсвідомо шукає, щоб «всі навколо стали мамою», прагнучи в теперішньому компенсувати те, чого бракувало в минулому.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Інструмент 10 -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title"><span class="rule-num">10</span>Сила маленьких кроків</h2>
+    <p>Короткий щоденний ритуал — «хвилина вранці, хвилина ввечері, більше не треба».</p>
+    <div class="quote-block">
+      <div class="qa">Ритуал</div>
+      <p>Прокинувшись, варто на одну хвилину уявити, яким був би найкращий результат сьогоднішнього дня, узгоджений із власними цінностями. Завершуючи день, варто пригадати, як цей день насправді пройшов — з двох ракурсів: майстерність (що сьогодні було зроблено для розвитку навички чи справи) і турбота про себе та задоволення (як сьогодні я подбав(ла) про власні потреби).</p>
+    </div>
+    <div class="highlight">
+      <p>Якщо людина не подбає про себе сама, здебільшого нікому іншому до цього насправді байдуже немає — і саме тому забезпечення власних потреб є особистою відповідальністю кожного. При цьому турбота про інших описується не як вимушений обов'язок, а як власний вибір і своєрідна честь — і, дбаючи про інших, людина водночас дбає й про себе.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Інструмент 11 -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">11</span>Вторинні вигоди</h2>
+    <p>Поглиблений варіант п'ятого інструмента (дверей втечі): вторинні вигоди — це переваги, які людина отримує, утримуючи проблему нерозв'язаною.</p>
+    <div class="highlight">
+      <p>Постійна нестача часу — неприємна сама по собі ситуація — водночас дає змогу викликати співчуття, кричати на інших, виправдовуватися перед собою фразою «якби був час, я жив би краще», і взагалі підтримує звичне мучеництво («страждаю — отже, я правий(а)»).</p>
+    </div>
+    <p>Сам факт спостереження і називання цих вторинних вигід уже трохи знижує їхню привабливість — грати в цю гру стає менш цікаво. Це переважно теоретична, психоосвітня модель: побачити і визнати, а не обов'язково одразу змінити.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Інструмент 12 -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title"><span class="rule-num">12</span>Ціннісно орієнтоване мислення</h2>
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">Зовнішній успіх</div>
+        <div class="col-text">Популярність, гроші, вплив, влада — значною мірою залежить не лише від самої людини, а й від удачі, збігу обставин та інших некерованих зовнішніх сил. Ставка виключно на нього наперед прирікає на можливе розчарування.</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">Внутрішній успіх</div>
+        <div class="col-text">Рішення, прийняті у злагоді з власними цінностями: навіть якщо результат не був досягнутий, людина готова повторити той самий вибір, бо розуміє, у що вірить і чому. Такі рішення — щеплення від майбутніх гірких жалів.</div>
+      </div>
+    </div>
+    <div class="highlight">
+      <p>Цінності неможливо отримати готовими ззовні («якщо інший пережував цю їжу, проковтнути її замість себе не вийде») — вони викристалізовуються зсередини через дослідження: що для мене насправді важливо, яким змістом я наповнюю форму власних дій. Цінності немислимі без дій — вони завжди виражаються в тому, що людина реально робить, а не лише в красивих словах про них.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Інструмент 13 -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">13</span>Право на помилку та байдужість до результату зустрічі</h2>
+    <p>Противага ілюзії, що людина зобов'язана бути ідеальною для всіх і в усьому. Помилка перетворюється на провал лише тоді, коли її замовчують, — сама наявність шорсткостей і недосконалостей є природною частиною того, що робить людину людиною. Не варто ховати незручні моменти «під плінтус» — краще визнавати їх і робити висновки.</p>
+    <div class="highlight">
+      <p>«Байдужість до результату зустрічі» — це не пасивність і не бездіяльність, а готовність робити максимум від себе залежного і смиренно приймати те, що від тебе не залежить. Людина, що кидає камінь у ставок, — вона може створювати хвилі, які, можливо, комусь допоможуть, комусь ні, а самого ставка (як цілого) змінити неможливо; єдине, що реально в її владі, — сам кидок каменя.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Інструмент 14 -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title"><span class="rule-num">14</span>Робити те, що залежить, приймати те, що ні</h2>
+    <p>Підсумковий інструмент, навмисно вставлений, аби число зупинилося саме на чотирнадцяти, а не тринадцяти. Його суть — робити максимум із того, що знаходиться на відстані витягнутої руки просто зараз, і смиренно приймати те, що від людини об'єктивно не залежить узагалі.</p>
+    <div class="highlight">
+      <p>Прийняття тут — не пасивний, а активний процес: перестати грати у гру «цього не мало статися» і замість цього визнати — «це сталося, це відбувається, я це бачу».</p>
+    </div>
+    <p>Протилежна пастка: легко занурюватися в те, що від тебе не залежить, створюючи ілюзію бурхливої зайнятості, аби не братися за те, що справді залежить.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Завершення заходу -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Завершення заходу</h2>
+    <p>Коротка групова вправа: у трійках, по черзі, кожен упродовж кількох хвилин у форматі монологу переказує, підглядаючи в конспект, що саме сьогодні було корисним і які з чотирнадцяти інструментів планується застосувати найближчим часом і чому саме ці. Після цього — коротке коло запитань і зворотного зв'язку від слухачів.</p>
+    <div class="quote-block">
+      <div class="qa">Притча-жарт наостанок</div>
+      <p>Двоє людей зустрілися біля рукомийника: один каже, що взагалі нічого не запам'ятав із почутого, крім того, що в сумці лежить роздатковий матеріал; другий, миючи яблуко, зауважує, що яблуко теж не пам'ятає дотику кожної краплі води, які його мили, — але це не заважає йому стати чистим.</p>
+    </div>
+    <p>Головна думка цього образу: не обов'язково запам'ятати чи усвідомлено застосувати геть усі чотирнадцять інструментів — сам факт перебування в контакті з матеріалом уже робить свою справу.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Глосарій -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Короткий глосарій</h2>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🪝</span>
+        <div class="card-title">Гачок</div>
+        <div class="card-text">Репліка, подія чи ситуація, здатна зачепити людину емоційно й запустити автоматичну реакцію.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🕳️</span>
+        <div class="card-title">Голод</div>
+        <div class="card-text">Накопичена потреба пережити звичну емоцію чи підтвердити звичне переконання про себе, інших або світ; що більше голод накопичений, то менший привід потрібен, щоб «клюнути».</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🚪</span>
+        <div class="card-title">Двері втечі</div>
+        <div class="card-text">Чотири типи психологічного опору перед змінами: бездумна, агресивна, аутоагресивна, пасивна.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🤝</span>
+        <div class="card-title">Закон домовленостей</div>
+        <div class="card-text">Набір принципів про те, як укладати, виконувати і за потреби перегоджувати домовленості з іншими, не діючи ані зі страху, ані з позиції «жертви».</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🌊</span>
+        <div class="card-title">Вода — земля — повітря</div>
+        <div class="card-text">Послідовність зовнішньої відповіді на маніпулятивний випад: визнати можливість чужої думки, твердо викласти власну позицію на фактах, поставити зустрічне уточнювальне запитання.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎭</span>
+        <div class="card-title">Вторинні вигоди</div>
+        <div class="card-text">Приховані переваги від збереження проблеми нерозв'язаною.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🧭</span>
+        <div class="card-title">Зовнішній і внутрішній успіх</div>
+        <div class="card-text">Досягнення, залежні від зовнішніх обставин, на противагу рішенням, прийнятим у злагоді з власними цінностями незалежно від результату.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" style="animation-delay:1s">
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Які саме двері втечі найбільш «змащені» саме у тебе — і який гачок найшвидше приводить тебе до них?</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Насамкінець -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Насамкінець</h2>
+    <p>Про саму гру голод-гачок-насичення й драматичний трикутник докладніше — <a href="manipulation-hook.html">Гачок і розплата</a>. Про трикутник переслідувач-жертва-рятівник окремо — <a href="codependency-triangle.html">Трикутник співзалежності</a>. Про закон домовленостей із протилежного боку — коли важко сказати «ні» — <a href="right-to-no.html">Право на «ні»</a>. Про силу маленьких кроків і цінності в дії розгорнуто — <a href="discipline-system.html">Архітектор власного життя</a>.</p>
+    <div class="final-quote">
+      <div class="final-text">Яблуко не пам'ятає кожної краплі, яка його мила, — але це не заважає йому <strong>стати чистим</strong>.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
