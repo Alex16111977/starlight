@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Деталі, які важать</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,180,120,.20) 0%,rgba(60,150,100,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#2f8f5e,#4caf7d,#1f6b48,#a9772e,#3a9d6f);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#2f8f5e,#4caf7d,#1f6b48,#a9772e,#3a9d6f);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#7ecfa0;box-shadow:0 0 12px #7ecfa0}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#1f7a4d;text-decoration:none;border-bottom:1px solid rgba(47,143,94,.35)}
+.section p a:hover{color:#155c3a}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#2f8f5e,#4caf7d,#1f6b48,#a9772e,#3a9d6f);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(126,207,160,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(126,207,160,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.09);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:#1f4a37;margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(47,143,94,.08),rgba(148,103,23,.07));border:1px solid rgba(52,58,94,.16);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(126,207,160,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(178,60,46,.06);border-color:rgba(178,60,46,.20)}
+.col.good{background:rgba(31,122,77,.07);border-color:rgba(31,122,77,.22)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#9c2f22}
+.col.good .col-label{color:#146239}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(47,143,94,.08),rgba(148,103,23,.06));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(126,207,160,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#2f8f5e,#4caf7d,#1f6b48,#a9772e,#3a9d6f);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(126,207,160,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+.stat-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-top:20px}
+.stat{background:rgba(52,58,94,.04);border:1px solid rgba(52,58,94,.12);border-radius:14px;padding:20px 18px;text-align:center;transition:all .3s}
+.stat:hover{background:rgba(52,58,94,.08);border-color:rgba(52,58,94,.2)}
+.stat-num{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:36px;color:#1f7a4d;display:block;margin-bottom:6px}
+.stat-label{font-size:11px;font-weight:400;letter-spacing:.1em;color:rgba(52,58,94,.65);line-height:1.5}
+
+.steps-grid{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.step-card{background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:24px;align-items:flex-start}
+.step-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(126,207,160,.4),transparent);opacity:0;transition:opacity .4s}
+.step-card:hover{background:rgba(52,58,94,.09);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.step-card:hover::before{opacity:1}
+.step-num{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:48px;color:rgba(47,143,94,.35);line-height:1;flex-shrink:0;width:40px;text-align:center}
+.step-body{flex:1}
+.step-body .card-title{margin-bottom:8px}
+
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#1f7a4d;background:rgba(126,207,160,.18);border:1px solid rgba(126,207,160,.5)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="ketosis.html">← Кетоз</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Деталі,<br>які важать</h1>
+  <p class="page-subtitle">Найважливіші щоденні поради щодо кето-дієти та інтервального голодування</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Дрібниці мають велике значення, щоб не опинитися на плато</div>
+      <div class="hero-author">Ерік Берг</div>
+    </div>
+    <p>Перша мета вранці — пропустити сніданок, і найкращий спосіб це зробити — додати в каву масло MCT. Починати варто з однієї столової ложки, щоб уникнути діареї від великої кількості цього масла. Масло MCT — це вид жиру, який зазвичай отримують із кокосового масла і який дозволяє не відчувати голоду протягом кількох наступних годин; якщо дійти до двох столових ложок, голоду точно не буде. Це масло дає енергію.</p>
+    <div class="highlight">
+      <p>Після кави можна пити воду з лимоном — можна й перед кавою. Цілий лимон подрібнюють у блендері з водою, не вичавлюючи сік окремо; напій виходить дуже кислим, тож можна додати кілька крапель стевії або мірну ложку електролітного порошку — так організм отримує калій, магній і більше енергії. Лимонна вода з електролітами чи без них дає енергію, у ній багато вітаміну C, а також є цитрати, які допомагають запобігти утворенню камінців у нирках.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Перший прийом їжі -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Перший прийом їжі: порядок і овочі</h2>
+    <p>Після ранкової кави й лимонної води людина вже не голодна вранці, і перший прийом їжі припадає на полудень. Варто розвести столову ложку яблучного оцту в склянці води і випити — це допомагає травленню й нормалізації цукру в крові; пити це не обов'язково саме перед їжею, можна й під час голодування. Яблучний оцет корисно приймати в поєднанні з усім іншим — він дає енергію, нормалізує цукор і прискорює зниження інсулінорезистентності.</p>
+    <div class="highlight">
+      <p>Щодо самої їжі — завжди спершу овочі або зелень, а вже потім білкова їжа. Причина в тому, що з'їдати ті самі 7–10 склянок овочів на день багатьом спочатку не вдається. Але 5 склянок зелені в обід і ще 2–3 на вечерю — це неважко, особливо якщо додати густіші овочі на кшталт брокколі чи брюссельської капусти, яких тоді потрібно менше — можливо, лише 4–5 склянок замість 7–10.</p>
+    </div>
+    <p>Зелень можна посипати пластівцями харчових дріжджів — виходить дуже смачно, а смак трохи нагадує пармезан; так організм отримує вітаміни групи B протягом дня, що знижує стрес. Купувати варто дріжджі, які не є збагаченими, оскільки в збагачені дріжджі додають синтетичні вітаміни.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Два нутрієнти -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Два обов'язкові нутрієнти</h2>
+    <p>Дві основні групи нутрієнтів як абсолютний мінімум під час кето-дієти — електроліти й вітаміни групи B. Вони потрібні, щоб запобігти втомі, кето-висипу та іншим симптомам, адже на початку з тіла виходить багато води, а разом із нею — багато електролітів; через це дехто відчуває сильну втому й зневоднення, тож електроліти потрібно поповнювати.</p>
+    <div class="highlight">
+      <p>Коли організм спалює більше жиру, йому потрібні вітаміни групи B, а багато людей на початку перебувають на межі дефіциту — вони можуть відчувати втому, якщо не отримуватимуть ці вітаміни. Один із найкращих джерел — харчові дріжджі.</p>
+    </div>
+  </div>
+
+  <!-- Скільки білка -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Скільки білка і навіщо жир наприкінці їжі</h2>
+    <p>Скільки потрібно білка, залежить від метаболізму, віку й статі — зазвичай 80–170, а іноді й 200–230 грамів реального білка; якщо людина молода й тренується, можна трохи додати. Але надлишок білка, особливо на вечерю, може заважати заснути вночі.</p>
+    <div class="highlight">
+      <p>Наприкінці прийому їжі варто з'їсти ще трохи жиру — це допомагає довше не їсти й відчувати більшу ситість. Це може бути жменя горіхів пекан, ціле авокадо, горіхи макадамія, більше оливкової олії до зелені або просто трохи більше вершкового масла. Цей жир допомагає довше не їсти після прийому їжі.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Живіт повний, але не ситий -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Чому «живіт повний, але не ситий»</h2>
+    <p>Дві причини цього відчуття. Перша — інсулінорезистентність, і потрібен час, щоб її знизити: при інсулінорезистентності нутрієнти не повністю засвоюються, тому людина почувається трохи «недоїденою», що зазвичай спонукає їсти більше.</p>
+    <p>Друга причина — у їжі може бути мало нутрієнтів.</p>
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">Зернового відгодування</div>
+        <div class="col-text">Значно більше мармурового жиру в білку, більше жиру взагалі, і в таких корів часто виникає інсулінорезистентність, що призводить до дефіциту нутрієнтів у самої корови — а отже, споживаючи таке м'ясо, людина теж отримує менше нутрієнтів.</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">Трав'яного відгодування</div>
+        <div class="col-text">Нутрієнтів набагато більше: більше жирних кислот омега-3, є фітонутрієнти, значно більше бета-каротину, ретинолу, вітаміну A, вітаміну E й мікроелементів. Смак може бути не таким вишуканим або незвичним.</div>
+      </div>
+    </div>
+    <div class="highlight">
+      <p>В ідеалі для ситості потрібна їжа, багата на нутрієнти: яловичина трав'яного відгодування, морепродукти (особливо багато мікроелементів), молюски й ракоподібні, печінка, органічні пасовищні яйця і промислова (дика) риба, наприклад лосось — на відміну від курячої грудки без шкіри, протеїнового порошку чи фастфуду, навіть «кето»-батончиків, — усе це продукти низької якості.</p>
+    </div>
+    <p>Це не привід перевантажувати себе інформацією: перший етап — просто зменшити вуглеводи, навіть якщо вийде «брудний кето»; другий етап — підвищити якість того, що ви їсте, а це вже потребує трохи більше знань і часу. Головне правило — робити що можеш, адже щось краще, ніж нічого.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Голодування до вечері -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Голодування до вечері</h2>
+    <p>Після першого прийому їжі настає голодування до вечері. Можна пити різні трав'яні чаї, дуже добрий зелений чай, а також чай із куркуми — він допомагає голодувати довше і стимулює автофагію, яка приносить велику користь у плані омолодження й оздоровлення мозку.</p>
+  </div>
+
+  <!-- Другий прийом їжі -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Другий прийом їжі</h2>
+    <p>На другому прийомі їжі можна знову випити воду з яблучним оцтом для покращення травлення, а потім з'їсти щось жирне — наприклад, велику жменю насіння соняшника: із них можна отримати ще трохи жиру та вітамін B1.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Рідина ввечері -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Рідина ввечері та вечірні перекуси</h2>
+    <p>Якщо людина повечеряла, скажімо, о шостій вечора, а лягає спати о десятій, не варто (особливо людям старшого віку, які через проблеми з сечовим міхуром прокидаються вночі) пити багато рідини десь у сьомій-восьмій-дев'ятій-десятій годині, тобто за три години до сну. Пити багато води варто протягом дня, можливо, ще й після вечері, але не варто пити багато рідини ближче до сну.</p>
+    <div class="highlight">
+      <p>Дуже часто, і, можливо, у це важко повірити, людям хочеться перекусити саме в проміжку між вечерею і сном — а це буквально вбиває підтримку кетозу. Найважливіша порада: у домі просто не повинно бути їжі, яку можна з'їсти як перекус, — приберіть з дому потенційно спокусливі продукти. Якщо конче потрібно щось з'їсти — просто з'їжте селеру: вона хрустка, і це те, що можна пожувати. Якщо дотримуватися описаного вище — їсти багату на нутрієнти їжу і додавати жир наприкінці прийому їжі, — стримуватися від перекусів буде легше.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Сон -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Сон</h2>
+    <p>Сон дуже важливий: якщо людина не виспалася, вранці її тягне до їжі через підвищений кортизол, а це зайвий стрес, і досягти бажаних результатів стане важче — метаболізм погіршиться.</p>
+    <div class="highlight">
+      <p>Якщо можна вправлятися протягом дня — це чудово: вправи допомагають витратити енергію, нормалізують цукор у крові й покращують сон. Важливо вправлятися на свіжому повітрі або хоча б бувати на вулиці вдень, адже під сонячними променями виробляється багато мелатоніну, а мелатонін покращує сон. В ідеалі варто проводити на сонці хоча б одну годину — не обов'язково під прямими променями, достатньо просто бути на вулиці, навіть у капелюсі й одязі, оскільки інфрачервоне світло сонця проникає крізь них, і завдяки цьому підвищується рівень мелатоніну, не кажучи вже про вироблення вітаміну D, який також покращує сон.</p>
+    </div>
+    <p>Взимку, якщо людина мало буває на сонці й хоче суттєво покращити сон, можна приймати близько 10 000 одиниць вітаміну D3 прямо перед сном — це поліпшить цикли сну. Якщо перед сном у голові рояться думки, допомагає вітамін B1 перед сном.</p>
+    <div class="highlight">
+      <p>Ще одна порада щодо сну — не споживати забагато білка, особливо чоловікам, щоб краще спати: якщо кількість неперетравленого білка буде надто великою, це погіршить сон. Якщо людина отримує достатньо мелатоніну від сонця, не варто додатково приймати мелатонін у вигляді добавки — це створює іншу проблему; краще отримувати мелатонін саме за рахунок інфрачервоного випромінювання від сонця, а з добавок приймати вітаміни B1 і D3.</p>
+    </div>
+  </div>
+
+  <!-- Електроліти для тренувань -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Електроліти для тренувань</h2>
+    <p>Щоб мати енергію для тренувань, потрібні електроліти, особливо натрій і калій. У дні тренувань обов'язково варто додавати в їжу більше морської солі, інакше виникне дефіцит натрію, через який м'язи стануть слабкими і з'явиться відчуття, що немає енергії для тренування — зазвичай це викликано саме нехваткою натрію, і усунути це легко, додавши морську сіль у їжу.</p>
+    <div class="highlight">
+      <p>Калій — ще один електроліт для підтримання енергії; калій і магній містяться в зелені та в електролітному порошку. Достатньо просто додати в раціон морську сіль і калій, щоб побачити, наскільки ефективнішими стали тренування, наскільки зросли витривалість, сила і бажання тренуватися. За дефіциту цих елементів, навпаки, усе дається важко: немає бажання тренуватися, немає енергії протягом дня, з'являється млявість.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Дрібниці -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Дрібниці, які виводять із кетозу</h2>
+    <p>Саме дрібниці мають велике значення, щоб не опинитися на плато. Один зі способів вийти з кетозу — вживати дієтичні штучні підсолоджувачі: вони можуть усе зіпсувати.</p>
+    <div class="highlight">
+      <p>Існує прихований цукор, і він є навіть у нібито «кето-сумісних» батончиках, десертах і снеках. Навіть якщо людина вживає менше 50 грамів вуглеводів, мальтодекстрин і декстрин, хоч як дивно, офіційно не класифікуються як цукор — тож не варто вірити на слово, а завжди читати склад; ще краще — взагалі виключити будь-які «кето»-снеки. Мальтодекстрин часто ховається навіть у так званих «натуральних ароматизаторах» у кето-електролітних порошках: його використовують як своєрідний носій для висушування певних ароматизаторів. Мальтодекстрин гірший за цукор і навіть за глюкозу — у нього дуже високий глікемічний індекс.</p>
+    </div>
+    <p>Мед — це цукор, і його варто уникати; якщо в складі є мед, такий продукт краще не купувати. Існує багато інших форм цукру — наприклад, фініковий цукор чи кокосовий цукор також містять багато цукру.</p>
+    <div class="highlight">
+      <p>Навіть невелика кількість цукру чи інших вуглеводів може вивести людину з кетозу на значний період часу — до двох діб. Мета всього цього — протриматися в кетозі достатньо довго, щоб відчути те, що людина має відчути: приплив енергії, покращення роботи мозку, а не лише схуднення, — адже саме відчуття здоров'я і благополуччя, відчуття наповненості енергією є дуже й дуже важливим, особливо з віком.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Показник прогресу -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Найкращий показник прогресу</h2>
+    <p>Найкраща ознака того, що процес іде, — це зникнення апетиту, а не саме схуднення: спершу потрібно стати здоровою, а вже потім худнути. Не варто зважуватися надто часто — натомість варто фокусуватися на рівні енергії, зникненні апетиту й тяги до їжі та на тому, що одяг стає завеликим. Докладніше про цей самий критерій — <a href="fat-bomb.html">Жирова бомба</a>.</p>
+  </div>
+
+  <!-- Остання порада -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Остання невелика порада</h2>
+    <div class="highlight">
+      <p>Якщо дотримуватися всього одразу занадто важко — краще щось, ніж нічого. Можна просто перейти на низьковуглеводну дієту або почати з голодування як першого кроку. Навіть якщо людина почне з «брудного кето» і їстиме батончики Аткінса, у яких повно не дуже корисних складників, — у них принаймні менше 50 грамів вуглеводів, а це вже краще, ніж нічого.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Насамкінець -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Насамкінець</h2>
+    <p>Дрібниці — ранкова кава, порядок їжі, жир наприкінці прийому, сіль у дні тренувань, час перед сном — саме вони й вирішують, чи вийде втриматися в кетозі надовго.</p>
+    <p>Про сам принцип «знизьте вуглеводи і їжте рідше» — <a href="keto-start.html">Кето-старт</a>. Про конкретні приклади страв на день — <a href="fat-bomb.html">Жирова бомба</a>. Про схеми інтервального голодування розгорнуто — <a href="fasting-window.html">Вікно голодування</a>.</p>
+    <div class="final-quote">
+      <div class="final-text">Дрібниці мають велике значення, <strong>щоб не опинитися на плато</strong>.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
