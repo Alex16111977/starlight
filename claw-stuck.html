@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Кігтик застряг</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Кігтик<br>застряг</h1>
+  <p class="page-subtitle">Чому заєць сам відчинив лисиці двері у власну хатинку — розбір «Заюшкиної хатинки» про кордони, які здають по шматку</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Пташці кігтик застряг — усій пташці кінець</div>
+      <div class="hero-author">Альберт Сафін</div>
+    </div>
+    <p>Лисиця й заєць за своєю природою належать до різних ланок харчового ланцюга — і, здавалося б, просто не можуть довго співіснувати мирно: конфлікт між ними закладений уже самою їхньою видовою належністю. Тим не менш якимось чарівним чином вони опиняються сусідами: у лисиці хатинка крижана, а в зайця — лубʼяна, зроблена з кори дерева, у якій можна зігрітися й сховатися від вітру, нічого собі в цьому не відмовляючи. І попри те що зайцева хатинка об'єктивно надійніша, саме лисиця дражнить зайця.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Головне запитання -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Чому заєць дозволяє себе дражнити</h2>
+    <p>Головне запитання: невже в зайця не вистачає розуму, щоб не дозволяти лисиці себе дражнити? Іншими словами — що змушує зайця бути тим, хто отримує якесь задоволення від того, що його дражнять («у мене хатинка світла, а в тебе темна»)? Дурість лисиці, яка на рівному місці хизується, ще можна якось зрозуміти — їй психологічно необхідно показати себе найкрутішою. Але значно цікавіше питання — чому заєць взагалі дозволяє собі це слухати.</p>
+    <div class="highlight">
+      <p>Тут доречний вислів «не чіпай — не смердітиме»: про це важливо пам'ятати. І саме завдяки цьому моменту казка стає повчальною.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Танення хатинки -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Танення хатинки: заєць теж не безгрішний</h2>
+    <p>Минає літо, і крижана хатинка лисиці тане. Можливо, заєць, розуміючи, що рано чи пізно хатинка лисиці розтане, саме тому й дозволяв їй розкіш принижувати себе — щоб потім мати змогу позловтішатися: «ха-ха-ха, а пам'ятаєш, як ти мене обзивала? ось тепер отримай». Тобто в певному сенсі вони варті одне одного.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Поступова здача кордонів -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Поступова здача кордонів: двір, ганок, хатинка, піч</h2>
+    <p>Лисиця проситься до зайця: «пусти мене, зайчику». Заєць спершу питає: «а навіщо дражнилася?» — і сам собі створює пастку цим питанням, бо якоїсь притомної відповіді на нього годі й чекати. Найцікавіше, що, цікавлячись причинами, чому лисиця дражнилася, заєць лише зволікає той момент, коли він уже не зможе їй відмовити. Здатності говорити «ні», звісно, зайцю варто було б повчитися.</p>
+    <div class="highlight">
+      <p>«Пташці кігтик застряг — усій пташці кінець»: послідовне здавання позицій ще ніхто не скасовував. Якщо зайчик дозволив лисиці залізти до себе на двір, це лише питання часу, коли лисиця повністю проковтне зайця — потихеньку, непомітно. У шахраїв (а лисиця тут грає роль справжньої шахрайки) немає совісті, і їхня жага ніколи не буде вгамована — їм завжди буде мало, і саме ця жадібність зрештою їх і губить.</p>
+    </div>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text"><strong>Двір.</strong> Лисиця продовжує упрошувати, і заєць пускає її на двір — хоча для годиться ще й намагався відмовити.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Ганок.</strong> На другий день лисиця знову проситься — тепер на ганок. Заєць уже привчив її до того, що вона може поводитися нахабно: якщо благати й упрошувати достатньо наполегливо, урешті-решт він усе одно поступиться, навіть якщо для годиться скаже «ні».</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text"><strong>Сама хатинка.</strong> На третій день лисиця проситься вже в саму хатинку. Вона чудово знає, що на шию до зайчика легко всістися, — він сам залюбки дає себе обманювати. Сидить лисиця на лаві, а зайчик — уже на печі.</div></div>
+      <div class="num-row"><div class="num-badge">4</div><div class="num-text"><strong>Піч.</strong> На четвертий день лисиця проситься вже на піч, до самого зайчика — і заєць пускає її й туди.</div></div>
+    </div>
+    <p>Будь-якого шахрая визначає те, що коли йому щось потрібно, він може лити солодкий мед у вуха від щирого серця, а щойно отримає своє — одразу тікає, бо головна мета шахрая — забрати побільше. Яка взагалі логіка в тому, щоб щоразу казати «ні, не пущу», якщо перед тим тричі поспіль ти вже казав те саме — і щоразу зрештою пускав?</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Захисні механізми -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Кордони як захисний механізм</h2>
+    <p>Організм має захисні механізми (наприклад, шерсть), які не пускають усередину зайвий бруд, — так само особисті кордони мають захищати від зовнішньої шкоди. А заєць не захищає свій побут від підступної лисиці, чиє завдання — його зжерти.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Виганяння -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Лисиця виганяє зайця з власної домівки</h2>
+    <p>Минає день чи два, і лисиця вже сама починає зайця з хатинки виганяти. Вона вже настільки звикла до цієї вседозволеності, що жодних норм пристойності для неї більше не існує — і, звісно, вона не може встояти перед внутрішньою спокусою вигнати зайця повністю (хоча, по-хорошому, могла б і просто зжерти його уві сні). «Іди геть, косою, не хочу з тобою жити», — і так виганяє.</p>
+    <div class="highlight">
+      <p>Коли цю казку розповідають дітям, легко викликати жалість до зайця — мовляв, яка несправедливість. Але суть у тому, що заєць сам зробив усе, щоб опинитися тим, кого вигнали з дому, — він сам через власну дурість «отримав кулю в лоб». Саме через цю призму з покоління в покоління й передається дуже шкідливий урок: «якщо тебе поранили — сам дурень». Метафорично, якщо малюка образили на дитячому майданчику, то, за такою логікою, він сам усе зробив для того, щоб його образили, — а це не завжди справедливо чи корисно як універсальне правило, але саме цим ця казка й цінна: вона показує, як людина сама створює умови для того, щоб опинитися постраждалою.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Заєць у ролі жертви -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Заєць у ролі жертви: як він втягує рятівників у трикутник</h2>
+    <p>Сидить заєць, плаче, лапками сльози втирає. Він розповідає свою історію: була в мене хатинка лубʼяна, а в лисиці — крижана, прийшла весна, хатинка в лисиці розтанула, попросилася лисиця до мене — і мене ж і вигнала. Замість того щоб сказати собі чесно «я виявився настільки нерозумним, що дозволив лисиці оселитися в мене вдома, тож не дивно, що вона мене вигнала», заєць повністю знімає з себе особисту відповідальність — а натомість починає скиглити.</p>
+    <div class="highlight">
+      <p>Коли, наприклад, бабуся розповідає цю казку онуку, варто ще й інтерпретувати її та пояснювати, до чого тут що, — бо якщо малюк через відсутність критичного мислення просто, наче губка, вбирає в себе зміст казки, у майбутньому він ризикує уподібнюватися цьому нетямущому зайцю. Тут, навпаки, варто сказати зайцю: «дякую тобі, що ти спеціально прикинувся вкрай нетямущим і дурним, бо завдяки тобі ми можемо здобути з цієї казки багато цінного — тож можеш більше не грати цю роль, ми знаємо, що ти мудрий хлопець, живи й здоровкай».</p>
+    </div>
+    <p>Так заєць по черзі підтягує у свій маленький трикутник нових учасників — і щоразу повторює ту саму історію, підкреслюючи, який він нещасний.</p>
+    <div class="cards">
+      <div class="card">
+        <span class="card-icon">🐕</span>
+        <div class="card-title">Собаки</div>
+        <div class="card-text">«Геть, лисице!» — а лисиця з печі: «як вискочу, як вистрибну, підуть клаптики по закапелках!» Собаки лякаються й тікають, забуваючи, якими гордими й вільними псами вони були буквально кілька хвилин тому.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🐺</span>
+        <div class="card-title">Вовк</div>
+        <div class="card-text">Та сама історія слово в слово; вовк переконує себе, що зможе допомогти, хоча собаки вже намагалися й не змогли, — і теж лякається й тікає, почувши про клаптики по закапелках.</div>
+      </div>
+      <div class="card">
+        <span class="card-icon">🐻</span>
+        <div class="card-title">Старий ведмідь</div>
+        <div class="card-text">Та сама історія вчетверте поспіль: «не виженеш, — каже заєць, — собаки гнали-гнали, не вигнали, сірий вовк гнав-гнав, не вигнав». Ведмідь ричить на лисицю — і теж тікає, налякавшись тієї самої погрози.</div>
+      </div>
+    </div>
+    <p>Важливо, щоб цей мовленнєвий патерн (повне зняття особистої відповідальності й перекладання її на когось іншого) не «розчинився в підсвідомості» дитини, яка слухає цю казку, — бо заєць тут стверджує, що хтось ззовні може впливати на його стан і благополуччя. Ані собаки, ані вовк, ані ведмідь не знайшли в собі сил допомогти зайцю. Можливо, зрештою вони й зрозуміли, що заєць сам зробив усе, аби опинитися в цій неприємній ситуації, і вирішили не втягуватися в цей трикутник, залишивши лисицю й зайця розбиратися між собою, — хоча їхню справжню мотивацію ми напевно не знаємо, і це теж цілком нормальне рішення.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Провокація -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Провокація: заєць свідомо набиває собі ціну</h2>
+    <p>Іде півень, несе косу. Півень точно не належить до тих, хто харчується зайцями, — його травна система просто фізично не дозволить йому «перетравити» таку здобич. Тому в півня немає жодного інтересу зжерти зайця, зате є можливість — і, можливо, бажання — закріпитися на цій території.</p>
+    <div class="highlight">
+      <p>Мало того що заєць опинився в біді, так він ще й свідомо (чи несвідомо) провокує в співрозмовника потребу себе врятувати, а потім ще й переконує його в неможливості успіху — «не виженеш, собаки гнали-гнали не вигнали, сірий вовк гнав-гнав не вигнав, старий ведмідь гнав-гнав не вигнав, а ти й поготів не виженеш». По суті, заєць грає в гру жертви трикутного характеру: «у мене все погано, але ти повинен мені допомогти, ти ж не хочеш, щоб я вважав тебе бездушною худобою» — і водночас навмисно набиває собі ціну цим скигленням, не втрачаючи надії, що хтось таки допоможе, — намагаючись, як то кажуть, і рибку з'їсти, і на кілочок сісти.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Розв'язка -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Розв'язка: чому саме півень зміг вигнати лисицю</h2>
+    <p>Півень утретє кукурікає: «іду на ніжках у червоних чоботях, несу косу на плечах, хочу лисицю посікти». Уперше почувши це, лисиця з печі: «зараз, одягаюся, вилажу звідси». Удруге — «зараз-зараз-зараз, шубу вдягаю»: тут природно помітно, як вона починає побоюватися півня — очевидно, зметикувавши, що він таки може добряче їй наваляти. Утретє лисиця вже налякано зіскакує з печі й тікає геть. А заєць із півнем відтоді живуть-поживають разом.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Висновки -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Два висновки</h2>
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">Заєць</div>
+        <div class="col-text">Сам не захищав власні кордони, піддавався на провокації та маніпуляцію викликанням до себе жалю — тим самим сам утягнув себе в трикутник. Спочатку він узагалі був у ролі рятівника: сприймав лисицю як жертву обставин і врятував її від холоду, тримаючи водночас на «небезпечній дистанції» — отримуючи задоволення від думки, що скоро зможе їй за все відплатити.</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">Півень</div>
+        <div class="col-text">Здогадався, що домівка зайця цілком комфортна — навіть, можливо, занадто комфортна для того, щоб заєць жив там сам-один, — і вступив із зайцем у своєрідний симбіоз: повернув йому його ж домівку, прогнавши лисицю подалі, а натомість сам тепер забезпечує зайцю захист і живе на його території. У півня немає жодної спокуси зжерти зайця, оскільки такої їжі, як заєць, у його раціоні просто не існує.</div>
+      </div>
+    </div>
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Що змушує тебе отримувати задоволення від того, що тебе ображають інші?</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Насамкінець -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Насамкінець</h2>
+    <p>Свої кордони, свою територію необхідно берегти. Не дозволяйте нікому нав'язувати вам чужі правила на вашій території — а територія ця не обов'язково фізична чи топографічна: це може бути й сфера вашого професіоналізму, і будь-яка інша область вашого життя. Водночас поважайте й кордони інших людей — і живіть щонайкраще: прокидайтеся вранці з радістю і завершуйте кожен день у вдячності й радості.</p>
+    <p>Про сам трикутник переслідувач-жертва-рятівник докладніше — <a href="codependency-triangle.html">Трикутник співзалежності</a>. Про право не догоджати й не боятися відмовити — <a href="stop-pleasing.html">«Ні» іншому — «так» собі</a>. Про технологію маніпуляцій і психологію жертви — <a href="manipulation-hook.html">Гачок і розплата</a>. Про той самий трикутник на прикладі казки Пушкіна — <a href="broken-trough.html">Розбите корито</a>. Про те, як «доброта» без права на «ні» веде до тих самих граблів, — <a href="be-not-seem.html">Бути, а не здаватися</a>.</p>
+    <div class="final-quote">
+      <div class="final-text">Пташці кігтик застряг — <strong>усій пташці кінець</strong></div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
