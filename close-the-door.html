@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Зачинити двері в минуле</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Зачинити двері<br>в минуле</h1>
+  <p class="page-subtitle">Ольга Демчук відповідає на 20 запитань глядачів: зрада довіри, горе, ревнощі, межі з родичами і дитячі позиції, які ми тягнемо в доросле життя</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Там є зручна кімната, куди можна прийти, усім подумки помститися й відчути себе святою</div>
+      <div class="hero-author">Ольга Демчук</div>
+    </div>
+    <p>Із майже 180 запитань глядачів відібрано ті, що найбільш конкретні й близькі до реального життя, а не ті, що потребують окремої лекції. У цих двадцяти історіях — попри все їхнє розмаїття — раз у раз проступають ті самі механізми.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q1 -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Ідеалізація керівництва і роль «цапа відбувайла»</h2>
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Пропрацювала на своєму місці 17 років, вірила в чесність і відданість справі та своєму керівнику. Після доносу мою помилку подали як умисне порушення, керівник погрозами змусив звільнитися, а колеги, яких я вважала друзями, підтримали негатив і заважали працевлаштуванню. Довелося змінити фах і починати з нуля; відчуття приниження й неповноцінності не минає й досі.</div>
+    </div>
+    <p>Те, що тут описано — ідеалізацію чесності й відданості, — радше нагадує перебування не просто на роботі, а в структурі на кшталт секти чи духовної організації зі своїм гуру-керівником. Ідеалізація автоматично стримує все негативне, що є в нас самих: коли ми когось ідеалізуємо, ми повертаємось до нього найкращою своєю стороною. Але якщо станеться подібна зрада, виникає відчуття падіння з великої висоти — бо ми вважали себе абсолютно правими, незгрішними.</p>
+    <div class="highlight">
+      <p>Коли людина починає впізнавати власну «темряву», їй стає легше: таке ідеалістичне служіння ідеалу насправді трохи маніпулятивне — воно каже оточенню «подивіться, яка я хороша, як мене можна не любити», і так формує бажане ставлення до себе.</p>
+    </div>
+    <p>Другий момент — вона стала «цапом відбувайлом». Так буває, коли людина занадто хороша й не показує темних сторін: оточення починає комплексувати, а коли ця прекрасна людина спіткнеться, на неї з радістю накидаються. Так трапляється і з блогерами, які проповідують ідеальний спосіб життя, а потім їх «застукують» на невідповідності. Це не означає, що треба ставати поганою, — але демонстрація себе ідеальною іншим має такі наслідки.</p>
+    <p>Щоб відпустити ситуацію, потрібно визнати, що ти не незгрішна, що в ній була і твоя вигода, і твоя частка відповідальності. Коли ми не вважаємо себе невинною постраждалою жертвою, а бачимо причинно-наслідковий зв'язок, злість, змішана з образою, яку неможливо відпустити, відступає.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q2 -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Ревнощі як спосіб зрівняти становище в шлюбі</h2>
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Валерія свідомо руйнує стосунки з чоловіком ревнощами: у стані образи шукає привід для ревнощів, доводить розмову до абсурду, щоб довго потім не розмовляти з чоловіком. Раніше такого не було, вона уникала конфліктів, а тепер демонструє «звіра».</div>
+    </div>
+    <p>Для повної відповіді бракує деталей — можливо, раніше жінка була реалізована, працювала, а потім вийшла заміж, народила дитину й перестала працювати. Будь-яка жінка, яка надовго залишає діяльність, починає самостверджуватися іншими способами, зокрема прискіпуваннями до чоловіка, бо він стає годувальником, а будь-яка людина на утриманні відчуває неповноцінність і хоче трохи «опустити» того, хто годує, щоб не почуватися на його фоні такою ущербною.</p>
+    <div class="highlight">
+      <p>Те, що чоловік не зупиняє цю поведінку, свідчить про його власне почуття провини, а дружина несвідомо б'є в це слабке місце, в «ахіллесову п'яту». Треба зрозуміти, чому вона грає в цю гру, але це точне влучання в слабке місце.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q3 -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Злість на запитання родичів про хворого сина</h2>
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Як упоратися зі злістю, коли родичі цікавляться станом мого сина, хворого на шизофренію? Син уже тяжко хворий, перебуває на тривалому стаціонарному лікуванні, йому 19 років, мені 45. Усе життя я була інтровертом, а тепер з'явилася соціофобія.</div>
+    </div>
+    <p>Хвора дитина, тим паче психічно хвора, назавжди змінює життя матері — це той відбиток, який залишається назавжди, і з цим треба змиритися. Розумом це можна прийняти, але внутрішньо людина продовжує цьому протистояти — і це нормально, це не те, що треба «лікувати». Кожне запитання про дитину нагадує про ситуацію: якщо декого можна попросити уникати цієї теми, поясніть, що це ранить. Тим, кому пояснити важко, варто відповідати максимально коротко, щоб згорнути розмову.</p>
+    <div class="highlight">
+      <p>«Він уся моя жизнь» — так, дитина для матері дійсно частина її життя, і краще навчитися жити не вдаючи, що цього немає, а з розумінням, що це є і буде впливати. Соціофобія з'являється тому, що будь-яка мати хворої дитини почувається неповноцінною — наче не змогла народити здорову дитину, а нагадування про сина завжди є нагадуванням про цю внутрішню ущербність.</p>
+    </div>
+    <p>Не варто йти на поводу в цих думок про ущербність — вони будуть виринати, але їх не треба розвивати. Можливо, варто звузити коло спілкування, знайти колективи, де не знають про цю біду, і зрозуміти, що мати теж поранена і теж має право захищати свою рану.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q4 -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Постійний рух і втеча від самої себе</h2>
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">43 роки, двоє дітей, у розлученні — уже 5 років живу в постійному русі: відрядження, переїзди, захоплення, які ніколи не доводяться до кінця. Робота стресова, але без стресу життя не відчувається; з одного боку втома й бажання спокою, з іншого — страх, що на одному місці стане нудно. Є відчуття постійної гонитви за примарним щастям.</div>
+    </div>
+    <p>Людина зазвичай тікає сама від себе, від внутрішнього простору, який у ній є, — це нездатність витримувати саму себе. Коли увага особистості весь час зайнята переробкою нових вражень і нових місць, людина відволікається від себе. Особистість ніби живе всередині дому, де дім — це її психіка, її внутрішній світ, і в цьому домі нестерпна обстановка — так само, як молоді люди чекають повноліття, щоб утекти з дому, де нестерпно перебувати.</p>
+    <div class="highlight">
+      <p>Усередині, найімовірніше, іде внутрішній діалог із собою, від якого погано: потужний тиск на себе з приниженнями, претензіями, нападками, незадоволенням і тягою до руйнування. Постійні переїзди — це спосіб зберегтися, бо залишившись на місці, людина почне руйнувати — не буквально, а емоційно.</p>
+    </div>
+    <p>Варто вивести цей внутрішній діалог назовні, бажано голосом, щоб був чутний емоційний контекст, і працювати з психологом над тим, чому ці процеси нестерпні. «Гонитва за примарним щастям» — це радше пошук емоційного стану щастя: не щось зовні має зробити людину щасливою, а сама людина повинна навчитися виробляти щастя зсередини, бо зараз усередині не щастя, а біда.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q5 -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Втрата партнера і переживання горя</h2>
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Втратила чоловіка 8 місяців тому; моє життя «поставлене на паузу», одна частина мене переконана в реальності події, інша шукає ознак перевтілення й можливості зв'язку. Щодня мене мучить почуття провини, що передчувала біду й не сказала про це, а за годину його не стало.</div>
+    </div>
+    <p>Вісім місяців — це маленький термін: за багаторічною практикою переживання втрати триває приблизно 3 роки, у когось більше, у когось менше. Треба дати собі час і не робити висновків про життя раніше, ніж мине цей термін.</p>
+    <div class="highlight">
+      <p>Емоційний контекст такого послання дуже важкий, і хоча слова прості, відчувається ця тяжкість — це свідчить про присутність думок на кшталт «гірше вже нікуди». У такому разі важливіше за будь-що звернутися по професійну підтримку, бо депресивний стан виникає саме через постійні атаки на себе — зокрема через відчуття провини «передчувала і не сказала». Варто «виривати з рук» ті інструменти, якими людина себе вбиває зсередини.</p>
+    </div>
+    <p>Якщо звертатися по підтримку до психотерапевта, то краще до того, хто сам пережив утрату, бо витримати це горе може тільки той, хто сам із ним зіткнувся.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q6 -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Неприйняття власної зовнішності, голосу й реакцій попри тривалу терапію</h2>
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Я вже давно в психотерапії, яка значно мене змінила, але досі не можу прийняти свої «тонкі місця» — реакції, зовнішність, навіть голос. Через це боюся «явити себе світу», боюся знайомитися, хоча вже не намагаюся позбутися цієї незручності й не гноблю себе за неї, але пориви до аутоагресії залишаються. Чи можливе, зрештою, безумовне прийняття себе?</div>
+    </div>
+    <p>Безумовне прийняття — це скоріше казка: безумовно приймають хіба військкомат і мама, а все інше обумовлене, навіть ми самі приймаємо себе обумовлено. Голос — це те, що можна змінити, звернувшись до фахівця й поставивши його таким, як хочеться. Зовнішність також залежить від кількості прикладених зусиль — можна зробити когось презентабельним, можна — ні, тут допоможуть фахівці, стилісти тощо. Реакціям так само можна навчитися в психотерапії.</p>
+    <div class="highlight">
+      <p>У такому запитанні звучить бажання не змінюватися самій, а щоб змінилося ставлення до тебе, — так не буває: не вийде, що завдяки психотерапії людина почне собі подобатися, не докладаючи жодних зусиль до зміни поведінки, зовнішності й голосу.</p>
+    </div>
+    <p>Варто перестати копатися всередині й почати впливати на ці речі за допомогою інших людей, які можуть у цьому допомогти, бо часто психотерапія знімає відчуття неповноцінності й аутоагресію, але не впливає на поведінку — а на поведінку впливає розуміння того, який у людини контакт із зовнішнім світом, з ким вона поводиться так, а з ким інакше.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q7 -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Хаотичність у голові і орієнтація на емоції замість пріоритетів</h2>
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">22 роки. Перед будь-якою справою, навіть прибиранням, виникає питання «з чого почати», немає відчуття пріоритетності, бо все здається важливим. Це позначається на спілкуванні з людьми — я часто кажу чи роблю щось недоречне, є проблеми з розпізнаванням того, що відбувається всередині, і хронічна «ошелешеність».</div>
+    </div>
+    <p>Тут — орієнтація не на пріоритети, а на емоції. Є розуміння того, що важливо з погляду зовнішньої реальності: якщо прорвало трубу, спершу треба покласти ганчірку й викликати майстра, а якщо вода хлище — діяти рішучіше; але якщо орієнтуватися на емоції, хочеться просто бігати й кричати.</p>
+    <div class="highlight">
+      <p>Для розуміння пріоритетності потрібно орієнтуватися не на яскравіші емоції, а на те, що важливіше з погляду дійсності — наприклад, пам'ятати під час сварки з чоловіком, що насправді хочеться жити з ним разом, і будувати розмову, виходячи з цієї мети, інакше слова стають надто жорстокими. Йдеться про вихід із замкненості на самій собі, коли людина не є «світом в ім'я себе», а частиною зовнішнього світу.</p>
+    </div>
+    <p>Недоречність у спілкуванні — це теж про неможливість вийти з цього замкненого на собі світу, про надмірну зациклeність на собі й невпізнавання власних почуттів, адже саме емоції зараз керують людиною. У цьому віці це майже нормальний стан — варто розбиратися з емоціями, розуміти, куди вони кличуть, і не йти в усьому на їхній поводі.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q8 -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Неможливість завагітніти попри спроби ЕКЗ</h2>
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">У тривалому шлюбі, хочу дітей, серйозних фізичних захворювань немає, кілька спроб штучного запліднення не дали результату. Пережила всі «тіньові» сторони цієї ситуації — злість на світ, аутоагресію, заздрість, знецінення інших; почала ходити до церкви, щоб «Бог дав», а потім зрозуміла, наскільки лицемірно до цього ставлюся. Як правильно підійти до нездійсненних бажань?</div>
+    </div>
+    <p>Для жінки неможливість мати дітей — це дуже стресово, бо жінка не відчуває себе повноцінною, і це ніби «прошито» на генетичному рівні: фізіологічна природа жінки вимагає дітей, а до цього додається тиск мам і бабусь. Складно уявити себе жінкою, яка не може мати дітей; можливо, у майбутньому ситуація зміниться, але зараз це саме та жінка, яка дітей мати не може — і йдеться не про те, щоб ставити на цьому крапку, а про неможливість прийняти себе такою, перезібрати свою ідентичність і визнати, що в ній зараз немає цієї опції.</p>
+    <div class="highlight">
+      <p>Хочеться атакувати оцю реальну себе — себе без дітей, і з позиції ідеального «я» постійно карати та знущатися над реальним. Навчитися жити з собою такою можливо, лише якщо побачити в собі й інші прояви емоційного тиску на себе, коли чогось дуже хочеться, — загальне емоційне самокатування «дай мені те, що я хочу».</p>
+    </div>
+    <p>Варто розвернутися від претензій до світу в бік того, що людина робить із собою, наскільки немилосердно до себе ставиться й сама собі наказує «дай».</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q9 -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Виснажливі клієнтки в роботі майстра з нарощування вій</h2>
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Майстер із 10-річним стажем, з великою клієнтською базою. Є кілька клієнток, які мене «руйнують»: одна щотричі тижні розповідає про розкішне життя й сім'ю, інша палить одноразову сигарету просто в обличчя під час процедури й забуває прохання цього не робити за 15 хвилин. Зростає злість, важко зберігати людяність, хочеться відмовити цим клієнткам, але думка «можна й потерпіти» заважає це зробити; сприймаю це як власну гордовитість.</div>
+    </div>
+    <p>Гординя тут ні до чого. Клієнтка, яка розповідає про розкішні покупки, самостверджується за рахунок майстра, усвідомлюючи, що та заробляє собі на життя сама; та, що палить в обличчя, просто демонстративно ігнорує прохання. Важливо зрозуміти: ці клієнтки забирають терпіння й життєву енергію, швидко «спалюють батарейку».</p>
+    <div class="quote-block">
+      <div class="qa">«Я можу деякий час витримувати твій крик, але потім ні»</div>
+      <p>У власній роботі я кажу людям, які кричать, саме так — або перехід на спокійний тон, або я перестаю чути, якщо на мене кричать. Можна чесно сказати клієнтці «я не можу з вами працювати», а ту, що хвалиться розкішшю, просто кілька разів не записати — вона знайде іншого майстра.</p>
+    </div>
+    <p>Якщо немає сил іти у відкритий конфлікт — варто схитрити, але дбати про себе необхідно: якщо ігнорувати власну неможливість витримати когось, починаєш «косячити» з рештою клієнтів, бо сил на всіх не вистачає. Визнання власної слабкості («я це не можу внести») — це не звинувачення клієнта, а турбота про себе; якщо майже половина клієнтів дратує — це вже претензія до самої майстрині, але є типи особистості, які самостверджуються саме через чуже почуття слабкості, і від таких варто позбавлятися.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q10 -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Розрив із близькою подругою-колегою</h2>
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Різко зіпсувалися стосунки з колишньою дуже близькою подругою, з якою зараз доводиться працювати разом. Причина, думаю, — в різних реакціях на важливу ситуацію: я не виправдала очікувань подруги, вона відповіла відчуженням, і це було дуже боляче. Віддалитися неможливо через спільну роботу; прошу допомогти прийняти це й перейти до смирення, адже емоції заважають і це відбивається на робочій атмосфері.</div>
+    </div>
+    <p>Лист описаний не зовсім чітко, але якщо відновити картину — авторка зробила щось, що образило подругу, і тут можна попросити пробачення не для того, щоб його отримати, а щоб визнати свою провину: сказати «я була не права», не очікуючи, що пробачать і дружба відновиться, а зробити це для себе.</p>
+    <div class="highlight">
+      <p>Те, що вона почувається відчуженою, свідчить про бажання повернути прихильність подруги; схоже, у її присутності виникає відчуття провини, через яке хочеться «лебезити й метушитися». Треба забрати свою частку відповідальності, визнати провину й розуміти, що могла поранити подругу цим.</p>
+    </div>
+    <p>А потім перевести статус цієї людини в голові з «близької подруги» на просто знайому колегу — ставитися до неї не як до близької подруги, з якою посварилися, а як до стороннього співробітника.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q11 -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Складнощі з підвищенням ціни на консультації</h2>
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Психотерапевт із медичною освітою й понад 5-річним досвідом, веду блог в Instagram. Уже рік намагаюся підняти ціну консультацій до 100 доларів, але не можу втримати цей рівень: хтось погоджується, більшість — ні, доводиться постійно знижувати ціну. Фінансово вже понад рік залишаюся на одному рівні й шукаю, чого не помічаю.</div>
+    </div>
+    <p>Із власного досвіду: люди самі пропонували більше, щоб не стояти в основній черзі, і так з'явилося кілька черг за різними цінами — це сталося не тому, що ціну підняли штучно, а тому, що люди самі почали пропонувати більше, ніби реальність сказала «твоя ціна занизька, заплати більше».</p>
+    <div class="highlight">
+      <p>Підняти ціну «педаллю» самостійно — це, здається, не той напрямок: треба підвищувати не ціну, а власний рівень — рівень самостійного, оригінального мислення, яке завжди поза конкуренцією, бо унікальний продукт ні з ким не конкурує. Мета «рости фінансово, збільшувати дохід» для психотерапевта доволі слизька; краще поставити мету рости як фахівець, вести групи, читати лекції — бо коли в голові лишаються тільки гроші, важко мислити.</p>
+    </div>
+    <p>Заробіток варто розглядати як побічний продукт діяльності: коли зациклюєшся на тому, як заробити, сили спрямовуються не туди, а коли думаєш про професійне зростання, заробіток починає рости сам собою.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q12 -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Чоловік хоче прийомну дитину, дружина — ні</h2>
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Дружина хоче взяти прийомну дитину (своїх дітей бути не може), а в чоловіка немає жодної мотивації для цього. Дружина казала, що без його бажання цього не робитиме, але раніше говорила, що зробить це в будь-якому разі, з ним чи без нього; є передчуття, що згодом виникне або конфлікт, або розлучення.</div>
+    </div>
+    <p>Незрозуміло, чому саме не може бути дітей — через страх дружини народжувати чи через фізичну неможливість чоловіка, бо від цього залежить відповідь. Якщо погадати на кавовій гущі: ймовірно, причина в дружині, а для жінки дуже важливо відбутися як матері, інакше виникає відчуття, що вона не реалізує своє призначення, і почуття провини й неповноцінності через відсутність дітей, яке вона намагається закрити в такий спосіб.</p>
+    <div class="highlight">
+      <p>Авторові листа варто зрозуміти, який «пекельний» стан коїться всередині дружини — тоді буде легше з нею говорити, а також усвідомити, чому сам він налаштований так категорично (буває, жінка хоче кота, чоловік категорично проти, а потім саме він найбільше з цим котом возиться).</p>
+    </div>
+    <p>Варто взяти спільну консультацію з психологом, який допоможе обговорити це без зайвих емоцій, і докладніше з'ясувати причини небажання — лише після цього можна дати конкретнішу пораду.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q13 -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Агресія до власного психолога після фрази про навчання</h2>
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Мене турбує сильна агресія до мого психолога. Кілька місяців тому, тільки починаючи рух до своєї м'якості, я прийшла на сесію в настрої жертви, і на мій сум психологиня сказала «з натиском», що головне в моєму житті зараз — навчання. Сесія загалом містила й хороші поради, але цієї фрази вистачило, щоб на два тижні зануритися в аутоагресію; тепер, роблячи кроки до свого «реального», я дуже боюся реакції психологині й відчуження. Як вийти із зациклення на цих реакціях і прийняти себе?</div>
+    </div>
+    <p>У цій розповіді — дивні, зливні стосунки з психологом, схожі на стосунки мами з донькою, і це варто прямо проговорити. Корисна практика — записувати аудіо сесій: коли ми сприймаємо щось на слух, ми часто додумуємо, тож важливо зрозуміти, що психологиня сказала буквально, а не так, як це запам'яталося крізь емоції.</p>
+    <div class="highlight">
+      <p>Можливо, психологиня злякалася, що клієнтка, яка хоче «нарешті приділити час собі», ризикує зруйнувати своє життя — адже коли в людини зменшується аутоагресія, вона іноді йде у вседозволеність і неробство. Те, як тут скаржаться на психологиню, нагадує дитячу позицію «мама зробила погано, піду поскаржусь татові», тож варто стати на позицію двох дорослих.</p>
+    </div>
+    <p>Спершу варто обговорити зі своїм психологом саме це злиття й ставлення до неї як до мами, а вже потім — що саме було сказано (переслухати аудіо, уточнити або написати на папері, якщо складно сказати вголос). З цієї дитячої позиції потрібно виходити, інакше життя перетвориться на вічне страждання й постійне відчуття себе скривдженою «поганими дядьками й тітками».</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q14 -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Нав'язливе повернення думками до минулих стосунків</h2>
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Чому так складно перестати повертатися думками й образами в минулі стосунки? Лякає відчуття, що досі хочеться уявляти себе поруч із цією людиною, хоча чітко розумію, чому більше не обрала б її партнером. Виникає бажання подивитися під іншим кутом на ту холодність і інертність, які зводили з розуму в тих стосунках і зводять досі; інколи фантазії використовуються для заспокоєння, інколи — як приємний, що «оживляє» емоції образ.</div>
+    </div>
+    <p>Ми завжди повертаємося до минулих стосунків, коли немає теперішніх, бо не можемо залишатися зовсім на самоті — хтось повинен бути хоча б у фантазіях. Якщо людина перебуває в стосунках, але повертається думками в минуле, це означає, що минуле ідеалізоване: вона повертається не до реального минулого, а до вигаданого, де на образ колишнього партнера накладено маску. Таке фантазування не має нічого спільного з реальним минулим, і цьому варто навчитися.</p>
+    <div class="highlight">
+      <p>Коли людина мріє про стосунки й про те, як там було чудово, вона насправді плекає дитячу мрію про безумовно приймаючого батька, який візьме на руки й кудись віднесе, — а це блокує активність, ініціативність і власну реалізацію. Таке фантазування схоже на наркотик чи алкоголь: у ньому втілюються всі мрії, а потім людина повертається й розуміє, що життя минає повз неї.</p>
+    </div>
+    <p>Щоб перестати «відлітати» у фантазії, потрібно самій ставати тією опорою, на яку можна спертися, — не дитиною, що шукає батьків, а дорослою, яка вміє заробляти благо самостійно.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q15 -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Постійна тривога за реакції оточення</h2>
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Постійно дивлюся на себе очима оточення: уявляю, що злю й дратую інших у багатьох ситуаціях — наприклад, коли на пошті довга посилка затримує чергу (хоча розумію, що ні моєї вини, ні вини працівника тут немає), коли намагаюся якнайшвидше зняти гроші в банкоматі, щоб менше затримувати людей, або почуваюся незручно в будівельному магазині, бо здається, ніби консультанти-чоловіки сприймають мене як «дурну жінку». Як навчитися витримувати цей стан або у що його трансформувати?</div>
+    </div>
+    <p>Це надмірна зациклeність на собі: здається, що всі про тебе думають, і хочеться жити так, щоб ніхто не дратувався, — а це неможливо. Якщо затримуєш чергу, люди дратуються; коли сама стоїш у черзі й хтось затримує тебе — дратуєшся ти. Бажання, щоб усі ставилися тільки позитивно, нездійсненне.</p>
+    <div class="highlight">
+      <p>Важливо розуміти, що в такі хвилини до тебе й справді можуть ставитися негативно — як до тієї, хто затримує чергу, — але це триває лише кілька хвилин, і щойно ти підеш, про тебе забудуть; варто применшувати ці переживання саме цим розумінням короткочасності. Та ж логіка стосується банкомата: дратуємося не на конкретну людину, а на те, що нам заважають зробити щось так швидко, як хочеться, — так само дратуються й інші люди в черзі, сприймаючи затримку як перешкоду, а не особисто проти них.</p>
+    </div>
+    <p>Відчуття, що чоловік-консультант вважає тебе дурною, теж не варте тривоги — у ситуації, де людина справді не розуміється на товарі, немає нічого ганебного. Бажання постійно радувати всіх і викликати лише захоплення — ідеалістичне ставлення, яке просто неможливе, це свого роду казка.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q16 -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Відсутність сексу в шлюбі і невпевненість у власній жіночності</h2>
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Чоловік піклується про мене й оберігає, іноді навіть надто пильно аналізує мої емоції; я емоційна й останнім часом часто самобичуюся, а чоловік намагається підтримати. Проблема — у відсутності сексу: чоловік енергетично не готовий, хоча фізична реакція є, і пояснює це частими сварками й нервами. Без сексу почуваюся пригніченою й непотрібною, стала дратівливішою та агресивнішою і не відчуваю себе жінкою; ми любимо одне одного, але часто сперечаємося, обстоюючи кожен свою правоту.</div>
+    </div>
+    <p>Інтуїтивно здається, що причина проблем із сексом не та, що описана, — вона в чомусь іншому, і з'ясувати це можна лише у щирій розмові. Навіть якщо прийняти пояснення про сварки як правду: що заважає, розуміючи потребу в сексі, уникати конфлікту з чоловіком? Можливо, усередині є протестна поведінка, навіть якщо людина розуміє, що робить собі гірше.</p>
+    <div class="highlight">
+      <p>Можливо, чоловікові потрібне відчуття головування, «альфа-самця», і коли дружина претендує на це головування, він не хоче входити в інтимний контакт інакше, ніж переможцем; тоді йому потрібне не стільки відсутність сварок, скільки її поступливість у дрібницях, щоб відчути себе головним — багато жінок «грають» у це, і цього буває достатньо. Можливо, він несвідомо шантажує її цим постійним станом: або так, або я не дам того, що ти хочеш.</p>
+    </div>
+    <p>Щодо відчуття власної жіночності без стороннього схвалення — варто розрізняти бажання почуватися жінкою і бажання почуватися бажаною, це різні речі; варто також подумати, чи не забарикадована вона сама в якомусь підлітковому бунті проти чоловіка, який узяв на себе батьківську роль опіки й турботи, — тоді бунт може бути пов'язаний саме з надмірною опікою.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q17 -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Надмірна відкритість і сміх, що заважають у роботі й особистому житті</h2>
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Мені дуже заважає в особистому й професійному житті власна надмірна відкритість і надмірний сміх: таке розслаблене поводження не викликає в колег і партнерів по роботі поваги, вони перестають серйозно рахуватися з моїми словами й пропозиціями, а домовленості зі свого боку часто затягують аж до моменту підписання документів і зрештою розривають співпрацю, хоча сама я завжди виконую роботу вчасно. Як навчитися, не почуваючись «сп'янілою», поводитися безсторонньо й без зайвих емоцій, вимагати вигідних для себе умов? Я надто чутлива й переймаюся тим, що мої потреби нікого не цікавлять, а якщо про них сказати — партнери образяться і угода не відбудеться; при цьому я працюю переважно на догоду іншим, навіть собі на шкоду, і так само в стосунках із протилежною статтю.</div>
+    </div>
+    <p>Тут — застрягання в образі маленької дівчинки, яка хоче всім подобатися: для такої дівчинки бажання, щоб нею захоплювалися, набагато важливіше за бізнес і реалізацію. Це дитяча, спокуслива поведінка — не доросла й не сексуальна, а саме дитяча, образ «хорошої дівчинки», яку хочеться розглядати й хвалити.</p>
+    <div class="highlight">
+      <p>Саме цей образ обрано для комунікації, і спершу важливо навчитися впізнавати момент, коли відбувається перетворення на цю «реготушку з бантиками», а потім — відвоювати себе в цього образу, бо він притягує тих, хто захоче скористатися милою дівчинкою й змусити її робити вигідне їм. Побачивши цей образ, варто перестати його любити.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q18 -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Порушення особистих меж родичами</h2>
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Щойно закінчила університет і намагаюся побудувати кар'єру в улюбленій справі (поки що не заробляючи й перебуваючи на утриманні чоловіка). Мене дуже дратує, коли родичі радять, що й коли робити, нав'язують свою точку зору та знецінюють мої спроби; чоловік теж тисне на мою справу. Я злюся, коли так роблять, але не завжди можу відстояти межі, і починаю думати, що зі мною щось не так, раз поки не виходить заробляти. Як навчитися відстоювати межі з родичами й пояснити чоловікові важливість цього?</div>
+    </div>
+    <p>Коли людина перебуває на утриманні, її всі сприймають як дитину, яку можна повчати — усім здається, що в них більше життєвого досвіду і вони «навчать жити». Хоч це й молода випускниця, з цього «тону, що приймає», потрібно виривати себе через власну роботу й реалізацію, інакше всерйоз сприймати не будуть.</p>
+    <div class="highlight">
+      <p>Відстоювання себе залежить від конкретної ситуації; можна відповідати напівжартівливо («дякую за цінні поради, без них не знала б, що робити») або прямо сказати співрозмовнику, що він говорить повчальним тоном. Питання «як не потрапляти під вплив», імовірно, означає, що всередині людина емоційно реагує як та, з ким можна так розмовляти; спершу потрібно внутрішньо усвідомити, що подібні поради варто давати лише на прохання, і коли з'явиться це внутрішнє право, оточення його відчує.</p>
+    </div>
+    <p>Тут ідеться про роботу з внутрішнім відчуттям ущербності й дозволом іншим так із собою поводитися — таке потурання часто живить внутрішнє «ідеальне я», яке прискіпується до реального.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q19 -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Нещасливий шлюб і страх самостійності</h2>
+    <div class="question-card">
+      <div class="question-label">Питання (псевдонім «від гарячої гарбузини»)</div>
+      <div class="question-main">38 років, одружена, маю двох маленьких дітей і погані стосунки з чоловіком, але не можу піти, бо не впораюся сама з роботою й дітьми. Прошу поради щодо вирощування самостійності: відчуття, що сама не впораюся з життям, супроводжує мене багато років, навіть коли не було дітей і було своє житло.</div>
+    </div>
+    <p>Судячи з обраного псевдоніма й з того, що навіть без дітей і за наявності власного житла виникало те саме відчуття, справа не у зовнішніх обставинах, а в емоціях — потрібен хтось стабілізуючий. Що саме не так з емоціями, варто з'ясовувати окремо; «вирощування емоційної самостійності» — так можна сформулювати завдання.</p>
+    <div class="highlight">
+      <p>У листі бракує конкретики: чи є зараз робота, скільки дітей і якого віку, які з ними стосунки — від цього залежатиме, чи йдеться, наприклад, про гіперопіку з постійним відчуттям провини перед дітьми. Без цих деталей давати конкретну відповідь означало б «гадати на кавовій гущі».</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Q20 -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Шкільний булінг і довгострокове почуття несправедливості</h2>
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Понад 10 років тому закінчила школу, але досі подумки повертаюся до однокласників, які обговорювали мене й поширювали плітки, на що я реагувала відкритою агресією натовпу щодо себе й не змогла впоратися з цим належно. Тепер бачу колишніх кривдників у соцмережах, де ті поводяться «гірше за підлітків», намагаючись привернути увагу. Як прибрати внутрішнє почуття несправедливості й аутоагресії, не боячись проявлятися?</div>
+    </div>
+    <p>Відчуття несправедливості виникає тоді, коли людина впевнена, що вона «в білому», а отже — жертва. Коли цькували в дитинстві, це особливо складно пережити; суть у тому, щоб зрозуміти: не «бідолашну й нещасну мене» цькували, а в неї тоді просто не було сил чи вміння себе захистити, і нікому було її захистити.</p>
+    <div class="highlight">
+      <p>Коли береш на себе цю відповідальність і розумієш, що діти цькували б не тільки тебе, а будь-кого іншого — бо дітям властиво шукати цапа відбувайла й самостверджуватися на ньому, — прибравши себе як центральну постать цієї історії, стає легше. Багато людей, самі того не підозрюючи, роблять із власного стану жертви цілу релігію: у внутрішньому світі спогад «наді мною знущалися» стоїть наче обеліск, якому вони моляться, і це не відпускає, бо за будь-яких життєвих обставин людина може повернутися до цього моменту й знову побути «в білому».</p>
+    </div>
+    <p>Це проблема всіх, хто пережив психологічне чи фізичне насильство: виникає несвідомий культ жертви, і людина через нього краде в себе теперішнє життя — постійне пережовування «бідна я нещасна, як мене кривдили» перетворюється на подумки помсту, яка насправді лише розвиває агресивність, спрямовану потім на себе ж.</p>
+    <div class="quote-block">
+      <div class="qa">Зачинити двері в минуле</div>
+      <p>Там є зручна кімната, куди можна прийти, усім подумки помститися й відчути себе святою — у цьому є чимало вторинної вигоди. Якщо, навіть заходячи туди, не затримуватися надовго, визнати «так, це було, але це вже в минулому» і дивитися вперед, поступово ця рефлекторна дуга розмикається, і навіть якщо людина туди потрапляє знову, то лише ненадовго.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Насамкінець -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Насамкінець</h2>
+    <p>Двадцять обраних запитань глядачів. Попри різноманіття ситуацій — зрада на роботі, ревнощі в шлюбі, хвороба дитини, постійні переїзди, втрата близької людини, неприйняття себе, хаотичність думок, нездійсненне бажання мати дітей, важкі клієнти, розрив дружби, ціна власної праці, рішення про прийомну дитину, стосунки з психологом, туга за минулими стосунками, тривога за думку оточення, відсутність сексу в шлюбі, дитяча манера спілкування, порушення меж родичами, страх самостійності та шкільний булінг, — у їхній основі часто лежать схожі механізми: ідеалізація та уникнення власної «темної» сторони, зациклeність на собі замість орієнтації на реальність, дитячі позиції та образи, перенесені в доросле життя, а також бажання, щоб хтось зовні розв'язав внутрішні труднощі замість того, щоб узяти на себе відповідальність і докласти власних зусиль до зміни ситуації.</p>
+    <p>Про сам трикутник жертви, переслідувача й рятівника, який тут раз у раз проступає, — <a href="codependency-triangle.html">Трикутник співзалежності</a>. Про право відстоювати межі з тими, хто їх порушує, — <a href="stop-pleasing.html">«Ні» іншому — «так» собі</a>.</p>
+    <div class="final-quote">
+      <div class="final-text">Визнати «так, це було, але це вже в минулому» — <strong>і дивитися вперед</strong></div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>

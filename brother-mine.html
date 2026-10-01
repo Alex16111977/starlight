@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Ти ж брат мені</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Ти ж брат<br>мені</h1>
+  <p class="page-subtitle">Сімейна система Багрових: роль, яку видали ще до народження — психологічний розбір фільму «Брат»</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Сімейна роль — це не висновок із вашої поведінки; це місце, яке вам видали ще до народження, а далі вже вашу поведінку підганяють під це місце, а не навпаки</div>
+      <div class="hero-author">Альберт Сафін</div>
+    </div>
+    <p>На перший погляд сім'я проста: мати в провінційному містечку, двоє дорослих синів, батька немає. Але якщо дивитися на сім'ю як на систему, а не як на набір людей, картина зовсім інша — так само, як людина це не просто мішок із внутрішніми органами, а система. Тут у кожного є функція, і ці функції роздані задовго до подій фільму. Батько — заборонена тема, про нього не говорять, він існує лише як застереження. Віктор — гордість, годувальник, виправдання материнських страждань. Данило — тривога, непутящий, той, за кого постійно страшно, той, хто от-от піде поганою дорогою.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Сім'я як система -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Сім'я як система</h2>
+    <p>Зверніть увагу: ці ролі не випливають із учинків. Ми застаємо сім'ю в момент, коли Данило ще нічого не скоїв — він щойно повернувся з армії, з бойових дій, і лише встряв в одну бійку, тоді як Віктор уже кілька років найманий убивця. Але в сімейній картині світу все навпаки: убивця — це годувальник, а хлопець без роботи, який повернувся додому, — ганьба.</p>
+    <div class="highlight">
+      <p>Сімейна система розподілила ролі раніше, ніж з'явилися для цього підстави, і продовжує тримати їх усупереч фактам. Сімейна роль — це не висновок із вашої поведінки; це місце, яке вам видали ще до народження, а далі вже вашу поведінку підганяють під це місце, а не навпаки.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Чому роль відчувається як характер -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Чому роль відчувається як власний характер</h2>
+    <p>Роль у сім'ї сприймається як особистий характер, бо її видають занадто рано: дитина не може зіставити себе з кимось іншим і сказати «це ваша інтерпретація, а я взагалі інший». Данило як дитина не може сказати матері: «У тебе емоційні проблеми, і щоб упоратися з ними, ти надягаєш на Віктора маску найкращого, а на мене — найгіршого; це не має жодного стосунку до нас як до людей, це лише твої внутрішні процеси, де ти використовуєш нас як манекенів для своїх примар». Дитина отримує опис себе від найважливіших людей у житті — батьків — і приймає цей опис як правду про себе, так само природно, як приймає власне ім'я.</p>
+    <div class="highlight">
+      <p>Далі вмикається механізм «пророцтва, що саме себе здійснює»: про непутящого Данилка завжди чекають неприємностей і помічають лише підтвердження цього, а будь-які перемоги такого «непутящого» просто не реєструють. І сама дитина починає жити в цій колії не на зло, а тому що колія відчувається як «я такий і є».</p>
+    </div>
+    <p>За весь фільм Данило жодного разу не сперечається з материнською оцінкою — навіть подумки, найімовірніше, він із цим згоден до кінця: він мовчки їсть і мовчки їде, залишаючи матір наодинці з її тривогою, бо людина не сперечається з «писанням», яке вважає описом себе.</p>
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Якщо у вашій сім'ї про вас повторювали щось на кшталт «ти в нас запальний» чи «ти безвідповідальний» — коли ви вперше почули цей ярлик і від кого?</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Вирок на підставі страху -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Вирок на підставі страху, а не спостереження</h2>
+    <p>На якій підставі мати вирішила, що Данило непутящий? Що вона взагалі знає про молодшого сина? Що він повернувся з армії, що він побився, що поки не працює — і все. Вона не знає, де він насправді служив (він сказав — у штабі, вона не перепитала), не знає, що він пережив, навіть не спитала, як він спить, що йому сниться, чому в нього така реакція на конфлікт під час зйомок кліпу. У кухонній сцені вона говорить про дрова, про зарплату, про якесь залізяччя, яке він приніс, і про те, що він піде красти, точно як батько, — і жодного питання про нього самого.</p>
+    <div class="highlight">
+      <p>Вирок «Данило непутящий» побудований не на спостереженні за ним, а на її страхах: вона дивиться на сина й бачить не сина, а схожість із чоловіком, який занапастив її життя. Вона використовує Данилу, щоб спілкуватися з примарами колишнього чоловіка.</p>
+    </div>
+    <p>Це поширена річ у сім'ях, і вона дуже жорстока до дитини: коли дитину судять не за те, що вона зробила, а за те, на кого вона схожа. У дитини немає способу виправдатися — схожість не скасуєш. Тому «непутящий синок» — це не характеристика Данила, а ім'я материнського страху.</p>
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">А за що засуджували в дитинстві вас — за вчинки чи за те, що ви комусь нагадували?</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Цап відбувайло -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">«Цап відбувайло»: навіщо сім'ї потрібен непутящий</h2>
+    <p>Чому в сім'ях майже завжди хтось стає поганою дитиною, точніше — цапом відбувайлом, тобто відром, у яке зливається тривога й напруга інших? Бо ця роль корисна й потрібна системі. Поки є той, за кого страшно, «поганий, непутящий, якого треба врятувати», у сім'ї є зрозуміла тема й зрозуміле завдання, і решті учасників не потрібно дивитися на власні труднощі.</p>
+    <div class="highlight">
+      <p>Уся материнська тривога спрямована на Данилу, тоді як Віктор уже кілька років живе невідомо на що, не пише, з'являється лише грошовими переказами — і жодних запитань у неї не викликає, навпаки, він — джерело гордості. Тривога зосереджена на призначеному її носієві, а реальна біда сім'ї лишається непоміченою.</p>
+    </div>
+    <p>Так і працює конструкція «поганої дитини-громовідводу»: вона збирає на себе все занепокоєння системи, і завдяки цьому система почувається стійкою. Ціну за це платить одна людина — вона росте з відчуттям, що з нею щось не так, хоча насправді вона просто зайняла місце, яке мусив заповнити собою хтось.</p>
+    <p>Тому якщо ви впізнаєте себе в ролі поганої, непутящої дитини, запитання до себе звучить не «що зі мною не так», а «чию тривогу я носив у цій сім'ї, чию тривогу я переробляв, чию тривогу я, наче відро, вбирав у себе». Данило був обраний сімейною системою як відро для материнської тривоги.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Фінал першого фільму -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Фінал першого фільму як перевірка ярликів</h2>
+    <p>Життя рано чи пізно влаштовує сімейним ярликам перевірку, і ці ярлики майже ніколи її не витримують. У фіналі першого фільму «Брат» велика людина, гордість сім'ї, Віктор сидить із розбитим обличчям і тремтить, чекаючи смерті, а непутящий дурень, від якого чекали ганьби, приходить і витягує його сам, без жодної допомоги, а потім сам вирішує, як брату жити далі. Навіть бандит Круглий, вражений, не може повірити, що тихий хлопець, який відсидівся в штабі писарем, перебив його людей.</p>
+    <div class="highlight">
+      <p>У цій історії помилилися всі — і сім'я, і вороги, — бо дивилися на ярлик, а не на людину. Ярлики описують не вас, а чиїсь очікування, які колись до вас приклеїли, і ви завжди більші за будь-які ярлики.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Та сама динаміка в звичайних сім'ях -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Та сама динаміка в звичайних сім'ях</h2>
+    <p>Здавалося б, ідеться про сім'ю бандитів — а яке це має відношення до звичайного життя? Приберіть звідси зброю й складнощі, з якими стикаються ці персонажі, — і механізм залишиться без жодної зміни. Старший син-відмінник вступив, виїхав, увесь у дідуся — ним хваляться перед сусідами; з молодшим завжди проблеми, хоча проблем у нього рівно стільки ж, скільки в будь-якого підлітка, просто їх колекціонують, а його успіхи ігнорують.</p>
+    <div class="highlight">
+      <p>Є тема, про яку не говорять, — розлучення бабусі, чийсь давній борг, чиясь хвороба, чиясь дитина на стороні, про яку домовилися не згадувати, — і ця тема так само невидимо керує сім'єю, як батько в Багрових. Є носій тривоги — той, навколо кого постійно крутяться розмови й занепокоєння, і саме за нього сім'я тримається, щоб не обговорювати власні тріщини. Є той, кому роздали роль сильного, якого ніхто не питає, чи важко йому, бо «ти ж упораєшся». Є міфи про тих, хто виїхав, які ніхто не перевіряє. Є мовчання, яке передається точніше за прізвище.</p>
+    </div>
+    <p>Різниця між Багровими й більшістю сімей не в устрої, а в гучності наслідків: у цьому фільмі за роль платять кров'ю, у звичайних сім'ях — роками доведення «я ж не такий поганий, яким ви мене вважали» і неможливістю наблизитися до рідної людини, хоч вона й поруч.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Чому відсутній батько керує сильніше -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Чому відсутній батько керує сильніше за присутнього</h2>
+    <p>Про батька Данила й Віктора відомо небагато: він був злодієм, потрапив до в'язниці й там загинув. Він не бере участі в жодній сцені, його немає навіть на фотографіях, які перебирає мати. І водночас без нього нічого не пояснюється: материнський страх походить від нього, відправлення молодшого подалі від дому — від нього, ремесло старшого з високою ймовірністю — теж. Хлопчик із сім'ї злодія, який зростав без батька, виріс людиною, яка вирішує питання зброєю, і навіть фінал упирається в нього: Данило відправляє брата влаштовуватися в міліцію — саме в ту організацію, яка посадила їхнього батька.</p>
+    <div class="highlight">
+      <p>Парадокс у тому, що живий, звичайний, недосконалий родич — це предмет для обговорення: з ним можна сперечатися, на нього можна ображатися, його можна одного разу побачити простою людиною, можна простити чи не простити. А той, кого немає, обговоренню не підлягає: він перетворюється на фігуру, яку не можна перепитати, уточнити, перевірити. Тому образ відсутнього батька чи матері кожен добудовує сам — з уривків материнських інтонацій, із того, про що мовчали, — і добудовує зазвичай у крайнощі: або в чудовисько, або в героя.</p>
+    </div>
+    <p>У Багрових цей образ добудований у чудовисько, і розплачується за цю добудову не батько (його давно немає), а молодший син, на якого перенесли схожість.</p>
+    <p>Дуже важливо помітити: те, що в сім'ї не проговорюють, не зникає, а стає могутнішим. Люди, які одного разу наважуються розпитати старших про закриту сімейну тему, часто помічають: ця фігура зменшується до людського розміру, і жити стає легше. Яким був батько насправді — не чудовиськом, а загалом: про що думав, чого хотів, від чого страждав, які мав слабкості, залежності, інтереси, з якої сім'ї сам був — його треба очеловічити, зняти з п'єдесталу містичної фігури, хоча це, як правило, останнє, чим хочеться займатися.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Страх матері та спадок способів -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Страх матері та спадок не крові, а способів</h2>
+    <p>Чому мати так боїться, що Данило піде батьковою дорогою? Це тривожне пророцтво: вона вже одного разу втратила чоловіка на цій дорозі й тепер дивиться на молодшого сина крізь цю втрату. Кожна бійка, кожен день без роботи читається нею як перший крок знайомим маршрутом. Вона не зла — вона в перманентному жаху.</p>
+    <div class="highlight">
+      <p>Її фраза про те, що тут брата швидше вб'ють, — це не докір, а страх, виражений єдиним доступним їй способом. Але коли страх проговорюється як вирок, він працює не як попередження, а як програма: дитина чує не «я боюся за тебе», а «ти дурень, поганий, ідіот». І далі спрацьовує гірка логіка: якщо тебе вважають тим, ким ти не є, різниця між «бути» і «здаватися» стирається, і шлях до того, чого від тебе чекають, стає коротшим — особливо коли це звучить з уст дорогої людини.</p>
+    </div>
+    <p>Обидва сини опинилися в тому самому лютому кримінальному світі — це збіг, спадок чи закономірність? Жодної «поганої крові» не існує — професія батька не передається генами. Передається інше.</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text"><strong>Способи.</strong> У сім'ї, де чоловік розв'язував питання поза законом, а розмови про нього були закриті, діти не отримали іншої моделі — не бачили, як дорослий чоловік долає труднощі словами, домовленістю, роботою.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Ставлення до сили.</strong> Якщо в дитинстві слухали лише того, хто сильніший, дитина засвоює, що інакше не буває.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text"><strong>Мовчання.</strong> Жоден із братів не вміє говорити про важливе — Данило не розповідає про війну, Віктор бреше сім'ї про своє життя. Мовчання успадковується так само надійно, як прізвище.</div></div>
+    </div>
+    <p>Однаковий фінал братів — не тому, що «яблуко від яблуні», а тому, що обом видали один набір інструментів для життя й подолання труднощів.</p>
+    <p>Чому в цій сім'ї взагалі не говорять про батька? З найлюдянішої причини — із сорому. Мати ростила синів у маленькому містечку, де всі все знають: «твій чоловік злодій, що загинув у в'язниці» — це не горе, яке можна оплакати прилюдно, це пляма, яку треба пережити мовчки. Вона робить те, що роблять тисячі сімей у таких випадках: закриває тему.</p>
+    <div class="highlight">
+      <p>Дитяча психіка не витримує порожнечі — там, де немає розповіді, вона заповнює прогалину власними фантазіями, і майже завжди звинувачує в цьому себе, вважаючи, що з їхньою сім'єю щось фундаментально не так. З часом таке відчуття перетворюється не на пам'ять про батька, а на смутне відчуття прокляття. Натомість важка сімейна історія, розказана дітям по-людськи, чесно, без зайвих подробиць, виявляється для них значно меншим тягарем, ніж та сама історія, закрита на замок: горе, яке проговорене, можна оплакати й залишити в минулому, а непроговорене горе лишається тягарем у теперішньому й переходить до наступних поколінь.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Чи любила мати Данилу -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Чи любила мати Данилу</h2>
+    <p>Любила й водночас не вміла бути йому матір'ю. Варто розводити ці речі, бо їх постійно плутають.</p>
+    <div class="compare">
+      <div class="col good">
+        <div class="col-label">Любов</div>
+        <div class="col-text">Почуття. Судячи з усього, воно є — вона турбується, боїться за нього щиро, не виганяє його, переживає за його майбутнє.</div>
+      </div>
+      <div class="col bad">
+        <div class="col-label">Материнство</div>
+        <div class="col-text">Набір дій: помітити, спитати, витримати, не порівнювати, не відправляти від себе геть, коли дитині погано. Усі її дії влучають повз ціль.</div>
+      </div>
+    </div>
+    <p>Вона відправляє його до чужого міста, до сина, про якого нічого не знає; одразу порівнює його з братом не на його користь, звівши на п'єдестал того, кого не знає, і знецінивши того, кого бачить перед собою; вона вирок йому виносить батьковою долею. Це поведінка людини, в якої немає ресурсу — рано постарілої жінки без грошей, із непрожитим горем і страхом: їй просто нема з чого кувати материнське тепло.</p>
+    <div class="highlight">
+      <p>Важко це визнати, але корисно, особливо тим, хто виріс у такої матері: питання «чи любила вона мене» зазвичай роками мучить людину й відповіді не має, а от питання «чи могла вона дати мені те, чого в неї самої не було» — має відповідь, і ця відповідь звільняє. Дитина отримує любов не почуттям, а діями, і якщо дій не було, збиток реальний, навіть якщо почуття було.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Механіка улюбленця -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Механіка улюбленця</h2>
+    <p>Чому Віктор — первісток, годувальник, а Данило — дурень, непутящий? Погляньте, що дає матері кожен із синів, одягнувши на себе цю маску-роль. Віктор зрідка надсилає гроші й дозволяє їй розповідати сусідам і самій собі, що її життя все-таки вдалося: син вийшов у люди, став великою людиною в Ленінграді. Він доказ того, що вона не марно прожила й виростила дітей правильно.</p>
+    <p>А Данило поруч, без роботи, з розбитим обличчям після бійки, щодня нагадує їй про те, чого вона боїться найбільше, — що історія з батьком повторюється; він живе нагадування про її поразку.</p>
+    <div class="highlight">
+      <p>Це вся механіка улюбленця, і вона майже ніколи не пов'язана з якостями дітей. Улюбленцем стає той, хто своїм життям підтверджує батьківську правоту, а нелюбленим — той, хто ставить цю правоту під сумнів. Важлива іронія цієї конкретної сім'ї: вона пишається вбивцею й соромиться того, хто поки що не в кримінальному світі.</p>
+    </div>
+    <p>Справжнє життя улюбленця матір насправді не цікавить — важлива не реальність, а функція, яку улюбленець виконує в її психічній реальності. Людина живе одночасно у двох реальностях — фізичній (де я сиджу за столом із мікрофоном) і психічній (де я, наприклад, намагаюся справити на вас враження). І навіть коли людина одна у фізичній реальності, це не означає, що вона одна в психічній, — буває, у ліжку двоє партнерів фізично, а психічно там ще й батьки, які оцінюють.</p>
+    <p>Якщо ви росли молодшим чи цапом відбувайла, а хтось інший — золотою дитиною, річ не в тому, що хтось кращий чи гірший, а в тому, що психіка батьків, аби не розсипатися, уже розмітила й поділила вас на ці ролі незалежно від ваших досягнень. Це не робить біль меншим, але знімає неіснуючу провину.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Міф про велику людину в Ленінграді -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Міф про «велику людину в Ленінграді»</h2>
+    <p>Звідки взявся цей міф? Із дуже малого — із рідкісних грошових переказів і зворотної адреси на конверті. Більше матері знати нема звідки: Віктор не пише, не приїжджає, нічого про себе не розповідає — і далі починає працювати уява.</p>
+    <div class="highlight">
+      <p>На базі цих уривків і формується «велика людина в Ленінграді», і мати вже сама придумала йому біографію та, захоплюючись нею, щоб самій не розсипатися, розповідає про це іншим — класичний ефект ореола: одна відома риса (надсилає гроші, на конверті Ленінград) розтягується на всю особистість. Що довше такий міф живе, то він міцніший, бо його ніхто не перевіряє — і не треба, перевірка завжди чимось неприємна.</p>
+    </div>
+    <p>Розплачується за цю зручність, як завжди, третій — Данило, нелюбленець, якого відправляють жити при цій легенді й порівнюють із нею. Показово, що Данило, приїхавши, бачить справжнього Віктора — метушливого, що грає в солідність, який живе невідомо на що й як, — і нічого не розповідає матері. Міф лишається неторканим: так і буває в сім'ях, що зручну легенду бережуть усі її учасники, навіть ті, хто від неї постраждав.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Делегування тривоги -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Делегування тривоги: чому Данилу відправляють саме до Віктора</h2>
+    <p>Мати бачить, що із сином коїться щось не те, і замість спитати «що з тобою, синку, як ти?», відправляє його за тисячу кілометрів до людини, про яку знає лише з чуток.</p>
+    <div class="highlight">
+      <p>Це не жорстокість, це делегування: батько передає дитину разом зі своїм завданням подбати про неї комусь третьому, бо сам не справляється й не може собі в цьому зізнатися, а ресурсів упоратися немає — їй би саму себе витримати. Рішення приймається не зі знання потреб сина, а з власних потреб матері — щоб перестати тривожитися.</p>
+    </div>
+    <p>Формально навіть логічно: старший брат, сім'я, велике місто, перспективи, — але всі елементи цієї логіки непідтверджені: хто такий зараз Віктор, чим він живе, чи захоче він узагалі займатися молодшим — невідомо. Вона віддала сина в руки, про які знала тільки те, що ці руки іноді присилають гроші.</p>
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Коли наступного разу вам здаватиметься, що ви точно знаєте, як мають жити ваші дорослі діти, — те, що я зараз хочу їм сказати про те, як їм слід жити, це моє знання про них чи моя спроба заспокоїтися?</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Порівняння з братом -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Порівняння з братом</h2>
+    <p>Що відчуває дитина, яку порівнюють із братом? Вона чує не те, що батьки хотіли сказати. Батькам здається, що вони мотивують: «дивись, як брат, тягнися, старайся». А дитина чує зовсім інше: «таким, який ти є, ти недостатньо хороший; щоб тебе любили, ти повинен стати іншою людиною».</p>
+    <div class="highlight">
+      <p>Наслідки тягнуться все життя: по-перше, любов починає сприйматися як те, що потрібно заслужити, а не як те, що є просто так; по-друге, між дітьми з'являється дистанція — вони стають суперниками, а не союзниками, хоч би скільки їм повторювали «ви ж брати».</p>
+    </div>
+    <p>Показово, що брати з фільму нічого одне про одного не знають, і перша зустріч починається з того, що Віктор тримає брата на прицілі, — це не близькість, а двоє, що виросли в одному домі, але не поряд. Дитина, яку порівнюють, виростає людиною, яка все життя автоматично вимірює себе з кимось, навіть без будь-якої матері поруч, — і варто помітити, чий голос звучить у моменти такого порівняння, адже зазвичай це не ваш власний голос.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Призначений батьком -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">«Призначений батьком»: роль Віктора</h2>
+    <p>Коли мати відправляє Данилу до брата, вона каже ключову фразу: «він тобі замість батька». Віктор дійсно зайняв місце загиблого батька, і у фіналі сам Данило назве його так, як колись у дитинстві називав, — «тату».</p>
+    <div class="highlight">
+      <p>Тим, кого батьки призначають «батьком» для молодших, зазвичай дістається одне: у них немає права на слабкість, вони не можуть розгубитися, злякатися, попросити допомоги — у них немає дитинства, бо воно пішло на обслуговування чужих потреб. Натомість з'являється щось на кшталт довічного кредиту: «я віддав тобі своє дитинство, отже, ти мені винен», — і Віктор користується цим кредитом віртуозно, одразу беручи Данилу в оборот, щоб той відплатив за ті страждання, які Віктор на себе взяв, ставши йому вимушеним батьком.</p>
+    </div>
+    <p>Віктор не злодій від народження — він людина, якій у дитинстві вручили ношу не за віком, і він ніс її так, як умів. Якщо ви самі були дитиною, призначеною батьком для молодших, ви, напевно, знаєте цю двоїстість зсередини: і гордість, і втому, і відповідальність, і глуху образу.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Фасад благополуччя -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Фасад благополуччя</h2>
+    <p>Навіщо Віктор зображував перед сім'єю таку солідну людину? Тому що його місце в сімейній системі цілком побудоване на успіху — він годувальник і гордість, і це його єдина цінність в очах матері. Зізнатися, чим він насправді займається, означало б не просто засмутити матір, а втратити єдину роль, у якій він узагалі існує для сім'ї.</p>
+    <p>Тому він вибудовує фасад — гроші, дорогий костюм, розмови про справи, обіцянки перебратися до Москви, — і найбільше старається саме перед молодшим братом, який приїхав на нього подивитися: одразу дає грошей на одяг, на житло, пояснює, як жити, тримається покровительськи. Це не щедрість, це підтримання власного образу.</p>
+    <div class="highlight">
+      <p>Ціна в цього фасаду висока — за ним людина завжди самотня. Віктору ні з ким бути справжнім: ні з матір'ю, якій він бреше двадцять років, ні з братом, перед яким грає роль. Коли фасад одного разу впаде, виявиться, що за ним немає нічого, і людина проситиме пробачення саме в того, кого щойно зрадила.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Прийоми втягування -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Прийоми, якими Віктор втягує Данилу у злочин</h2>
+    <p>Віктор не погрожував, не шантажував, не примушував — і все ж Данило за кілька тижнів пройшов шлях від приїзду з маминим пирогом до вбивств на замовлення. Варто розібрати ці прийоми по черзі, бо вони трапляються в багатьох сім'ях.</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text"><strong>Точний момент.</strong> Віктор з'являється з грошима й турботою рівно тоді, коли йому потрібен виконавець, а решту часу роками мовчить, не пише, не приїжджає. Використання під виглядом любові впізнається саме через те, що інтерес прокидається в момент потреби.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Спорідненість як відмичка.</strong> Розмова ведеться не про роботу, а про те, що «ми свої», що є протистояння «або вони нас, або ми їх», і це дозволяє запросити Данилу у свої справи, апелюючи до родинності.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text"><strong>Зручний міф.</strong> Данило чує не «мені замовили людину, і треба розв'язати питання», а версію про поганого чоловіка, який утискає «наших» на ринку, — зручну й ніби справедливу історію, яка переводить убивство в розряд правої справи.</div></div>
+      <div class="num-row"><div class="num-badge">4</div><div class="num-text"><strong>Послідовність маленьких згод.</strong> Спершу невелике доручення, потім трохи більше, потім іще більше, — і що більше команд людина виконує, то важче їй відмовити в наступній. Той, хто один раз виручив, психологічно майже не може відмовити вдруге.</div></div>
+      <div class="num-row"><div class="num-badge">5</div><div class="num-text"><strong>Заборона на запитання.</strong> Данилі пропонують убити людину, і він нічого не питає: ні хто замовник, ні чому саме він, ні що буде, якщо щось піде не так.</div></div>
+    </div>
+    <div class="highlight">
+      <p>Пояснення цього — не в характері Данила, а в устрої сім'ї, з якої він вийшов: про батька не говорять, матері не перечать, старший брат замість батька. У такій системі запитання прирівнюється до непослуху, а непослух — до зради. Дитина, яка виросла там, де не можна питати, виростає дорослим, який не вміє питати, і це робить її зручною для будь-кого, хто захоче цим скористатися.</p>
+    </div>
+    <p>Запитувати можна й потрібно, це нормально — бути незгодним, чогось не розуміти, озвучувати своє незадоволення. Питання «навіщо» у відповідь на прохання — це не грубість і не недовіра, а турбота про себе: той, кому справді потрібна допомога, спокійно пояснить подробиці, а той, хто уникає пояснень чи ображається на таке запитання, уже відповів сам.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Ієрархія страху -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Ієрархія страху: чому Віктор здав саме Данилу</h2>
+    <p>Коли Круглий бере Віктора в оборот, той здає молодшого брата — того самого, який двічі ризикував за нього життям. Спокусливо сказати «Віктор негідник», але таке пояснення нічого не дає.</p>
+    <div class="highlight">
+      <p>Річ у тім, що в системі, де живе Віктор, діє проста ієрархія страху: людина завжди вибирає того, кого боїться сильніше. Круглого він боїться смертельно й негайно, а брата Данилу не боїться взагалі. Коли людина живе під тиском, вона здає не того, хто їй менш дорогий, а того, хто менш небезпечний, — і в цьому гіркота: часто зраджують не зі злості, а з боягузтва, і близького здають саме тому, що він близький — з ним потім можна пояснитися, він зрозуміє.</p>
+    </div>
+    <p>Розуміння причини й називання речей своїми іменами — це дві різні операції, і обидві потрібні: розуміння звільняє від ненависті, а називання причин — від ілюзій. Тому якщо вас колись здав близький, корисно зробити обидві роботи: зрозуміти, з якого страху він це зробив, і все-таки, хоча б про себе, назвати це зрадою.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Каяття чи переляк -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Каяття чи переляк</h2>
+    <p>Віктор на підлозі, його трясе, він плаче, благає не вбивати, повторюючи «вибач мені, брате». Чи це каяття?</p>
+    <div class="compare">
+      <div class="col good">
+        <div class="col-label">Справжнє каяття</div>
+        <div class="col-text">Звернене до постраждалого: людина думає про те, що зробила з іншим, називає свій учинок, витримує чужий біль і готова щось виправляти.</div>
+      </div>
+      <div class="col bad">
+        <div class="col-label">Переляк Віктора</div>
+        <div class="col-text">Звернений до себе: людина думає про наслідки для себе і промовляє «вибач» як заклинання, щоб скасувати покарання. Не каже жодного слова про те, що зробив, не питає, як було Данилі, — просить не стріляти.</div>
+      </div>
+    </div>
+    <p>Перевірити це можна уявним експериментом: якби в двері не увійшов озброєний брат і все обійшлося б, чи просив би Віктор пробачення? Звичайно, ні.</p>
+    <div class="highlight">
+      <p>Звідси важливий момент для власного життя: дивитися не на слова, а на адресата. Якщо у вибаченні йдеться про того, хто говорить, про його страх, його репутацію, його незручність, — це не вибачення. Справжнє звучить інакше: «я зробив ось це, я розумію, що тобі було так-то, ось які висновки я роблю і що робитиму надалі».</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Ганьба вдома -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Що відчуває той, кого вдома вважають ганьбою</h2>
+    <p>За весь фільм Данило жодного разу не поскаржився — ні матері, ні брату, ні випадковим знайомим. Він не сказав, що йому було образливо, що його не любили, що його все життя вважали цапом відбувайла й непутящим. Глядачеві легко прийняти це за відсутність переживань — мовляв, спокійний хлопець, йому байдуже.</p>
+    <div class="highlight">
+      <p>Але подивімося не на слова, а на поведінку: людині, якій справді байдуже, не їхала б через півкраїни щось доводити, не погоджувалася б на все, про що просить брат, не віддавала б останнє кожному, хто ставиться до неї по-доброму. Так поводиться не байдужа людина, а дуже голодна за теплом людина, яка просто не знає, що про це можна говорити, — вона говорить учинками.</p>
+    </div>
+    <p>У сім'ях, де почуття не називають, діти виростають із повним набором переживань, але без жодного слова для них: річ не в тому, що людина нічого не відчуває, а в тому, що вона не вміє виявити й назвати те, що відчуває, і тоді все йде в дію — у бійку на зйомках, у подарунки, у готовність стріляти за того, хто покликав. Якщо ви росли в сім'ї, де не плакали й не скаржилися, ця механіка вам, можливо, знайома: ніби нічого особливого не відбувається, а потім звідкись береться лють, утома чи сльози на рівному місці — це не збій, а те, що просто не знайшло слів.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Гофман -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Чому Данило відкрився чужому Гофману, а не рідним</h2>
+    <p>Данило не розповів про війну ні матері, ні брату, а чужому літньому німцю Гофману, якого знає кілька днів, розповідає все, сидячи біля багаття на кладовищі. Цьому є дві причини.</p>
+    <div class="highlight">
+      <p>Перша — з чужою людиною не потрібно відповідати очікуванням: Гофман не знає його ролі, не пам'ятає його дитиною, нічого від нього не чекає й нічим не ризикує, тож поруч із ним Данило може бути просто собою, а не якимось непутящим молодшим. Друга причина тонша — він береже рідних: розповісти матері, що було на війні, означало б побачити її жах, а він і так знає, скільки вона винесла, тож мовчання тут працює як вивернута навиворіт форма турботи.</p>
+    </div>
+    <p>Тому якщо поруч із вами є мовчазна близька людина, її короткі відповіді не завжди означають закритість чи байдужість — можливо, це захист вас від того, що вона несе. Тиснути в таких випадках марно; корисніше просто бути доступним і витримати момент, коли людина все-таки заговорить, не поспішаючи давати поради.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Роздає гроші чужим -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Данило роздає гроші чужим</h2>
+    <p>Здавалося б, недолюблена людина мала б накопичувати для себе, а Данило віддає зароблені страшною ціною гроші Світлані, Кет, Гофману, випадковим людям — і залишається без копійки.</p>
+    <div class="highlight">
+      <p>Так він купує право бути поруч: дитина, якій удома дали зрозуміти, що просто так, ні за що, її любити не будуть, виростає дорослим, який приходить до людей із чимось у руках — подарунком, послугою, допомогою, бо прийти просто так йому страшно. У ролі того, хто дає, дуже зручно ховатися: поки ти той, хто допомагає, ніхто не спитає, що болить у тебе самого, і не доведеться на це відповідати.</p>
+    </div>
+    <p>Це ідеальна позиція для людини, в якої немає слів для власного болю. Ціна висока: Данило всім платить і нікому не відкривається, і зрештою залишається в цьому місті цілковито один, оточений людьми, яким зробив добро.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Жертва чи доросла людина -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Жертва чи доросла людина, відповідальна за свої вчинки</h2>
+    <p>Хто такий Данило — жертва своєї сім'ї чи доросла людина, що відповідає за свої вчинки? І те, і інше, і плутати ці рівні не можна.</p>
+    <p>На рівні пояснення він продукт сімейної системи: йому дали роль непутящого, цапа відбувайла, йому не дали слів, його навчили силі замість розмови, бо саме це він бачив як модель подолання труднощів, його не навчили питати й відправили до міста, де брат використав його вразливість. Але на рівні відповідальності він доросла людина, яка вбивала людей, і сімейна історія цього не скасовує — жодне дитинство не переводить убивство в розряд пробачного.</p>
+    <div class="highlight">
+      <p>Пояснити й виправдати — це абсолютно різні речі, і їх постійно плутають в обидва боки: одні кажуть «у нього було важке дитинство, отже, він не винен» — це неправда; інші кажуть «він дорослий, отже, дитинство ні до чого» — це теж неправда, адже з сімей і гірших за цю люди виходять без зброї в руках.</p>
+    </div>
+    <p>Доросла позиція тримає обидва рівні одночасно: «я розумію, звідки в мені це взялося, і я відповідаю за те, що з цим роблю». Людина не обирала ситуацію, у якій опинилася, але приречена нести відповідальність за те, що робитиме з цим надалі. Перше звільняє від провини за чуже, друге повертає свободу й відповідальність за власні вчинки. Поки людина лише пояснює себе своїм минулим, вона ніби раб цього минулого; коли вона починає ще й відповідати за теперішнє з урахуванням минулого, вона починає виходити з цього рабства.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Ти ж брат мені -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">«Ти ж брат мені»: прощення чи поховання</h2>
+    <p>Кульмінація лінії братів: Віктор труситься, чекаючи смерті, а Данило обіймає його зі словами «ти ж брат мені», згадуючи, як у дитинстві брат ніс його на руках десять кілометрів, коли Данило поранив ногу на рибалці. Одна фраза — і тема закрита назавжди, більше про зраду не буде сказано ні слова.</p>
+    <div class="highlight">
+      <p>Виглядає це як великодушність, а за устроєм це інше: не прощення, а поховання. Прощення — активний процес: збиток називають, потім його визнає друга сторона, потім стає зрозуміло, що далі, — принаймні обговорюють питання. Нічого цього тут немає. Віктор не каже «я тебе здав, я злякався, мені соромно», натомість звучить «ти ж брат», і спогад накриває все зверху, наче ковпак. А поховане не зникає — воно лежить між людьми й визначає дистанцію, навіть коли зовні все гаразд. Одразу після обіймів Данило відправляє брата в інше місто — зовні пробачив, фактично віддалив.</p>
+    </div>
+    <p>Чому Данило пробачив так миттєво? Втрачати більше йому нічого — батька немає, з матір'ю говорити ні про що, у чужому місті він сам, жінка, яку він кохав, прогнала його. Віктор — остання своя людина в його світі. І спрацьовує зрозуміла логіка: втратити останню свою людину страшніше, ніж стати тим, кого зрадили, тож психіка обирає зберегти зв'язок будь-якою ціною — витіснивши зраду, ніби її й не було.</p>
+    <p>При цьому Данило знав правду: коли бандит, що тікає, кидає йому, що це брат його здав, Данило коротко відповідає «я знаю». Тобто він прощає не через незнання, а всупереч знанню — це його важкий вибір людини, в якої більше нікого немає.</p>
+    <div class="highlight">
+      <p>Якщо ви впізнали себе в цьому: триматися за єдиний зв'язок — не дурість і не слабкість, а нормальна людська реакція на самотність. Але варто хоча б розуміти, чим ви за цей зв'язок розплачуєтеся.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Молодший став старшим -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Як молодший брат став старшим</h2>
+    <p>У певний момент саме Данило починає приймати рішення: брату — додому до матері, на роботу влаштуватися, ці гроші забрати, ті віддати, їхати на попутках, а не поїздом. Він говорить із Віктором тим самим тоном, яким Віктор говорив із ним при першій зустрічі, — заступницьки й турботливо. Ієрархія перевернулася за один вечір.</p>
+    <div class="highlight">
+      <p>Що це робить з обома? Молодший різко дорослішає — йому вже нема на кого спертися, тепер спираються на нього, і зазвичай після такого ривка людина вже не вміє й не може бути слабкою — просто нема в кого цьому вчитися. А Віктор переживає втрату переваги, про яку не прийнято говорити, — у нього тепер немає іншого місця, крім опікуваного.</p>
+    </div>
+    <p>У сім'ях такий переворот трапляється з усіма, просто зазвичай повільніше: діти дорослішають, батьки старіють, і одного дня рішення починає приймати той, хто раніше питав дозволу. Минає це легше там, де зміну ролей помічають і проговорюють уголос; тут це сталося різко.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Навіщо відправив до матері й у міліцію -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Навіщо Данило відправив Віктора до матері й у міліцію</h2>
+    <p>Син злодія, який загинув у в'язниці, влаштовує свого брата, найманого вбивцю, служити в органи — і не просто в органи, а до людини, яка знала їхнього батька. Це спроба одним рішенням закрити сімейну історію завдовжки в покоління: повернути старшого на місце біля матері, перевести його з батьківської дороги на протилежну, відновити лад, якого в цій сім'ї не було ніколи.</p>
+    <div class="highlight">
+      <p>Психологічно це зрозумілий жест, дуже характерний для людини, яка звикла діяти, а не розмовляти. Данило не може поговорити з матір'ю, не може обговорити з братом зраду, не може попрощатися по-людськи, але може все облаштувати й розпорядитися — він робить те саме, що робив зі Світланою: вирішує за іншого, як тому жити далі. Тільки цього разу заперечення не було, бо в руках у нього зброя й силова перевага.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Чи розірвав коло -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Чи розірвав Данило сімейне коло</h2>
+    <p>З одного боку, дещо він справді розірвав: він єдиний у цій сім'ї, хто вийшов за межі відведеної йому ролі, — раптом виявився тим, хто всіх урятував і все вирішив; він відмовився від материнського сценарію, не помстився тому, хто його зрадив, хоча міг, — усе це вчинки людини, яка перестала бути фігурою на чужій дошці.</p>
+    <div class="highlight">
+      <p>Але подивімося з іншого боку: він їде до Москви з обрізом під курткою, із чужими грошима в кишенях і на запитання водія про службу відповідає те саме, що й на початку, — «писарем у штабі відсидівся». Нічого не розказано, нічого не проговорено, та сама легенда, та сама дорога. Мати боялася, що молодший піде батьковим шляхом, — і ось він іде батьковим шляхом: поза законом, зі зброєю, без дому, туди, де, як йому здається, сила. Коло не розірване, воно лише замкнулося з переміною місць: старшого відправлено в нормальне життя, молодший зайняв батькову колію.</p>
+    </div>
+    <p>Звідси випливає важливий висновок для кожного з нас: вийти із сімейного сценарію вчинком неможливо, бо сценарій живе не в обставинах, а у способах давати собі з ними раду. Поки способи ті самі — мовчати, вирішувати силою, нікого не питати, — людина несе свою сім'ю з собою в будь-яке місто, куди б не поїхала. У фізичній реальності локацію можна змінити, у психічній реальності ролі лишаються застиглими.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Відповідь на заперечення -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Відповідь на можливі заперечення</h2>
+    <p>Це не засудження матері за те, що вона ростила двох синів сама, в убогості, без чоловіка. Усе сказане про її обставини — це факти: вона сама, без грошей, із двома хлопчиками, із ганьбою на все містечко, без жодної підтримки. Жодного засудження такого життя тут немає, лише співчуття.</p>
+    <div class="highlight">
+      <p>Але обставини, в яких вона опинилася, пояснюють її поведінку, і водночас не скасовують її наслідків для дітей — це ключова відмінність. Зрозуміти дорослого й сказати правду про те, що дісталося дитині, — не взаємовиключні дії. Якщо із співчуття до матері сказати, що порівняння синів не завдало шкоди, ми обманемо дитину, яка несла це порівняння все життя; якщо із співчуття до дитини сказати, що мати була поганою, ми обманемо жінку, яка віддала дітям усе, що в неї було. Правда важча й точніша: вона робила все, що могла, і цього не вистачило — а те, що людина робить усе, що може, не гарантує, що цього вистачить.</p>
+    </div>
+    <p>Так само несправедливо казати, що брати «просто виживали в дев'яності», тож усе пояснюється епохою: час справді був такий, і контекст важливий, але йдеться не про професію Віктора, а про те, як він двадцять років брехав матері, як перекладав смертельне замовлення на молодшого брата за десяту частину ціни, як промовчав про стеження й ризики, як здав брата, рятуючи себе, — жоден із цих учинків не випливає з дев'яностих автоматично, і величезна кількість людей у тих самих умовах виживала інакше. Епоха створює умови й звужує вибір, але всередині будь-яких умов залишається бодай вузька смужка, у якій людина вирішує сама за себе, — і саме в цій смужці живе те, що ми називаємо характером.</p>
+    <p>Є й протилежне заперечення — що особиста відповідальність існує, а все зводиться до сім'ї. Так, особиста відповідальність існує, і вона нікуди не зникає. Але якщо пояснювати все сім'єю, людина перетворюється на механізм без свободи волі, а сімейна система не визначає долю — вона лише задає стартові умови й набір доступних інструментів.</p>
+    <div class="highlight">
+      <p>Дитинство не зумовлює майбутнє наперед, воно впливає на нього — так само, як мова, якою ви виросли, впливає на те, як ви думаєте, але не визначає все, про що ви можете думати. Якби сім'я визначала все, розуміння було б марним; оскільки вона лише задає умови, розуміння — це перший інструмент свободи: воно дозволяє розрізняти, де дієте ви, а де спрацьовує засвоєне. До речі, люди, які заперечують вплив сім'ї, зазвичай точніше за всіх відтворюють батьківські способи — саме тому, що не бачать їх і вважають власним характером. Що краще людина знає, звідки й що в ній узялося, то більше в неї особистої відповідальності, а не менше.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Сила не скасовує травму -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Сила не скасовує травму</h2>
+    <p>Є звичка вважати, що якщо в людини було важке дитинство, вона слабка, а якщо сильна — значить, нічого такого не було. Данило якраз показує, що це хибна розвилка: він, безумовно, сильний, пережив війну, вижив у чужому місті, впорався там, де ніхто б не впорався, витягнув брата, не зламався, — і водночас він людина, якій у сім'ї не дісталося ні любові, ні слів, ні права бути почутим, і це видно в кожному його вчинку.</p>
+    <div class="highlight">
+      <p>Сила не скасовує рани, а рана не скасовує сили; більше того, ці речі часто пов'язані — людина, якій рано довелося давати собі раду самій, виростає дуже витривалою й дуже самотньою, бо витривалість будується на невмінні просити.</p>
+    </div>
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Чи хотіли б ви для власного сина такої сили, як у Данила, і такої ціни за цю силу?</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Якщо прибрати зброю -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Якщо прибрати зброю з фільму</h2>
+    <p>Фільм ніби про дев'яності, про бандитів — яке це має стосунок до звичайної сім'ї? Приберіть зброю, приберіть весь кримінальний антураж — і залишиться мати, в якої є улюблений син і нелюблений; залишиться міф про того, хто виїхав, якого ніхто не перевіряє, про золоту дитину; залишиться тема, про яку в сім'ї не говорять і яка при цьому всім керує; залишиться батько, що помер у в'язниці; залишиться старший, якого призначили дорослим раніше строку, і молодший, якому ніхто не поставив жодного запитання про те, як він, чого хоче, як у нього справи; залишиться зрада, прощена однією фразою без розмови, і людина, яка їде подалі в надії, що там почнеться інше життя з тим самим багажем, який возила завжди.</p>
+    <div class="highlight">
+      <p>Усе це відбувається в найблагополучніших сім'ях, просто без пострілів, а тому повільніше й непомітніше. У цьому й сенс розбору кіно як прийому: чужа історія, препарована перед очима, дозволяє побачити механізм більшим і на безпечній відстані — про себе прямо говорити важко й боляче, а про Багрових можна. А далі кожен сам вирішує, яку частину побаченого взяти собі й приміряти до власного життя.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Практичні висновки -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Практичні висновки</h2>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text">Дайте відповідь письмово: ким вас призначили в батьківській сім'ї — гордістю, тривогою, сильним, якого ніхто не питає, чи слабким, кого треба берегти? Коли ці ролі були роздані і що стало приводом — реальні вчинки чи чиясь схожість, чиясь зручність, чийсь страх?</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text">Визначте носія тривоги у вашій сім'ї — на кого спрямоване все занепокоєння, і чи не слугує це занепокоєння тому, щоб не дивитися на щось інше, важливіше.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text">Знайдіть тему, про яку у вашій сім'ї не говорять, — чийсь відхід, чиясь хвороба, чиїсь гроші, чийсь учинок, про який домовилися не згадувати. Це не для того, щоб негайно виводити всіх на розмову, а щоб знати, яке саме невидиме місце керує іншим.</div></div>
+      <div class="num-row"><div class="num-badge">4</div><div class="num-text">Перевірте, що саме передалося вам як спосіб давати раду, а не як характер чи доля: спосіб поводитися з конфліктом, спосіб поводитися з грошима, спосіб просити про допомогу, спосіб поводитися з почуттями і спосіб поводитися з образою. Це й є справжній спадок — і хороша новина в тому, що засвоєний спосіб можна розучити й навчитися нового, хоча вчитися доведеться свідомо й у дорослому віці.</div></div>
+      <div class="num-row"><div class="num-badge">5</div><div class="num-text">Напишіть одним реченням, ким вас у сім'ї вважали, саме тими словами, якими про вас говорили, а поруч — факти з вашого дорослого життя, які цій формулі суперечать.</div></div>
+      <div class="num-row"><div class="num-badge">6</div><div class="num-text">Якщо є можливість, спробуйте дізнатися більше про людину, довкола якої в сім'ї закрита тема, — яким він чи вона були, що тоді сталося, — не як з'ясування стосунків, а просто як запитання.</div></div>
+      <div class="num-row"><div class="num-badge">7</div><div class="num-text">Помічайте, де ви порівнюєте себе з кимось, і зауважуйте, чий голос за цим стоїть, — не для боротьби з ним, а щоб було помітніше, скільки у вашій голові чужої мови.</div></div>
+      <div class="num-row"><div class="num-badge">8</div><div class="num-text">Якщо є давні образи, одного разу закриті фразою на кшталт «та гаразд, забули», не обов'язково йти з'ясовувати стосунки — можна письмово назвати все цілком: що сталося, що ви тоді думали, що відчули, чого хотіли, чого не сказали, чого цей досвід вас навчив, — а потім символічно «відпустити» цей запис.</div></div>
+      <div class="num-row"><div class="num-badge">9</div><div class="num-text">Вийти з ролі можна без розриву із сім'єю: вихід відбувається не зовні, а всередині — перестати сперечатися з ярликом і почати його просто помічати; відокремити любов від послуху; і, нарешті, узяти з батьківської сім'ї те, що підходить, а те, що не підходить, залишити їй — наприклад, здатність любити взяти від матері, а спосіб, у який саме вона це робила, залишити їй.</div></div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Насамкінець -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Насамкінець</h2>
+    <p>Де запитання прирівнюється до зради, немає близькості, є лише жорстка ієрархія. Можна любити своїх рідних і водночас не брати участі в тому, що вони роблять, не погоджуватися, ставити запитання.</p>
+    <p>Про сам трикутник ролей, у якому опиняються і Данило, і мати, і Віктор, — <a href="codependency-triangle.html">Трикутник співзалежності</a>. Про те, як дитячі переконання про себе тягнуться в доросле життя, — <a href="belief-scenario.html">Одна й та сама п'єса</a>. Про образу на батьків, з якої виростає нездатність відстоювати власні кордони, — <a href="parent-resentment.html">Потяг, який не прийде</a>.</p>
+    <div class="final-quote">
+      <div class="final-text">Коло не розірване, воно лише замкнулося <strong>з переміною місць</strong></div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
