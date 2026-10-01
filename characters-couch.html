@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Кіногерої на кушетці</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Кіногерої<br>на кушетці</h1>
+  <p class="page-subtitle">Чотирнадцять персонажів кіно і мультфільмів очима психолога: від Попелюшки до Джокера</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Справжні Попелюшки мріють про диво, яке трапляється вкрай рідко, а натомість частіше вступають в абʼюзивні, співзалежні й руйнівні стосунки</div>
+      <div class="hero-author">Права півкуля інтроверта</div>
+    </div>
+    <p>Пригоди й долі діснеївських принцес мало кого залишають байдужим: якщо ми не захоплювалися ними в дитинстві, то принаймні точно знаємо їхні імена та історії, а багато дівчат бачили в них кумирів і приклад для наслідування. Варто подивитися на дитячих кумирів очима психолога і подумати, чи варто ідеалізувати їхні образи та брати з них приклад, — адже боротьба зі злими чаклунками далеко не єдина проблема в їхньому житті.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Попелюшка -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Попелюшка</h2>
+    <p>Казка про Попелюшку — одна з найпопулярніших історій у світі, її ім'я стало загальним для певної моделі поведінки. У способі мислення героїні є дуже нездорові установки щодо себе, і причину їх виникнення видно буквально з перших слів казки: у власному домі Попелюшка — служниця, навіть її справжнього імені ніхто не пам'ятає, мачуха постійно принижує її і прискіпується, а батько взагалі не бере участі в її вихованні, навіть коли об'єктивно необхідно захистити дочку.</p>
+    <p>Попелюшку вчать служити, радувати інших, повністю відмовившись від себе, своїх бажань і свого життя. Трагічно, що дівчина сама приймає таку позицію і зовсім не намагається за себе боротися: вона вірить, що справді недостатньо хороша і не заслуговує на увагу, любов, визнання й вдячність, тому постійно безкорисливо працює на благо інших.</p>
+    <div class="highlight">
+      <p>Казкова історія закінчується щасливо, але не завдяки зусиллям самої Попелюшки — у її житті з'являється фея-хрещена, яка обдаровує її кришталевими туфельками, каретою і впевненістю в собі. Багато дівчат переймають цю модель поведінки в реальному житті: установка «мені треба дуже багато працювати й старатися, щоб інші мене прийняли» поступово переростає в образу на те, що в реальності далеко не завжди принци закохуються у скромність і працьовитість.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Мулан -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Мулан</h2>
+    <p>Історія Мулан ґрунтується на легенді про дівчину-воїна і сильно відрізняється від типового образу принцеси: Мулан смілива, самостійна, і її зовсім не приваблюють пишні сукні та перспектива заміжжя. Такий образ справді ламає безліч стереотипів і надихає дівчаток прагнути того, чого вони дійсно хочуть, а не тих ідеалів, які нав'язує суспільство.</p>
+    <div class="highlight">
+      <p>Але якщо уважніше придивитися до рішення Мулан вирушити на війну, можна помітити, що прийняте воно не стільки з прагнення реалізувати себе, скільки з глибокого почуття сорому за те, що вона не виправдовує сподівань родини. Вона з усіх сил намагається підлаштуватися під ніжний образ, який висували до китайських дівчат того часу, але її спроби не приносять результату, а кульмінацією батьківського розчарування стає невдале знайомство зі свахою.</p>
+    </div>
+    <p>Після цього Мулан більше не може витримувати накладеного на неї тягаря «ганьба родини» і втікає з дому, вирушаючи на війну. Керується вона прагненням, дуже схожим на бажання Попелюшки, — довести, що є за що її любити. На щастя, особисті риси характеру допомагають Мулан відмінно проявити себе як воїна і знайти своє місце в житті.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Красуня і Чудовисько -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Красуня і Чудовисько</h2>
+    <p>Історія про дівчину, здатну врятувати коханого силою самозречення й любові, транслюється в багатьох казках — подібний сценарій ми бачимо, наприклад, у «Сніговій королеві», де Герда всіма силами намагається розтопити серце Кая. Але найяскравіше він показаний в історії про Красуню і Чудовисько.</p>
+    <p>На перший погляд може здатися, що Бель стала заручницею стокгольмського синдрому — несвідомої захисної реакції на такі травматичні події, як викрадення чи насильство, коли жертва починає співчувати своєму викрадачу, виправдовувати його дії і зрештою ототожнювати себе з ним.</p>
+    <div class="highlight">
+      <p>Але правильніше було б говорити про так званий синдром рятівника: ще до зустрічі з Чудовиськом ми бачимо в героїні прагнення взяти на себе вирішення всіх проблем близьких, урятувати їх і захистити від неприємностей, — саме заради порятунку батька вона й потрапляє в замок. А після зустрічі із зачарованим принцом, ще не знаючи, хто він насправді, вона прагне побачити в ньому хоч краплю хорошого і врятувати його від самого себе. Можливо, в цій історії відбувається накладання одного синдрому на інший, і таке поєднання виявляється ще складнішим і небезпечнішим для дівчини.</p>
+    </div>
+    <p>У мультфільмі ми знову бачимо щасливий фінал, але в реальному житті подібне прагнення до самопожертви та сліпа віра у свою здатність вилікувати обранця любов'ю частіше призводить до того, що дівчата вступають у тривалі співзалежні стосунки й нерідко стають жертвами домашнього насильства.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Русалонька -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Русалонька</h2>
+    <p>Історія Русалоньки в мультфільмі дуже відрізняється від оригінальної казки Ганса Крістіана Андерсена, у якій героїня не возз'єднується з коханим, а гине, — і цей фінал справді здається більш реалістичним, адже заради свого принца Аріель готова на крайні заходи. Але за її вчинками, на відміну від інших популярних принцес, не криється проблема із самооцінкою чи брак батьківської любові — навпаки, Аріель наймолодша і улюблена дочка морського короля Тритона, який усіляко прагне убезпечити її й оградити від будь-яких проблем, щоправда, вельми авторитарними методами й суворими заборонами. А враховуючи, що Аріель на піку підліткової кризи, у нього це не дуже виходить.</p>
+    <div class="highlight">
+      <p>У поведінці Аріель ми бачимо всі ознаки підліткового максималізму: вона прагне захопливих пригод, тікає із сімейних заходів, спливає до затонулого корабля, колекціонує предмети побуту людей, яких Тритон вважає небезпечними. Із часом її пригоди стають дедалі ризикованішими, і одного разу вона бачить принца, в якого закохується з першого погляду.</p>
+    </div>
+    <p>Стривожений батько не готовий прийняти таке очевидне дорослішання дочки й намагається повернути її під свій контроль звичними для нього заборонами й погрозами, але Аріель підліток, і вона вже не в силах витримувати таку задушливу турботу. У гонитві за свободою та мріями про принца вона діє необачно, укладає угоду зі злою морською відьмою Урсулою й віддає їй свій голос в обмін на ноги, що тягне за собою страшні наслідки не лише для неї, а й для всієї родини.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Амелі -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Амелі</h2>
+    <p>Фільм «Амелі» переносить нас у незвичний і дивний світ юної дівчини: акценти на деталях, розмиті кадри, крупні плани облич — усе це переносить нас у цю картину, і ми ніби проживаємо всі моменти разом із героїнею. Вона зовсім не вміє спілкуватися з людьми, у дитинстві завжди була сама, живе у світі своїх фантазій, прагне допомогти всьому людству й змінює навколишній світ відповідно до своїх уявлень про прекрасне.</p>
+    <div class="highlight">
+      <p>Усе це пояснюється тим, що в Амелі шизоїдний тип особистості — одразу застереження: він не пов'язаний із захворюванням шизофренії і не належить до психічних розладів, це особливість характеру, за якої окремі риси виражені надзвичайно яскраво, але в межах клінічної норми. До цього типу належить усього один-два відсотки людей: шизоїди замкнуті, небагатослівні, відокремлені від інших, мають гарну уяву, а їхні фантазії яскраві й по-дитячому чудні. Шизоїдам важко спілкуватися з іншими, їхній внутрішній світ зазвичай закритий для сторонніх — туди вони тікають від лякаючої реальності, і це їхній механізм захисту від травм, яких можна зазнати в зовнішньому світі.</p>
+    </div>
+    <p>Шизоїди сприймають навколишній світ не так, як інші — фокус на дрібницях, увага до деталей добре передається у фільмі світлом, кольором та кадруванням. Згадайте, як Амелі допомагає незрячому чоловікові дійти до метро: вона описує йому все, що бачить навколо, аж до дрібниць, — із цього й складається світ Амелі, вона зосереджується на дрібницях, тоді як фон розмивається. Хоча з боку Амелі, як справжній шизоїд, виглядає холодною і байдужою, насправді їй цікаві інші люди, просто прямий контакт із ними для неї занадто інтимний, тож свій інтерес до людей вона задовольняє по-іншому — спостерігає за ними з безпечної відстані, наприклад через підзорну трубу, вивчаючи людей, які зазвичай залишаються поза кадром. У дитинстві Амелі не пускали до школи через уявну хворобу серця, вона навчалася вдома і не дружила з ровесниками — її єдиними друзями були уявні крокодил і рибка.</p>
+    <p>Страх і водночас бажання близькості відображаються й на інтимному житті Амелі — у неї немає партнера, вона пробувала зав'язати стосунки з чоловіками, але вони залишили її байдужою до сексу; натомість вона виявляє суто інтелектуальну цікавість. Люди із шизоїдним типом особистості часто асексуальні або неглибоко зацікавлені статевим життям, хоча можуть виявляти до сексу майже науковий інтерес або фантазувати, не втілюючи фантазії в реальність. З її коханим Ніно в Амелі багато спільного: вони обоє не грали в дитинстві з іншими дітьми, мріяли про брата чи сестру і доволі самотні, навіть захоплення в них схожі — колекціонування незвичних дрібниць. Їхні стосунки нагадують квест: вона грає з ним у хованки, загадує загадки, підкидає шматочки пазла.</p>
+    <div class="quote-block">
+      <div class="qa">Інша сторона Амелі</div>
+      <p>Хоча Амелі здається ніжною, романтичною і вразливою, у неї є й інша сторона — вона буває мстивою й безжальною, хай і справедливою. Коли вона здогадується, що сусід поглузував із неї, то свідомо шкодить йому, а коли мстить крамарю за те, що той третирує свого беззахисного помічника, обирає один із найжорстокіших способів помсти — газлайтинг: вона міняє місцями його речі, через що він починає сумніватися у власній адекватності. Жорстокість і холоднокровність Амелі шокують, хоча її й рухає бажання заступитися за скривдженого; однак така помста непряма, вона не вирішує проблему і не виражає своїх справжніх почуттів.</p>
+    </div>
+    <p>Скляний чоловік Дюфаель, один із небагатьох друзів Амелі, здається її двійником через важку хворобу — його кістки крихкі, мов скло, тож він майже ні з ким не спілкується. Він дублює картину Ренуара, розмірковуючи про намальовану на ній дівчину, — наче йдеться про саму Амелі, і так, подібно до психолога, допомагає їй розповісти про свій характер і переживання, завдяки чому вона краще пізнає себе.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Шерлок Холмс -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Шерлок Холмс</h2>
+    <p>Серіал «Шерлок» від BBC став найуспішнішою екранізацією розповідей про геніального детектива. Його персонаж вийшов диваковатим, загадковим, трохи нелюдимим і, як і раніше, геніальним; у серіалі він називає себе високофункціональним соціопатом, що мало б закрити всі питання про природу його дивакуватості, але психологи досі обговорюють, чи є в нього насправді психічні розлади.</p>
+    <div class="highlight">
+      <p>Термін «соціопат» є синонімом застарілого терміна «психопат», тобто антисоціального розладу особистості, а в сучасній мові використовувати неактуальні терміни некоректно. Розладом особистості можна назвати лише ті риси, які помітно погіршують життя: якби Шерлок дійсно був соціопатом, він був би лицемірним, не здатним дотримуватися законів, безвідповідальним і байдужим до інших. Натомість він піклується про близьких і допомагає шукати злочинців; так, деякі його риси відповідають критеріям цього розладу — він імпульсивний, доволі дратівливий і часто чинить ризиковано, — але цього недостатньо, щоб поставити такий діагноз. Дружба з Ватсоном ясно дає зрозуміти, що в нього є почуття, а це вже саме собою заперечує соціопатію.</p>
+    </div>
+    <p>Існує дві теорії щодо природи «дивакуватості» Холмса. Перша — шизоїдний тип особистості: емоційна відстороненість, відсутність активного соціального життя, замкнутість, знижена потреба у спілкуванні, занурення у світ уяви. Холмс, як справжній шизоїд, не вміє проявляти свої емоції, але це не означає, що їх у нього немає; шизоїди сильно прив'язуються до близьких людей, і розставання для них вкрай болісне — ми бачимо, як важко Шерлок переживає суперництво й водночас прив'язаність до брата Майкрофта. Емоційний інтелект у людей із цим типом особистості розвинений погано, тож Холмсу доводиться визначати емоції людей за непрямими зовнішніми ознаками, завдяки високому інтелекту, — ніби комп'ютер зчитує людину, намагаючись розгадати її складну натуру.</p>
+    <p>Друга теорія — синдром Аспергера, розлад аутистичного спектра, за якого на відміну від інших розладів цього спектра рівень інтелекту збережений і немає затримки в розвитку мовлення й пізнання, але є проблеми із соціальною взаємодією. Стереотипні шаблони поведінки й наявність ритуалів — важлива ознака цього розладу: Холмсу важливо, щоб усі речі завжди були на своїх місцях, навіть якщо іншим це здається безладом; водночас до одних речей у нього надмірний інтерес (наприклад, склад ґрунту в різних районах країни), а до інших — абсолютна байдужість (наприклад, чи обертається Земля навколо Сонця). Люди із синдромом Аспергера часто мають здатність запам'ятовувати списки тривіальних відомостей, що ми теж помічаємо в Холмса. Але найяскравіший доказ цього синдрому — неможливість контактувати з ким-небудь, окрім Ватсона: Шерлок — майстер монологів, який іноді навіть не помічає, що поки він говорив, усі вже пішли, а слухати когось іншого чи вести діалог йому неймовірно нудно.</p>
+    <div class="quote-block">
+      <div class="qa">Ватсон</div>
+      <p>У серіалі це військовий медик, що брав участь у бойових діях в Афганістані, після служби в нього залишилися психосоматичні болі в нозі та посттравматичний стресовий розлад, який проявляється уві снах і спогадах про війну. Дружба й робота із Шерлоком діють на Ватсона як шокова терапія і виліковують його недугу: він утомився від рутинного й нудного життя, і динамічний, ідейний та імпульсивний Холмс змушує його мобілізуватися — хвороба відступає, він перестає кульгати.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Смешарики молодші -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Смешарики: молодші персонажі</h2>
+    <p>Неможливо поставити діагнози вигаданим персонажам, тим більше, що в різних серіях вони поводяться по-різному, однак на їхньому прикладі можна розглянути симптоматику деяких розладів — значущість окремих симптомів буде перебільшена, щоб показати, як розлад може виглядати в реальному житті.</p>
+    <div class="quote-block">
+      <div class="qa">Їжачок</div>
+      <p>Добрий і дружелюбний персонаж, завжди готовий прийти на допомогу друзям, але для цього йому доводиться долати безліч фобій: він боїться темряви, ночі в лісі, глибини й висоти, а ще в нього є й доволі дивні страхи, наприклад, страх втратити свої голки. У серії про здоров'я він не може перестати мити руки, його переслідують нав'язливі думки про те, що він обов'язково захворіє, якщо як слід не вимиє руки з милом. Усе це підпадає під симптоматику обсесивно-компульсивного розладу (ОКР), який характеризується нав'язливими думками (обсесіями) та нав'язливими діями й ритуалами (компульсіями); найчастіше присутні обидва симптоми — думки про хвороби стають нав'язливими і не йдуть із голови, поки не буде виконано ритуал (миття рук).</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Нюша</div>
+      <p>У мультсеріалі стала жертвою найпоширеніших стереотипів про жінок — вона емоційна, експресивна, вередлива й думає лише про красу й моду, намагаючись відповідати типовим уявленням про те, якою має бути жінка. Неспроста в неї можна помітити симптоми розладу харчової поведінки та дисморфофобії: у серії про конкурс краси вона не проходить відбір, виявляє, що не відповідає необхідним параметрам, і впадає у відчай; в іншій серії переживає через відсутність талії та вирішує схуднути, обмежуючи себе в їжі; а ще в одній зациклюється на шоколаді й не може думати ні про що інше. Зацикленість на певному продукті, суворі дієти та спотворене сприйняття свого тіла — усе це симптоматика розладів харчової поведінки, що у Нюші поєднується з дисморфофобією: розладом, за якого людина надмірно стурбована особливостями свого тіла і вважає їх потворними.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Бараш</div>
+      <p>Найромантичніший і найвразливіший з усіх героїв, багато думає про сенс життя й інші екзистенційні питання та часто сумує — наприклад, коли в нього немає натхнення або просто тому, що настала осінь. В одній серії він не може заснути й відчуває постійну втому, в іншій — не бачить сенсу навіть у тому, щоб підвестися з ліжка чи вмитися. Так ми розуміємо, що в нашого героя депресія — розлад, що проявляється депресивною тріадою: хворобливо зниженим настроєм, а також психомоторною й інтелектуальною активністю. У людей у депресії знижений емоційний фон, їх ніщо не радує й не цікавить, навіть те, що раніше приносило задоволення; фізична активність зменшується, навіть найзвичайніші рутинні справи можуть завдавати дискомфорту; психічна активність теж знижується, думати стає важко, думки перетворюються на румінацію — «розумову жуйку», коли людина прокручує одні й ті самі сценарії знову й знову, а також нерідко знецінює себе, шукаючи підтвердження власної нікчемності.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Крош</div>
+      <p>Найжвавіший і найактивніший Смешарик, на відміну від решти героїв його особистісні характеристики не змінюються від серії до серії, а поведінка завжди однотипна: він гіперактивний, імпульсивний, нетерплячий і нерідко підданий різкій зміні настрою — більшу частину часу веселий, але якщо щось трапляється, різко стає злим і нестримним. Попри веселу вдачу, у Кроша є й свої проблеми: він доволі образливий, емоційно нестійкий і важко сприймає відмову. Усе це дає нам зрозуміти, що у Кроша синдром дефіциту уваги й гіперактивності (СДУГ) — неврологічний розлад, який сильно впливає на психічний розвиток людини. При цьому розладі страждає пам'ять і увага, оскільки людина не може на чомусь зосередитися, через що виникають проблеми у всіх сферах життя: учитися важко через непосидючість, заводити особисті стосунки складно через гіперактивність і швидку втрату інтересу.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Смешарики старше покоління -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Смешарики: старше покоління</h2>
+    <p>Багато проблем, з якими стикаються Лосяш, Кар-Карич, Совунья, Пін і Копатич, незрозумілі дітям, але знайомі багатьом дорослим — у них теж іноді болить спина, википає суп і не все виходить на роботі.</p>
+    <div class="quote-block">
+      <div class="qa">Копатич</div>
+      <p>Добрий і чуйний, став прекрасним другом молодшому поколінню Смешариків, до нього завжди можна звернутися за порадою, особливо у справах городніх. Але є в Копатича ще одна пристрасть, яка стає не такою безневинною, — мед. Його любов до солодкого здається нездоровою, адже він не здатний її контролювати: Копатич ніколи не може встояти перед ласощами, не може контролювати дозування і зрозуміти, коли йому вже досить, продовжує вживати мед попри очевидні шкідливі наслідки й поступово забуває про альтернативні інтереси, навіть город цікавить його менше, коли поруч є мед. Усі ці ознаки відповідають критеріям хімічної залежності.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Лосяш</div>
+      <p>Захоплива натура, яка з головою занурюється в усі свої починання і іноді не може себе контролювати й вчасно зупинитися; з тим самим запалом він кидається і в комп'ютерні ігри, заради гри відмовляється від їжі, сну, науки й спілкування з друзями. На прикладі Лосяша ми бачимо нехімічну залежність — ігроманію, для якої характерні ті самі критерії, що й для хімічної залежності: непереборний потяг до об'єкта залежності, нездатність себе контролювати, байдужість до інших захоплень і навіть синдром відміни, тільки на рівні психіки, а не фізіології.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Кар-Карич</div>
+      <p>Часто розповідає неймовірні історії про свої минулі пригоди, але, як виявляється, вони не завжди правдиві, а ще він перебільшує власну значущість і досягнення. Усе це свідчить про те, що в нашого героя нарцисичний тип особистості в межах норми: нарциси вважають себе найвидатнішими серед своїх знайомих, Кар-Карич не приховує, що вважає себе найрозумнішим і багато в чому переважаючим своїх друзів. Будь-якому нарцису властиве відчуття, ніби він недостатньо хороший, хоча з боку здається, що самооцінка нарцисичної особистості завищена, — насправді вона низька; Кар-Карич теж час від часу сумнівається в собі, але приховує свою невпевненість, щоб інші продовжували захоплюватися ним.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Пін</div>
+      <p>Найексцентричніший Смешарик, відсторонений, увесь час працює й винаходить нові пристрої; Піна виховували в суворості, перебування в льотному училищі зробило свою справу — він дуже пунктуальний і дисциплінований, не любить сидіти без діла. З усіх героїв Пін найпрацьовитіший, мало спить і постійно чимось зайнятий — у нього трудоголізм, така сама залежність, як ігроманія чи залежність від меду. Найчастіше люди, які йдуть із головою в роботу, намагаються втекти від власних емоцій, думок і тривоги, яка їх поглинає; Пін постійно з ностальгією згадує своє дитинство й рідні краї, і ці сильні емоції змушують його працювати, щоб відволіктися. Трудоголізм насправді не допомагає прожити емоції, а лише на час заглушує їх.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Совунья</div>
+      <p>Якби Смешарики жили у ХХ столітті, психоаналітики сказали б, що в Совуньї істерія — вона дуже вразлива, часто падає в непритомність і впадає в ступор. Але цей діагноз давно вважається застарілим, а з Совунею насправді все гаразд — у неї істероїдний тип особистості, який є нормою: це пояснює її вразливість і підозрілість, її легко можна обдурити й налякати. Ступор і непритомність, що проявляються в Совуньї як реакція на стрес, — це захисні механізми психіки, а точніше дисоціації: їхня суть у тому, що психіка в стресовій ситуації намагається відсторонитися від того, що відбувається, і людина впадає в ступор, тобто не сприймає того, що зараз відбувається, — це дозволяє відгородити свідомість від того, що може її травмувати.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Хаул -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Хаул із Мандрівного замку</h2>
+    <p>Депресія може виглядати по-різному, і далеко не завжди її ознаки помітні з боку — наприклад, Хаул із «Мандрівного замку» не лежить цілими днями в ліжку, він спілкується з людьми, жартує і здається цілком здоровим. Дія роману розгортається під час війни, її жахи залишаються за кадром, за порогом замку, і ми можемо судити про них лише з того, як змінюється головний герой. Спочатку Хаул може здатися поверхневим і легковажним — він живе в мандрівному замку, який відносить його подалі від проблем, у місті його вважають «пожирачем сердець». З війни Хаул повертається зовсім іншим: стає дратівливим, потайним і прагне помсти; у нього розвивається депресія, яка почалася ще тоді, коли він намагався ухилитися від служби.</p>
+    <div class="highlight">
+      <p>Депресія — досить поширений психічний розлад: за оцінками Всесвітньої організації охорони здоров'я, від неї страждає близько чотирьох відсотків населення Землі, тобто приблизно 280 мільйонів людей. Залежно від причин виникнення розрізняють три типи депресії: соматогенну (наслідок іншого захворювання, наприклад травми головного мозку), ендогенну (виникає через порушення в роботі мозку, без зовнішніх причин) та екзогенну, або психогенну, яка виникає через зовнішні причини — розлучення, втрату близького, психологічну травму або, як у випадку Хаула, війну.</p>
+    </div>
+    <p>У депресії людина не обов'язково цілий день лежить і нічого не робить, як це часто показують у кіно, — депресія багатолика, і людина з цим розладом на перший погляд може здаватися абсолютно здоровою, але уважні глядачі можуть помітити перші ознаки розладу в Хаула, і з часом їх стає дедалі більше.</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text"><strong>Безлад удома.</strong> Люди в депресії позбавлені фізичних сил, їхні вольові якості знижуються, їм складно змусити себе щось зробити — замок Хаула більше нагадує склад речей, похованих під шаром бруду й пилу.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Зміни апетиту.</strong> Через депресію апетит може посилюватися або, навпаки, зникати, як у Хаула.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text"><strong>Байдужість.</strong> У депресії людина фокусується на власних переживаннях, через що їй стає байдужим весь навколишній світ, навіть хобі, які раніше приносили радість, — Хаула не хвилює ніщо, крім війни, йому байдуже, як виглядає його дім і що він їсть.</div></div>
+      <div class="num-row"><div class="num-badge">4</div><div class="num-text"><strong>Емоційна нестабільність.</strong> У депресії люди нерідко стають дратівливими, але через брак сил роздратування швидко змінюється втомою — так само в Хаула, він зривається на домочадців без серйозного приводу.</div></div>
+      <div class="num-row"><div class="num-badge">5</div><div class="num-text"><strong>Циклічність настрою.</strong> Настрій постійно то покращується, то погіршується: удень Хаул веселий і бадьорий, а ввечері повертається додому сумним, утомленим і не хоче контактувати з близькими.</div></div>
+    </div>
+    <p>Софі стає важливою героїнею не лише в мультфільмі, а й у житті Хаула — саме вона рятує його і допомагає вибратися з депресії, зцілює його своєю любов'ю. Але що відчувала сама Софі? Поки вона не зустріла Хаула, вона жила спокійним і навіть нудним життям; по суті, коли відьма пустощів перетворила її на старушку, героїня стала виглядати саме так, як почувалася.</p>
+    <div class="highlight">
+      <p>Софі побачила похмуру сторону Хаула, яка потребувала порятунку, і взялася саме за це — вона бере на себе роль рятівниці й залучається до співзалежних стосунків із Хаулом. У таких стосунках є три провідні ролі: рятівник, агресор і жертва. Софі розгледіла в Хаулі жертву, адже рятівники завжди шукають людей у біді, яким потрібно допомогти, але ми бачимо й те, як герої міняються ролями: Хаул стає агресором і кричить на Софі, вказуючи, що їй робити, а потім лежить у ліжку, дозволяючи їй доглядати за ним. Допомагаючи мешканцям мандрівного замку, Софі насправді задовольняє власні потреби — їй необхідно відчувати, що вона комусь потрібна, а така нав'язлива турбота — особлива форма психологічного насильства.</p>
+    </div>
+    <p>На героїв чекає щасливий кінець: Хаул бере на себе відповідальність за своє життя, а Софі позбувається страхів і знову стає молодою, — але в реальності все далеко не завжди відбувається так, як у казці. Психогенна депресія справді часто минає, коли на людину перестають впливати фактори, через які вона почалася, але так буває не завжди; у реальності ні партнер, ні близькі, хоч би як вони любили людину, зазвичай не можуть самотужки допомогти їй вийти з депресії — для цього потрібна консультація фахівця.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Джокер -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Джокер</h2>
+    <p>У фільмі Тодда Філліпса тема психічних розладів виходить на перший план: це історія хвороби Артура Флека. Артур живе в Готемі, який виглядає майже як антиутопія, мріє стати стендап-коміком, хоча людям у місті точно не до сміху. Артур сміється тільки під час нападів через нервове перевантаження — у подібних ситуаціях відбувається величезний тиск на нервову систему героя, і реакцією на це стає сміх, який він не може контролювати; він сміється не через позитивні емоції, навпаки, цей болісний сміх переходить у кашель і більше нагадує ридання — це симптом психічного розладу.</p>
+    <div class="highlight">
+      <p>Скоріш за все, йдеться про псевдобульбарний синдром — неврологічне порушення, до симптомів якого належить неконтрольований сміх і плач; причиною можуть бути різні фактори: черепно-мозкова травма, судинні порушення, проблеми в перинатальному періоді чи під час пологів.</p>
+    </div>
+    <p>Про розлад Артура нам можуть розповісти й інші симптоми: один із них — галюцинації, про які ми дізнаємося тільки наприкінці фільму (наприклад, стосунки із сусідкою виявляються плодом його уяви), вони починаються, коли він перестає приймати ліки, що й призводить до загострення хвороби. Ще один симптом — марення, сукупність хворобливих уявлень, які повністю захоплюють свідомість людини і спотворюють сприйняття дійсності; у випадку Артура марення проявляється в маніакальному бажанні відновити справедливість — він твердо переконаний, що здатен змінити світ, і водночас прагне, щоб його помітили. Ми спостерігаємо в Артура два види марення — параноїдне (ідея сутяжництва, боротьба за свої права проти несправедливого світу) і марення величі (переоцінка власного статусу в суспільстві, зокрема ідея високого походження — переконання, що його батько, багатий і впливовий чоловік, насправді є його біологічним батьком).</p>
+    <div class="quote-block">
+      <div class="qa">Коріння з дитинства</div>
+      <p>Проблеми Артура йдуть із дитинства: його мати Пенні сама мала важкі психічні порушення, усе дитинство хлопчик зазнавав фізичного насильства від її співмешканця, одного разу його знайшли прикутим до батареї із серйозною черепно-мозковою травмою, яка, як уже згадувалося, може бути причиною псевдобульбарного синдрому. У матері було діагностовано параноїдний психоз і нарцисичний розлад особистості — усе це ми бачимо і в самого Артура: найочевидніший прояв параноїдного психозу — галюцинації та маячні ідеї, а крізь хворобу важко розгледіти й нарцисичні риси особистості Артура — жорстокість до оточуючих, відсутність емпатії, холоднокровність і мстивість.</p>
+    </div>
+    <p>Увесь цей симптом входить до структури шизофренії, а саме її параноїдної форми, тож можна припустити, що діагноз Артура Флека — параноїдна шизофренія, причиною якої могла стати як спадковість, так і численні травми голови в дитинстві.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Конячка Боджек -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Конячка Боджек</h2>
+    <p>Серіал «Конячка Боджек» на подив реалістичний, хоча головний герой — говорячий кінь: криза середнього віку, залежності, депресія — проблеми, з якими стикається Боджек, актуальні для багатьох людей. На перший погляд Боджеку немає на що скаржитися: колись він знявся в популярному ситкомі, а тепер живе у великому будинку в Лос-Анджелесі, але він не отримує жодного задоволення від свого життя.</p>
+    <div class="highlight">
+      <p>Причини бід Боджека коріняться в його дитинстві: велике значення на нього вплинули батьки, мати постійно казала йому, що він товстий, і ніколи не хвалила сина, батько ж навіював почуття провини. Систематичне психологічне й фізичне насильство в дитинстві, постійні звинувачення з боку батьків і їхня емоційна холодність сильно вплинули на Боджека — у 50 років він переживає кризу особистості.</p>
+    </div>
+    <p>Знайомі Боджека називають його нарцисом, але це не зовсім так — насправді в нього пограничний розлад особистості (ПРЛ). Люди з ПРЛ схильні до нестабільності в усьому, і це проявляється і в самооцінці, і в стосунках: в одних ситуаціях Боджек підносить себе над оточуючими, в інших — особливо коли залишається наодинці з собою — поринає в самокритику й думки про власну нікчемність.</p>
+    <p>Стосунки — окрема проблема для людей із ПРЛ: вони всією душею прагнуть до інших людей, але водночас відштовхують їх, бояться бути покинутими й чіпляються за партнерів, але сумніваються у своїх почуттях; спочатку така людина ідеалізує партнера, але однієї невірної репліки достатньо, щоб вона від нього відвернулася. Такі люди не можуть без стосунків — лише в злитті з іншими вони якось ідентифікують себе, а залишаючись наодинці, впадають у відчай і не можуть зрозуміти, хто вони такі; дотримання меж для людей із ПРЛ видається непосильним. Люди з ПРЛ імпульсивні, настрій у них постійно змінюється, а їхні думки більше нагадують румінацію — «розумову жуйку». Через постійне розчарування в оточуючих і відчуття самотності такі люди намагаються впоратися із цим за допомогою психоактивних речовин, тож ризик залежності в людини з ПРЛ украй високий — за оцінками експертів, від 30 до 80 відсотків. У Боджека це зайшло настільки далеко, що йому навіть довелося пройти реабілітацію.</p>
+    <div class="highlight">
+      <p>Важливо розуміти: хоча залежність Боджека справила сильний вплив на його колегу Сару Лінн, вона сама обрала піти тим самим шляхом, і так само з Боджеком — хоча на нього негативно вплинуло виховання, батьки не можуть нести відповідальність за дорослого сина; коли ми стаємо самостійними дієздатними людьми, нам доводиться самим справлятися з тим, що залишилося в нас із дитинства. Боджек міг би піти на терапію, але обрав інший шлях — він постійно шукає тих, хто його врятує, схильний до співзалежних стосунків, у яких грає роль жертви. Рятівницями Боджека стають Діана і принцеса Керолайн, які знову й знову рятують його, хоча самі могли б давно відмовитися від нестабільного коня, який вплутує їх у неприємності.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Шрек -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Шрек</h2>
+    <p>Це сімейний мультфільм із гумором і філософськими думками, які змушують замислитися про себе, своє життя й правила, нав'язані нам соціумом. Попри те, що дія відбувається в чарівному світі, де існує магія, проблеми тут цілком реальні й знайомі багатьом із нас: це нав'язані суспільством стандарти, розбіжності з батьками, неприйняття себе, страх бути відкинутим.</p>
+    <p>У мультфільмі особливе місце посідає тема неприйняття себе й стандартів, яким часом нереально відповідати: Шрека вважають страшним і небезпечним просто тому, що він огр, Фіону ховають у вежі, бо вночі вона перетворюється на огра, і вона мало не виходить заміж проти своєї волі, тільки щоб завжди залишатися в людській подобі. Коли вона вирішує залишитися огром, її вибір засуджують усі — від родини до суспільства.</p>
+    <div class="highlight">
+      <p>В реальному житті огрів не існує, але вимоги до зовнішності в нашому світі схожі: стрункі тіла в масовій культурі асоціюються зі щастям, через що виникають розлади харчової поведінки й дисморфофобія. Фіона — одна з небагатьох у фільмі, хто не женеться за стандартами краси, не намагається стати такою, якою її хочуть бачити інші, а приймає себе, і їй подобається своє життя, навіть якщо інші цього не розуміють.</p>
+    </div>
+    <p>Ще одна важлива для фільму тема — стосунки: як і в реальному житті, у Шрека й Фіони далеко не завжди все складається ідеально, вони часто конфліктують і не розуміють одне одного через те, що додумують щось одне за одного замість того, щоб прямо спитати думку партнера. Причина такої поведінки — когнітивні помилки: наш мозок любить створювати єдині шаблони для поведінки й висновків, замість того щоб щоразу вибудовувати нову логічну послідовність і аналізувати інформацію. В основі гармонійних і здорових стосунків лежить відкрита комунікація — партнери щиро говорять про свої переживання й страхи, щоб не було недомовок і поспішних висновків.</p>
+    <p>Найголовніша криза в родині Шрека й Фіони настала після народження дітей: рішення завести їх було важким для пари, побут заполонив усе їхнє життя, і на цьому тлі Шрек вирішується на відчайдушні заходи — йде з родини.</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text"><strong>Пріоритети.</strong> На першому місці ви самі, на другому ваш партнер, на третьому діти (хоча іноді на перше місце може вийти робота, якщо саме в ній ви самореалізуєтеся, або дитина, якщо вона захворіла чи потребує підвищеної уваги). Діти не можуть бути сенсом вашого життя, вони лише гості, які з вами тимчасово.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Турбота про себе.</strong> Важливо займатися собою й саморозвитком, наприклад знайти хобі, яке приноситиме задоволення, і пам'ятати, що перші роки життя з дитиною дійсно будуть рутинними, але це минеться.</div></div>
+    </div>
+    <p>Попри всі недоліки, пара Шрека й Фіони може слугувати прикладом для наслідування: найголовніше в їхніх стосунках — повне прийняття партнера таким, який він є, вони завжди відстоювали й захищали інтереси одне одного і завжди були готові прийти на допомогу й вислухати.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Залізна людина -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Залізна людина</h2>
+    <p>Тоні Старк — спадкоємець величезної компанії, що займається військовою технікою, живе як типовий мільярдер: любить клуби й красивих жінок, витрачає гроші направо й наліво. На самому початку Тоні Старк справді схожий на нарциса — ми бачимо в ньому такі риси нарцисичної особистості, як потреба в самоствердженні й загальному захопленні, байдужість до почуттів інших, відсутність друзів і по-справжньому близьких людей; він продає зброю, не замислюючись, чи користується іншими для досягнення своїх цілей. Але все це ми спостерігаємо лише в перші півгодини фільму.</p>
+    <p>Поворотним моментом стає поранення, яке він отримує від ракети, створеної його власною компанією, і полон у терористів, що хочуть, щоб він створював для них зброю масового знищення. Тоні зближується з ученим Хо Їнсеном, єдиним, кому можна довіритися, і зрештою знаходить у собі сили відкритися. На відміну від нарцисів, він виявляється здатним не лише на маніпуляції, а й на інші форми взаємодії з людьми — усвідомлює цінність людського життя й починає по-іншому ставитися до себе й оточуючих.</p>
+    <div class="highlight">
+      <p>Чи може людина змінитися — питання дискусійне: на особистість впливають як вроджені, так і набуті риси, і хоча навіть проходження терапії не змінює особистість, а лише допомагає пропрацювати внутрішньоособистісні конфлікти, є фактори, здатні значно вплинути на людину й змінити її до невпізнання — наприклад, війни та інші катастрофи. У момент сильних потрясінь трапляється криза особистості, відбувається переоцінка цінностей і переосмислення життя, і саме тому ми більше не помічаємо в Тоні нарцисизму: він перестає егоїстично дивитися на життя й користуватися іншими, починає більше цінувати близьких і дуже чуйно ставитися до людей.</p>
+    </div>
+    <p>Нарциси ж, навпаки, байдужі до чужих життів, не здатні дружити чи вибудовувати романтичні стосунки — усі оточуючі потрібні їм лише для досягнення якихось цілей; Тоні Старк не такий, він переживає за Пеппер, занепокоєний майбутнім планети й людства, у нього зав'язується дружба з десятирічним хлопчиком Харлі, а для Пітера Паркера він стає практично батьком — нарциси на таке не здатні.</p>
+    <p>Полон у Тоні був не єдиним потрясінням: у третьому фільмі про Залізну людину він впадає в депресію — психогенну, тобто спричинену зовнішніми причинами, а саме війною й стресом; скоріш за все, депресія супроводжується посттравматичним стресовим розладом, його мучать безсоння й панічні атаки. Для нього це незвичний стан, і це теж свідчить про те, що в Тоні немає нарцисичного розладу особистості — нарциси завжди сумніваються в собі, їм властива неадекватна самооцінка, яка з боку здається завищеною, а насправді низька, тоді як Тоні засумнівався в собі лише раз, і це було зумовлено серйозною стресовою ситуацією.</p>
+    <div class="highlight">
+      <p>Попри те, що Тоні Старк не нарцис, неможливо не помітити, наскільки він егоцентричний: він любить себе, вірить у свою винятковість і велич, вважає себе найкращим у команді Месників; у звичайному стані його самооцінка стабільно висока, йому важливо виглядати ідеальним для всіх, подобається увага до своєї персони, він любить захоплювати публіку, ретельно стежить за своїм образом, а його емоції по-театральному награні. Усе це свідчить про те, що в Тоні Старка істероїдний тип особистості: ненаситна жага захоплення, ініціативність (він генератор усіх важливих ідей), любов бути лідером у будь-якій компанії, імпульсивність.</p>
+    </div>
+    <p>Тоні пройшов величезний шлях від егоїстичного нарцисоподібного персонажа на початку до співчутливого й чуйного Залізної людини, готового пожертвувати собою заради інших, — і саме він урятував всесвіт ціною власного життя, довівши всім, що Залізна людина не така вже й залізна.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Рік Санчес -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Рік Санчес</h2>
+    <p>Рік постає перед нами одночасно божевільним і геніальним: скептик, циніком і песимістом, він майстерно володіє сарказмом і ненавидить усе живе. Серіал починається з повернення Ріка до дочки Бет після довгої відсутності, він починає жити з її родиною, одразу встановлює в домі свої порядки й проголошує себе главою родини. Рік не любить проводити час із родиною, замикається в гаражі й займається своїми винаходами; єдиний член родини, до якого в Ріка є хоч якийсь інтерес, — це Морті, його онук і напарник у пригодах.</p>
+    <div class="highlight">
+      <p>Рік доволі холоднокровний, розважливий і прямо говорить, що те, що люди називають коханням, — це просто хімічна реакція. Враховуючи, що в Ріка немає особливої ніжності й прив'язаності до людей, неважко зрозуміти, чому він так легко розпоряджається чужими життями, навіть змінюючи спогади Морті й порушуючи його особисті межі, сприймаючи онука радше як об'єкт, яким можна керувати, ніж як живу людину. Рік без жодних докорів сумління клонував свою дочку — йому було байдуже, яка з двох Бет справжня, головне, щоб вона виконувала свої функції.</p>
+    </div>
+    <p>Коли його Всесвіт уже неможливо виправити, він просто переїжджає з онуком в іншу вселенну, де тутешні Рік і Морті загинули, і продовжує жити з новими Бет, Джеррі й Саммер; усе це говорить про те, що в Ріка немає емпатії, а його емоційний інтелект невисокий — він у першу чергу думає про себе, а оточуючих використовує для досягнення власних цілей.</p>
+    <p>Рік гордиться тим, що вважає себе найправильнішим Ріком з-поміж незліченної кількості версій себе у всесвіті, і не втрачає нагоди нагадати про це, принижуючи решту. Усе це говорить нам про те, що Рік Санчес — нарцис, у нього нарцисичний розлад особистості. Його жорстокість і відсутність емпатії призводять до відсутності жалю й дозволяють йому з легкістю вбивати інших і користуватися Морті незалежно від того, наскільки сильно хлопчика травмують їхні пригоди.</p>
+    <div class="quote-block">
+      <div class="qa">Корінь нарцисизму</div>
+      <p>Основний симптом нарцисів — нестійка, двоїста самооцінка: у соціумі й при інших людях Рік ніколи не показує своїх слабкостей, постійно намагається довести, що він кращий за інших, і, як і інші нарциси, намагається відкидати сором і страх, оскільки ці почуття вважаються ознакою слабкості. Однак саме сором і заздрість є основними рисами характеру людини з нарцисичною організацією особистості — ці емоції змушують її постійно непокоїтися про те, що про неї думають інші, і доводити їм свою перевагу. Двоїстість самооцінки нарцисів полягає в тому, що вона постійно коливається від грандіозного «я» до протилежного полюсу: наодинці із собою нарцис занурюється в апатію й самобичування, хоча серед інших людей цього ніхто не побачить, — саме в цьому й полягає ядро особистості нарциса: він сильно сумнівається в собі й, щоб цього не помітили інші, створює образ самовпевненої людини.</p>
+    </div>
+    <p>Ми майже нічого не знаємо про минуле Ріка і його стосунки з батьками, але знаємо, який стиль виховання провокує формування нарцисичного типу особистості: у дитинстві майбутнього нарциса постійно оцінюють, порівнюють з іншими дітьми й ставлять когось йому в приклад; дитину помічають і хвалять, тільки якщо їй вдається догодити батькам, а чого хоче вона сама — не має значення. За такого оцінювального виховання діти створюють хибне «я», яке дозволяє отримати від батьків бажане, але при цьому вони сумніваються в собі й засвоюють установку, що далекі від ідеалу, — через постійну оцінку й порівняння формується сором, який присутній у житті нарциса на постійній основі.</p>
+    <p>У своїй справі важливо бути рішучим і впевненим у собі, однак рушійною силою не повинні ставати заздрість і порожнеча: Рік страждає через відсутність близьких людей і нерідко помічає, як ним користуються навіть рідні, а порожнечу всередині заповнює алкоголем, який дарує відчуття ейфорії та ілюзію відсутності внутрішньоособистісних проблем.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Насамкінець -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Насамкінець</h2>
+    <p>У кожного з розглянутих персонажів, хоч би яким вигаданим був їхній світ, можна розпізнати цілком реальні психологічні механізми: нездорові установки щодо власної цінності (Попелюшка, Мулан), співзалежність і синдром рятівника (Белль, Софі, Боджек), підлітковий максималізм у відповідь на гіперопіку (Аріель), особливості типу особистості, які не є хворобою (Амелі, Шерлок Холмс, Кар-Карич, Совунья, Тоні Старк), конкретні розлади — ОКР, РПП з дисморфофобією, депресія, СДУГ, залежності хімічного й нехімічного характеру, пограничний розлад особистості, параноїдна шизофренія та нарцисичний розлад особистості.</p>
+    <p>Про сам трикутник жертви, переслідувача й рятівника, який тут повторюється знову й знову, — <a href="codependency-triangle.html">Трикутник співзалежності</a>.</p>
+    <div class="final-quote">
+      <div class="final-text">У реальному житті розлади й нездорові моделі поведінки самі собою не минають завдяки чиємусь коханню чи дружбі — <strong>важливо вчасно звертатися по допомогу до фахівця</strong></div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
