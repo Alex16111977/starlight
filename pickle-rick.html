@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Огірок у розсолі</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Огірок<br>у розсолі</h1>
+  <p class="page-subtitle">Що сказала б психологиня про Ріка Санчеза: самозакоханість, залежність як щит — і горе, яке він не проживає</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Рік здатен витримати буквально будь-яке випробування, окрім зустрічі віч-на-віч із власними емоціями</div>
+      <div class="hero-author">TheMortification</div>
+    </div>
+    <p>Психологиня, яка вже п'ять років працює ліцензованим психологом, переглянула всі вісім сезонів «Рік і Морті» — і список проблем головного героя вийшов довгим. Це аналіз персонажа очима фахового психолога, який переказує автор каналу TheMortification.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Завищене відчуття значущості -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Завищене відчуття власної значущості</h2>
+    <p>Найочевидніша риса Ріка — перебільшене відчуття власної величі: він щиро вважає себе набагато розумнішим за всіх навколо. Можливо, це справді так, але він використовує свій інтелект як виправдання бути нестерпним з будь-ким, особливо з рідними.</p>
+    <div class="highlight">
+      <p>Коли справа стосується вибачень перед близькими, Рік майже фізично не здатен визнати свою провину — натомість він перетворює будь-яку спробу примирення на демонстрацію власної вищості.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Презирство -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Презирство до тих, кого вважає гіршими</h2>
+    <p>Коли Рік одного разу допомагав команді супергероїв-невдах («Захисників») перемогти космічного суперзлодія, він не сприймав їх серйозно попри масштаб загрози — і ставився до них зверхньо протягом усієї пригоди. Йому огидна сама думка, що онук Морті може дивитися з повагою на когось, кого Рік вважає нижчим за себе.</p>
+    <div class="quote-block">
+      <div class="qa">Вечір перед вирішальною битвою</div>
+      <p>Рік до нестями впився й зганьбив команду непристойним учинком на їхньому головному столі — і при цьому не продемонстрував ані крихти сорому, хоча сам визнав, що на його місці йому було б соромно показуватися на людях місяцями. Далі він ще й влаштував команді серію небезпечних загадок і заблокував вихід, щоб ніхто не міг просто піти, — а оскільки сам не пам'ятав, що наробив уночі, він не пам'ятав і відповідей на власні загадки.</p>
+    </div>
+    <p>Урешті Рік виконав усе завдання команди не тому, що хотів допомогти, а тому, що хотів показати їм, які вони пересічні супергерої, а сам — набагато кращий.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Жага визнання -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Жага зовнішнього визнання попри самоненависть</h2>
+    <p>Рік любить, коли ним захоплюються, хоча в глибині душі ненавидить себе, і цінує чуже визнання значно більше, ніж показує. Коли він влаштував команді ту серію пасток, одна з них стосувалася речі, яку він найбільше цінував. Морті вирішив, що йдеться про нього, і зайняв те місце — але натомість програвся запис, де заплаканий Рік зізнавався, як багато значить для нього... сторонній персонаж другого плану, який майже не мав стосунку до сюжету чи до самого Ріка, і при цьому щиро сміявся з Рікових жартів, коли більше ніхто цього не робив.</p>
+    <div class="question-card">
+      <div class="question-label">Питання</div>
+      <div class="question-main">Чому найрозумнішій людині у всесвіті було так важливо, що саме цей випадковий персонаж вважав його смішним?</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Маніпулятивність -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Маніпулятивність</h2>
+    <p>Рік не вагається маніпулювати ким завгодно — Морті, Джеррі, будь-ким, бо для нього ніхто не є недоторканним. В одній із сцен він прямо визнає перед Морті, що насправді врятував онука лише тому, що мати хлопчика не прийняла б його назад без дітей, — і одразу додає, що якщо Морті розповість про це решті сім'ї, Рік просто все заперечуватиме, і сім'я повірить саме йому, бо він — герой.</p>
+    <p>Повної відсутності співчуття в Ріка немає — психологиня не вважає, що в нього соціопатія. Іноді він щиро жахається того, до чого призвела його поведінка, і може навіть визнати, що зіпсував чиїсь стосунки й повестися нечесно. Але таке усвідомлення зазвичай приходить занадто пізно. Його нарцисизм змушує його відчувати, що він має право читати всім лекції про життя, і часто він заходить у цьому значно, значно далі, ніж потрібно.</p>
+    <div class="quote-block">
+      <div class="qa">Зарядка для телефону: сімнадцять років «уроку»</div>
+      <p>Найяскравіший приклад — епізод, коли Рік вирішив покарати Морті й Саммер за те, що вони довго не віддавали йому зарядку для телефону, і занурив їх у симуляцію реальності як «урок». Потім він просто заснув і забув про них — а через особливості стиснення часу всередині симуляції онуки провели там еквівалент сімнадцяти років. Жоден із них після цього не став тим самим, хоча причина всього була сміховинно мізерною.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Подвійні стандарти -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Подвійні стандарти</h2>
+    <p>Рік часто поводиться як лицемір, бо вважає, що правила, які застосовує до інших, на нього самого не поширюються.</p>
+    <div class="quote-block">
+      <div class="qa">Мікровсесвіт в автомобільному акумуляторі</div>
+      <p>Рік створив усередині автомобільного акумулятора цілий мікровсесвіт, населення якого виробляло для нього електроенергію, — і коли один місцевий вчений зробив достеменно те саме у своєму власному мікровсесвіті, Рік із високої моральної позиції назвав це рабством, не помічаючи, що описує самого себе. Цей інший учений навіть мав ту саму залежність, що й Рік, — це була майже дзеркальна копія його самого, і Рік категорично відмовлявся це визнавати, натомість розгорнувши справжню війну за звання «більшого нарциса».</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Страх вразливості -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Страх вразливості та залежність як щит</h2>
+    <p>Рік радше помре, ніж покаже свою вразливість. Він використовує сарказм і алкоголь, щоб приховати, що насправді відчуває. Чим більше контексту й матеріалу накопичується про цього персонажа, тим очевидніше, що його безглузда поведінка під час алкогольного сп'яніння походить із болю й бажання втекти від реальності.</p>
+    <div class="highlight">
+      <p>Його знамените тарабарське вигукування під час вечірок насправді не випадкове слово — одного разу інший персонаж пояснює, що на його мові ця фраза означає «мені дуже болить, будь ласка, допоможіть мені».</p>
+    </div>
+    <p>Алкоголізм Ріка — це не просто кумедна особливість персонажа, а щит. Це стає особливо небезпечним, коли додати технології для подорожей між всесвітами: Рік вживає речовини, які звичайним людям важко навіть уявити, і здатен на вчинки, яких ми б ніколи не повторили під їхнім впливом.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Юніті -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Короткий роман із Юніті та спроба самогубства</h2>
+    <p>Короткий, але бурхливий роман Ріка з колективною сутністю на ім'я Юніті переважно складався зі спільних запоїв, хоча вони явно отримували задоволення від товариства одне одного — поки вона не залишила його, просто зникнувши з короткою запискою. Вона визнала, що він їй не байдужий, але мусила піти, бо він був для неї поганим впливом і вона не могла продовжувати жити так, як вони жили разом: вона майже втратила контроль над своєю колективною свідомістю, яку будувала роками, бо надто захопилася спільним із Ріком відпочинком.</p>
+    <p>Коли Юніті пішла, Рік узяв це напрочуд важко: напився вдома й спробував накласти на себе руки. Це шокувало — спершу здавалося, що це всього лише бурхливий розрив стосунків, не більше. Але справжньою одержимістю Ріка завжди була його покійна дружина Діана, а стосунки з Юніті всі навколо сприймали лише як тимчасове відволікання.</p>
+    <div class="highlight">
+      <p>Можливо, Рік не був аж так прив'язаний саме до Юніті, а просто знову відчув себе самотнім після того, як на короткий час повернув собі щастя, яке колись мав, — і коли це щастя знову забрали, він цього не витримав. А можливо, причина глибша: він зрозумів, що токсичний сам по собі, і тягне всіх навколо на дно власною руйнівною поведінкою.</p>
+    </div>
+    <p>Саморуйнівні тенденції та суїцидальні думки Ріка — це, за словами психологині, зрештою симптом депресії та межового (прикордонного) розладу особистості. Інший прояв цієї депресії — нігілістичні переконання Ріка: він щиро вважає, що нічого насправді не має значення, і що все, що відбувається в житті, повторюється безліч разів у безлічі паралельних реальностей. Можливо, це наслідок того, що він на власні очі бачив, як руйнуються цілі всесвіти й замінюються майже ідентичними копіями, — а закопування власного тіла на задньому дворі, певно, теж цьому не допомагає.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Межовий розлад -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Межовий розлад особистості</h2>
+    <p>У Ріка справді можуть бути ознаки межового розладу особистості: низька самооцінка, імпульсивність, схильність до співзалежності та гостре відчуття вразливості перед можливістю бути скривдженим. Через це такі люди часто саботують власні стосунки — або відштовхують тих, хто наближається, або раптово й різко розривають зв'язок через якусь дрібницю. Люди з цим розладом часто не вміють зупинитися вчасно, особливо коли йдеться про залежності, і Рік демонструє це постійно.</p>
+    <div class="highlight">
+      <p>Він також сильно применшує власний страх покинутості, хоч іноді цей страх прозирає крізь його поведінку. Можливо, саме цей страх пояснює один із найтемніших вчинків альтернативної версії Ріка — так званого Прайм-Ріка, який в іншій реальності вбив власну дружину Діану: він волів власноруч стерти її з усіх паралельних всесвітів, аніж ризикнути, що вона одного дня піде від нього сама, на своїх умовах.</p>
+    </div>
+    <p>Рік також надзвичайно сильно співзалежний від Морті — частково через суто «технічну» причину, пов'язану з особливостями його розуму, але також і тому, що люди з межовим розладом особистості часто фіксуються на одній людині до нездорової міри й готові на що завгодно, аби утримати цю людину поруч. Попри це, Рік раз у раз поводиться так, ніби Морті геть нікорисний, і постійно його знецінює — хоча хлопець насправді заслуговує на значно більше визнання.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Токсичність -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Токсичність, яку він не готовий відпустити</h2>
+    <p>Показовий приклад: одного разу Рік і Морті потрапили до інопланетного спа-салону, який повністю видаляв із відвідувачів усю їхню токсичність і невпевненість. Процедура подіяла саме так, як мала.</p>
+    <div class="compare">
+      <div class="col good">
+        <div class="col-label">Морті</div>
+        <div class="col-text">Звільнена від токсинів версія скористалася новою позитивністю, щоб стати успішним біржовим трейдером, розбагатіти й переїхати жити до нової дівчини.</div>
+      </div>
+      <div class="col bad">
+        <div class="col-label">Рік</div>
+        <div class="col-text">Не зміг прийняти життя без власної токсичності — і врешті об'єднався з виокремленою з нього «токсичною» версією самого себе, навіть вистежив заради цього «очищеного» Морті.</div>
+      </div>
+    </div>
+    <p>Можна визнати, що в цьому була й сюжетна необхідність — інакше серіал про цілком щасливих, психологічно здорових персонажів не мав би конфлікту, — але водночас це недвозначно показує, наскільки Рік закоханий у власну токсичність і прив'язаний до неї. Можливо, письменники саме це й хотіли сказати: Рік не хотів відмовлятися від негативних частин себе, бо знаходив у них якийсь дивний комфорт.</p>
+    <div class="highlight">
+      <p>Утратити свою токсичність у спа було простим і чистим розривом із минулим, але він викинув цю можливість, бо більше не розумів, хто він такий без усієї своєї травми й токсичності.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Антисоціальні риси -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Антисоціальні риси</h2>
+    <p>Перелік проблем Ріка на цьому не закінчується: ще одна риса — ознаки антисоціального розладу особистості. Людям із таким розладом, як правило, байдужі права інших людей, і вони можуть бути агресивними. Наскрізна тема серіалу — те, що Рік використовує всіх навколо: для нього інші люди — просто інструменти. Він майже ніколи не визнає того, що Морті робить для нього, і не виявляє вдячності у відповідь. Коли Морті помиляється, Рік миттєво й жорстко карає його, але майже не помічає, коли хлопець робить щось правильне чи коли сам Рік помиляється.</p>
+    <p>Рік поводиться так, ніби Морті йому щось винен, а сам нічого не зобов'язаний робити для онука.</p>
+    <div class="quote-block">
+      <div class="qa">Колесо «кращих варіантів за Морті»</div>
+      <p>Одного разу, коли Морті напартачив із портальною зброєю, Рік буквально замінив онука — покрутив спеціальне колесо «кращих варіантів за Морті» й отримав двох ворон, яких оголосив своїми новими напарниками, навіть вигадавши собі новий «бренд». При цьому серед інших варіантів на тому колесі траплялися значно гірші речі — тож, зрештою, ворони ще й непогано йому «вистояли». Але сам факт, що Рік крутив рандомне колесо, щоб обрати заміну власному онукові, — це по-справжньому жорстоко, і він раз у раз нагадує Морті, що той замінний.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Жорстокість до Морті -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Насмішки та повторювана жорстокість до Морті</h2>
+    <p>Рік просто любить знущатися над онуком. Пригадаймо один із перших епізодів серіалу: він витягнув Морті з ліжка й змусив перевезти контрабандою насіння в прямій кишці, хоча весь цей час у нього вже була портальна зброя, і він міг би просто миттю перенести насіння без жодної митниці, — він просто хотів поглузувати з онука.</p>
+    <p>Подібна поведінка з роками анітрохи не покращилася: у пізнішому сезоні є сцена, де спостерігачі з іншого всесвіту прокручують запис того, як Рік обманом переконав Морті, що кінець світу залежатиме від того, чи лизне він ніздрю мавпи, — і Морті, довіряючи дідусю, справді кинувся виконувати це «завдання», щиро вважаючи, що рятує всесвіт. А насправді це був просто жарт заради того, щоб перевірити, чи Морті повірить і чи можна буде потім посміятися. Рік постійно принижує онука, називаючи його ідіотом та іншими образливими словами, — а хлопцю всього чотирнадцять, і такі слова залишають слід.</p>
+    <p>Це дуже дивно, якщо замислитися: ідеться про людину, яка мала б бути для Морті опікуном, дідусем, тим, хто любить безумовно, — але натомість Рік сам визнає, що для нього ніхто насправді не особливий, навіть він сам. І водночас саме ця людина — та, кого Морті в багатьох сенсах обожнює, на кого дивиться із захопленням і вірить, що той здатен практично на все, маючи для цього реальні підстави.</p>
+    <div class="highlight">
+      <p>Рік постійно перемикається між жорстокістю й раптовою турботою, і саме це утримує Морті емоційно прив'язаним. Така «гойдалка» поведінки — класичний спосіб контролю, який часто трапляється в нарцисичних стосунках. Рік принижує й піддає Морті небезпеці нібито заради пригод, але насправді йдеться про владу. Їхній зв'язок зовсім не милий і не теплий — це заплутаний цикл контролю, провини й прив'язаності, з якого жоден із них повністю не вириватиметься.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Шизотипний розлад -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Шизотипний розлад особистості</h2>
+    <p>У Ріка явно є ознаки шизотипного розладу особистості — стану, за якого людині важко й некомфортно формувати близькі стосунки з іншими. Такі люди можуть сприймати та інтерпретувати речі незвично, поводитися так, що іншим це здається дивним, або мати переконання, які оточення вважає нетиповими. Рік зневажливо ставиться до психотерапії, прямо заявляючи, що не поважає її, хоча визнає, що вона допомогла багатьом людям заспокоїтися й менше панікувати — просто сам він цього для себе не хоче.</p>
+    <div class="highlight">
+      <p>М'яко кажучи, Рік емоційно відсторонений — йому майже фізично важко виявляти прихильність чи говорити про власні почуття. Він украй некомфортно почувається поряд із будь-якою близькістю і рідко демонструє теплі емоції — частково через те, що не може пережити втрату дружини, яка померла кілька десятиліть тому. Зрештою, він навіть перетворив себе на огірок у розсолі, лише щоб не говорити про власні почуття на сімейній терапії.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Вбиральня та Тоні -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Усамітнена вбиральня та війна з Тоні</h2>
+    <p>У показовому епізоді Рік влаштував собі особисту вбиральню в тихому, ізольованому паралельному всесвіті — місце, призначене винятково для нього самого. Але згодом він виявив, що цим туалетом користується ще одна людина — звичайний чоловік на ім'я Тоні, який просто полюбив те саме місце, зовсім не якийсь зловмисник, що полює на Ріка. Будь-яка розсудлива людина, можливо, зрозуміла б таку симпатію — адже місце справді приємне. Але Рік на цю звістку відреагував інакше: він оголосив справжню війну.</p>
+    <p>Зрештою Рік так і не визнав власної провини, хоча про людське око вдавав примирення — передав Тоні подарунки й повідомив, що тепер той може користуватися туалетом вільно. Бідолашний Тоні, не встигнувши дізнатися про це, наклав на себе руки, бо Рік заздалегідь розставив у туалеті голограми самого себе, які виникали й насміхалися над Тоні щоразу, коли той туди заходив. Навіть на похороні Тоні Рік категорично відмовився визнати, що той узагалі був йому другом.</p>
+    <div class="highlight">
+      <p>Епізод завершився тим, що самі ці пастки й голограми, створені для покарання Тоні, зрештою обернулися проти самого Ріка, і фінальна сцена показує його, що сидить у тому самому туалеті, а голограми насміхаються тепер уже над ним самим, — іронічне покарання за власну жорстокість.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Пікл Рік -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Пікл Рік: алкоголізм як метафора</h2>
+    <p>Варто докладніше зупинитися на епізоді, де Рік перетворює себе на солоний огірок. Це сталося тому, що він не хотів іти на сімейну психотерапію й говорити про свої почуття. Хоч уся ситуація виглядала як черговий безглуздий науково-фантастичний жарт серіалу — а вона такою й була, — автор серіалу Ден Гармон прямо визнавав, що це перетворення було метафорою алкоголізму Ріка.</p>
+    <div class="highlight">
+      <p>Так само, як огірки тримають у розсолі, щоб вони не змінювалися, Рік тримає себе «законсервованим» в алкоголі, аби не мати справи з реальністю й усім емоційним багажем, який тягне за собою десятиліттями.</p>
+    </div>
+    <p>На перший погляд це просто черговий Ріків дивакуватий учинок, яким він потім вихваляється, — типова для серіалу ситуація: перетворитися на щось, аби уникнути відповідальності. Але саме в цьому й суть: епізод перебільшено показує звичку Ріка тікати від усього, що робить його емоційно вразливим. Замість того, щоб зіткнутися з дискомфортом терапії, він буквально перетворився на неживий овоч. Це майже фізична нездатність мати справу з власними емоціями — іронічно, зважаючи, що йдеться про найрозумнішу людину у всесвіті, окрім випадків, коли мова заходить саме про почуття.</p>
+    <p>Поки сім'я була на терапії, Рік пережив самостійну пригоду — бився з каналізаційними пацюками, а згодом розгромив цілу посольську будівлю, — і це лише підкреслює, що Рік здатен витримати буквально будь-яке випробування, окрім жахливого завдання зустрітися віч-на-віч із власними емоціями. З одного боку — геніальна винахідливість, бойова стратегія, здатність розв'язувати найскладніші проблеми; з іншого — повне небажання, а не неспроможність, опрацьовувати власні почуття. А почуттів справді багато, бо й травми достатньо, — проте мало що насправді лякає Ріка в усьому безмежному мультивсесвіті так само сильно, як саморефлексія.</p>
+    <p>Навіть психотерапевтка, яку сім'я запросила, прямо сказала Ріку, що не має жодного сумніву — йому буде нестерпно нудно на терапії так само, як їй нудно, коли вона чистить зуби чи виконує інші рутинні гігієнічні процедури, — і це була чиста правда. Хай би як дочка Ріка, Бет, хотіла вірити в інше, вона була просто надто щаслива знову мати батька поруч, і через це дозволяла йому дуже багато.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Вплив на сім'ю -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Вплив на сім'ю</h2>
+    <p>Хай як прикро це визнавати, іноді навіть зять Ріка Джеррі, якого в серіалі зображують як пересічного, нудного батька передмістя, має рацію, коли намагається переконати Ріка рідше брати Морті на пригоди, щоб хлопець міг зосередитися на навчанні. Саморуйнівна поведінка Ріка шкодить не лише йому самому — вона проходить крізь усю його сім'ю. Колись він залишив Бет, коли та була ще дитиною, і цей вчинок залишив по собі справжній слід: навіть зараз Бет і Джеррі постійно конфліктують через Ріка, і значна частина цього напруження походить саме з його емоційного багажу та хаосу, який він приносить у життя всієї родини.</p>
+    <div class="quote-block">
+      <div class="qa">Фрагменти Морті в грі: три прості слова</div>
+      <p>Епізод, у якому Морті підключили до віртуальної гри, а його свідомість розділилася на мільярди фрагментів, що стали ігровими персонажами. Рік особисто зайшов у гру, щоб переконати всі ці фрагменти об'єднатися й залишити симуляцію, аби врятувати онука. Переважна більшість фрагментів погодилася, але невелика частка відмовилася — вони погоджувалися піти з Ріком лише за однієї умови: якщо він прямо скаже, що любить їх. Здавалося б, простіше нікуди — та не для Ріка: він довго вагався, перш ніж вимовити ці слова, і це вагання само по собі промовисто свідчить про його характер. Фрагменти свідомості Морті сприйняли цю паузу як підтвердження того, що Рікові справді байдуже, і через цю затримку частина свідомості хлопця могла просто загинути всередині гри — лише тому, що дідусь не міг вимовити три прості слова.</p>
+    </div>
+    <p>Навіть коли Рік зрідка таки каже щось подібне до «я тебе люблю», трапляється це вкрай рідко, і він завжди намагається подати ці слова якнайбуденніше й несерйозніше, часто одразу обертаючи все на жарт. Так само промовисто й те, як він поводиться з Бет: перед тим, як запропонувати створити для неї клон, він якраз розмірковував уголос про те, що ніщо в житті насправді не має значення, — і коли Бет цілком логічно спитала, навіщо тоді він узагалі пропонує їй це, якщо «нічого не важить», для неї було б достатньо почути просте «я люблю тебе». Але Рік, як завжди, відповів манівцями, натякаючи на приховані мотиви, замість прямої відповіді.</p>
+    <p>Залишається лише гадати, яким Рік був до втрати дружини Діани, — у нечисленних спогадах він здається значно спокійнішим і щасливішим, ніж теперішній.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Втеча від горя -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Втеча від горя замість його опрацювання</h2>
+    <p>У фіналі одного із сезонів здавалося, що для Ріка нарешті настав поворотний момент: він пішов на важкий крок і стер зі своєї пам'яті всі спогади про Діану. На перший погляд це виглядало як чистий, остаточний розрив із минулим.</p>
+    <div class="compare">
+      <div class="col bad">
+        <div class="col-label">Що зробив Рік</div>
+        <div class="col-text">Стер зі своєї пам'яті всі спогади про Діану — радикальний крок, до якого вдався тому, що настільки уникав цього болю, що не міг упоратися інакше.</div>
+      </div>
+      <div class="col good">
+        <div class="col-label">Справжнє опрацювання</div>
+        <div class="col-text">Десятиліття, щоб усвідомити втрату й відпустити її поступово. Це не можна назвати повноцінним опрацюванням горя.</div>
+      </div>
+    </div>
+    <p>Втратити дружину та дитину за таких обставин — це справді нестерпно важко, і цілком можливо, що більшість проблем, які демонструє Рік, походять саме з цієї травми. У всіх спогадах, де ми бачимо Ріка до того, як альтернативна версія його самого — так званий Прайм-Рік — убила його дружину, він виглядав помітно інакше: охайним, без ознак сп'яніння в мові чи поведінці, спокійним, урівноваженим, навіть щасливим. Десятиліття, витрачені на пошуки Прайм-Ріка, цілком можуть бути травматичною реакцією — спробою повернути бодай частину сили й контролю, які були відібрані в момент втрати родини. Та коли Рік урешті вбив Прайм-Ріка, сподіваючись, що це раптово все змінить і стане легше, — нічого не змінилося.</p>
+    <div class="highlight">
+      <p>Люди, які переживають настільки важкі втрати й таку масштабну травму, часто починають самолікування, стають украй цинічними, уникають вразливості й одержимо прагнуть відплати — і Рік відповідає буквально кожному з цих пунктів, знову і знову. Для людей із посттравматичним стресовим розладом також характерні повторювані флешбеки травматичних подій, і в Ріка це теж є: він не може відпустити Діану, бо постійно й нав'язливо переживає цю травму в голові знову й знову, тримаючись за неї, наче за якийсь трофей.</p>
+    </div>
+    <p>Він настільки довго жив цим горем, що просто не знає, ким бути без нього, — саме тому він урешті й відмовився від дуелі з колишнім партнером своєї нової знайомої Бін, коли йому прямо сказали, що проблема була не в його покійній дружині, а в ньому самому; саме тому він намагався врятувати бодай щось зі спогадів про Діану; і саме тому він урешті знову забрав назад свою «токсичну» частину після інопланетного спа — люди, що пережили травму, часто чіпляються за власний біль, бо це останнє, що досі пов'язує їх із тим, кого вони втратили, і Рік робить це буквально.</p>
+    <p>Навіть його знамените тарабарське вигукування під час вечірок, якщо розкрити його справжнє значення — «мені дуже болить, будь ласка, допоможіть мені», — фактично підсумовує все вищесказане.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Насамкінець -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Насамкінець</h2>
+    <p>Ріку дійсно потрібна серйозна допомога. Ці нездорові моделі поведінки існують не рік чи два — вони формувалися десятиліттями, тож і подолати їх буде непросто, і знадобиться чимало часу й зусиль, аби допомогти Ріку опанувати здоровіші способи справлятися з емоціями та отримати бодай шанс на щастя. У фіналі останнього на той момент сезону Бін, зі свого боку, не сказала Ріку остаточне «ні» — вона просто замовкла й не відповіла на його повідомлення. Хто знає, можливо, вони з Ріком ще зможуть налагодити стосунки знову.</p>
+    <p>Про те, як виглядає нарцисична особистість зсередини й ззовні, — <a href="narcissist.html">Нарцис</a>. Про горе, яке не проживають, а обходять, — <a href="grief.html">Рубець, що не болить</a>. Про Ріка серед інших кіно- і мультгероїв — <a href="characters-couch.html">Кіногерої на кушетці</a>.</p>
+    <div class="final-quote">
+      <div class="final-text">«Мені дуже болить, <strong>будь ласка, допоможіть мені</strong>»</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Ціну визначаєш сама</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Ціну<br>визначаєш сама</h1>
+  <p class="page-subtitle">Панельна розмова про дораму «Справжня краса»: самооцінка, булінг, батьківські очікування і різниця між «кохати» та «бути коханою»</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Ти сама вирішуєш собі ціну, і якщо ти впевнена в собі, ніхто тебе не торкнеться</div>
+      <div class="hero-author">Сестра Чу Кьон · «Справжня краса»</div>
+    </div>
+    <p>Хьюго Тан — модератор, засновник ініціативи з психічного здоров'я «You Are Not Alone Southeast Asia» (YANA) — відкриває цю трансляцію, нагадуючи, що це нормально — не почуватися добре, і що тема психічного здоров'я сьогодні важливіша, ніж будь-коли. З ним — троє гостей із різних професій: Мелісса Лін, ведуча, модель, амбасадорка YANA; Іда (Джасмін), професійна візажистка з 13-річним досвідом; і Деббі Вонг, іміджевий стиліст, спеціалістка з кольору, міжнародна тренерка.</p>
+    <p>Приводом для розмови стала корейська дорама «Справжня краса» — історія школярки Чу Кьон, яку завжди ігнорували, висміювали й булили через її зовнішність, аж доки після переходу в іншу школу вона не опанувала мистецтво макіяжу і не змінила своє життя.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Чому резонує -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Чому ця дорама резонує з кожним із нас</h2>
+    <div class="quote-block">
+      <div class="qa">Іда</div>
+      <p>Мені ця дорама близька через історію того, як Чу Кьон відкрила для себе макіяж — як вона боролася і вчилася, щоб стати візажисткою. А ще мені відгукується сама назва: шлях від того, що здається менш гарним, до того, що стає по-справжньому красивим.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Мелісса</div>
+      <p>Окрім того, що актори привабливі, мені найбільше імпонує сама ідея історії: краса — це не те, як ти виглядаєш, а те, яке відчуття ти даєш іншим. Сухо бачив, що Чу Кьон вважає себе негарною, але все одно переконував її, що вона красива. Краса йде від серця і розуму: якщо ти сама вважаєш себе красивою, ти такою і є, і ніхто не може сказати інакше.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Деббі</div>
+      <p>Коли я дивилася перший епізод, то побачила, що ця дорама дуже схожа на мою власну історію — історію «гидкого каченяти». Я завжди звертаю увагу на те, яке послання несе дорама і чого з нього можна навчитися в реальному житті, і вважаю, що ця дорама справді варта перегляду саме заради цього послання.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Болючі слова -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Болючі слова та досвід «гидкого каченяти»</h2>
+    <div class="question-card">
+      <div class="question-label">Питання Хьюго</div>
+      <div class="question-main">Чи був у вашому житті момент, коли ви почувалися як Чу Кьон — ігнорованою, знехтуваною через зовнішність? Які найболючіші слова вам доводилося чути і як вони вплинули на ваш характер і подальший напрямок життя?</div>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Деббі</div>
+      <p>Найболючішим у моєму житті було те, що мене не визнавав власний батько — навіть через мою зовнішність. Батько сказав мені, що в мене дуже великий ніс і що це негарно. Мені тоді було років тринадцять-чотирнадцять, і я почала думати: що не так із моїм носом? Мені було дуже прикро, я ревіла, і я досі не можу прийняти той факт, що батько мене тоді не визнавав. Це залишилося в мені як болюча пам'ять.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Мелісса</div>
+      <p>Я зараз беру участь у конкурсі краси «Місіс Всесвіт», і, як ви бачите, я не маю типової зовнішності «королеви краси» — я це визнаю. На початку мого шляху в конкурсі мене дуже вразив один коментар: мені написали, що не знають, гарна я чи негарна, але точно не варто брати участь у конкурсі краси, і показали фото попередньої переможниці як зразок, на який я не схожа — мовляв, пакуй речі й їдь додому, поки є час. Тоді я подумала: дякую за коментар, я не можу змінити, як я виглядаю, і краса — поняття суб'єктивне, але я можу прийняти себе й показати, що здатна на більше. Зараз я у топ-четвірці конкурсу і сподіваюся потрапити у топ-два та поїхати до Польщі.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Іда</div>
+      <p>У шкільні роки в мене було дуже багато прищів через гормональні зміни, і це сильно підкосило мою самооцінку. Я пробувала різні засоби, нічого не допомагало, про макіяж я тоді нічого не знала, тож просто шукала способи доглядати за шкірою. Коли прищі не проходили, я почувалася справді негарною — із коротким волоссям я відчувала себе зовсім непривабливою. Згодом, із роками, я навчилася краще дбати про шкіру, і тиск, який я відчувала, був радше від мене самої, ніж від того, що думали про мене інші люди.</p>
+    </div>
+    <div class="highlight">
+      <p>Часто найжорсткішим критиком стає не хтось зовні, а сама людина, яка дивиться в дзеркало й не може прийняти себе.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Поворотні моменти -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Поворотні моменти: від ненависті до дії</h2>
+    <div class="question-card">
+      <div class="question-label">Питання Хьюго</div>
+      <div class="question-main">У Чу Кьон був момент, коли «досить» — і вона знайшла макіяж як рішення. Який був ваш поворотний момент, коли ви сказали собі «я більше не можу так жити, треба щось робити»?</div>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Деббі</div>
+      <p>Мій перший хлопець, моя перша любов, пішов до іншої дівчини, кращої на вигляд, бо я, за його словами, негарна. Я ненавиділа його три роки. А потім зрозуміла, що ненависть — не дуже хороше почуття, і що я сама поводилася як дурепа. Поворотним моментом став фільм «Рожева пантера»: я побачила Бейонсе й зрозуміла, що навіть із темнішою шкірою можна бути по-справжньому чарівною. Мені було шістнадцять, і я вирішила перетворити свою ненависть на навчання: почала читати статті про догляд за шкірою, досліджувати косметику — саме відтоді й почався мій шлях.</p>
+    </div>
+    <div class="highlight">
+      <p>На початку такого шляху зазвичай проходимо через заперечення, потім гнів і звинувачення долі чи оточення — а справжній поворотний момент настає тоді, коли цей гнів перетворюється на дію.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Іда</div>
+      <p>Я можу повністю співвіднести себе з цією історією Деббі: мій перший хлопець кинув мене прямо перед фінальними іспитами, бо я не носила високі підбори, не користувалася макіяжем, не стилізувалася. Я була дуже роздратована, навіть не плакала — просто злилася. Це сталося у 2006 році, коли з'явився конкурс Maybelline Dream Team, що шукав десять візажисток і давав їм навчання. Я вирішила спробувати й сказала собі: якщо він мене покинув — я проживу своє життя без нього. Так усе почалося.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Мелісса</div>
+      <p>Я повністю згодна з Деббі — ненависть забирає багато енергії. Коли на мене посипалися недоброзичливі коментарі, поворотним моментом стало рішення сприймати їх як паливо: я хотіла довести критикам, що вони помиляються, і сприймала кожен коментар позитивно — як стимул покращуватися й дійти до Польщі. Я й досі тримаю це в голові: коли мені сумно, я нагадую собі, що багато людей дивляться на мене й чекають, що я продовжуватиму цей шлях.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Історія Хьюго -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Особиста історія Хьюго: дитячий ОКР, тривожність і шлях до комунікації</h2>
+    <div class="quote-block">
+      <div class="qa">Хьюго</div>
+      <p>Я виріс в азійській родині, де панував типовий сценарій: не говори на уроках, не говори старшим, не пустуй, просто навчайся й стань юристом, бухгалтером чи банкіром. Я довго слідував цьому сценарію як «хороша дитина», але років в одинадцять почав помічати дещо дивне: якщо я просто мовчу, навчаюся і не цікавлюся нічим іншим — спілкуванням, дружбою, соціальними навичками, — чому тоді улюбленцем учителів завжди стає хтось із більш яскравим характером? Чому за такою «формулою успіху» я не міг навіть стати старостою класу? Якщо я не можу досягти успіху в соціальній ситуації в школі, яка гарантія, що я досягну успіху на роботі, якою мене так хочуть бачити батьки?</p>
+      <p>З роками я зрозумів, що хулігани булять саме тих, хто не вміє соціально інтегруватися, хто не вміє говорити, не вміє здобути соціальну перевагу — через вплив, комунікацію чи авторитет. Мені ці речі тоді ніхто не пояснював. У мене був обсесивно-компульсивний розлад і важка тривожність, а соціальні навички — практично нульові, і це створювало багато неприємних ситуацій. Я навіть не знав, що це називається ОКР — і найгірше, що може статися з людиною, це не знати, що їй потрібна допомога. Одним із побічних ефектів тривожності були раптові «випадання» з реальності посеред дня, що в соціальних ситуаціях виглядало дуже дивно і призводило до прізвиськ та ярликів.</p>
+      <p>Одного дня я пропустив заняття з підготовки, тож блукав біля вулиці неподалік і натрапив на книжковий магазин, який на той момент уже закривався через брак покупців. Там я знайшов книжку під назвою «Думай і багатій» — на вигляд досить сумнівну, схожу на шахрайську, але грошей на інші книжки в мене тоді не було. Ця книжка дала мені перший поштовх у саморозвитку: я дізнався про силу мислення, постановку цілей, силу афірмацій, важливість оточення себе хорошими людьми — речі, які сьогодні звучать як загальновідомі, але для шістнадцятирічного підлітка тоді були справжнім відкриттям. Я прийняв рішення: більше не сумувати й не гніватися через це, а вирішити проблему.</p>
+      <p>Я поставив собі правило — заводити розмову з будь-ким протягом трьох секунд після зустрічі: з людьми в автобусі, в потязі, поруч, позаду; брати участь у позакласних заходах, виступати з промовами, коли шукали волонтерів. За менш ніж два роки я опанував новий навик, який служить мені й донині: я навчився публічно виступати. Цікаво, що спершу я міг говорити перед великою аудиторією, але після того, як спускався зі сцени, все одно не міг підтримати звичну розмову один на один — «як погода» і все. Говорити «один до багатьох» я вмів, а «один до одного» — ще ні, хоча це й був хороший початок.</p>
+    </div>
+    <p>Мелісса зауважує, що ця історія дуже перегукується з персонажем дорами Су Джин, у якої також є риси тривожного розладу: вона постійно миє руки і щоразу, коли думає про батька чи про іспит, боїться, що знову не отримає першого місця і за це отримає покарання. Для багатьох, хто виріс в азійських родинах, це теж болюче знайоме — фізичні покарання за оцінки були не рідкістю.</p>
+    <div class="highlight">
+      <p>Головне не те, що в нас можуть бути якісь біологічні особливості, які ми не завжди можемо змінити, а те, що ми завжди можемо себе покращувати. І справа тут не лише у щасті, а у відчутті справжньої реалізації: коли Хьюго згадує, як колись тремтіли коліна й губи на сцені, і як йому доводилося тримати в руках довгий текст промови, а тепер він може говорити без жодного сценарію — то розуміє, що якщо це вдалося йому, можливо, вдасться і іншим.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Батьки -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Батьки та нетрадиційні професійні шляхи</h2>
+    <div class="question-card">
+      <div class="question-label">Питання Хьюго</div>
+      <div class="question-main">Як батьки вплинули на те, якими ми стали, і як це пов'язано зі сценою, де мати Чу Кьон не підтримує її захоплення макіяжем?</div>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Мелісса</div>
+      <p>На початку мого шляху батьки були категорично проти моделювання. Вони, як типові азійські батьки, бачили потенціал тільки в респектабельних професіях на кшталт юриста чи банкіра — таких, якими можна похвалитися перед сусідами. Коли вони почули, що я йду в моделі, це не поєднувалося в їхній голові з тим, що в мене були хороші оцінки: вони вважали, що модель — це означає відсутність мозку, відсутність навичок. Насправді моделювання — справжня робота: стояти, позувати, робити волосся, носити п'ятикілограмові головні убори. Який би шлях людина не обрала, головне — це пристрасть і задоволення від того, що робиш; і саме це робить мене кращою людиною.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Деббі</div>
+      <p>Мій батько і моя мати мають дуже різні характери: батько завжди був проти того, що я робила, і не визнавав мене, а мати завжди мене підтримувала. Батько — традиційний бізнесмен, який вважав, що саме він має вирішувати все в домі, навіть те, де мені навчатися; але я завжди приймала власні рішення, і це його сильно гнівило. Я розповідала про це мамі, і запитала її, як вона може терпіти, коли батько так голосно й різко говорить. Мати навчила мене одній навичці: коли хочеш прийняти людину, не дивись на її погані сторони, а намагайся побачити гарну сторону. Я почала дивитися на батька інакше: так, він говорить різко й неприємними словами, але водночас він дуже добра людина — якщо хтось приходить без їжі, він завжди дасть грошей, навіть сусідові. Я зрозуміла, що в нього просто немає навички говорити, але серце в нього добре — і зрештою обидва батьки стали для мене прикладом. Те, що батько був проти мене, стало для мене стимулом довести, що який шлях я б не обрала — він вартий того.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Іда</div>
+      <p>Мої батьки завжди хотіли, щоб я була відмінницею: мама сама за мене заповнила форми для вступу, вибрала природничі предмети, хотіла, щоб я стала фармацевтом. Я дуже старалася під час іспитів, впоралася непогано, але не досягла того рівня, і сказала мамі, що натомість піду на бухгалтерський облік — це був останній варіант у її списку, але все ж її варіант. Під час навчання, у 2006 році, я потрапила на конкурс Maybelline Dream Team; мама була скептична — казала, що на макіяжі багато не заробиш, — і я вирішила довести їй протилежне. Я старанно розвивала навички: після конкурсу (який тривав близько шести місяців із навчанням) я проходила короткі курси, вчилася у старших візажистів, переймала досвід із телепрограм. Коли я почала заробляти й віддавати батькам гроші, вони заспокоїлися й почали мене підтримувати. Я розумію, що батьки хотіли, аби ми стали кимось у житті і не зазнали таких труднощів, як вони самі колись, — тож я йшла назустріч їхнім вимогам, водночас не відмовляючись від своєї пристрасті до макіяжу.</p>
+    </div>
+    <div class="highlight">
+      <p>Звертає на себе увагу паралель зі сценою, де мати Чу Кьон наказує їй викинути всю косметику і стати відмінницею, обмежуючи дочірнє самовираження: це типова проблема в малайзійських родинах, де батьки не намагаються зрозуміти, через що проходять їхні діти, а просто вважають, що дитина має ходити в школу, отримати результати, вступити в коледж, отримати роботу з дев'яти до п'яти — і так по колу, без запитання, що в цьому цікавого. Найчастіше справа не в поганих намірах батьків, а в тому, що вони просто не вміють правильно виражати турботу.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Сестра -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Сестра як приклад для наслідування</h2>
+    <div class="question-card">
+      <div class="question-label">Питання Хьюго</div>
+      <div class="question-main">Чи була у вашому житті людина — сестра, найкраща подруга — яка здавалася набагато активнішою й рішучішою за вас, як сестра Чу Кьон, яка сама підходить до хлопців, замість чекати, коли підійдуть до неї?</div>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Деббі</div>
+      <p>Я бачу в сестрі Чу Кьон саму себе: вона дуже рішуча, нічого не чекає, діє на всі сто відсотків — наприклад, сама підійшла до хлопця, який їй сподобався, замість чекати, коли він підійде першим. Мені подобається її характер, її шаленість і відкритість.</p>
+    </div>
+    <p>Мелісса та Іда відзначають, що відчувають себе схожими на цю сестру, адже обидві є старшими дочками в родині: якщо чогось хочеш — іди й бери, не чекай, бо життя (і особливо пандемія) показало, що будь-що можна раптово зупинитися.</p>
+    <div class="highlight">
+      <p>Деббі поділилася улюбленою цитатою із серіалу, яку сестра каже Чу Кьон, коли та почуває себе невпевненою: «ти сама вирішуєш собі ціну, і якщо ти впевнена в собі, ніхто тебе не торкнеться». Ця фраза важлива саме тому, що ми часто почуваємося нікчемними, коли стикаємося з труднощами, забуваючи, що саме ми самі вирішуємо власну цінність, і що впевненість — ключове слово, яке робить нас недоторканними для чужої критики.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Проактивність -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Бути проактивним у стосунках: за і проти</h2>
+    <div class="question-card">
+      <div class="question-label">Питання панелі</div>
+      <div class="question-main">Чи варто бути проактивним у стосунках, і які в цього плюси та мінуси?</div>
+    </div>
+    <p>Мелісса зазначає, що впевненість — ключ до проактивності, і не кожен має таку впевненість від народження: вона приходить із досвідом і переживаннями, які нас змінюють.</p>
+    <div class="compare">
+      <div class="col good">
+        <div class="col-label">Плюс</div>
+        <div class="col-text">Можливість багато встигнути в житті.</div>
+      </div>
+      <div class="col bad">
+        <div class="col-label">Мінус</div>
+        <div class="col-text">Доводиться жертвувати звичними речами, як-от часом із друзями та родиною.</div>
+      </div>
+    </div>
+    <p>Іда наводить паралель із Со Джуном, який наполегливо, навіть попри постійні відмови, продовжував добиватися дівчини, яка йому подобалася, — зрештою досягнувши свого завдяки наполегливості й стовідсотковій щирості.</p>
+    <p>Піднімається і стереотип, що хлопці нібито не цінують дівчину, яка зробила перший крок: дехто чув про таку думку від подруг, але водночас усі знайомі хлопці кажуть, що саме впевненість і сміливість зробити перший крок викликає в них повагу й захоплення — якщо людина підходить правильно. Іда додає, що саме така стратегія спрацювала особисто для неї — вона одружена завдяки проактивному підходу.</p>
+    <div class="highlight">
+      <p>Зробити перший крок — це найлегша частина стосунків; найскладніше — не почати стосунки, а втримати їх, бо з часом змінюються цінності, інтереси, обставини, і щодня потрібно вкладати зусилля, щоб стосунки тривали.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Кохати чи бути коханим -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Кохати самому чи бути коханим</h2>
+    <div class="question-card">
+      <div class="question-label">Питання панелі</div>
+      <div class="question-main">У класичній формулі драм — головний герой, головна героїня, другий герой і друга героїня — кого варто обирати: того, кого кохаєш сам, чи того, хто кохає тебе?</div>
+    </div>
+    <p>Деббі і Іда обидві відповідають, що обрали б кохати самі, а не бути коханими: Деббі посилається на Чу Кьон і Сухо, які, на її думку, по-справжньому кохають один одного; Іда ж із власного досвіду зазначає, що намагалася полюбити того, хто любив її (подібно до того, як Чу Кьон пробувала із Со Джуном), але почуттів так і не виникло, тож чесність важливіша, ніж намагання змусити себе покохати через жалість.</p>
+    <p>Мелісса додає, що віддавати краще, ніж отримувати: головне — віддавати стосункам на повну, незалежно від того, скільки дає інша людина. Водночас вона наголошує на важливості мов любові: кожна людина має свою мову кохання — комусь потрібні щоденні підтвердження, дотики чи обійми, комусь — словесні підтвердження, — і стосунки будуть міцними, якщо партнери приймають мову любові одне одного.</p>
+    <div class="highlight">
+      <p>Стилі прив'язаності теж мають значення: одним людям потрібно більше особистого простору, іншим — більше близькості, і стосунки — це пошук балансу між тим, де ми збігаємося, і тим, у чому можемо поступитися. Чу Кьон цінує особистий простір і свободу, тоді як Сухо, хоч і заперечує це, насправді дуже «липкий» — турбується, чому дівчина не дзвонить, і сумнівається, чи вона його любить, навіть сидячи з друзями за грою.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Другорядні персонажі -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Другорядні персонажі: заздрість Су Джин і Со Джун</h2>
+    <p>У корейських драмах типовий стереотип: другий головний герой зазвичай по-доброму, але безрезультатно любить головну героїню, а друга героїня — зазвичай хороша людина, яка заздрить головній героїні.</p>
+    <div class="question-card">
+      <div class="question-label">Питання панелі</div>
+      <div class="question-main">Якби ви опинилися на місці Со Джуна чи Су Джин — обох відмінників школи з багато спільного з головними героями, — як би ви діяли?</div>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Мелісса</div>
+      <p>Я цінюю дружбу понад усе: якщо найкраща подруга любить того самого хлопця, з яким у тебе, можливо, навіть більше спільного дитинства (як у Сухо й Чу Кьон), найкраще — залишатися хорошим другом, цінувати дружбу і радіти щастю подруги. У фіналі серіалу і Кан (друга героїня) щаслива із Со Джуном, і Чу Кьон із Сухо — для мене це ідеальний фінал.</p>
+    </div>
+    <p>Іда нагадує слова Со Джуна, сказані Су Джин: що її заздрість руйнує не Чу Кьон, а саму Су Джин. Коли заздрість довела її до спроби знищити Чу Кьон, це зрештою зруйнувало саму Су Джин: вона кидає школу, її родина розпадається через розлучення батьків. Іда висловлює жаль, що в персонажа був потенціал для кращого фіналу.</p>
+    <p>Деббі розмірковує над цим питанням найглибше: якби вона була на місці Су Джин і дізналася, що Сухо і Чу Кьон разом, вона запитала би себе — чи дійсно любить Сухо як людину, чи любить лише те, як він піклується про неї тоді, коли їй це потрібно. Це дві різні речі.</p>
+    <div class="compare">
+      <div class="col good">
+        <div class="col-label">Любити людину</div>
+        <div class="col-text">Приймати людину повністю, з усіма її недоліками й перевагами — так, як мама Деббі приймає її батька.</div>
+      </div>
+      <div class="col bad">
+        <div class="col-label">Любити те, як до тебе ставляться</div>
+        <div class="col-text">Коли хтось добрий до нас, ми відчуваємо тепло й зворушення, і помилково називаємо це любов'ю, хоча насправді це лише задоволення власної потреби в турботі в конкретний момент.</div>
+      </div>
+    </div>
+    <p>Хьюго й Мелісса погоджуються з цим спостереженням: Су Джин, імовірно, насправді не настільки любить Сухо, як сама вважає — вона заздрить Чу Кьон, бо та отримала любов, якої Су Джин ніколи не відчувала ні в родині, ні від друзів (окрім холодно-«крутого» кола спілкування).</p>
+    <div class="highlight">
+      <p>Можна сказати, що в основі заздрості Су Джин — відчуття порожнечі й незадоволених потреб, і вона помилково приймає обмежений вибір людей навколо, до яких відчуває тепло чи зв'язок, за кохання. Любов — це прийняття, а більшість людей має заплутане уявлення про любов, плутаючи її з потягом, дружбою чи захопленням.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Платонічна дружба -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Платонічна дружба між чоловіком і жінкою</h2>
+    <div class="question-card">
+      <div class="question-label">Дискусійне запитання</div>
+      <div class="question-main">Чи може дівчина бути найкращою подругою хлопця (і навпаки) без романтичних почуттів?</div>
+    </div>
+    <p>Хьюго вважає, що це можливо, але оскільки будь-які стосунки — двостороння вулиця, ставить те саме запитання панелі навзаєм. Причин тримати когось поруч може бути багато, і не всі вони романтичні, якщо для цього є чітко визначена причина.</p>
+    <p>Хьюго пропонує «практичну підказку» для глядачок, які хочуть зрозуміти, чи можна довіряти хлопцю, який каже, що просто дружить із дівчиною:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text">Партнер ніколи не мав відчувати до цієї людини психологічного чи фізичного потягу.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text">У нього має бути одна чи дві риси цієї людини, яких він просто не може терпіти (наприклад, деякі хлопці не витримують, коли дівчина неохайна) — тобто має існувати якийсь бар'єр, який він не здатен прийняти в цій людині.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text">Має бути очевидна різниця в тому, як він спілкується з цією людиною порівняно з тим, як він би спілкувався з романтичним партнером — наприклад, чи писав би він щось типу «доброго ранку» просто так, чи цікавився б, чи вона голодна, посеред ночі, як це часто буває між романтичними партнерами.</div></div>
+    </div>
+    <p>Іда не погоджується частково: у неї є друзі-чоловіки, які спілкуються з усіма дівчатами однаково тепло — і це, за її словами, не обов'язково ознака романтичного інтересу, це просто їхня манера спілкування. Хьюго уточнює позицію: якщо людина поводиться так з усіма без винятку, то справді це не ознака особливого ставлення саме до тебе — але питання полягає в тому, чи є різниця між «базовою» звичною поведінкою людини і тим, що вона робить додатково, понад звичну норму, саме для конкретної людини.</p>
+    <div class="highlight">
+      <p>У кожної людини своя «базова лінія» нормальної поведінки — одні від природи стримані й формальні з усіма, інші — душа компанії, завжди на зв'язку з багатьма людьми; і головне питання — чи відхиляється людина від власної звичної норми саме у стосунках із конкретною особою.</p>
+    </div>
+    <p>Деббі повертається до своєї думки про Су Джин: любити людину і цінувати турботу, яку вона проявляла тоді, коли це було потрібно, — різні речі, і одна з них є проявом власного егоїзму, спрямованого на задоволення потреби в турботі, а не справжнім коханням.</p>
+    <p>Якщо дівчина має найкращого друга-хлопця, з яким дружить довше, ніж із будь-яким романтичним партнером, і цей друг завжди поруч — готовий допомогти з їжею, грошима, вислухати, коли потрібно поплакатися, — але не є романтичним партнером, це можливо, якщо партнер знає про нього і спокійно до цього ставиться, а дружба відкрита й прозора: наприклад, якщо дівчина завжди розповідає чоловікові про своїх двох найкращих друзів-хлопців і про всі свої взаємодії з ними, чоловік не відчуває загрози, бо немає прихованості чи «тіньових» елементів у цій дружбі.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Довіра, прозорість -->
+  <div class="section" style="animation-delay:.95s">
+    <h2 class="section-title">Довіра, прозорість і спроба «перевершити» звичну поведінку</h2>
+    <p>Де межа між людиною, яка просто дружня з усіма, і людиною, яка виявляє особливий, підвищений інтерес саме до тебе? Головний критерій — не сама поведінка, а те, чи людина виходить за межі своєї звичної «базової лінії» спілкування саме з цією конкретною особою; кожна людина має свою норму нормальності, і важливо порівнювати її дії із самою собою, а не з абстрактним стандартом.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Прийняття перед трансформацією -->
+  <div class="section" style="animation-delay:1s">
+    <h2 class="section-title">Прийняття себе перед трансформацією зовнішності</h2>
+    <div class="question-card">
+      <div class="question-label">Питання панелі</div>
+      <div class="question-main">Якби кожна з вас опинилася на місці майстра, який допомагає Чу Кьон перетворитися, з чого варто було б почати?</div>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Іда</div>
+      <p>Спершу потрібно підняти впевненість Чу Кьон, допомогти їй усвідомити власну внутрішню доброту й турботливість — так само, як вона допомагала сестрам головної героїні з макіяжем. Справжня краса — це поєднання внутрішнього і зовнішнього, і лише коли людина спершу приймає себе зсередини, тоді з'являється впевненість, а вже потім — і зовнішня привабливість; макіяж тут лише посилення, а не заміна внутрішньої роботи.</p>
+    </div>
+    <p>Хьюго підсумовує: спершу внутрішня робота, лише потім — зовнішні навички.</p>
+    <div class="quote-block">
+      <div class="qa">Деббі</div>
+      <p>Я б навчила Чу Кьон правильно доглядати за шкірою — оскільки надмірний макіяж лише посилить проблеми зі шкірою, — і розповіла б про базові речі догляду, які мені свого часу допомогли подібні просвітницькі програми в школі. Багато підлітків просто позбавлені такої інформації, і освіта тут є ключовою складовою.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Мелісса</div>
+      <p>Я нагадала б Чу Кьон, що краса йде зсередини, і водночас, як людина практична, звернула б увагу на догляд за шкірою, можливо — на контактні лінзи замість окулярів. Освіта про силу догляду за собою настільки ж важлива, як освіта про психічне здоров'я, якою займається YANA; а правильний стиль волосся також здатен змінити сприйняття людини.</p>
+    </div>
+    <div class="highlight">
+      <p>Часто кажемо про «внутрішню гру» як першооснову, але буває і навпаки — покращення зовнішнього вигляду підсилює внутрішню впевненість, і це працює в обидва боки, по колу, що лише посилює одне одного.</p>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Фінальне голосування -->
+  <div class="section" style="animation-delay:1.05s">
+    <h2 class="section-title">Фінальне питання: команда Сухо чи команда Со Джуна</h2>
+    <div class="quote-block">
+      <div class="qa">Мелісса — команда Сухо</div>
+      <p>Я щиро вірю у взаємну любов Сухо і Чу Кьон: неможливо провести все життя з людиною, яка лише любить тебе, а ти її не любиш — зрештою з'явиться відчуття незадоволеності. Єдине, що мені не сподобалося, — це спосіб, яким Сухо розірвав стосунки раніше в сюжеті, але загалом я вважаю їх ідеальною парою.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Деббі — Чу Кьон і Сухо</div>
+      <p>Пригадую сцену в лісовому поході, коли Чу Кьон втекла від Со Джуна, не знаючи, як із ним бути, а він розплакався і запитав, чи зробив щось не так, — після чого Чу Кьон все одно повернулася до Сухо. Со Джун дуже хороший і щирий, але якби я сама опинилася на його місці, обравши людину, яка тебе лише жаліє, — це не було б справжнім коханням, тож фінал, у якому Чу Кьон лишається із Сухо, я вважаю щасливим.</p>
+    </div>
+    <div class="quote-block">
+      <div class="qa">Іда — Чу Кьон і Сухо</div>
+      <p>Було приємно спостерігати саме прийняття з боку Сухо — те, як він приймав Чу Кьон і без макіяжу, і з макіяжем, постійно «випробовуючи» її в хорошому сенсі; а ще в них було спільне захоплення, пов'язане з книжковим магазином коміксів, що бере початок іще з дитячих спогадів обох, і саме ці спогади роблять їхній зв'язок особливо теплим — на відміну від Со Джуна, стосунки з яким ґрунтувалися переважно на зовнішній привабливості.</p>
+    </div>
+    <p>Фінальний підсумок голосування панелі — усі троє панелісток підтримують пару Чу Кьон і Сухо, відзначаючи, що Со Джун, попри свою доброту, турботливість і талановитість, зрештою отримав не те, чого хотів — таке буває в житті.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Насамкінець -->
+  <div class="section" style="animation-delay:1.1s">
+    <h2 class="section-title">Насамкінець</h2>
+    <p>Про впевненість, яка не залежить від чужого схвалення, на прикладі іншої героїні — <a href="pink-resume.html">Рожеве резюме</a>. Про те, як любов батьків за умовами позбавляє права вибирати себе, — <a href="choose-yourself.html">Обирати себе</a>. Про заздрість і роздратування як те, що ми ховаємо в собі, — <a href="shadow-resource.html">Тінь як ресурс</a>. Про іншу корейську дораму й токсичного героя, якого «любов» виправдала у фіналі, — <a href="butterfly-wrist.html">Метелик на зап'ясті</a>.</p>
+    <div class="final-quote">
+      <div class="final-text">Краса — це не те, як ти виглядаєш, а <strong>те, яке відчуття ти даєш іншим</strong></div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>

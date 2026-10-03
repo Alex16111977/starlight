@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Справжня проблема Кессі</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Справжня<br>проблема Кессі</h1>
+  <p class="page-subtitle">Відео-есе The Take про Кессі Говард із серіалу «Ейфорія»: чому дівчат на кшталт Кессі соромлять, що означають її образи, правда про «daddy issues» і любов як «приз»</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">I deserve this, right? Because I've actually lived a life.</div>
+      <div class="hero-author">Кессі Говард · «Ейфорія»</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Чому дівчат на кшталт Кессі соромлять -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">Частина 1 · 0:00–18:50</span>Чому дівчат на кшталт Кессі соромлять</h2>
+    <p><strong>Теза.</strong> Я починаю з того, що ми як суспільство стали краще у тому, щоб менше осуджувати жінок, але Кессі Говард з «Ейфорії» нагадує нам, наскільки ми ще далекі від цього: «We've gotten better as a society at judging women less, but Euphoria's Cassie Howard reminds us how far we haven't come.»</p>
+    <p><strong>Контекст.</strong> За даними Twitter, «Ейфорія» — найобговорюваніше шоу десятиліття, і величезна частина цих твітів — розгроми Кессі. У 2 сезоні Кессі спить з колишнім своєї найкращої подруги Меді, закохується в нього й «going bananas». Ця поведінка зачепила культурний нерв: половина Twitter була зла й водночас радісно чекала на «cat fight», друга половина обговорювала «cringe» Кессі — її одержимість хлопцями, особливо Нейтом.</p>
+    <p><strong>Фінал 2 сезону.</strong> Під час вистави Лексі Кессі виходить на сцену, і здається, що вона нападає на нас, глядачів, за те, що ми її судимо: «I deserve this, right? Because I've actually lived a life.»</p>
+    <p><strong>Секс і сором.</strong> Сама «Ейфорія» не має пуританського погляду на секс; персонажі навіть цінують сексуальний досвід і глузують з незайманих. Але серіал показує, як Кессі принижують через її поширені нюдси й відео — вона на «slut page». Щоб ми не думали, ніби в «просвіченішу» епоху слат-шеймінг лишився в минулому, у 2 сезоні ситуація погіршується. Кессі поводиться як «cringe-worthy pick-me» і жахлива подруга, і майже виглядає, ніби «Ейфорія» провокує глядачів її засуджувати. Тут я підкреслюю головне: мене цікавить не лише те, що робить Кессі, а те, як до неї ставляться однолітки та глядачі, і який ефект це має на неї. Далі — наш погляд на її арку: про самооцінку, сексуальність і трюк слат-шеймінгу сьогодні.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Бекграунд і «daddy issues» -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">2:12–3:00</span>Бекграунд і «daddy issues»</h2>
+    <p>Коли персонаж робить сумнівні речі, його бекграунд допомагає зрозуміти чому. Ми можемо не вважати, що вчинили б так само, але принаймні співчуваємо: смерть батька Рю пов'язана з її вживанням наркотиків, а Кел — джерело більшості гніву й насильства Нейта. З Кессі нам одразу кажуть, що тато її любив, але підвів. Перехід від розмови про батька до її любовного життя «seamless»: вона закохувалася в кожного хлопця, з яким зустрічалась, тож її стосунки з хлопцями — продовження стосунків з батьком. Вона постійно покладає віру в хлопців, які її розчаровують.</p>
+    <p>Але, окрім архетипних «daddy issues», що спричиняють промискуїтет, є частина динаміки Кессі з хлопцями, яка має менше стосунку до неї самої й більше — до світу навколо.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Пубертат: змінилась не вона, а світ -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">3:00–4:10</span>Пубертат: змінилась не вона, а світ</h2>
+    <p>Як ми дізнаємося з бекграунду та вистави Лексі, пубертат Кессі був настільки доленосною подією, що торкнувся й Лексі: «The most defining moment of my adolescence was when my sister went through puberty.» І Лексі робить дуже важливе спостереження: змінилось не лише тіло Кессі, а й решта світу. Я пояснюю це так: Кессі не стала кимось принципово іншим — просто всі інші почали реагувати на неї інакше лише через її «більш жіночий» вигляд. Репліки: «Look at you all grown up… You really filled up. I bet you got all the boys wrapped around your finger.» Ці слова показують, наскільки це тривожно для юних дівчат, коли раптом усі починають бачити й сприймати їх як сексуальні об'єкти.</p>
+    <p><strong>Іронія:</strong> творця «Ейфорії» Сема Левінсона критикували за сексуалізацію Кессі, адже вона — єдина акторка з оголеними секс-сценами, і їх у неї багато. Але я вважаю, що це рішення має сенс: воно відображає, як Кессі і покладається на свою сексуальність, і сприймається як сексуальний об'єкт усе своє пост-пубертатне життя.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- «Прокляття» гарного вигляду -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">4:09–5:35</span>«Прокляття» гарного вигляду</h2>
+    <p>«The curse of growing up hot» може звучати як дратівлива фраза, але з дитинства, коли говорять про Кессі, говорять тільки про її зовнішність. Лексі кричить їй: «You look beautiful, Cassie… It's literally all anyone's ever told you your entire life.» Я зазначаю: це сумно, бо натякає, що ніхто ніколи не сказав Кессі про неї нічого іншого приємного. До того ж на той момент Кессі хвилюється про свій живіт, бо вагітна, — тож репліка Лексі боляча вдвічі.</p>
+    <p>Коли єдине, що в тобі бачать, — зовнішність, ти сам починаєш гіперфокусуватись на ній і засвоюєш ідею, що краса, або подобатись чоловічому погляду, — це єдине, що дає тобі цінність. «You learn to rely on it. You don't know how much power you have.»</p>
+    <p>Тому, коли Маккей розповідає Кессі про тривоги щодо футбольної кар'єри, вона починає його цілувати, і він роздратований: «Why you got to make everything so sexual?» Але здається, що вона так робить, бо навчилась: віддати секс — найлегший спосіб зробити людей щасливими, тож це її автоматична реакція на засмучення Маккея. Маккей закріплює цю ідею, коли невдовзі наполегливо просить у неї нюдси.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Дві сили, що живлять одна одну -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">5:36–7:04</span>Дві сили, що живлять одна одну</h2>
+    <p>Сила арки Кессі в тому, що вона не лише про героїню, яка жадає чоловічої валідації, і не лише про героїню, яку стереотипно клеймять «шльондрою», а про те, як ці дві сили — внутрішня і зовнішня — грають одна проти одної. Показано, як Кессі спершу вчиться ставитись до чоловіків із тим самим сумним терпінням, що має до батька, — довіряти, попри розчарування, — а потім початкова об'єктивація з моменту пубертату запускає «ланцюгову реакцію»:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text">Покладання на хлопців заради самооцінки змушує Кессі дозволяти їм заштовхувати її далі, ніж їй комфортно.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text">Кожен хлопець, з яким вона зустрічалась, просив те саме, і вона майже завжди казала «так».</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text">Це ще більше підточує її самооцінку, що робить її ще залежнішою від них. «Cassie always has a boyfriend. When have you ever been single?»</div></div>
+      <div class="num-row"><div class="num-badge">4</div><div class="num-text">Водночас хлопці відчувають її потребу сподобатись і трактують це як готовність, щоб її «штовхати».</div></div>
+    </div>
+    <p>Пришвидшена версія цього процесу — Кессі та Деніел. Вона знає, що він засипле її увагою, тож двічі приходить до нього засмучена (перший раз — на «Моллі»). Але Деніел, відчуваючи, що вона використовує його для самооцінки, вимагає права використати її у відповідь — і це вилилось у жахливий «інцельський» монолог: «You think I'm here because I'm interested in you and what you have to say, or are you dumb?»</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Однаковість світу -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">7:00–7:48</span>Однаковість світу</h2>
+    <p>В історії Кессі ми добре відчуваємо, наскільки однорідна реакція світу на неї. Усі кажуть, що вона красива, часом тими самими словами: «You are literally the most beautiful girl I've ever seen.» — «You're the most beautiful girl I've ever seen. Has anyone ever told you that?» Кожен хлопець питає, чи можна її зняти. Тому, хоч і дратує, що Кессі ніколи не дає відсічі й не виривається з цього експлуатаційного патерну, серіал показує: світ майже «зумовив» її постійним повторенням скочуватись у колію, де вона шукає любов в обмін на сексапільність, робить ті самі вибори й знову страждає. «I keep making mistakes and not learning from them.»</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Любовний трикутник: Кессі, Меді, Нейт -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">7:48–10:33</span>Любовний трикутник: Кессі, Меді, Нейт</h2>
+    <p>У пілоті 2 сезону Кессі спить з Нейтом — колишнім Меді. Вони були розійшлись лише 3 тижні й 3 дні. Кессі не каже Меді, але її «outed». У Twitter лавина фанатів кличе по її кров і зрештою отримує бажане; одночасно існує тіньова спільнота прихильників — «Cassie Hive».</p>
+    <p>Я пояснюю, чому це зачіпає: ми як суспільство зачаровані історіями про романтичних суперниць. Класичний любовний трикутник, що сягає середньовічних лицарських романів і давніших історій, — це двоє чоловіків, що змагаються за жінку. Але коли історія про двох жінок, що змагаються за чоловіка (у давній літературі це рідкість), тон інший: чоловік «перемагає суперників, щоб здобути серце жінки», а про жінок кажуть, що вони «крадуть» чоловіків у інших жінок. Лексі: «Is this the part of the play where I steal Jake from Marta?» Ця мова відображає, що чоловіче суперництво в коханні легітимізоване в суспільстві, тоді як табу на жіноче «викрадення» чоловіків лишається унікально потужним. Кессі: «But I'm not the bad guy.» Мама: «Well, you're not the good guy.»</p>
+    <p>Twitter (принаймні найголосніша частина) сприйняв історію буквально: Кессі — лиходійка, що зрадила Меді. Але, придивившись, цей трикутник коментує те, як ми думаємо про жінок, що б'ються за чоловіків. Хоч Кессі мала б бути «спокусницею», вона не така, якими зазвичай зображають жінок, що крадуть чоловіків — не наполеглива й не незалежна. Вона — повна романтичка. «You deserve someone who's passionate and loving who yearns for you…» Ця солодко-наївна дівчина одержима ідеєю справжнього кохання і вірить, що для цього треба пожертвувати всім: «I ruined my entire life for you.»</p>
+    <p>Тим часом чоловічий «приз», за який борються, — Нейт — явний лиходій. Глядач знає, що, по суті, жодна з дівчат не мала б бути з ним — і саме це робить цю версію трикутника такою трагічною. Меді може бути лютою й страшною, коли її скривдили («She'll actually kill you»), але вона — чудова подруга для Кессі: «I would have never done this to you.» Тож, радше ніж «покинута жінка, що тримається за свого чоловіка», вона, можливо, жінка, яка засмучена, бо любить свою подругу: «This isn't about Nate. This is about you and me and our friendship.»</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Одержимість Нейтом і «cringe» -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">10:33–14:05</span>Одержимість Нейтом і «cringe»</h2>
+    <p>Після зв'язку з Нейтом Кессі стає одержимою. Це запустило другу половину Twitter — тих, хто не хотів, щоб Меді розбила Кессі череп, а знаходив її жалюгідною й «cringe-worthy». Одні вказували, що Нейт — аб'юзер і соціопат, а Кессі — ідіотка, що цього не бачить; інші — що він навіть не так цікавиться нею; ще інші — що вона маревна, ігноруючи натяки на його закритість (хоча актор Джейкоб Елорді зазначав, що питання складніше за чітку орієнтацію через проблеми Нейта з сексуальною поведінкою батька). Але найбільше людей дратувала готовність Кессі іти на що завгодно, щоб хлопець її захотів.</p>
+    <p>Початок одержимості — її ранковий ритуал: камера трясеться, поки Кессі маніакально прихорошується, намагаючись стати абсолютно досконалою «just in case Nate notices her»; «for those three hours she spent getting ready, she only thought about one thing.» Вона також починає одягатись, робити зачіску й макіяж як Меді, що говорить: її одержимість Нейтом повністю замінила будь-яке почуття себе.</p>
+    <p>Мейкап-артист «Ейфорії» Донні Деві про 7-му серію 2 сезону: «The goal was to sort of shift her whole vibe to the season 1 era Jules by Maddie by Cassie hybrid that would appeal to Nate or possibly to his subconscious.» Волосся Кессі світліше, рівніше й нерухоміше, шкіра значно блідіша — що, за Деві, майже натякає, ніби вона «unwell»: «gorgeous, but weirdly sterile like a mannequin», юнацька невинна енергія зникла. Усе, чого вона хоче від життя, — бути Нейта, до ступеня, на який соромно дивитись.</p>
+    <p><strong>Два типи «cringe».</strong> Мелісса Доль (авторка «Cringeworthy: A Theory of Awkwardness»): вікарне збентеження буває двох типів — contemptuous cringe (зневага) і compassionate cringe (щире співчуття людині, що зазнає приниження). Більшість твітів про Кессі — другої, зневажливої категорії. Ми часто «cringe» з того, що частково впізнаємо в собі. Доль: збентеження — «self-conscious emotion», тож ви б його не відчували без особистої залученості в те, що викликає cringe. Тобто ті, хто глузує з Кессі в Twitter, можливо, почасти глузують і з себе. Адже досвід закохування до нестями, коли віддаєш усі думки й енергію комусь, — не унікальний для Кессі. Втрата почуття себе й одержимість хлопцем після сексу — дуже поширена поведінка юних дівчат. Той момент, коли бачиш свого краша в коридорі школи, і переконання, що ти зможеш «пробитись» крізь погане до справді хороших стосунків, — «instantly recognizable to most of us, even if we don't like to admit it».</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Вистава Лексі — «снігова куля» -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">14:05–18:50</span>Вистава Лексі — «снігова куля»</h2>
+    <p>На кінець 2 сезону ми разом з усією Euphoria High дивимося виставу, яку написала сестра Кессі Лексі. Це створює «калейдоскопічний ефект»: усередині світу «Ейфорії» є менша «снігова куля», яку дивляться самі персонажі. Більша частина вистави — про Кессі (в п'єсі «Холлі») і про те, яким було дорослішання поруч із нею. Лексі виражає чимало жорстокого з того, що ми зазвичай думаємо про жінок, які ставлять чоловічу увагу в центр життя: заздрість до їхньої уваги, змішана з натяком, що вони марнославні, пусті й бездарні. Водночас навіть у виставі Лексі розуміє, що реакція людей на Кессі/Холлі не зовсім у її владі: «I'm not really the kind of person who wants to be known for their body, but I also didn't want the troubles that came along with it.» І що все, чого справді хоче Кессі, — любов: «At that age, we all thought we knew what love looked like. None of us had any idea what it actually was.» Це бажання знайти справжню любов — у самому ядрі «шльондровитості» Кессі: вона так поводиться — ставить хлопців вище подруг, будує життя навколо чоловічої уваги — щоб знайти любов.</p>
+    <p>Арка Кессі в 1 сезоні не підштовхує глядача ні «за», ні «проти» неї: вона робить сумнівні вибори, але з нею трапляються й жахливі, незаслужені речі. Це висвітлює низьку самооцінку, що рухає її поведінкою, і водночас показує, як кожен її сексуальний акт з хлопцем ставиться їй у провину однолітками: «She's a [ __ ] through and through, bro.» І ми далеко не подолали слат-шеймінг: у добу нюдсів, коли все знімають, шкода репутації може бути ще лютішою й конкретнішою.</p>
+    <p>У 2 сезоні ми бачимо, як Кессі робить усе менш прощальні речі: жахливо ставиться до Меді, яка по-справжньому її любить, і жертвує всім, включно з усім відчуттям ідентичності, заради найгіршої людини в шоу. Здається, що «Ейфорія» запрошує нас судити Кессі, майже «bait us into hating her». Усередині «снігової кулі» цей суд над Кессі відбувається на сцені вистави Лексі. І навіть коли Кессі зривається, вистрибує на сцену й намагається виправдатись, кричачи на Лексі, а через неї — на нас: «You've never even lived. That's why you're able to stand up here and judge all of us» — «Ейфорія» все одно не робить перспективу Кессі головною, бо це зняло б відповідальність з нас. Поки Кессі говорить, її перериває версія себе з вистави. Ця сцена натякає на горезвісну сцену з каруселлю з 1 сезону, де Кессі переборщила з «Моллі» і стала надмірно збудженою на каруселі, поки на неї витріщались і знімали глядачі. Кессі зривається й нападає на свою двійницю у виставі. І це видіння — жінка, що бачить версію себе, з якої глузують для публічної розваги, зривається і знову виставляється напоказ за зрив, — дуже впізнаване в нашій культурі. «Ейфорія» знає: культурно ми одержимі спостереженням за тим, як жінки «going off the rails», особливо якщо вони красиві й популярні.</p>
+    <p>У нульових публіку й медіа зачаровували публічні «розпади» жінок на кшталт Бритні Спірс, Аманди Байнс, Ліндсі Логан та Емі Вайнгауз. Реакція на «спуск у божевілля» Кессі довела, що ми, можливо, й досі так само схильні сприймати вигляд популярної жінки в болю як чисту розвагу.</p>
+    <p>Легко співчувати дівчині на кшталт Кессі певною мірою й нетривалий час, поки вона зрештою не візьметься за розум і не припинить повторювати ті ж дурні помилки, безпідставно очікуючи іншого результату. Але чи можемо ми зберегти емпатію й повагу до неї, якщо вона не вириється з цього циклу?</p>
+    <p><strong>Підсумок:</strong> арка Кессі у 2 сезоні — це виклик. Ніби нас питають: «Will you stay with us through the points we're trying to make, or will you again get seduced and distracted by the spectacle of a beautiful girl going nuts and again forget to actually feel for her?» Судячи з реакцій онлайн, сталося і те, й інше. Триває гаряча дискусія між тими, кого Кессі бентежить і відштовхує, та тими, хто їй співчуває, — і це само по собі прогрес.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що насправді означають образи Кессі у 2 сезоні -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">Частина 2 · 18:50–27:41</span>Що насправді означають образи Кессі у 2 сезоні</h2>
+    <p><strong>Теза.</strong> У 2 сезоні Кессі переживає великі зміни, і змінюється її стиль. Вигляди в «Ейфорії» — впливові й іконічні, але мають й глибше значення, що відображає те, що відбувається з персонажами. Тобто я питаю: який «секретний емоційний зміст» кожного з луків Кессі?</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Копіювання Меді -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">19:12–20:14</span>Копіювання Меді</h2>
+    <p>Коли Кессі відчайдушно хоче привернути увагу Нейта, вона міняє стиль на подібний до стилю його колишньої — Меді, і просто повністю копіює її: такий «Y2K-esque» комплект-набір і міні-сумочка. Як пише Vogue, комплекти й яскраві костюми — «легкий впливовий скорочений запис» для «королеви бджіл» (думайте про Шер Хоровіц чи Блер Валдорф), і Меді не виняток: комплект каже «I have my life in order», проєктуючи іноді обсесивну потребу контролю, властиву «королевам бджіл». Тому іронічно, що Кессі намагається перейняти впевнений стиль Меді, коли сама очевидно виходить зі всякого контролю.</p>
+    <p>Макіяж теж міняється: її звичайний денний лук — без тону й з сяйвом, але після закоханості в Нейта вона починає перенімати важчі, «вампічніші» луки Меді, навіть робить такі самі «laid down edges», що для білошкірої Кессі не найкращий вигляд. Це на мить привертає увагу Нейта, але це інсайт у те, наскільки швидко Кессі втрачає себе, пробуючи будь-що — навіть копіювати подругу, яку вона зраджує, — аби отримати мимохідний погляд хлопця.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Джулс і «гібрид» -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">20:28–21:30</span>Джулс і «гібрид»</h2>
+    <p>Кессі також починає трохи сходити на Джулс — можливо, відчуваючи таємну привабливість Нейта до неї. На кінець 2 сезону її шкіра блідіша, волосся рівніше й світліше за Джулс; яскрава графічна підводка й кольори теж нагадують Джулс. Донні Деві (мейкап-артист): «The goal was to sort of shift her whole vibe to be season 1 era Jules, Maddie, Cassie hybrid that would appeal to Nate or possibly to his subconscious.» Нейт фантазує, що Кессі перетворюється на одну з них або на обидві; у фіналі яскраве волосся й макіяж відсилають до Джулс, а комплект одягу — до Меді. «Am I everything you wish for?» Це також вказує на те, що він ще не пережив розрив з Меді та має сильне притягання до Джулс (що ускладнює історія Джулс із його батьком), і невпевненість Кессі виходить з того, що вона знає: Нейт не повністю її. «We got to play with so many really cool looks because I was all these other characters that I thought Nate wanted.»</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- «Лялька» Нейта -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">21:31–22:30</span>«Лялька» Нейта</h2>
+    <p>Після тих каральних годинних ранкових ритуалів для привабливості Нейту — це було її способом сказати йому, що вона його. Пізніше в сезоні вона прямо каже Нейту, що він може зробити з неї свою «ляльку»: «You can't control what I wear, what I eat» — і ми бачимо мрійливу сцену, де він її одягає. Ця фантазія — символ їхнього стосунку: він робить її тим, ким він у цей момент бажає, а вона нічого не хоче більше, ніж бути під його контролем і щоб її «мали». Нейт любить дівчат жіночних й невинних, тому він зав’язує їй баклажано-блакитну стрічку в волосся й одягає її в сукню з пом-помами, яка була з весняної колекції Moschino 2022 року від Джеремі Скотта. CBR пише: ця колекція викликала критику як «інфантилізація жінок», і була відсиланням до домівки 1950-х, що відображає фантазію Нейта про те, щоб зробити Кессі вагітною (що, на думку багатьох фанатів, вона й є).</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Костюм не стиль, а «роль» -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">22:33–23:38</span>Костюм не стиль, а «роль»</h2>
+    <p>У 2 сезоні Кессі загубилася і шукає роль. Після спроби бути наче Меді вона «метушиться», шукаючи будь-що, що може подобатися Нейту. Один просто випадковий лук збігається з пробами для шкільної «Оклагоми» — і Рю думає, що Кессі буквально грає персонажа: «Do I look like I'm in Oklahoma?» Костюмна директорка Хайді Біввен (Vogue): «I think what you see her trying to emulate is what she wishes she was. And so, more than a lot of the other characters, I feel like Cassie's clothes are a costume.» У фіналі здається, що «в Кессі практично не лишилося Кессі»: волосся не пружинять, вона «смертельно бліда», виглядає, за словами Деві, «unwell». Її вигляд трохи роботизований, як у дружини з Степфорда — можливо, це відлуння фантазії Нейта про ідеальну сім’ю. Прагнучи підійти на роль дівчини Нейта, Кессі придушує власну ідентичність. І страшнувато, коли Меді каже: «Well, she certainly looks the part.»</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- «Сумні спортивки» і «купальник відчаю» -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">23:39–24:05</span>«Сумні спортивки» і «купальник відчаю»</h2>
+    <p>Деякі аутфіти не потребують експерта: сірі «депресивні» спортивки Кессі і «купальник відчаю». Кессі бачить, як Нейт забаганяє над Меді на її день народження, і реагує. Цей купальник в іншому кольорі був би просто реччю Меді — її стиль — лямки та вирізи, але на Кессі це «cry for help».</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Дитяче й сексуальне одночасно -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">24:05–25:30</span>Дитяче й сексуальне одночасно</h2>
+    <p>Базовий стиль Кессі — юний й жіночний: майже все, що вона носить, — світло-рожеве або блакитне: «кольори маленької дівчинки» і «дитячі зачіски» — хвостики, подвійні пучки, кіски, але облітні силуети й глибоке декольте — жіночі й чуттєві. Ці дві сторони відбивають, як у житті Кессі триває постійне «push and pull» між невинністю та сексуальністю. «We should just pick the hottest, most confident bad [ __ ] version of ourselves and be that for the rest of the school year.» Її натура — мила й незріла, але вона звикла, що її сприймають як секс-об’єкт, і знає, що це частина її сили.</p>
+    <p>Донні Деві про епізод, коли Кессі вперше займається сексом з Нейтом і зраджує Меді: «We loved keeping her skin dewy with super flushy cheeks and lips for this episode. We were always bringing her lip color out beyond her lips to sort of look like make-out cry lips» — і крихітні стрази, що обрамляють очі: ще й ніч триває, її «перелякані, відверто занепокоєні очі» замкнені у «делікатне, невинне сяйво». «She wasn't really trying to do what she did, right?» Протягом сезону люди, як-от її мати, тиснуть на це протиріччя: вона ніби безсила та невинна, але очевидно робить вибір лягти з чоловіком своєї найкращої подруги. «I'm not the bad guy. Everyone keeps looking at me like I'm the bad guy…» — «Well, you're not the good guy.»</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Кессі проти Меді: два полюси -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">25:32–27:41</span>Кессі проти Меді: два полюси</h2>
+    <p>Сюжет таємних стосунків Кессі та Нейта вершиться відкритим конфліктом двох подруг, і це відбивається у контрасті їхніх луків. Подивіться, якою гладенькою й бездоганною виглядає Меді навіть після бійки, а вигляд Кессі — цілком рознесений. І загалом, поки Кессі у 2 сезоні пробує луки Меді, «вона воює програну битву», бо їхня суть протилежна: Меді контрольована й доросла, Кессі — дитяча й «бердак». «I just want to die.»</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Мейкап Меді — важкий й сміливий, з гострими «смертельними» стрілками; луки Кессі у 1 та на початку 2 сезону — натуральні, сяючі, м’які.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Причіски: у Меді — гладкі щільні укладки й хвости, що сигналізує її зібраність і контроль; у Кессі — розпущені золоті кудрі.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Еволюція: коли Кессі копіює Меді з 1 сезону, сама Меді переходить до стилю 90-х — більш відважного й модного, можливо, під впливом її нової дуже модної наставниці Саманти.</div></div>
+    </div>
+    <p><strong>Контроль над власним образом.</strong> Коли Меді носить гіперсексуальний одяг, здається, що це вже не про секс, а про демонстрацію впевненості, необхідної, щоб носити таке. Але коли сексуальні речі носить Кессі, — можливо, через форму її тіла й те, як воно ніби вивалюється з одягу, — вона виглядає ще сексуальнішою, ніж планувалося, і ніби її власне тіло не цілком під її контролем. Тобто контроль, який має Меді і якого не вистачає Кессі, розповсюджується й на те, скільки влади вони мають над власним образом. Кессі проводить 2 сезон у волі поривів свого серця, і її одяг та макіяж відображають цей розсіяний, невпорядкований емоційний стан. Тоді як Меді та інші персонажі одягаються, щоб виразити себе, Кессі просто сліпо пробує все, що може, щоб її полюбили. Але повністю стираючи себе, вона цього зробити не може.</p>
+    <p>Хайді Біввен: «She's still trying to figure out how to present herself to the world. Hopefully, in season 3, we'll see a new Cassie style that's actually about who she is.»</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Правда про «daddy issues» -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">Частина 3 · 27:41–40:48</span>Правда про «daddy issues»</h2>
+    <p><strong>Теза.</strong> Чому «daddy issues» висміюють або фетишизують, коли це — синонім відсутнього, байдужого чи дисфункційного батьківства? Саме про це я питаю.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що це означає в поп-культурі -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">27:41–29:30</span>Що це означає в поп-культурі</h2>
+    <p>«Daddy issues» — це «umbrella unsympathetic term» для жінок зі складними чи нездоровими стосунками з батьком, найчастіше тому, що він був фізично чи емоційно відсутній. У дорослих стосунках таких дівчат на екрані (і в реальному житті) вважають дуже сексуальними, охочими догодити й схильними до старших чоловіків. Через це вони бажані, але й осміяні: вважається, що вони не поважають себе, надміру чіпляються й ревнують. Коли в дитини є відсутній чи байдужий батько, це часто призводить до незахищеного (insecure) типу прив'язаності — серйозної проблеми, з якою треба працювати. То чому в дівчат це сприймають як «turn-on», жарт або привід списати людину як безнадійну?</p>
+    <p>У чоловіків є довга історія фетишизації жінок із daddy issues, бо вважається, що вони автоматично означають промискуїтет і надмірну готовність догоджати. Ця риторика водночас зменшує й знецінює цих жінок як особистостей: ідея в тому, що вони годяться для необтяжливої зв'язки на одну ніч, але надто «зламані» для довгих стосунків. У поп-культурі дівчина з daddy issues — це «hot mess»: її життя нібито назавжди зіпсоване втратою батька, і це для неї погано, але історія часто просто використовує її як бічну лінію для більш об'ємного персонажа або як об'єкт жалю.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Харлі Квінн і Мерилін -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">29:30–31:30</span>Харлі Квінн і Мерилін</h2>
+    <p>Один із найкращих сучасних прикладів фетишизації daddy issues — Харлі Квінн, на-вмикання-вимикання дівчина Джокера (Suicide Squad, Birds of Prey). З коміксів ми знаємо, що батько Харлі став причиною, чому вона пішла вивчати психіку — вона хотіла зрозуміти його байдужість і зради. Коли починаються її стосунки з Джокером, вона перетворює цього дуже дисфункційного чоловіка на свою нову батьківську фігуру. Маркетинг «Загону самогубців» популяризував образи Харлі в топі «Daddy's Little Monster», подаючи це як чоловічу фантазію — і справа не лише в тому, що її грає красуня Марго Роббі, а й у її дикій нестабільності та непередбачуваності, що читаються як код «сексуально сміливої й експериментальної».</p>
+    <p>«Блондинка» надає ще трагічнішого тону «daddy issues» Мерилін Монро: вигадана Мерилін називає обох чоловіків «daddy» і відчайдушно потребує схвалення чоловічих авторитетів. Тобто знову натяк: наша найвідоміша секс-ікона створила себе такою бажаною лише тому, що жадала уваги «тата». Але результат — дуже плаский і редукційний портрет того, як може вести себе людина з відсутнім батьком. «Блондинка» фактично каже, що всі невпевненості та майбутні проблеми Мерилін випливають із дитинства без батька і що вона назавжди позбавлена впевненості та самоцінності; вона майже немовля в тілі дорослої, «forever infantilized». Підсумок: поп-культурне розуміння дівчини з daddy issues — «highly one-dimensional and pretty insulting».</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Кессі як «hot mess» -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">31:33–32:40</span>Кессі як «hot mess»</h2>
+    <p>«Ейфорія» краще за більшість досліджує, чому й як культура ображає дівчат із ознаками проблем із батьком. Кессі, яка має підручникові daddy issues через покинутість батьком, у очах однолітків втілює архетип «hot mess». Хлопці зі школи бачать у ній гіперсексуальну й добиваються сексу, а потім «шеймлять» за згоду. Хлопці-партнери штовхають її на нюдси чи зйомки, але погану репутацію отримує саме Кессі. Усе це заважає стосункам із тими хлопцями, які її поважають: Маккей у 1 сезоні захищає її від критики, але на неї так сильно навішано ярликів, що навіть він іноді піддається цьому погляду й ставиться до неї погано: «Why you got to make everything so sexual?» Тому в Кессі ми бачимо обидві сторони монети: її фетишизують як одну з найпопулярніших дівчат школи й водночас демонізують і публічно ганьблять як сумнозвісну постать.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Типи прив'язаності -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">32:43–36:40</span>Типи прив'язаності</h2>
+    <p>Дослідження показують: моделі прив'язаності, сформовані в дитинстві, можуть зберігатися все життя, а занедбане чи дисфункційне виховання часто дає дитині незахищений тип прив'язаності. Daddy issues пов'язані з одним із трьох типів: тривожно-заклопотаний (anxious preoccupied), уникаючо-відсторонений (dismissive avoidant) або тривожно-уникаючий (fearful avoidant).</p>
+    <p>Кессі втілює тривожний тип — бажання близькості, змішане з глибоким страхом відторгнення й низькою самооцінкою. Шоу розкладає корінь проблем: її підвів батько. «Used to visit them on weekends. He said he was coming and then sometimes more than a month would go by.» Спочатку він любляче її підтримував, але коли власні залежність та фінансові проблеми його перевантажили, він почав її занедбувати саме тоді, коли вона входила в буремні підліткові роки. До того ж у пубертаті інші дорослі чоловіки навколо починають пожадати її — тобто її знову підводять люди, які мали б дбати про неї, і водночас вона раптово отримує потік уваги до тіла. Її тривожно-заклопотана прив'язаність проявляється в боязкому, надмірно запопадливому підході до романтичних стосунків: «She fell in love with every guy she ever dated. She didn't like to be alone.» Вона віддає занадто багато себе чоловікам і ігнорує, що вони не дбають про її інтереси. Виходить самозбувний цикл: стосунки не складаються й підтверджують її найгірший страх, що її неминуче покинуть; вона реагує ще більшою поступливістю, але її не поважають, бо здається, що вона не поважає себе. Це доходить до її «cringe-worthy» поведінки у 2 сезоні: що гірше з нею поводиться Нейт, то більше вона робить, щоб привернути його увагу.</p>
+    <p>Сумна іронія — вона та інші в крайніх прикладах, віддаючи себе, роблять неможливим те, щоб їх полюбили такими, якими вони є. До того ж вони пропускають фундаментальну правду: нічого, що ми можемо зробити, не змусить когось нас любити, так само як нічого, що могла б зробити Кессі, не змусило б тата залишитися чи бути уважнішим. Але саме ця емоційна хибна думка — підсвідома віра, що тата не було, бо вона щось зробила не так чи з нею щось не так, — рухає дисфункційні дорослі стосунки.</p>
+    <p>На іншому кінці спектра зневага батька може викликати уникаючу прив'язаність: замість чіпляння — холодність і відстороненість, щоб більше не страждати. Приклад — Марго Тененбаум, яку покинув біологічний батько й емоційно поранив дистанційний прийомний; у дорослому віці вона замкнена («secrecy»): ніхто не знав, що вона палить із 12 років; емоційно далека від чоловіка й опирається вразливості з тим, кого любить найбільше, зі своїм зведеним братом Річі. Трагічно, що навіть коли дорослі партнери надійні, людина з daddy issues і незахищеною прив'язаністю може не прийняти відданого партнера або навіть шукати тих, хто погано з нею поводиться. «Forrest Gump»: наруга від батька в дитинстві штовхає Дженні до небезпечної самознищувальної поведінки з «поганими» чоловіками, тоді як вона уникає близькості з Форестом, який любить її глибоко.</p>
+    <p>Важливо: відсутній батько може виглядати не так, як ми думаємо. Сім'я Лав Квінн («You») доволі благополучна, вона не знала ні фінансового, ні фізичного занедбання, але в корені проблем у тому, що вона й брат відчували батька дистанційним. У «Train Wreck» уроки батька Емі в дитинстві стають «origin story» її важкого пияцтва, гулянок і промискуїтету. У «Flight Attendant» батько пив із Кессі в зарано юному віці, що призвело до її дорослої проблеми з алкоголем: вона може тепло згадувати тата, але щоб вирватися з нездорових циклів, треба чесно подивитися, що було не так із його поведінкою.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- «Невже вона приречена?» -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">37:45–40:48</span>«Невже вона приречена?»</h2>
+    <p>Дивлячись такі історії, не можна не питати: чому так часто вважають, що жінка з daddy issues ніколи цього не подолає й приречена на все життя? На щастя, сучасніші приклади показують героїнь, що опрацьовують минулі проблеми й вчаться здоровішої дорослої поведінки. Навіть Дженні й Марго досягають прогресу, хоч це й не головний фокус. Диковинніші версії — Лав і Харлі — також руйнують наші очікування, бо це сильні присутності, яких не можна відкинути: Лав теж виявляється насильницькою, власницькою й непередбачуваною, тож може постояти за себе; Харлі в «Birds of Prey» нарешті отримує власне життя поза Джокером.</p>
+    <p>Якщо придивитися, є й багато позитивних прикладів жінок із відсутніми батьками, яких це не визначає. Деякі реагують, приймаючи традиційно «чоловічі» риси — безстрашність, відвагу, силу. Стосунки Мередіт Ґрей із батьком майже відсутні, вона навіть заперечує, що він її батько, розмовляючи зі зведеною сестрою Лексі: «We do not have the same dad. My dad disappeared when I was 5 years old and I never saw him again.» Але цю відсутність вона перетворила на запеклу незалежність і цілеспрямованість. Схожу тему бачимо в багатьох фільмах Disney, де героїні — без батька чи обох батьків і мусять самі заповнити порожнечу: Рапунцель — без батьківської фігури й зі злою «мамою», але відважна й ризикує заради правди про літаючі вогники; принцеса Тіана теж без батька, але працьовита й націлена на кар'єру; навіть Попелюшка, батько якої одружився вдруге й не захистив її від жорстокої мачухи, знаходить у собі наполегливість, силу волі й чіткі цінності: «Kindness is free. Love is free.»</p>
+    <p>Тож за відсутності ідеального батька (а іноді — жодного з батьків) ці героїчні взірці можуть створити уявну версію цієї постаті, спробувати її втілити й «виховати» себе самі. Моделі прив'язаності народжуються у стосунках з обома батьками, не лише з батьками-чоловіками; на них впливають і брати та сестри, вчителі й будь-хто, хто доглядає, бо по суті йдеться про довіру. «You and your father are obsessed with each other. You're diagnosing me with daddy issues.» Зводити цю складність до редукційного, гендерно забарвленого поняття «daddy issues» — це прибирати всю нюансовість. Придивившись, ми бачимо персонажів, яким потрібні не глузування, а підтримка, і деяких, що виробили вражаючу стійкість і способи справлятися. Ми всі можемо глибше розглянути власні проблеми прив'язаності, і скільки б разів ми не помилялися, завжди є шанс замислитися й змінити модель.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Любов як «приз», який треба виграти -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">Частина 4 · 40:48–52:46</span>Любов як «приз», який треба виграти</h2>
+    <p><strong>Теза.</strong> Любов давно сприймали на екрані як приз: «Love has long been seen as a prize to win on screen». Але наскільки важливим був цей приз для мотивації персонажа загалом — розділялося: для чоловіків це був лише «nice cherry on top», а для жінок — часто «animating drive» їхнього життя. Я розбираю, як цей троп сформував наш погляд на стосунки, чому він «fell apart» і як сучасні оновлення не позбулися кохання, а лише змінили те, що означає «виграти».</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Як виглядає троп -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">41:42–43:50</span>Як виглядає троп</h2>
+    <p>Для багатьох жіночих персонажів, хоч яке в них життя, головна мета — знайти хлопця, який у неї закохається. Вони можуть мати чудових друзів, круту роботу, загалом класне життя, але «they always feel like something is missing. And that something is always a dude». Деякі героїні не потрапляють у цю пастку, бо мають «bigger fish to fry», але дивовижно багато жінок змушені діяти з ідеєю, що знайти кохання (чи його подобу) — єдине, на чому треба фокусуватися, єдине, що зробить їх цілими: «Everyone needs a man». Такі героїні почуваються покинутими життям, бо не мають ідеальних стосунків; вони, можливо, до цього зосереджувалися на іншому й тепер бояться, що не матимуть шансу знайти «того самого». «Everyone I know is either getting married or getting pregnant or getting promoted and I'm getting coffee and it's not even for me.»</p>
+    <p>Її бажання — не абстрактне «було б непогано». Полювання на «того самого» рухає нею більше за все. Вона вважає, що виграш цього призу — «tying down the guy» — спосіб довести свою цінність і собі, і суспільству; а клас хлопця, якого вона отримає, — пряме відображення її власної цінності.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Любов має бути роботою -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">43:23–44:18</span>Любов має бути роботою</h2>
+    <p>Через такий настрій героїня думає, що знайти «того самого» має бути важким завданням: якщо легко — значить, він «not really worth it». Коли їй трапляється хлопець, якому вона просто подобається такою, яка є, і який не змушує її ганятися, вона не вірить, що це справжнє кохання, бо в її очах «love should be work». «I'm used to the hunt and this is effortless. It's freaking me out.» Оскільки пошук кохання — центральна мотивація життя, вона готова відсунути всі дружби, роботу, навіть родину і змінити все в собі, якщо цього вимагає здобуття бажаного. Вона готова повністю стерти справжню себе, бо вірить, що та версія, яка достатньо хороша для нього, — це та, ким вона й має бути.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Кессі в 2 сезоні -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">44:18–45:15</span>Кессі в 2 сезоні</h2>
+    <p>У 2 сезоні «Ейфорії» ми бачили, як відчайдушне бажання Кессі бути бажаною і «claimed» хлопцем, особливо таким, як Нейт, якого вважають ідеалом на вершині шкільної «харчової піраміди», змусило її повністю підірвати своє життя і зруйнувати справжню, люблячу дружбу з найкращою подругою. Щойно вона зрозуміла, що бути з Нейтом можливо, ця мета повністю поглинула все інше: кожна хвилина стала присвячена тому, щоб стати дівчиною, якою зацікавиться Нейт. А оскільки вона бачить це як пошук кохання — найважливішої речі, — вона навіть не може до кінця збагнути, чому все розвалюється так видовищно.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Щасливіші приклади -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">45:15–46:48</span>Щасливіші приклади</h2>
+    <p>Проте не всі історії такі сумні. Деякі героїні, які спершу йдуть цим шляхом, учаться на помилках і зрештою мають щасливіше життя. Керрі Бредшоу майже все життя після Біґа «moping around, trying to force him to love her». Шарлотта обрала інший шлях: почала серіал найвоєнізованішою мисливицею за коханням «with rules and regulations to match», потім отримала хлопця, який «on paper» був усім, чого вона хотіла, — і не склалося. Але вона не залишилася намагатися змусити стосунки працювати і не здалася остаточно, а відкрила розум для інших можливостей того, як виглядає любов і ідеальний хлопець, — і через цей новий настрій знайшла «того самого». І головне — зрозуміла, що романтичне кохання — не все, і втримала друзів поруч: «Maybe we could be each other's soulmates and then we could let men be just these great nice guys to have fun with.» А поки Кессі повністю поглинає пошук кохання, зрада якраз пробуджує Меді: вона бачить, наскільки нездоровими були її стосунки з Нейтом, і розуміє, що мусить рухатися далі й залишити його, якщо хоче щасливого, повноцінного життя. «Out of sight, out of mind.»</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- З боку чоловічих персонажів -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">46:48–48:51</span>З боку чоловічих персонажів</h2>
+    <p>У чоловічих історій «getting the girl» — зазвичай мила маленька премія, ще одне «feather in his cap», щоб показати, який він крутий і бажаний, але аж ніяк не головний двигун сюжету чи фокус життя. У нього багато справ, романтика навіть не спадає на думку, якщо він випадково не зустріне гарну даму у своїх пригодах, та й тоді це швидкоплинно. Для жінок отримати хлопця подається як приз її життя, для чоловіків вона — додатковий трофей.</p>
+    <p>Одне з відгалужень цього тропу, популярне у 80-х і 90-х: чоловік не цінує дружину, доки вона не збирається піти, і через 90 хвилин екшну (де її або немає, або вона «damsel in distress») він розуміє, що все ж хоче її втримати. Приз тут — не вона й не її любов, а її збереження і зазвичай повернення від якогось «nerdy money guy», з яким вона почала зустрічатися. А коли чоловічі персонажі таки ставлять кохання і «getting the girl» головною метою, вони майже завжди «creepy nice guys»: усі зусилля — на полювання, але лише тому, що бачать її як об'єкт, який «заслужили». «She can't say it's not meant to be. It is meant to be. And you know why? Cuz I mean it to be.» Вони не вважають її тією, що їх «завершить», як жіночі версії тропу, але мають схожий потяг: ніби захоплення цієї людини дозволить нарешті довести світові власну цінність. І якщо жіноча версія тропу змінить у собі все, щоб отримати хлопця, то чоловіча думає, що жінка, яку він хоче, має повністю підлаштуватися під те, що зробить щасливим його. «You don't want me to quit my job so you can feel like you have a girlfriend?»</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Як історії перевертають троп -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">48:51–51:00</span>Як історії перевертають троп</h2>
+    <p>З часом ми дедалі частіше бачимо історії, що перевертають цей троп або взагалі від нього відмовляються. Класична «Legally Blonde»: Ел спершу має єдину мотивацію — змінити все життя, щоб повернути Warner'а, але досить швидко розуміє, що це не найкраще місце для її енергії. «All to get my boyfriend Warner back. And now he's engaged to this awful girl, Vivian. So it was all for nothing.» Їй потрібно ще трохи часу, щоб повністю прийняти, що Warner не те майбутнє, яке вона хоче, але їй легше, бо в неї є й інше: вона ідеально вчиться, дружить із колишніми «ворогами» й сама рятує ситуацію наприкінці. Її приз — повноцінне, наповнене життя серед людей, яким вона не байдужа. У «Bend It Like Beckham» Джесс узагалі не цікавлять хлопці чи стосунки: її головний рушій — стати кращою футболісткою. Вона таки закохується, але не віддає заради нього життя чи майбутнє і зберігає плани поїхати в Америку грати у футбол із найкращою подругою Джулс.</p>
+    <p>У суспільстві, де жінкам часто кажуть, що головне — знайти хлопця й осісти, може бути страшно робити щось інше, але в таких історіях видно, наскільки наповнююче — розвивати свою цілісну особистість. Якщо романтичне кохання з'являється — чудово, але не обов'язково орієнтувати життя лише на нього.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Підсумок -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">50:36–52:46</span>Підсумок</h2>
+    <p>Троп «love as a prize» сьогодні здається нам застарілим, бо ми, на щастя, засвоїли той самий урок, що й багато наших улюблених героїнь: змінювати все життя заради того, щоб знайти чи втримати те, що, за словами суспільства, має зробити тебе щасливою й цілісною, — це не спосіб жити. Історії також відкрилися до того, що кохання може бути рушійною силою і для чоловіків — і не лише у «creepy nice guy» варіанті. Дедалі більше історій розглядають реальність з іншого боку: героїв, які нарешті «спіймали» мрію, лише щоб зрозуміти, що самі себе в пастку заманили: «I wonder if the sad I'd be without you would be less than the sad I get from being with you.» Також ми, на щастя, відступили від жорстких бінарностей щодо гендеру, сексуальності й стосунків, що дало змогу побачити різні ідеї кохання — не як приз, за який треба боротися, а як щось позитивне, що ти будуєш із людиною, якій ти так само небайдужий, як і вона тобі. «I know I am imperfect, but I will humble myself before you because I cannot imagine my life without you.»</p>
+    <p>Крім того, найбільший зсув — у тому, що персонажам дозволяють узяти час, щоб з'ясувати, чого вони насправді хочуть у дружбі, стосунках і житті загалом. Немає жодної людини чи речі, яку ми можемо «виграти» і яка магічно зробить нас цілими й перетворить на ту, ким ми мріємо стати. Але якщо натомість зосередитися на тому, щоб любити себе й оточувати себе людьми, яким ми справді не байдужі, ми можемо збудувати життя, яке точно відчувається як перемога.</p>
+    <p>І фінальна фраза, що її я залишаю дослівно: «This [ __ ] is hard and confusing. The last thing you need is to feel worse because you're not feeling something you're supposed to feel. You do what feels good to you.» That's the take.</p>
+    <div class="final-quote">
+      <div class="final-text">You do what feels good <strong>to you.</strong></div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
