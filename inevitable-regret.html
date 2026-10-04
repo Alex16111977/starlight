@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Жаль неминучий</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Жаль<br>неминучий</h1>
+  <p class="page-subtitle">Прямий ефір Альберта Сафіна: рішення, вибір місця роботи й стосунків, групова динаміка та сором</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Яке б рішення людина не прийняла, вона рано чи пізно про нього пожаліє, і це абсолютно нормальна робота психіки</div>
+      <div class="hero-author">Альберт Сафін</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Чому будь-яке рішення викликає жаль і чому ми іноді обираємо місця, де нас не цінують -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Чому будь-яке рішення викликає жаль і чому ми іноді обираємо місця, де нас не цінують</h2>
+    <p>Раджу собі й глядачам корисну вправу: перш ніж відкривати будь-який матеріал — відео, книжку, курс, — варто заздалегідь сформулювати для себе, яким буде найкращий результат від його вивчення: що я хочу зрозуміти, що відчути, якого висновку дійти. Так матеріал засвоюється набагато краще, ніж коли просто пасивно споживаєш контент.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Чому людина обирає місце чи стосунки, де її не цінують -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Чому людина обирає місце чи стосунки, де її не цінують</h2>
+    <p>Я міркую над запитанням глядача про те, чому людина йде працювати туди, де її не цінують, і чому попри це не йде звідти. Психіка влаштована так, що тягнеться до звичного способу існування, навіть якщо цей спосіб болісний. Місце, де тебе не цінують, насправді дає людині чимало: по-перше, воно забезпечує постійними проблемами, якими можна займатися, щоб не помічати інші, глибші проблеми свого життя; по-друге, заповнює порожнечу часу; по-третє, дає привід для розмов із друзями й знайомими на перекурі; по-четверте, дає насичені, яскраві враження. Тож місце, де тебе точно не цінуватимуть, лише штрафуватимуть, принижуватимуть і вимагатимуть грошей, — це, як не дивно, своєрідна конкурентна перевага: завжди знайдеться багато охочих на таку вакансію, бо вона дає людині виправдання не прагнути від життя чогось іншого.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Будь-яке рішення викликає жаль -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Будь-яке рішення викликає жаль</h2>
+    <p>Я звертаюся до універсального питання: як прийняти рішення і не пожалкувати про нього? Відповідь — ніяк. Яке б рішення людина не прийняла, вона рано чи пізно про нього пожаліє, і це абсолютно нормальна робота психіки. Психіка — це такий само орган, як шлунок чи печінка, і її функція — постійно ідеалізувати те, чого немає, і знецінювати те, що є. Будь-яке прийняте рішення завжди супроводжується болем, тому що з'являється ілюзія: інше, неприйняте рішення точно було б кращим. Тож питання не в тому, як прийняти рішення без жалю — це неможливо, — а в тому, як навчитися витримувати цей неминучий жаль, не ламаючись від нього. Варто також перевіряти, на чому ґрунтується відчуття «тут немає перспектив»: чи це факти, чи, можливо, хаос, посіяний ззовні заінтересованими людьми. Серйозні рішення варто приймати на холодну голову, обдумавши їх з різних сторін і порадившись із кількома людьми, водночас готуючись до того, що будь-який варіант однаково викличе певний жаль.</p>
+    <p>Я також наголошую: ніщо в житті не є абсолютно безумовним — ані інтерес до улюбленої справи, ані любов. Навіть найлюбиміша справа вимагає певної віддачі — фінансової, емоційної, уваги, — і якщо віддачі немає зовсім, інтерес із часом перетворюється на ненависть. Людина — істота біопсихосоціодуховна, тож на підтримання інтересу до чогось впливає ситуація на ринку, вікові зміни, зміни контексту. За замовчуванням усе в житті розпадається, якщо туди не вкладати постійних зусиль, — як заміський будинок, який без догляду поступово руйнується.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Притирки на старті спільного життя -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Притирки на старті спільного життя</h2>
+    <p>Відповідаю на запитання про конфлікти під час перших місяців спільного проживання з партнером. Притирки на старті спільного побуту — це абсолютно нормальна частина процесу: і чоловік, і жінка в цей момент сповнені тривоги, бо входять у новий етап життя, де раніше капризи молодої людини обслуговувала мама, а тепер цю роль частково переймає партнер. Це завжди виклик, завжди щось нове: нове життя разом, домовленості про побутові дрібниці — хто виносить сміття, хто коли приймає душ. Тривога від зіткнення з новим способом життя неминуче проявляється через якесь незадоволення іншою людиною — це і є механізм «притирання», подібний до коливальних рухів, і саме на цьому етапі є можливість обговорити одне з одним низку питань, які інакше залишилися б незрозумілими.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Козел відпущення в груповій динаміці -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Козел відпущення в груповій динаміці</h2>
+    <p>Я детально розбираю запитання про те, чому група нападає на одну людину, і для чого це відбувається. У груповій динаміці формування «козла відпущення» неминуче, і чим дисфункціональнішою є атмосфера в групі, тим імовірніше це станеться. Наведу приклад: уявімо групу двадцятитрирічних студентів, які зібралися разом на цілий рік навчання парикмахерському мистецтву, по сім днів на тиждень. Ця група стикається із зовнішніми викликами, з якими не може впоратися: невизначеність, жорсткі викладачі, які автоматично ставлять незадовільні оцінки, м'які викладачі, повний побутовий хаос. У відповідь на ці зовнішні виклики в кожного учасника групи народжується тривога, яку кудись треба «подіти». І тоді, за законами групової динаміки, у колективі обирається певна ознака — привід при цьому другорядний: найвищий, найнижчий, найтовстіший, найхудіший, найголосніший, найтихіший, — і саме цю людину група обирає «козлом відпущення», куди вміщує всю свою тривогу, перестаючи таким чином стикатися з реальною проблемою.</p>
+    <p>Важливо розуміти: наявність такого «козла відпущення» в груповій динаміці вирішується не всередині самої групи, а системно — ззовні, і це компетенція саме керівного складу: саме керівник чи викладач має помічати цей процес, вентилювати його, профілактувати й ліквідовувати. Зсередини групи ця динаміка не вирішується. Трапляється і так, що сам викладач спрямовує негатив групи на одного чи кількох студентів, не здатний упоратися з власною тривогою через усвідомлення власної некомпетентності, — тому над будь-яким керівником обов'язково має бути зворотний зв'язок і комунікація з боку учасників.</p>
+    <p>Я також звертаю увагу на принципову відмінність: усе сказане стосується дорослих людей, які мають можливість піти з такого колективу, якщо він стає нестерпним. У дітей така можливість відсутня, і тому динаміка булінгу в дитячих колективах має зовсім іншу специфіку — там я не компетентний давати пораду, це питання до фахівців саме цієї теми.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Робоче місце — це не сім'я -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Робоче місце — це не сім'я</h2>
+    <p>Відповідаючи на розповідь глядачки про травлю на роботі з боку начальниці, я наголошую на дуже важливій речі: дуже важливо не переносити на професійний вимір сімейну історію. Ваш начальник — це не ваші батьки. Ваші колеги — це не ваші брати й сестри. Ваші клієнти — це не ваші діти чи батьки. Коли ви на роботі, ви громадянин, який прийшов сюди заробляти гроші, у якого є права й обов'язки. І якщо на роботі ви стикаєтеся з принизливим ставленням, варто чесно запитати себе: чи отримувана плата достатня, щоб це терпіти? Багато людей, які регулярно отримують на роботі неприємності, насправді погоджуються на це тому, що за це їм платять, — і краще чесно визнати це собі, ніж грати в гру «зі мною тут несправедливо поводяться». Будь-яке робоче місце — не сім'я, і чим більшу незручність ви відчуваєте, перш ніж звідти піти, тим швидше варто йти. Водночас сила психологічного перенесення нікуди не зникає: за замовчуванням ми схильні «натягувати» на керівні постаті образи власних батьків, і важливо це в собі помічати.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Встановлення кордонів -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Встановлення кордонів</h2>
+    <p>Я пояснюю, що насправді означає «встановлення кордонів» у стосунках. Це не якась абстрактна техніка, а переведення того, що лише малося на увазі, у явне: прямо повідомляти іншій людині, що вам підходить, а що ні, не сподіваючись, що вона сама вгадає. Наведу метафору: уявімо, що ваш партнер виріс у середовищі, де під час зустрічі з другом нормально дати йому легкого ляпаса як дружній ритуал — і якщо ляпас був занадто слабким, друг може навіть ображено сказати: «Ти що, глузуєш?». А ви виросли у дворі, де нормою вітання є помахати рукою з усмішкою — і в системі цінностей вашого партнера саме такий жест, навпаки, може сприйматися як порушення кордонів. Зустрівшись, обидва відчують, що щось не так, хоча кожен діяв за власними нормами. Встановлення кордонів — це і є процес, коли ви прямо проговорюєте, що для вас прийнятно, а що ні, і далі це вже відповідальність іншої людини — зважати на це чи ні, а ваша відповідальність — вирішувати, продовжувати ці стосунки чи змінювати їх.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Хто веде розмову й хто виявляє ініціативу у стосунках -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Хто веде розмову й хто виявляє ініціативу у стосунках</h2>
+    <p>Я відповідаю на запитання про те, як відрізнити нормальну різницю в ініціативності партнерів від ситуації, коли людина постійно «тягне» стосунки сама. Я категорично відмовляюся від самої концепції «нижньої» і «верхньої» позиції у стосунках — на мою думку, це хибна й шкідлива рамка. Якщо вам подобається бути тим, хто керує процесом у стосунках, і це вас не напружує, а партнеру теж із цим комфортно — все гаразд. Якщо ні — потрібно просто прямо про це сказати: «Слухай, я помітив, що зазвичай ініціатива йде від мене. Скажи, наскільки це для тебе звучить правильно, що ти думаєш і відчуваєш з цього приводу?» Сила полягає саме в тому, щоби переборювати незручність таких прямих розмов, а слабкість — у тому, щоб сподіватися на якусь абстрактну «позицію», боячись утратити значущість в очах іншого, якщо озвучити свої почуття прямо. Я також наголошую на простій речі: і чоловіки, і жінки — це просто люди, з якими можна й потрібно відкрито розмовляти, не вдаючись до якихось «секретних технік впливу» одне на одного.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Батьки й вибір партнера -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Батьки й вибір партнера</h2>
+    <p>Відповідаю на запитання про батьків, які не визнають партнера через те, що той нібито «не бере на себе юридичної відповідальності» за стосунки. У кожного з батьків неминуче є власне ставлення до стосунків своєї дитини, і це природно — заборонити батькам мати таке ставлення неможливо, вони не іграшки, якими можна керувати. Водночас важливо розмежувати: яким має бути саме ваше бажане ставлення до ваших стосунків, який внесок ви хочете в них робити — це вирішуєте ви й ваш партнер, а не батьки. Те, чи оформлювати стосунки офіційно й коли, — це ваша особиста історія і ваші пріоритети, яку варто обговорювати саме з партнером, а не підпорядковувати очікуванням батьків.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Як зрозуміти, чого я хочу від життя -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Як зрозуміти, чого я хочу від життя</h2>
+    <p>На запитання «як зрозуміти, чого я хочу в житті» я відповідаю чесно: не знаю прямої відповіді на це запитання, і якби знав точну формулу, напевно, займався б чимось іншим, а не відповідав на запитання глядачів. Але є корисна вправа: часто набагато легше зрозуміти, чого ми точно не хочемо, ніж чого хочемо, — і від цього можна відштовхуватися. Наприклад, запитайте себе: чи підходить мені прокинутися в неприємному, некомфортному місці, без тепла й зручності? Зазвичай відповідь — ні. А тоді запитайте: як би мені хотілося прокинутися? І поступово, формулюючи, чого ви точно не бажаєте, ви починаєте вимальовувати бажаний образ життя. Бачення майбутнього — причина, а факт теперішнього — наслідок: письмове формулювання такого роду допомагає рухатися в напрямку бажаного.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Книга власного життя: щоденникова практика -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Книга власного життя: щоденникова практика</h2>
+    <p>Я рекомендую практику, яка, на мою думку, цінніша за читання тисяч книжок: купити великий зошит, назвати його «моя книга» і щовечора протягом двадцяти хвилин писати, що сьогодні відбувалося, що думаю, що відчуваю, що зрозумів, що не зрозумів, що вдалося, а що не вдалося за день. Варто спробувати робити це щодня протягом трьох місяців як експеримент — написавши таку книгу, людина дізнається про себе більше, ніж прочитавши тисячі чужих текстів. Читання зовнішніх текстів — це часто спосіб відволіктися від себе внутрішнього; натомість варто витягувати психічний матеріал із себе, а не лише споживати чужий. Три основні запитання для щоденного письмового підсумку дня стосуються минулого, теперішнього і майбутнього: яким був для мене сьогоднішній день, про що я думав, що відчував, що зробив; як я почуваюся прямо зараз; і що для мене важливо привнести в завтрашній день і в життя загалом. Такий щоденник стає чудовою «вентиляцією» внутрішньої напруги — своєрідним сховищем, куди можна вкладати внутрішні переживання.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Вторинні вигоди хворобливого стану -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Вторинні вигоди хворобливого стану</h2>
+    <p>Я пояснюю поняття «вторинних вигод» через наочний приклад. Уявімо семирічну дитину, першокласника, яка живе разом із мамою, татом і бабусею в двокімнатній квартирі — типова трипоколінна родина на одній житлоплощі. У сім років дитина потроху починає освоювати самостійність, і опікуючі фігури — і тато, і мама, і бабуся — неминуче відчувають через це тривогу: «як це він упорається без мене?». І одного дня дитина прокидається з температурою. Прокинувшись хворою, вона раптом помічає, як навколо неї всі заметушилися: бабуся немов оживає, починає турбуватися, годувати солодким чаєм; мама радіє можливості взяти офіційну відмазку й отримати вихідний на роботі через хворобу дитини; батько відчуває полегшення, бо тривога й роздратованість дружини й тещі тепер спрямовані не на нього, а на дитину. Дитина цього не усвідомлює, ніхто цього вголос не проговорює, але навколо неї розгортається ціла історія уваги й турботи — і згодом, навіть без температури, тіло «шукає» хворобу знову, бо навколо хвороби утворюється стільки вторинних вигод у вигляді уваги, турботи й звільнення від обов'язків. Цей механізм підкріплюється всіма заінтересованими людьми в системі навколо хворого, навіть якщо вони цього не усвідомлюють, і ця сама логіка застосовна в дорослому житті в будь-якому контексті — наприклад, коли керівник отримує задоволення від проблем у колективі, бо це дає йому відчуття потрібності.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Як прощатися зі старим місцем роботи -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Як прощатися зі старим місцем роботи</h2>
+    <p>Відповідаю на запитання про страх і тривогу при пошуку нової роботи після тривалого звикання до старого місця, де склалися теплі стосунки. Пошук нової роботи й прощання зі звичним місцем завжди супроводжується сепараційною тривогою: ми звикаємо до місця, починаємо сприймати його опорою, і прощання з ним болісне й хвилююче. Я пропоную корисну практику: написати лист своєму колишньому (або поточному) місцю роботи — не для того, щоб його комусь відправляти, а як внутрішню роботу із собою. У цьому листі варто описати, що я про це думаю, що відчуваю, які в мене залишилися спогади, фотографії, думки; скільки часу я там провів; як ми відзначали свята; кого я згадую з колег; чого я там навчився і що зрозумів. Мета — осмислити цей досвід не з позиції «мене від цього відірвали», а з позиції природного росту й органічної зміни, яка трапляється з кожним із нас. Головне розуміти: тепло цих спогадів неможливо у вас забрати — воно назавжди залишається з вами як внутрішня опора, навіть якщо фізично це місце зникло з вашого життя. І ніхто наперед не може переконати власний мозок, що все точно вдасться: невизначеність і сумнів — це нормальна частина будь-якого переходу, і попри них усе одно можна рухатися далі.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Коли алкоголь стає проблемою -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Коли алкоголь стає проблемою</h2>
+    <p>На запитання про те, як зрозуміти, що алкоголь став проблемою, і як бути з оточенням, що випиває, я пропоную не зовсім звичний погляд: алкоголь сам по собі — це не проблема, а рішення проблем, які лежать глибше. Якщо людина вживає алкоголь регулярно, то алкоголь для неї не є першопричиною, а способом впоратися з чимось значно важчим і глибшим усередині. Це екзистенційне запитання: наскільки для вас особисто це є проблемою чи ні — відповідь на нього суто індивідуальна. Якщо людина вирішує відмовитися від вживання алкоголю, оточення неминуче почне змінюватися: з колишніми товаришами по застіллях стане менше спільних тем, і це природний, хай і болісний процес, подібний до того болю, який ми переживали, народжуючись і назавжди розлучаючись із комфортним теплом материнського лона. Водночас я наголошую: відсутність шкідливих звичок не робить людину кращою за інших, а їхня наявність — гіршою; це просто різні способи існування, і кожен сам визначає, який спосіб йому підходить.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Самокритика і внутрішній критик -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Самокритика і внутрішній критик</h2>
+    <p>На запитання про те, як стримувати самокритику, коли здається, що друзі навколо більш відкриті й харизматичні, я відповідаю, що самокритика — це своєрідна фантазія про всемогутність: нібито якийсь внутрішній критик точно знає, як вам краще, як вам слід чи не слід поводитися. Я пропоную дати цьому внутрішньому голосу окреме ім'я, наприклад «внутрішній критикан», щоби можна було вести з ним діалог, а не автоматично підкорятися йому: іноді прислухатися до нього й справді щось скоригувати, а іноді подякувати за «турботу» і зробити по-своєму. Не варто примушувати себе копіювати чужий стиль спілкування — можливо, саме ваша стриманість і є вашим індивідуальним стилем, який допомагає вам досягати цілей у комфортний для вас спосіб.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- «Погода» чи «клімат»: коли емоційний стан вимагає звернення до психотерапевта -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">«Погода» чи «клімат»: коли емоційний стан вимагає звернення до психотерапевта</h2>
+    <p>Відповідаючи на болісне й особисте запитання глядачки про те, що їй не вистачає сил, вона плаче в сні і водночас хоче другу дитину, я пропоную важливе розрізнення між «погодою» і «кліматом». У кожного з нас бувають дні поганого настрою, апатії, роздратованості — це нормальна «погода», тимчасовий епізод. Але якщо такий пригнічений стан триває довго, це вже не погода, а клімат, і тут важливо розглянути можливість звернення до психотерапевта: психіка — це такий само орган, як зуб чи зламаний палець, і якщо вона тривало «болить», варто звернутися до фахівця, який може і поставити діагноз, і призначити медикаментозну підтримку, і працювати словом. Я також пропоную розглянути соціальний компонент: іноді зміна оточення сама по собі впливає на загальний настрій — адже людина є істотою біопсихосоціодуховною, і всі ці рівні взаємопов'язані.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Про вибір методу психологічної допомоги -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Про вибір методу психологічної допомоги</h2>
+    <p>На запитання, який метод психотерапії ефективніший, я чесно відповідаю: не знаю точної наукової відповіді на це запитання. Обидва запропоновані глядачкою варіанти можуть бути дорогами до потрібного результату, а зцілення — це не досягнута одноразова мета, а процес. Важливий нюанс: часто лікує не метод, а сама людина-фахівець, і конкретний спеціаліст може поєднувати різні підходи. Тож варто рухатися в напрямку будь-якого з варіантів, звернувшись до фахівця, якому довіряєте.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Як почати практикувати психологу-початківцю -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Як почати практикувати психологу-початківцю</h2>
+    <p>Відповідаю на запитання психологині, яка має вищу психологічну освіту, навчається на спеціалізації з КПТ, але не може почати консультувати, бо здається, що «ще треба вчитися». Я наголошую: перш ніж розширювати практику, важливо спершу забезпечити собі достатню стабільність і підтримку — особисту терапію, надійний тил у вигляді супервізії, до якої можна звернутися, якщо в роботі з клієнтом виникнуть складні питання. Психолог сам є своєрідною моделлю для клієнта, і якщо прийде клієнт із межовою організацією особистості (навіть високофункціональний), важливо мати достатню власну стійкість. Тож не варто «поєднувати» навчання й практику одночасно без підготовки — варто спершу подбати про власну стабільність, підтримку й ресурс, а вже потім поступово, дозовано розширювати практику, досліджуючи свій досвід у цьому процесі.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Як почати «виходити в люди» після тривалої ізоляції -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Як почати «виходити в люди» після тривалої ізоляції</h2>
+    <p>Відповідаю на особисту історію чоловіка 32 років, який десять років працює повністю на віддаленій роботі, у минулому мав досвід бути «козлом відпущення», панічно боїться відторгнення, але водночас гостро хоче уваги, близькості й визнання, а в спробах працювати над навичками спілкування відчуває, що викликає в інших лише нудьгу. Я пропоную конкретний, малий і безпечний перший крок: придбати абонемент у спортзал і почати відвідувати групові програми. Там складно відчувати себе «задушливим», бо працює вентиляція; складно відчувати себе недоречним, бо там будуть люди, ще менш вправні за вас; а завдяки фізичній активності природним шляхом з'являється відчуття легкості. Групові заняття вже входять у вартість абонемента, тож це не додаткові витрати, а безпечний, поступовий, послідовний спосіб повернути тілесну присутність серед людей — маленькими кроками, без різких рухів, тремтячою рукою, але бодай дійшовши до спортзалу. Це і є практичний приклад того, як «виходити в люди» після тривалої ізоляції: не одним стрибком, а через структуровану, передбачувану соціальну активність, де є природна й безпечна дистанція.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Про сором -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Про сором</h2>
+    <p>Останнє велике запитання стосується глибокого сорому: людина в стосунках відчуває нестерпний сором, що партнер «розкриє» в ній щось справжнє, хоча й сама не знає, що саме. Я описую сором через метафору темного, затхлого, мокрого підвалу: сором боїться світла й розголосу, і саме тому про нього важливо говорити вголос, проливати на нього світло. Навіть просте визнання самому собі: «мені зараз дуже соромно» — це вже величезний крок, тому що найгірше, коли людина сорому навіть не усвідомлює й не визнає його, а він непомітно керує всіма її вчинками й рішеннями зсередини. Можна практикувати проговорювання сорому вголос, навіть у стосунках із партнером — казати прямо: «мені навіть соромно тебе обійняти» — і часто саме це проговорювання, а не замовчування, стає моментом справжньої близькості. Сором — це ніби колись проковтнутий клубок, і говорити про нього — це витягувати цей клубок із себе назовні, поступово позбавляючи його сили.</p>
+    <div class="final-quote">
+      <div class="final-text">Сором — це ніби колись проковтнутий клубок, і говорити про нього — це <strong>витягувати цей клубок із себе назовні</strong></div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
