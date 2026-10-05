@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Або з повагою, або ніяк</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Або з повагою,<br>або ніяк</h1>
+  <p class="page-subtitle">Два головні правила виживання у стосунках з людьми</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Я віддаю з радістю, я приймаю з вдячністю</div>
+      <div class="hero-author">Альберт Сафін</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Вступ: проблеми у стосунках як побічний ефект порушення двох правил -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Вступ: проблеми у стосунках як побічний ефект порушення двох правил</h2>
+    <p>Я починаю з думки, що практично будь-які проблеми в людському житті у вимірі взаємин з іншими людьми є побічним ефектом порушення двох правил, яким я присвячую цей урок. Деякі з них можуть видатися вам незвичними, а комусь, навпаки, принесуть полегшення: виявляється, можна й так. Їхні стислі формулювання такі:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text">«Зі мною — або з повагою, або ніяк, і я з іншими — або з повагою, або ніяк».</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text">«Я уважно стежу за дотриманням балансу: я віддаю з радістю, я приймаю з вдячністю».</div></div>
+    </div>
+    <p>Життя — не найдовша річ у сенсі метражу, тож змушувати себе витрачати дорогоцінний час на взаємодію з людьми, поруч із якими ви відчуваєте біль, знецінення, гачки й маніпуляції, — не найкраща затія. Так само не найкраща затія — самому спілкуватися з іншими, вдаючись до маніпуляцій, знецінення й образ.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Метафора дерева: вхідний і вихідний потоки -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Метафора дерева: вхідний і вихідний потоки</h2>
+    <p>Щоб показати суть другого правила, я вживаю метафору дерева. Дерева значно давніші за нас, і в кожного з них є два потоки: вхідний — те, що дерево приймає з вдячністю (сонячні промені, вологу дощів, корисні елементи з ґрунту), і вихідний — те, що воно віддає з радістю (плоди, а восени й листя, яке збагачує ґрунт перегноєм). У природі завжди існує цей баланс, і в людському житті так само важливо стежити за його дотриманням. Це стосується не лише матеріальної складової життя.</p>
+    <p>Тут доречний афоризм: можна їсти лише ту страву, яку вам подали з любов'ю, — приймати їжу тільки з люблячих рук.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Як два правила пов'язані між собою: простір для дихання й особисті кордони -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Як два правила пов'язані між собою: простір для дихання й особисті кордони</h2>
+    <p>Придивившись, можна побачити, що ці два правила доповнюють одне одного й, по суті, говорять про одне. Я не дозволяю нікому сідати мені на шию — і водночас сам нікому на шию не сідаю. Обидва правила не про те, як «злипатися» з іншими людьми, а про те, як підтримувати простір для дихання між мною й іншою людиною. Це питання особистих кордонів.</p>
+    <p>Яку користь мені мати у своєму житті стосунки, де в іншої людини немає поваги до мене? Нерідко в людини є тяга отримувати «стріли» на свою адресу, але я запрошую залишити це в минулому й подумати, які висновки ви обираєте з цього витягти. І для чого мені оточувати себе людьми, до яких у мене самого немає поваги?</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Повага як тренована здатність -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Повага як тренована здатність</h2>
+    <p>Здатність поважати — не дана від народження штука. Людина зазвичай може переживати лише ті стани, на які в неї є здатність; так само, як не можна змусити рибу напам'ять читати вірші, жонглюючи апельсинами. Повага — це градієнт, шкала: як правило, людина тренує її з дитинства, спираючись на стосунки з батьками й на те, як батьки вибудували взаємодію з нею. Якщо з дитинства було порушено баланс — наприклад, дитині виконували всі примхи («це хочеш — бери, і це бери, і це бери»), але при цьому не створювали умов, щоб вона й сама віддавала (допомагала з побутом: мити посуд, чистити картоплю, прибирати), — то згодом такій людині доведеться докладати значно більше зусиль, щоб тренувати цю здатність. З людиною з нерозвиненою здатністю дотримуватися балансу й відчувати повагу працювати можна, але зусиль це вимагає великих.</p>
+    <p>Часто підґрунтям «розбитого корита» у дорослому житті стає те, що в дитинстві роботу робили за людину, дозволяли обманювати й скидати з себе відповідальність. Скажімо, коли людина напідпитку проспала роботу, а мама чи тато виправдовують її: «Він дуже втомився, усю ніч робив проєкт». Коли ви виправдовуєте людину й дозволяєте їй скидати відповідальність, ви цю відповідальність у неї крадете — і порушуєте баланс між «брати» й «давати», а отже прирікаєте її на те, що нічого доброго в її житті, найімовірніше, не буде. Жувати за дитину й підсувати їй «готове» — вона така хороша, зараз усе за тебе зроблю — це так само порушення цього балансу. Баланс важливий у будь-яких стосунках: дитячо-батьківських, у парі, з колегами, клієнтами — з ким завгодно.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Відповідальність за власну структуру стосунків -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Відповідальність за власну структуру стосунків</h2>
+    <p>Це моя відповідальність — як окремої людини — організувати своє життя так, щоб структура моїх стосунків із собою й з іншими була пронизана цими двома правилами. Само собою це не відбудеться ніколи: це мистецтво, що вимагає свідомих зусиль.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- «Не вмію казати "ні"» не є чеснотою -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">«Не вмію казати "ні"» не є чеснотою</h2>
+    <p>Ви напевно стикалися з людьми, які своє невміння казати «ні» вважають чеснотою: «Але ж я добра людина, як я можу відмовити, я всім допомагаю». Таке невміння — це, по суті, хвороба, і людина, що не вміє відмовляти, розбещує інших, спокушає їх користуватися нею. Вона не лише шкодить іншим, вважаючи себе хорошою, а й не визнає власної ахіллесової п'яти, яку варто тренувати. Приклади: «Мене попросили дати гроші в борг — я дав», чим між рядків привчаю іншого сподіватися на інших, а не вирішувати власні задачі самостійно; «Мене попросили підвезти додому — підвіз, хоча й не хотів», і тим самим створюю собі умови, щоб тихо ненавидіти, змушуючи себе усміхатися.</p>
+    <p>Допомагати й підтримувати інших можна, але надзвичайно важливо, щоб цю підтримку людина отримувала з вдячністю й повагою. Якщо ви наливаєте в повну склянку і силоміць змушуєте іншу людину брати вашу допомогу, ви робите гірше і їй, і собі: наливати треба тільки в порожню склянку.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Не треба подобатися всім і нічого нікому доводити -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Не треба подобатися всім і нічого нікому доводити</h2>
+    <p>Немає потреби подобатися всім і немає потреби постійно щось усім доводити. Працювати варто лише з тим, для кого ви корисні, хто вже готовий вас чути, коли ви говорите, і бачити, коли на нього дивляться. Людина, яка переслідує мету подобатися всім, уже «закінчилася». Ключове — розуміти, для кого ви справді корисні.</p>
+    <p>Те саме стосується й професійної сфери, яка також пов'язана зі взаємодією з людьми: коли ви розумієте, для кого ви корисні, чиї задачі ви вмієте розв'язувати і за свою участь у житті інших отримуєте зворотний зв'язок у вигляді вдячності, — баланс між «віддаю з радістю» і «приймаю з вдячністю» зберігається. Якщо ж ви щось робите, а потім гризете себе зсередини («я так для нього старався, а мене взагалі ні в що не ставлять»), ви порушуєте обидва правила: і баланс на чашах терезів, і повагу — до себе та, з часом, до іншого. Ви висловлюєте умови, на яких працюєте, задаєте структуру своєї діяльності; якщо інша сторона не зважає на це й повністю ігнорує, а ви, незважаючи на це, беретеся за роботу, — ви про це пошкодуєте зі стовідсотковою ймовірністю.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що показує досвід: де порушено правила, а де вони дотримані -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Що показує досвід: де порушено правила, а де вони дотримані</h2>
+    <p>Озирніться назад і згадайте безліч випадків, коли ви порушували ці правила, і до чого вони призвели. Озирніться вперед — образно, у майбутнє, — і побачите, що передумова побудови взаємовигідних, довготривалих, взаємодоповнювальних стосунків полягає саме в цьому. Мета стосунків — робити життя кожного кращим, а не змушувати страждати себе й іншого. Там, де є страждання, — ви побачите порушення цих двох правил; там, де є найкраще, що може бути в людському житті, — взаємопідтримка й взаємоповага, — ви побачите дотримання цих правил. Там, де перекіс на чашах терезів, нічого доброго не чекайте; там, де чаші збалансовані, хороше буде неминучим.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що таке повага -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Що таке повага</h2>
+    <p>Повага — це здатність, і ключове тут те, що вона не «є або нема», а існує як шкала. Повага означає зважати на межі й інтереси інших людей, визнавати їхню гідність, помічати індивідуальність, дотримуватися соціально прийнятних форм спілкування, взаємодіяти, не завдаючи морального чи фізичного шкоди. Робити щось замість іншого — це красти в нього відповідальність і порушувати баланс, що є передумовою великої кількості проблем у майбутньому.</p>
+    <p>Для вас це може означати: не вимагати від себе подобатися всім; працювати й взаємодіяти лише з тими, хто вас цінує й поважає; а якщо в іншої людини немає цієї здатності — не змушувати себе запобігливо їй подобатися, питаючи, що ще зробити, щоб заслужити її прихильність.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Це правила виживання, а не правила щастя -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Це правила виживання, а не правила щастя</h2>
+    <p>Існує чимало людей, які десятиліттями терплять кпини на свою адресу, зокрема з вуст рідних, виправдовуючись: «Це ж родичі, мені потрібно це терпіти». Я наголошую: це правила для виживання, а не для щастя — слово «щастя» нині занадто популярне. Порушення цих правил прирікає людину на повільне гниття заживо, а якщо нічого не робити, наслідки можуть бути катастрофічними. Ці правила стосуються взаємодії з ким завгодно, і, як і щодо особистих кордонів, працюють для всіх однаково, без винятків — торг тут недоречний. Не буває так, що з одними людьми діє, а з іншими ні.</p>
+    <p>Людина, наприклад, каже: «Я не дозволяю колегам звалювати на мене свою роботу, я як керівник вимагаю від співробітників робити краще, на що вони здатні, створюю умови для досягнення ними видатних результатів» — а вдома дає гроші в борг і виконує домашні завдання за своїх дітей. У постановці особистих кордонів правила працюють для всіх. На прохання про гроші в борг я можу відповісти: «Я чую твоє прохання; як ти можеш сам впоратися з цією задачею? Я достатньо тебе поважаю, щоб не піти на поводу, я бачу тебе здатним упоратися з цим самостійно». Гроші в борг і домашнє завдання — лише очевидні ілюстрації, а правила стосуються значно ширшого кола ситуацій: як ти можеш сам упоратися з цим викликом, з цією роботою.</p>
+    <p>Якщо співрозмовник наполягає на тому, щоб звалити на вас свою відповідальність, можна відповісти: «Чи правильно я розумію, що ти поки не знайшов способів упоратися з цим самостійно? Яке рішення бачиш ти, що ти збираєшся з цим робити?» Якщо ж ви виконуватимете прохання інших людей, які ще й вважають, що ви їм маєте дякувати за те, що вони передають вам свою роботу, — ви порушуєте баланс і незабаром за це заплатите. Порушення цих двох правил призводить до того, що людина втрачає повагу до самої себе, бо стає для інших не людиною, а лише засобом.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Правила двосторонні -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Правила двосторонні</h2>
+    <p>Правила діють в обидва боки. Не може бути так, що зі мною — або з повагою, або ніяк, а я дозволяю собі розкіш знущатися з інших. Якщо інша людина не співзвучна зі мною, це не привід ставитися до неї неповажно. Історії бувають різні: ви не знаєте, якими дорогами проходила інша людина у своїх чоботах і що в неї за плечима; нерідко для того, щоб зробити те, що вам здається звичайним і простим, потрібні космічні зусилля, тож недооцінювати чужу працю не можна. Кожен робить найкраще, на що здатен, але ваша відповідальність — обирати, ким себе оточувати, а кого тримати подалі. Адже благополуччя в житті людини — це побічний ефект її сміливості дозволити собі вирішувати, кого пускати в своє оточення, а кого тримати на відстані.</p>
+    <p>Для когось досліджувати ці правила може бути подібним до висмикування бородавки з коренем, що може супроводжуватися неприємними відчуттями, — але тканини регенерують, і ви потім помітите, наскільки легше стало дихати.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Спершу — я сам -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Спершу — я сам</h2>
+    <p>Ключове — усвідомити, що спочатку саме я починаю ставитися до інших або з повагою, або ніяк. Коли ви вирішуєте оточувати себе людьми, до яких відчуваєте повагу, ви не змушуєте себе — ви просто цього хочете й здатні на це. Часто людина, якій важко від неповаги до себе, сама чинить так щодо інших. Показовий приклад: особа скаржиться, що вона втомилася й ніхто не хоче її слухати, — а за кілька миттєвостей ногою відчиняє двері до кімнати свого сина, з цигаркою в зубах, голосно розмовляючи з подругою по телефону, прямуючи на балкон. Тому насамперед варто замислитися, що саме ви самі робите не так, і лише потім щось вимагати від інших.</p>
+    <p>Фрази на кшталт «я так для тебе стараюся, я все для тебе роблю, а ти мене зовсім не цінуєш» — це побічний ефект порушення балансу й першого правила. Ключове — вловити смисл, а формулювання можуть бути будь-якими, вам близькими.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Свобода перервати будь-який контакт -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Свобода перервати будь-який контакт</h2>
+    <p>Якщо у вас є друзі чи подруги, які регулярно сміються з вас, насміхаються, знецінюють, — для чого ви підтримуєте ці стосунки? Ви сподіваєтеся, що щось колись зміниться? Звісно, бувають винятки, і хтось змінюється, але не робіть на це ставку. Ви маєте право й свободу перервати абсолютно будь-які контакти. Я так розумію, що ви вільна людина — чи ви самі назвали себе рабом? Багато хто забуває, що вони давно вже не раби, а багато й ніколи ними не були, але добровільно такими себе роблять; і багато хто досяг успіху в тому, щоб робити рабами інших, — різними маніпулятивними впливами на кшталт «я думав, що ти зробиш свою роботу краще, я думав, що можу на тебе розраховувати». Людина, яка всередині боїться зовнішнього осуду й зіткнення з незгодою і готова на все, аби заслужити чиюсь прихильність, перестає бути причиною, вона лише наслідок зовнішніх впливів.</p>
+    <p>Приклади спокійних формулювань: «Те, що ви говорите, мені не співзвучне; скажіть, що конкретно ви пропонуєте, і я подивлюся, що можу з цим зробити». Або: «Наскільки я розумію, нам з вами не по дорозі; я не зможу бути корисним у розв'язанні ваших задач, усього доброго». Ви можете переривати будь-які контакти, нічого не пояснюючи. Ви можете вимагати від себе виявляти повагу до інших і вимагати того ж від інших; це не має відбуватися зі слиною з рота й криками — це промовляється між рядків. Іншою метафорою тут стає ситуація, коли хтось намагається ногою відчинити двері вашого кабінету.</p>
+    <p>Запам'ятайте фразу: їжте лише ту їжу, яку вам дають із любов'ю, — і дозвольте собі розкіш дивитися крізь цю призму на все, що відбувається у вашому житті, насамперед у вимірі стосунків. Така позиція — це наче сталевий кулак в оксамитовій рукавичці: «або з повагою, або ніяк».</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Не треба змушувати себе подобатися всім -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Не треба змушувати себе подобатися всім</h2>
+    <p>Якщо ви починаєте змушувати себе подобатися всім, то в такому спілкуванні ви вже не причина, а наслідок, вас чіпляють гачком і потихеньку використовують. Відпустіть цю затію: якщо ви присвятили життя спробам довести комусь, що чогось варті, — ви цього ніколи не доведете, і ця мета не заслуговує, щоб на неї витрачати час. Можна спокійно сказати: «Наскільки я розумію, я нічого не зможу вам довести; усього доброго. Якщо вважатимете за потрібне — приходьте, мої двері для вас відчинені, але тільки тоді, коли будете справді готові». Формулювання можуть бути будь-якими, але важливо підтримувати цей простір для дихання й баланс.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Два принципи дорослого -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Два принципи дорослого</h2>
+    <p>Ці два правила можна назвати не лише «двома головними правилами виживання у стосунках з людьми», а й двома принципами внутрішнього дорослого — двома критеріями, що підтверджують: перед вами людина, яка вже достатньо виросла, щоб вступати у зрілі взаємини з іншими. Такий дорослий не нав'язує іншим «добро» силою і не ображається. Уся ця історія з образами — побічний ефект порушення цих двох правил, коли стосунки нагадують торгово-ринкову взаємодію: «я так багато для них зробила, а вони...»</p>
+    <p>Подумайте, що ці правила означають для вас і як ви обираєте додавати їх до свого життя: в особистих стосунках, у взаємодії з дітьми, батьками, друзями, партнерами, колегами, клієнтами. Наприклад, коли ваша мама ударом ноги вторгається до вашого дому й вчить вас, як правильно жити й виховувати ваших дітей, — порушено ці два правила. Можна сказати: «Мені дуже приємна твоя турбота; мені важливо попросити тебе узгоджувати зі мною твої відвідини». Якщо ви вводите ці правила, а на вас, попри це, продовжують тиснути, можна запитати: «Чи правильно я розумію, що ви мене не почули й змушуєте мене чинити так, як потрібно вам, а не так, як важливо мені?»</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Додавати правила плавно -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Додавати правила плавно</h2>
+    <p>Вводити ці правила в життя слід плавно: якщо спортсмен візьме на свої м'язи занадто важку вагу, він ризикує порвати зв'язки, і тренуватися треба послідовно. Нехай настане момент, коли, озирнувшись навколо й зазирнувши в себе, ви скажете: «Так, мої стосунки такі, що або з повагою, або ніяк; навіть немає людей у моєму житті, які порушують ці правила, і немає людей, щодо яких я сам хочу їх порушувати; баланс дотримано, я з вдячністю приймаю підтримку, увагу, гроші, турботу, вдячність у різних сферах свого життя — і водночас з радістю віддаю».</p>
+    <p>Видатний фахівець, наприклад, приймає з вдячністю те, що з вдячністю приймають його турботу про пацієнта. Цей баланс має бути присутній у будь-якій соціальній ролі й у будь-якій сфері взаємин, і правила працюють для всіх однаково.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Не сподівайтеся, що ваші думки хтось прочитає -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Не сподівайтеся, що ваші думки хтось прочитає</h2>
+    <p>Не сподівайтеся, що хтось чутиме ваші думки: люди, наскільки мені відомо, не мають здатності їх читати. Часто людина сподівається, що інший прочитає її думки, коли живе в просторі неявних домовленостей; вкрай важливо перетворювати такі домовленості на явні, виражені: «Раніше було так, тепер буде так». У будь-якому разі те ставлення до себе з вуст і очей інших, яке ви отримуєте, — саме те, яке ви запитували. Тож яке ставлення до себе ви тепер будете запитувати?</p>
+    <p>Коли чаші терезів урівноважені, кожна з них разом з іншою стає дедалі «важчою». Тут доречна відома фраза: велика сила — це велика відповідальність; сила — це те, що ви приймаєте з вдячністю, а ваша відповідальність — те, що ви з радістю віддаєте. Дозвольте собі розкіш знімати з ніжної шкіри своєї шиї кліщів, які давно п'ють вашу кров, — і робіть це плавно; ніхто, крім вас, цього не зробить. Плавно вводьте нові правила у своєму житті й плавно перетворюйте неявні домовленості на виражені. Якщо ж хтось продовжує тиснути, можна запитати: «Чи правильно я розумію, що ви не чуєте те, що я вам кажу? Чи правильно я розумію, що ви змушуєте мене робити те, чого я не хочу?» Якщо ви говорите «ні», а хтось продовжує вмовляти й викручувати вам руки словами «тобі що, шкода?», можна запитати: «Чи правильно я розумію, що ви не почули мою відмову?» Якщо людина не готова приймати ваші відмови, постає питання, чи слід взагалі щось з нею робити й навіть бути поруч.</p>
+    <p>Крім того, ви дозволяєте й іншим казати вам «ні», коли формулюєте прохання: «Зроби, будь ласка, X: якщо це з тобою співзвучно — чудово, якщо ні — так і скажи, я підтримаю будь-яку твою відповідь». Ви стежите за цим простором для дихання, не нав'язуєтеся. Киньте стару звичку нав'язуватися, викручуючи руки іншим, — відпустіть її й займіться собою.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Практичні вправи -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Практичні вправи</h2>
+    <p>Перша вправа: візьміть аркуш паперу, поділіть його навпіл і ліворуч сформулюйте, що ви приймаєте з вдячністю, праворуч — що віддаєте з радістю. Складіть такий список щодо людей, які вас оточують, і щодо сфер, якими ви займаєтеся. Професійне вигорання — побічний ефект порушення балансу: коли людина робить дуже багато, але нічого не отримує, або отримує багато, але не вкладається. Коли баланс дотримано, у тому числі в професійній сфері, вигорання не виникає; якщо ж порушено — воно так само очевидне, як вода, що кипить у каструлі на вогні, і це лише питання часу. Перегляньте, чи підтримуєте ви баланс у різних сферах життя й з різними людьми — і за тим, що ви берете, і за тим, що віддаєте.</p>
+    <p>Коли турбота про сім'ю не є важким обов'язком, а добровільно взятим на себе зобов'язанням, яке мене збагачує й для мене є честю, — тоді баланс збережений: є те, що я вношу, і те, що я беру. Часто пересічна людина звикла лише брати й споживати, а потім дивується, чому життя не складається: усі хочуть «готового», але самі не вносять жодного внеску, прирікаючи себе на розбите корито. Це метафора: людина звикла до цукру й води без зусиль, а потім дивується, чому проблеми з обміном речовин.</p>
+    <p>Другий пункт: розкрийте різні сфери вашого життя, різні стосунки, різні соціальні ролі й складіть список того, що ви приймаєте з вдячністю та з радістю віддаєте. Якщо бачите порушення цього балансу — подумайте, як його компенсувати й відновити, що привнести. Якщо ви відчуваєте, що в клієнтській роботі багато працюєте заради інших, а вони вас не цінують, — переоформіть умови й ініціюйте переговори про новий контракт. Якщо ж навпаки: вам багато дають, а ви нічого не вкладаєте, — виявіть ініціативу: «Я візьму на себе ще низку задач, бо хочу бути корисним і бачу вразливі місця, які готовий узяти на себе і розв'язати». Відновіть баланс — здоровішими будете.</p>
+    <p>Для перевірки першого правила: запишіть на диктофон розмову з іншою людиною й проаналізуйте її на предмет того, як багато там звучить маніпуляцій, знецінення й інших прийомів психологічного насильства. Тоді ви зможете вирішити, чи варто взагалі присвячувати час спілкуванню саме з цією людиною, чи слід мінімізувати контакт, чи припинити його. Звертайте увагу й на те, як ви самі спілкуєтеся з іншими людьми й із собою — це теж має важливе значення, — і ставте собі аналогічні запитання.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Внутрішній стан: відпустити звичне почуття образи й ущербності -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Внутрішній стан: відпустити звичне почуття образи й ущербності</h2>
+    <p>Що означає для вас «або з повагою, або ніяк», коли ви відпускаєте потребу продовжувати відчувати звичне почуття образи, ущербності, нікчемності? Адже ви добровільно створюєте собі умови для цього — або створювали раніше, або це взагалі не про вас; у будь-якому разі це можна відкинути й рухатися далі. Коли ви говорите: «Наскільки я розумію, ми не зможемо бути корисними одне одному; те, що відбувається зараз, мені не співзвучне, я не готовий продовжувати таку комунікацію, нам, мабуть, не по дорозі», — це важливо спершу проробити всередині, у власному внутрішньому стані.</p>
+    <p>Що означає для вас ставитися з повагою до інших, тренувати здатність давати іншим людям можливість жити, а не змушувати їх робити те, що потрібно вам? Адже турбота — це робити щодо іншого не те, що потрібно тобі, а те, що важливо йому: «Як я можу про тебе подбати і що для тебе важливе?»</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Підсумок -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Підсумок</h2>
+    <p>Я не можу нічого вам дати — я можу лише давати; чи візьмете ви, залежить від вас, і це теж метафора балансу, про який ми говорили: я нікого нічого не змушую брати з моїх уроків, і саме ви відповідаєте за те, що з цього вилучите, які приклади знайдете у своєму житті і як це застосуєте. Це справді правила виживання: порушення цих правил ні до чого доброго не призведе, і, озирнувшись на досвід власний та інших людей, ви побачите, що перед будь-яким розлученням, будь-якими сварками, будь-якими криками, будь-яким насильством було порушення саме цих правил.</p>
+    <div class="final-quote">
+      <div class="final-text">Перед будь-яким розлученням, будь-якими сварками, будь-якими криками, будь-яким насильством <strong>було порушення саме цих правил</strong></div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
