@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Водогін замість відер</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+.num-row.sub{margin-left:38px;padding:12px 16px;background:rgba(52,58,94,.03)}
+.num-row.sub .num-badge{width:22px;height:22px;font-size:12px}
+.num-row.sub .num-text{font-size:14px}
+.num-list p.sub-note{margin:2px 0 4px 38px;padding-left:16px;border-left:2px solid rgba(148,103,23,.35);font-size:14px;line-height:1.8}
+@media (max-width:560px){.num-row.sub,.num-list p.sub-note{margin-left:18px}}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Водогін<br>замість відер</h1>
+  <p class="page-subtitle">20 правил високої ефективності</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Людина втомлюється й починає ненавидіти свою діяльність не тому, що працює багато й старанно, а тому, що працює бестолково й не застосовує таких правил</div>
+      <div class="hero-author">Альберт Сафін</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Вступ: що таке ефективність -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Вступ: що таке ефективність</h2>
+    <p>Я починаю з визначення: ефективність — це відношення досягнутих результатів до витрачених на них ресурсів. Якщо ви просиділи на березі п'ять годин і піймали одну дохлу оселедцеву рибину, ефективність невисока. Якщо за тридцять хвилин поїхали з берега з повною цистерною риби — вища. Але це працює лише тоді, коли задача — саме витягти максимум риби. Якщо ж задача — насолодитися природою, а вудка лише привід, то ефективність тут не вимірюється. Про ефективність ідеться, коли ви прагнете витягти максимум твердої користі, витративши мінімум зусиль.</p>
+    <p>Я кажу, що, вивчивши цей урок, ви вже не будете колишніми: складно буде не почати впроваджувати хоча б деякі правила. На графіку, де вісь X — час, а вісь Y — ефективність, до вивчення вона має один рівень, а після плавного впровадження правил починає рости. Чи так воно буде — залежить від вас: я нічого не можу нікому дати, я можу лише давати, а чи візьмете ви — вирішуєте ви. Хтось візьме одну ідею, хтось докладно законспектує й використає як технічне завдання на життя. Не все буде для вас корисним, але одне правило ви точно витягнете. Ці правила я «вистраждав», вони показали ефективність у моєму житті й житті мого оточення, і я ділюся ними щиро.</p>
+    <p><strong>Вступна думка:</strong> людина втомлюється й починає ненавидіти свою діяльність не тому, що працює багато й старанно, а тому, що працює бестолково й не застосовує таких правил. Людина також схильна формувати такі події та стосунки, щоб підтверджувати звичні переконання про себе, інших і світ та проживати звичні емоції: якщо вона вважає себе нікчемою, що займається ненависною справою, а інших — негідниками, то привчає себе відчувати сором, провину, жаль і сама породжуватиме відповідні події та стосунки в професійній діяльності.</p>
+    <p><strong>Як працювати з уроком:</strong> зупиняйте його на паузі після кожного правила й записуйте його письмово; потім запитайте себе, що це правило означає для вас, яку користь ви бачите від його застосування і як внесете його в життя.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Правила 1–5: планування, простір, система, підтримка, тіло -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Правила 1–5: планування, простір, система, підтримка, тіло</h2>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text"><strong>Перед будь-якою активністю заповнюю формулу: «Я — хто, що збираюся робити, щоб розв'язати яку задачу й отримати який результат».</strong> Наприклад: я — творча людина й педагог, планую записати урок на тему 20 правил ефективності, щоб збагатити бібліотеку своїх уроків, і в результаті — відчути радість від зробленої справи та примножити свою затребуваність. Я — письменник, збираюся працювати над компонуванням розділів книги, щоб зробити її кориснішою, читабельнішою й затребуванішою. Люди загалом не завжди зацікавлені у вашому процвітанні — зазвичай людина використовує іншу як засіб для досягнення своїх цілей; єдина людина, зацікавлена у вашому зростанні, — це ви. Тож щоразу нагадуйте собі цю формулу: вона налаштовує вас, «як ніж, що входить у масло» простору діяльності. Приклад застосування: коли я входжу в тренажерний зал, моя формула — людина, що дбає про здоров'я, виконую базові вправи з тренером, щоб компенсувати сидячий спосіб життя, і почуваюся чудово.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Заздалегідь організовую простір діяльності так, щоб мінімізувати відволікаючі фактори.</strong> Якби під час запису уроку поруч бігав хтось, постійно телефонували чи стукали в двері, ефективність упала б. Я записую урок удома, коли син у школі, а дружина в спортзалі; для великих уроків чи прямих ефірів використовую кабінет поруч із домом. Враховуйте і менеджмент домовленостей: якщо хтось регулярно дзвонить і запитує, коли буде готово, — це теж відволікаючий фактор. Також заздалегідь плануйте прийоми їжі: у який час і якого складу. Форма не терпить вакууму: спершу формулюється форма простору, потім вона наповнюється результатами.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text"><strong>Заздалегідь планую завтрашній день (а якщо забув — планую сьогоднішній; а якщо я «особливо крутий» — дні на кілька тижнів наперед) за трьома ключовими точками: турбота про себе, створення системи, зміцнення цінностей.</strong> Якщо ваші рішення й поведінка співзвучні з кожною з цих точок, ніби по них проходять прямі чи вектори, що збігаються, — будь-який вітер буде попутним.</div></div>
+      <div class="num-row sub"><div class="num-badge">•</div><div class="num-text"><strong>Турбота про себе</strong> — біологічний компонент: сон (спати не до третьої ночі), тренування, харчування, час для себе.</div></div>
+      <div class="num-row sub"><div class="num-badge">•</div><div class="num-text"><strong>Створення системи</strong> — чи підсилює те, що я роблю, систему. Якщо людина тисячі разів повторює одне й те саме і щоразу наступає на ті самі граблі, вона носить воду голими руками у відрах; якщо ж формулює принципи й правила дій, щоб надалі ухвалювати рішення за ними, не витрачаючи тисячі годин на роздуми, — будує водогін (а ще краще — гідроелектростанцію чи сітки, що ловлять рибу без вашої участі). Запис уроку, який залишиться доступним, — приклад інвестиції в систему.</div></div>
+      <div class="num-row sub"><div class="num-badge">•</div><div class="num-text"><strong>Зміцнення цінностей</strong> — чи відображає мій день цінності, за якими я живу. Для мене це творчість, відповідальність і системний підхід: займатися улюбленою справою, завершуючи яку я відчуваю радість від зробленого. Ви не щепка, що пливе за течією річки: ви — капітан корабля свого життя, і від вас багато залежить, куди й як ви пливете.</div></div>
+      <div class="num-row"><div class="num-badge">4</div><div class="num-text"><strong>Завожу напарника, з яким разом підтверджуємо зроблене за день.</strong> Це правило я сам не застосовую (я й так щиро хочу займатися улюбленою справою — мене швидше важко відірвати від неї), але знаю, що воно працює, особливо на старті, коли потрібен поштовх ззовні. Суть не в тому, щоб справити враження, а в самому процесі актуалізації зробленого за день — навіть якщо ви нічого не зробили, це вже великий крок. Базові запитання: що ви сьогодні зробили? З якими складнощами зіткнулися й як їх подолали? Які можливості це відкриває? Які висновки з сьогоднішнього дня ви обираєте? Що хорошого сталося? Що ви привнесете у свої прояви?</div></div>
+      <div class="num-row"><div class="num-badge">5</div><div class="num-text"><strong>Роблю своє тіло союзником, а не ворогом.</strong> Це сон, харчування, фізичні навантаження, сексуальна активність. Тіло керує думкою, а наші думки й бажання великою мірою — наслідок хімічних процесів в організмі: у короткостроковому форматі ми можемо силою думки на щось вплинути, але в довгостроковому тіло зазвичай перемагає. Образ: у кожному живе «внутрішня рептилія» — давня, глуха й сліпа, їй мільярди років, а вашій особистості стільки, скільки написано у паспорті. Завдання — приручити її й зробити союзником. Приклад: під час карантину я писав навчальний матеріал із 10:00 до години дня, потім ми разом обідали, гуляли, купували продукти, ввечері я записував другий годинний урок, потім вечеря й відпочинок. Моя «рептилія» вважає, що я заслужив їжу за годину записаного уроку — це позитивне підкріплення. Якщо після роботи ще й не поїсти, змушуючи тіло страждати, воно скаже: «Я більше не буду писати уроки, відчепися». Фізичні навантаження варто додавати: наш спосіб життя — не той, під який проєктувався організм.</div></div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Правила 6–10: час, делегування, об'єднання, незалежність, автоматизація -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Правила 6–10: час, делегування, об'єднання, незалежність, автоматизація</h2>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">6</div><div class="num-text"><strong>Перетворюю час необхідного очікування на корисний.</strong> Наприклад, велику частину роботи, читання й конспектування я виконував у поїздці швидким поїздом між містами — чотири години, які в будь-якому разі треба провести в дорозі.</div></div>
+      <div class="num-row"><div class="num-badge">7</div><div class="num-text"><strong>Делегую фахівцям те, що не можу, не хочу чи не вмію.</strong> Мені легше записати великий урок, ніж нарізати з нього короткі ролики, тому нарізка — задача співробітника, який розуміє матеріал і утримує зміст. Так само я не сиджу над книгами: я записую уроки, а співробітниця за посиланнями перетворює їх у текст, близький до першоджерела, з якого я потім компоную розділи. Водночас є задачі, які мені подобаються, і їх я виконую сам: підготовка до уроків, запис, малювання прев'ю, придумування назв, невеликий монтаж, узгодження конференц-залів для очних занять, замовлення квитків. Те, з чим я не впораюся, що мені не цікаво й виконаю гірше за інших, — делегую людям, з якими працювати для мене честь.</div></div>
+      <div class="num-row"><div class="num-badge">8</div><div class="num-text"><strong>Об'єдную активності, щоб витягти максимум користі.</strong> Приклад: мені пропонують дату запису інтерв'ю в Москві, але для цього довелося б їхати спеціально, тоді як на вихідні в Москві в мене вже заплановані справи; я пропоную іншу дату, поруч із цими днями, і так об'єдную активності. Інший приклад: у тренажерному залі під час підтягувань я можу вставити мудру думку й записати коротке відео — одночасно й тренування, і контент, і радість від процесу. Питання: як витягти максимум користі з того, чим я й так планую займатися, і як зв'язати активності в «пучок».</div></div>
+      <div class="num-row"><div class="num-badge">9</div><div class="num-text"><strong>Рухаюся проти натовпу.</strong> Якщо всі вкладаються в певні акції, потенціал ситуації вже вигорів. Якщо натовп вважає щось вигідним і цікавим, потенціал уже спалений. З самого початку я дозволяв і дозволяю собі робити випуски будь-якого хронометражу, навіть понад три години, що не заважає їм бути корисними. Років шість тому всі вважали, що тільки двадцяти- чи тридцятихвилинні ролики мають шанс, — тепер видно, що хронометраж може бути різним. Я не буду робити як усі: робитиму так, як подобається мені.</div></div>
+      <div class="num-row"><div class="num-badge">10</div><div class="num-text"><strong>Автоматизую процеси, щоб не множити вузли в системі.</strong> Чим менше вузлів, тим надійніша система. Людина часто робить руками те, чого руками робити не варто. Корисно приблизно раз на тиждень запитувати себе: які з процесів, що я регулярно виконую, я можу з себе зняти? Сучасні технології це дозволяють.</div></div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Правила 11–15: порядок, договірність, підсумки дня, відмова, образ життя -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Правила 11–15: порядок, договірність, підсумки дня, відмова, образ життя</h2>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">11</div><div class="num-text"><strong>Тримаю робочий простір у порядку — і внутрішньо, і зовнішньо.</strong> Внутрішній — це робочий стіл комп'ютера, папки, документи; зовнішній — те, де й як ви живете, що вас оточує. Хтось скаже, що любить «творчий безлад»; тоді це правило для тих, кого безлад тихо гнітить — вони проживають звичні емоції. Іноді варто приділити час і навести порядок.</div></div>
+      <div class="num-row"><div class="num-badge">12</div><div class="num-text"><strong>Виконую домовленості, які укладаю, навіть якщо за невиконання немає покарання.</strong> Людина багато в чому пропорційна слову, яке вона здатна тримати, і це не залежить від масштабу людини, з якою вона домовилась. Якщо людина дотримується домовленостей із впливовою особою лише через страх, а з прибиральницею в офісі щодо оплати першого числа — ні, бо та нічого не зробить і далі працюватиме, — то їй ціна невелика. Кожне життя має цінність. Також я перетворюю неявні домовленості на явні: замість «почнемо працювати, там розберемося» — «правильно я розумію, що ми робитимемо А, за умов Б, у такий строк, з оплатою Д?» Перш ніж сформулювати домовленість про подальшу роботу, я уточнюю всі деталі.</div></div>
+      <div class="num-row"><div class="num-badge">13</div><div class="num-text"><strong>Завершую день двома запитаннями: «Як я сьогодні просунувся в професійній діяльності?» і «Як я сьогодні подбав про себе?»</strong> Наприклад: я записав урок, збагатив бібліотеку й відчув радість від зробленої справи; а про себе подбав — сон, тренування, три якісні прийоми їжі й час із близькими. Не обов'язково впроваджувати всі правила одразу: достатньо взяти бодай одне.</div></div>
+      <div class="num-row"><div class="num-badge">14</div><div class="num-text"><strong>Упевнено відмовляю на прохання, які не можу, не хочу чи не маю інтересу виконувати — навіть якщо відмовляти складно.</strong> Безвідмовна людина, що живе за програмою «я хороший, коли всім догоджаю», перебуває під градом зобов'язань, які не може, не вміє й не хоче виконувати, — вона заручник необхідності бути хорошою в очах інших. Для довгострокової ефективності корисно володіти чотирма кроками безконфліктної відмови:</div></div>
+      <div class="num-row sub"><div class="num-badge">1</div><div class="num-text"><strong>Відмова:</strong> «Ні, цього я робити не буду».</div></div>
+      <div class="num-row sub"><div class="num-badge">2</div><div class="num-text"><strong>Аргументація:</strong> «Це пов'язано з тим, що це не належить до моїх професійних компетенцій/інтересів».</div></div>
+      <div class="num-row sub"><div class="num-badge">3</div><div class="num-text"><strong>Підтримка:</strong> «Розумію, що тобі хотілося б, щоб тебе в цьому підтримали».</div></div>
+      <div class="num-row sub"><div class="num-badge">4</div><div class="num-text"><strong>Альтернатива:</strong> «Ось варіанти, що можуть підійти й тобі, і мені».</div></div>
+      <p class="sub-note"><strong>Ілюстрація (утрирована):</strong> «Привези мені п'ять кілограмів картоплі на інший кінець міста. Тобі що, шкода?» — «Ні, я цього робити не буду; доставка картоплі поза моїми інтересами; розумію, що тобі хотілося б, щоб тебе підтримали; давай завтра розглянемо варіанти, що підійдуть нам обом». Усі чотири кроки не обов'язкові — можна обмежитися першим; але якщо ви цінуєте стосунки, корисні й усі чотири. Не вселяйте надії: якщо заздалегідь знаєте, що «ні», — кажіть «ні». Адаптуйте формулу під свій стиль.</p>
+      <div class="num-row"><div class="num-badge">15</div><div class="num-text"><strong>Виділяю час, щоб сформулювати бажаний спосіб життя — образ достатньо хорошого життя (не ідеального дня).</strong> Корабель, що не знає, куди пливе, може пропливти тисячі кілометрів, залишившись на місці. Я відкидаю фантазії про ідеальний день і формулюю достатньо хороше життя: я не найбагатша людина, але грошей мені й сім'ї вистачає, щоб вирішувати побутові питання, добре їсти й займатися улюбленою справою; живу не в найрозкішніших умовах, а в достатньо добрих; мій спортзал не унікальний, а достатньо хороший; мої стосунки не найособливіші, а достатньо добрі; я сам не геніальний і не ідеальний — у мене є плюси й мінуси, і мене може хтось дратувати, і це нормально. Відкиньте мрії про ідеальні фантазії й просто сформулюйте, що для вас означає жити достатньо добре. А тих, хто в соціальних мережах каже, що без яхти ви невдаха, — ігноруйте: це спроба вогнати вас у сором і провину, щоб витягти з вас гроші й увагу. Поверніться до цього образу раз на тиждень: він вплине на рішення, які ви ухвалюєте сьогодні. Мета — це не «куди», а «звідки»: її формулювання впливає на те, як ви проявляєтеся тут і зараз.</div></div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Правила 16–20: довгостроковість, кілька підходів, незавершені справи, помилки, відмова від марних цілей -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Правила 16–20: довгостроковість, кілька підходів, незавершені справи, помилки, відмова від марних цілей</h2>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">16</div><div class="num-text"><strong>Зміщую фокус із поточного моменту на довгострокові ефекти того, що роблю.</strong> Для мене перегляди — не мета, а побічний ефект того, що я займаюся улюбленою справою. Ефективність уроку оцінюється не в масштабі одного дня, а в масштабі п'яти років. Те саме з тренуванням: питання не в тому, що я сьогодні піду в зал і одразу прийду «з кубиками», а в тому, що станеться, якщо я п'ять років триматиму три тренування на тиждень.</div></div>
+      <div class="num-row"><div class="num-badge">17</div><div class="num-text"><strong>Приступаю до розв'язання задач із кількох підходів, а не намагаюся зробити все з першого разу.</strong> Ілюзія «зараз сяду й одразу зроблю геніально й ідеально» не працює. У моїх випусках видно еволюцію: п'ятий і сто п'ятдесят п'ятий випуски дуже різні. Результатом роботи є не лише окремий випуск, а й стан свідомості, який у вас кристалізується. Навичку, яка здається легкою, я тренував щодня протягом десяти років.</div></div>
+      <div class="num-row"><div class="num-badge">18</div><div class="num-text"><strong>Створюю список незавершених справ, дивлюся на нього віч-на-віч і плавно над ним працюю.</strong> Величезна кількість незавершених справ, що постійно «воскресають» в уяві, заважає навіть підняти руку. Випишіть на аркуші всі незавершені справи й невиконані обіцянки — усі «процеси, що працюють у диспетчері задач» і перевантажують оперативну пам'ять. Уже сам факт, що ви їх сформулювали й спокійно на них дивитеся, — велика перемога; і ви помітите, що радості в житті додається.</div></div>
+      <div class="num-row"><div class="num-badge">19</div><div class="num-text"><strong>Визнаю свої помилки й компенсую їх, не намагаючись вийти сухим із води.</strong> Якщо ми домовилися про зустріч на десяту, а я спізнився на п'ятнадцять хвилин і починаю її так, наче нічого не сталося, — це ні в які ворота. Якщо ви порушили договір, важливо визнати помилку й компенсувати завдану шкоду: брати відповідальність — і є те, що робить людину людиною з великої літери. Не намагайтеся вийти сухим із води: якщо ви замовчуєте помилку й починаєте звинувачувати іншого, ви тотально втрачаєте зв'язок із дійсністю.</div></div>
+      <div class="num-row"><div class="num-badge">20</div><div class="num-text"><strong>Відмовляюся від цілей і задач, у напрямку яких нічого не роблю, але дозволяю собі до них повернутися.</strong> Якщо ви десять років тішите себе ілюзією, що колись почнете вивчати, наприклад, англійську, і так і не почали, — дозвольте собі від цього відмовитися: «Я не буду її вивчати, я відпускаю цю тему», але за потреби повернутися до неї можна.</div></div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Додаткові правила (без нумерації) -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Додаткові правила (без нумерації)</h2>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Не дозволяю іншим тримати мене в підвішеному стані: «так — так, ні — ні; якщо не знаю — це за замовчуванням ні».</strong> Приклад: друзі збираються винайняти будинок; ви кажете: «Якщо хочеш поїхати, вписуйся, ось деталі й оплата. Якщо не знаєш — за замовчуванням «ні»; але до такої-то дати в тебе ще є можливість заявити про себе».</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Працюю над тим, щоб зробити своє оточення, особливо близьких, союзниками.</strong> Це делікатний момент, і не завжди реалізований для кожного. Якщо людина в професійній діяльності долає перешкоди, потіє, втомлюється, а вдома їй ще й «пиляють» — це багато в чому її відповідальність: організувати простір підтримки у власному житті. Якщо ви кажете, що вони винні в тому, що не підтримують, — це не вони винні, а ви. Ніхто, крім вас, не зацікавлений у вашому процвітанні.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Знаходжу сили працювати лише над тим, на що можу вплинути, і відпускаю те, що поза моїми силами.</strong> Потрібні мужність працювати над тим, на що можеш вплинути; смирення — відпустити те, на що не можеш; і мудрість — відрізняти одне від іншого. Від мене залежить, як мине урок: записати його з радістю й озвучити смисли, співзвучні мені, налаштувати камеру. Від мене не залежить, яку реакцію він викличе в зовнішньому світі та як розійдеться. Від мене залежить розкрити парасольку над головою, але не те, як рухаються хмари й тектонічні плити.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Хоча б одну хвилину на добу беру відповідальність за своє життя на себе.</strong> Відповідальність — це позиція, в якій я вважаю себе причиною всіх наслідків у своєму житті. Це не аксіома: людина, яка стала жертвою надзвичайної події, — заручник обставин. Але одну хвилину на добу варто розглянути потік подій у своєму житті як те, до чого я додав свій внесок. Ми не беремо кримінал чи кричущі випадки, а звичайне побутове життя: можливо, проблеми з грішми — не тому, що начальник поганий, а тому, що ви поки не навчилися організувати свої рішення й час, щоб мати інші результати.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Пам'ятаю про силу маленьких кроків і не вимагаю від себе швидких результатів.</strong> У швидкі результати вірять лише необачні люди, якими користуються шахраї: «хочеш розбагатіти — стрибай у цей вагон». Швидких результатів у будь-чому не буває, як правило, це копітка робота. А якщо швидкий результат навіть звалиться на людину, її крихкі плечі, ймовірно, не зможуть його втримати. Оцінюйте події не лише з точки зору моменту «зараз», а й у перспективі.</div></div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Завершальна думка: оточення -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Завершальна думка: оточення</h2>
+    <p>Людина — істота соціальна, і її добробут багато в чому залежить від того, кого вона тримає подалі, а кого запрошує у своє життя й тримає поближче. Люди, з якими ви взаємодієте, або підтримують і посилюють у вас прагнення процвітати, розвиватися, або навпаки — змушують опустити руки й вважати, що все скінчено. Те, що ви думаєте, відчуваєте, маєте й робите, певною мірою — середнє арифметичне вашого оточення, групи, з якою ви разом «танцюєте цей танець», дивлячись у вічі, в яких бачите власне відображення.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Підсумок -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Підсумок</h2>
+    <p>Цей перелік правил я не вважаю чимось особливим, але це достатній набір принципів, який справді може бути корисним для розв'язання особистих і професійних задач. Ви перебуваєте в цій точці часу й простору, і тепер від вас залежить, як ви застосуєте ці правила в житті та до чого вони вас приведуть.</p>
+    <div class="final-quote">
+      <div class="final-text">Ви перебуваєте в цій точці часу й простору, і <strong>тепер від вас залежить, як ви застосуєте ці правила в житті та до чого вони вас приведуть</strong></div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>

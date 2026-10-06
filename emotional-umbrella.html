@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Емоційна парасолька</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Емоційна<br>парасолька</h1>
+  <p class="page-subtitle">Як перестати ранитися об кожне слово: посібник</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Перестати сприймати все на свій рахунок — це навчитися користуватися емоційною парасолькою</div>
+      <div class="hero-author">Альберт Сафін</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Вступ: океан слів і людина, що ранить себе об кожне з них -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Вступ: океан слів і людина, що ранить себе об кожне з них</h2>
+    <p>Я починаю з образу: навколо людини літає цілий океан слів. Вони оточують нас, як пилинки, бувають крупніші, як птахи, а бувають слова-камені. Слова — це звукові хвилі, але нерідко людина ніби ходить полем із настовбурченими петельками й шукає гачки, об які можна зачепитися. Чому вона так робить? Бо ще не вивчила цього уроку.</p>
+    <p>Я вводжу шкалу. З одного боку — людина реакції: вона ранить себе об кожне слово й реагує на все надемоційно, продовжуючи себе виснажувати. З другого — людина, яка тренує здатність відсторонюватися, не ранитися об кожне слово й створювати простір між зовнішнім стимулом і внутрішньою реакцією.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що означає бути людиною реакції -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Що означає бути людиною реакції</h2>
+    <p>Людина реакції — та, чиї думки, почуття, слова, вчинки й поведінка значною мірою визначаються не її власними цінностями й внутрішніми орієнтирами (що для мене важливо, чому я кажу «так», а чому «ні», що для мене прийнятно, а що ні), а зовнішніми стимулами: словами, діями, емоціями інших або навіть лише припущеними емоціями. Її внутрішній стан залежить не від фактичного стану речей, а від припущеного. Наприклад, вона може подумати, що співрозмовник вважає її нудною чи поганою, — і почати реагувати на цей власний домисел.</p>
+    <p>Така людина подібна до автобота чи робота: її реакція нерідко непропорційна ситуації й шкодить її благополуччю та благополуччю інших. Нерідко вона шкодить собі, збагачуючи тих, хто тисне на її вразливі кнопки: продавців, що торгують страхом («залітайте в останній вагон потяга, що від'їжджає», «невже ви хочете й далі жити, як живете?»). Людина реакції — наче наслідок зовнішніх впливів, вона перекладає відповідальність за свій внутрішній стан на інших. Цей урок — про те, як здобути пульт керування власною увагою.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Приклад Марічки: домисел замість факту -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Приклад Марічки: домисел замість факту</h2>
+    <p>Марічка, щоразу коли її начальник заходить до кабінету похмурим, миттєво втрачає настрій, відчуває тривогу й починає судомно перебирати всі свої можливі провини. Навіть якщо його настрій жодним чином не пов'язаний із нею, увесь її робочий день минає в напрузі й очікуванні критики. А в начальника можуть бути зовсім інші причини: проблеми зі здоров'ям, головний біль, невдалий ранок. Марічка ж вважає себе настільки всемогутньою, що це саме вона — причина його похмурості. Метафора: човен без керма в морі під час шторму — кожен порив вітру, кожне чуже слово чи вчинок кидає його з боку в бік, а людина в ньому не може обрати курс. Бути людиною реакції означає бути таким човном.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Вправа: щоденник автоматичних реакцій -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Вправа: щоденник автоматичних реакцій</h2>
+    <p>Почніть відстежувати, коли ви реагуєте автоматично. Можна завести «щоденник моїх реакцій» і записувати: ситуацію, тригер (зовнішній стимул), миттєву реакцію (що я подумав, відчув, зробив), до чого це призвело, і які висновки ви обираєте з цього зробити. Почати відстежувати свої автоматичні реакції — вже означає почати ними володіти й впливати на них. Запитайте себе: у яких ситуаціях я помічаю, що реагую наче на автоматі? Що зазвичай запускає мою сильну емоційну реакцію? Як би я хотів почуватися в цих ситуаціях замість цього?</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Чому людина стає надмірно реактивною -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Чому людина стає надмірно реактивною</h2>
+    <p>Я розбираю причини.</p>
+    <p><strong>Тривога й страх.</strong> Реакції часто вкорінені в страху перед тим, що сталося, може статися чи відбувається зараз. Але якщо в дитинстві людина жила в страху, чи означає це, що й надалі вона має його обслуговувати?</p>
+    <p><strong>Звичка.</strong> Тривале перебування в стресових, кризових ситуаціях може сформувати звичку реагувати екстрено й напружено на все підряд. Коли за звуком ключа в замковій шпарині дитина вгадувала, скільки випила мама чи тато, і з цього знала, до чого готуватися, — пізніше цей звук, як голка в оголений нерв. Згодом навіть похмуре обличчя начальника сприймається як сигнал небезпеки.</p>
+    <p><strong>Захисний механізм.</strong> Таке гостре реагування — це захист, і я не збираюся про нього говорити зневажливо. Колись воно рятувало, зберігало життя й здоров'я. Ми досліджуємо його, щоб побачити, що те, що колись було доречним, зараз може бути зайвим.</p>
+    <p><strong>Завищені «має бути».</strong> Коли «має бути так, і ніяк інакше», а реальність не відповідає — це теж викликає гостру реакцію.</p>
+    <p><strong>Ставлення до себе як до нікчеми.</strong> «Я хороший і в безпеці, коли догоджаю й коли інші мною в захваті» — така установка змушує гостро реагувати на все, щоб лише залишатися «хорошим» в очах інших.</p>
+    <p><strong>Соціальне навчання.</strong> Людина, наче суха губка чи суха ґрунтова земля, вбирає наративи з екрана телевізора, журналів і середовища. Якщо її навчили, що на ситуацію X слід реагувати гнівом, образою чи контролем, вона так і діятиме, навіть не ставлячи цього під сумнів, бо ставити під сумнів звичне вимагає зусиль.</p>
+    <p><strong>Приклад Андрія.</strong> Андрій виріс у сім'ї, де батьки часто сварилися й непередбачувано виражали гнів. Йому вже 43, але функціонує він наче семирічний. Будь-яке підвищення голосу чи натяк на невдоволення його партнерки Тетяни викликає в нього миттєву захисну реакцію або бажання втекти, навіть якщо ситуація незначна. Він живе в режимі страхо- й атакоготовності.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- «Там і тоді» замість «тут і зараз» -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">«Там і тоді» замість «тут і зараз»</h2>
+    <p>Для несвідомого часу не існує. Людина перебуває не «тут і зараз», а «там і тоді». Андрій реагує не на те, що Тетяна лишилася невдоволена, наприклад, наваристістю бульйону, а на відчуття, що вона знову ним у цілому невдоволена, а отже зараз почнуть «викручувати руки» й дорікати, що його погано виховали.</p>
+    <p>Нервова система в такому разі — як надчутлива сигналізація: вона спрацьовує не лише на справжніх злодіїв, а й на кішку, що пробігла повз, і на порив вітру. Звичка до реактивності — це життя з постійно голосною сигналізацією за відсутності реальної небезпеки. Вона реагує на уявну небезпеку, а не на реальну.</p>
+    <p>Тут працюють і переконання: «я маю всім догоджати, інакше мене не приймуть», «світ небезпечний, ніколи не знаєш, що буде далі». У дитинстві, де батьки непередбачувано гніваються, дитина ухвалює таке рішення. Крім того, дитина вважає, що весь світ крутиться навколо неї, тож будь-який гнів відносить до себе. Але якщо раніше було непередбачувано, це не означає, що так буде завжди. Інші люди — це інші люди; я — теж інша людина стосовно них.</p>
+    <p>Я пропоную поміркувати: що ви кажете, що відчуваєте, як проявляєтесь, коли починаєте гостро реагувати? Які переконання про себе, про інших і про світ дають про себе знати в такі миті? Щоб стрибнути, потрібно відчути опору під ногами; щоб із чимось працювати, треба це побачити й визнати.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Умовні рефлекси -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Умовні рефлекси</h2>
+    <p>Музика — як машина часу: ви слухаєте пісню, і вона огортає вас тими переживаннями, з якими вона колись звучала. Людина багато в чому — сукупність умовних рефлексів. Хто обпікся гарячим молоком, дутиме на будь-яку рідину — навіть остиглу, про всяк випадок. У людини реакції налаштування цієї сигналізації збиті, вона вищить, виснажуючи саму людину, навіть на нейтральні стимули — наприклад, на кішку, що пробігла.</p>
+    <p>Важливо й те, що чиєсь невдоволення — це не реакція на ваші слова, а на «монстра», якого людина породжує своїми інтерпретаціями. Хтось може бути надзвичайно задоволений, хтось — невдоволений; це нормально. Це не робить поганим ні вас, ні мене.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Яку ціну платить людина реакції -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Яку ціну платить людина реакції</h2>
+    <p>Я перелічую негативні наслідки постійного гострого реагування.</p>
+    <p><strong>Ризик втрати контролю.</strong> Якщо людина не керує своїми діями, почуттями, словами, вона стає маріонеткою в чужих руках. Популярна тема — «поставити когось на місце». Але якщо в тебе є гостре бажання кого-небудь «поставити на місце», ти вже граєш за правилами чужої гри. Відео на цю тему набирають багато переглядів, бо тішать самолюбство глядача, дозволяючи фантазувати про своє всемогутність. Коментар на кшталт «як відповісти так, щоб людина згоріла від сорому» підкреслює ту саму ахіллесову п'яту. Відстороненість — не слабка позиція, а стильна: я не беру на себе те, що не моє.</p>
+    <p><strong>Втрата спокою.</strong> Внутрішній спокій — простір регенерації. У ньому можна вправлятися де завгодно: так само, як для молитви не потрібен храм — храм там, де ти зараз. Людина реакції живе в постійній тривозі, напрузі, паніці. Приклад: «чому офіціант так довго несе їжу, він, мабуть, щось замислив проти мене» — і можна піти втомленим, нічого не зробивши. Спокій — це не вдавання, ніби все гаразд, а реальне відчуття, що все достатньо гаразд.</p>
+    <p><strong>Неефективність дій.</strong> Рішення й вчинки, ухвалені в стані гніву, страху чи паніки, рідко бувають конструктивними й зазвичай ведуть до жалю. Фраза, що пасує: усе, що починається гнівом, закінчується ганьбою, а нерідко й слізьми.</p>
+    <p><strong>Фізичне виснаження.</strong> Постійне перебування в кризовому режимі — це високий рівень адреналіну, м'язова напруга, що зношує організм.</p>
+    <p><strong>Проблеми у стосунках.</strong> Реактивна поведінка — крики, звинувачення, контроль, образи — руйнує комунікацію й відштовхує людей. Іноді після інтриг і скандалів настає примирення, що здається особливо яскравим — але лише на тлі вічних страждань, як ілюзія, що все добре. Хочеш зробити людині добре — зроби їй погано, а потім поверни, як було: вона буде вдячна.</p>
+    <p><strong>Нездатність розв'язувати справжні проблеми.</strong> Гостро реагуючи на симптоми, людина не бачить і не усуває кореневої причини; працювати з причиною можна лише в стані спокою.</p>
+    <p><strong>Втрата себе.</strong> Життя людини стає відображенням чужих очікувань. Приклад: Світлана постійно реагує на найменшу невідповідність між тим, що, на її думку, має бути, і тим, що відбувається: мало бути не три квітки, а п'ять; усім має подобатися все, що я роблю. Це призводить до частих сварок, емоційного виснаження й неможливості обговорити реальні проблеми. Гостре реагування — це спроба загасити пожежу, підливаючи в неї бензин емоційних реакцій.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Підсумок перших трьох кроків -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Підсумок перших трьох кроків</h2>
+    <p>Щоб підсумувати: перший крок — ввести поняття людини реакції (та, що робить інших відповідальними за свій внутрішній стан) і дослідити, що зазвичай запускає гостре реагування. Другий — зрозуміти, чому людина стає гостро реагуючою (дитинство, ставлення до себе, невідповідність реальності очікуванням, звичний стан). Третій — побачити, яку ціну я плачу за це.</p>
+    <p>Немає потреби різко змінювати себе просто зараз: завдання — почати помічати. Проблема тоді, коли людина забуває, що вона забула; а коли вона починає пам'ятати, що забуває, — починається новий розділ її життя.</p>
+    <p>Я підкреслюю: гостре реагування — це захисний механізм, який колись зберігав мені життя й здоров'я. Наприклад, дитина емоційно незрілих батьків могла реагувати: не шуміти без потреби, не сміятися голосно, ходити з сумним обличчям — і маска поволі вростала. Але це не означає, що й тепер я повинен це обслуговувати. Не треба й гостро реагувати на власне гостре реагування: річ у тому, щоб побачити.</p>
+    <p>Додам важливе спостереження про впевненість: стан упевненості не передує дії, а приходить після її виконання.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Четвертий крок: відстороненість -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Четвертий крок: відстороненість</h2>
+    <p>Тепер я вводжу альтернативу. Це не інверсія («було біле — стало чорне»), а якісно інший рівень. Відстороненість — здорова дистанція від того, над чим я не маю влади, на що не здатен вплинути, у чому не вмію читати чужі думки.</p>
+    <p>Відстороненість — це не холод і не байдужість. Це здатність емоційно й психологічно (а за потреби й фізично) відділитися від того, на що ви зазвичай реагуєте гостро: на поведінку людей, події, власні думки, — щоб створити внутрішній простір для усвідомленого вибору. Це вміння не дозволяти зовнішнім факторам чи внутрішнім імпульсам автоматично керувати вашими почуттями й діями. Внутрішні імпульси теж можуть бути пасткою: «я так відчуваю, я проявляю свої почуття, тож кажу всім свою думку» — це раціоналізація гострого реагування.</p>
+    <p>Не завжди можна фізично вийти з простору, де ти перебуваєш, але є свобода обирати позицію щодо того, що відбувається, наприклад, у сім'ї. І завжди можна почати з внутрішнього ставлення.</p>
+    <p><strong>Користь відстороненості:</strong> повернути собі контроль над реакціями; зберегти й розвинути здатність до внутрішнього спокою й безтурботності; думати й діяти ефективніше, у власних інтересах (і в інтересах оточення), «на холодну голову»; перестати сприймати все на свій рахунок; відпустити ілюзію, ніби весь світ крутиться навколо мене; зберегти енергію, не витрачаючи її на марні реакції.</p>
+    <p><strong>Приклад.</strong> Шістдесятичотирирічна мама раніше зривалася на крик і погрози, коли сорокарічний син повертався пізніше обіцяного. Вона вирішила запросити в життя відстороненість: тренувала спокій, визнавала свою тривогу, не виплескуючи її одразу. Замість крику вона помітила, що в 42 роки він може сам розпоряджатися своїм часом.</p>
+    <p><strong>Метафора:</strong> відстороненість — це крок назад від картини, щоб побачити її цілком, а не окремі мазки, прикипівши до неї щокою. Ви не перестаєте бачити картину — ви здобуваєте перспективу й можливість оцінювати її без емоційного злиття.</p>
+    <p><strong>Пауза.</strong> Як запросити в життя паузу, коли відчуваєте, що починаєте реагувати гостро? Зробити паузу перед тим, як щось сказати чи зробити: використати її, щоб подихати, звернути увагу на свої відчуття, не діяти під їхнім впливом. Вам буде складно згадати про паузу в момент гострого реагування. Ведіть щоденник: які сьогодні були тригерні ситуації, що ви в них думали, відчували, робили, до чого це привело, які висновки обираєте зробити. Спочатку ви десять разів забудете про доцільність паузи, на одинадцятий — згадаєте, але вже після. Потім помічатимете, що згадуєте ближче до самої події, ще ближче, а потім і в момент; а згодом гострого реагування вже може й не бути, принаймні такого, яким воно було раніше.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Відстороненість — не байдужість -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Відстороненість — не байдужість</h2>
+    <p>Чи означає відстороненість, що мені байдуже до інших? Ні. Ви й далі можете любити людей, дбати про них, брати участь у вирішенні їхніх проблем. Різниця — у тому, як: відстороненість допомагає діяти не з позиції «змушений», не зі стану паніки, провини чи гніву, а зі стану спокою й ясності. Одна річ — упрягатися «з-під палки», інша — зробити це як свідомий вибір. Ви відстороняєтеся не від людей, а від руйнівних автоматичних реакцій на них і на ситуації, і робите це насамперед для себе — щоб зберегти спокій і діяти ефективно, що зрештою може бути корисним і для оточення.</p>
+    <p><strong>Метафора хору.</strong> Якщо хтось поруч фальшивить, краще самому співати чисто, ніж теж збиватися. Коли ви співаєте чисто, інший, можливо, помітить несузвучність і скорегує себе сам. Але це наслідок, а не мета; ключове — відстороненість, самоконтроль, увага до себе.</p>
+    <p><strong>Приклад Олени.</strong> Її подруга переживає важке розлучення й постійно телефонує в сльозах, звинувачуючи всіх навколо. Раніше Олена повністю поринала в її емоції, сама починала злитися на її чоловіка, давала різкі поради й після розмови почувалася спустошеною. Запросивши в життя відстороненість, вона навчилася слухати зі співчуттям, але не «заражатися» емоціями подруги: «Чую, що тобі непросто. Як я можу тебе підтримати, не даючи порад?» Поради ж — нерідко прихована пасивна агресія (мовляв, мені видніше, як має бути).</p>
+    <p><strong>Співчуття і злиття — різні речі.</strong> Співчуття — розуміння й розділення почуттів іншого без втрати себе; злиття — повне занурення в чужі емоції до втрати власних меж. Підтримку варто пропонувати зі стану співчуття, а не злиття.</p>
+    <p><strong>Дії в гострий момент.</strong> Створити паузу, змістити фокус уваги, задіяти тіло, прийняти душ, відкласти питання «до ранку», зробити «тиху годину», нормально поїсти. Але те, про що я говорю, має довгостроковий, стратегічний характер: працювати над власним сприйняттям так, щоб, зіткнувшись із тією ж подією знову, реагувати вже інакше.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Не сприймати все на свій рахунок -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Не сприймати все на свій рахунок</h2>
+    <p>Я розкриваю тему докладніше (її можна було б назвати «Як перестати сприймати все на свій рахунок»).</p>
+    <p>Поведінка інших — це їхня поведінка, а не ви. Схильність до злиття породжує віру, що чужі прояви — це про мене. Але ваше невдоволення мною — це ваше, а ваш захват уроком — також ваш. Залишайте їх їм. Вчинки, слова, настрої інших людей — це здебільшого про їхні проблеми, внутрішні процеси, страхи, переконання, а не про вашу цінність. Наприклад, комусь я можу нагадувати шкільного кривдника, або він бачить у мені те, що я дозволяю собі, а він собі забороняє. Причин може бути тисяча, і мені не потрібно знати, які саме. Якщо подруга сказала вам, що сукня на вас виглядає недоречно, можливо, вона просто побоюється, що ви привернете увагу молодої людини, на яку вона сама має плани. Сукня тут ні до чого.</p>
+    <p>Ваша безумовна цінність не пов'язана з чужим схваленням чи відмовою. Відмова вам — це відмова вашій пропозиції, а не вам. Критика на вашу адресу теж не пов'язана з вашою цінністю: що б люди вам не говорили, вони таким чином оголюють фільтри власного сприйняття. Слова інших людей про вас — це оголення фільтрів їхніх смаків і сприйняття, а не об'єктивна оцінка вас як особистості, бо особистість неможливо оцінити: ви більші й ширші за будь-які оцінки. Ваша цінність не залежить від того, схвалюють вас чи ні.</p>
+    <p><strong>Приклад:</strong> фото «до й після» брекетів — дівчина красива і до, і після, а коментарі: «Здається, ви втратили якусь родзинку»; «Сподіваюся, ваше рішення було викликане не тим, що ви себе раніше не приймали». Це оцінки, якими люди говорять про себе: у будь-якій ситуації людині потрібно зробити себе хорошою. Кожна людина — це завод із виробництва власних емоцій, слів і поведінки. Тому будь-яка критика на вашу адресу — це не про вас, а про фільтри сприйняття критика.</p>
+    <p>У процедурній, професійній діяльності, де мова про факти, доречно запитати: «Чую, про що ви кажете, давайте разом дослідимо; але спочатку — на підставі яких фактів ви це стверджуєте, який у вас досвід і експертиза для таких суджень?»</p>
+    <p>Дистанція дозволяє оцінювати ситуацію об'єктивніше, а не крізь призму власних образ і провини. Які є факти? Що відбувається насправді? Критика ранить тих, хто забороняє іншим мати думку, відмінну від власної.</p>
+    <p><strong>Метафора дощу й парасольки.</strong> Дощ — це чужа поведінка й слова: він іде сам по собі. Ви можете промокнути до нитки, замерзнути, сприйняти все на свій рахунок і засмутитися, а можете розкрити парасольку чи стати під навіс, усвідомивши, що це не про вас, — і залишитися сухим. Перестати сприймати все на свій рахунок — це навчитися користуватися емоційною парасолькою.</p>
+    <p><strong>Факт чи думка?</strong> Я сприймаю слова інших на свій рахунок, коли вважаю їх фактом. Але слова інших людей — найчастіше не факт, а думка; ранитися об думки не слід. Звісно, якщо ми домовилися зустрітися о десятій, а я прийшов о 10:20, і співрозмовник каже мені про це, — це факт, і я вибачаюся. Якщо ж я прийшов о 9:55, а мене звинувачують у запізненні, — варто спокійно уточнити, про що йдеться. Люди переважно ранять себе об думки: факти рідко звучать з вуст людей.</p>
+    <p><strong>Хто малює вашу картину?</strong> Людина, що гостро реагує, сприймає себе малюнком чужого художника. Але ви в цю мить і художник, і картина, і спостерігач, що дивиться на процес збоку: у вас є фарби, пензлі, полотно, і ви здатні керувати рухом своєї руки. Ви не той, кого малюють інші; ви — той, хто малює.</p>
+    <p><strong>Персоналізація.</strong> Як часто ви ловите себе на думці: «це через мене, це про мене»? Тут працює когнітивне спотворення — персоналізація. Але внесок у результат взаємодії робить кожна зі сторін. Запитайте: яка відповідальність кожної зі сторін? Що реально залежало від мене? Чию поведінку ви найчастіше сприймаєте на свій рахунок і що саме спонукає вважати, що справа в вас? Як змінився б ваш стан, якби ви припустили, що поведінка іншої людини принаймні на значну частку пов'язана з ним самим? Переконаність, що чужа поведінка на сто відсотків пов'язана тільки зі мною і я один винен, — робить мене людиною реакції.</p>
+    <p><strong>Інші когнітивні пастки.</strong> Читання думок (я не вмію їх читати), катастрофізація, персоналізація, емоційне обґрунтування (відчуваю втому — отже, робота погана; хоча людина могла прийти втомленою, бо пізно лягла). Таке обґрунтування — часте джерело хибних рішень: людина робить висновки на основі свого емоційного стану, цілком довіряючись імпульсам, які можуть не мати стосунку до предмета.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Практичні кроки: чотири етапи -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Практичні кроки: чотири етапи</h2>
+    <p><strong>Сигнали, що ви реагуєте:</strong> втрата спокою, тривога, страх, роздратування, образа, жалість до себе чи інших, сором, розгубленість, а також фрази «він мене змусив», «вона мене змусила». Ніхто не може закинути вам почуття ззовні.</p>
+    <p><strong>Правило:</strong> перш ніж реагувати, запросіть у життя комфорт, внутрішню рівновагу, спокій. Використовуйте безпечні, неруйнівні методи: глибоке дихання, прогулянку, прибирання, усамітнення, вмивання прохолодною водою, дзвінок другові, анекдот, читання, хобі, фізичну активність. Мета — емоційно, психологічно, а за потреби й фізично відділитися від тригера. Можна сказати: «Наскільки я розумію, зараз я не готовий бути корисним у розв'язанні цієї ситуації. Мені важливо зробити паузу, щоб, охолонувши, повернутися до неї».</p>
+    <p>Чотири кроки:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text"><strong>Розпізнати.</strong> Помітити, що я зараз думаю, що відбувається в тілі (жар у грудях, прискорене серцебиття), яке бажання народжується. Осмисленість — це здатність відстежувати свої думки, почуття й імпульси до дії у відповідь на зовнішній стимул. Гостре реагування проходить як у сні.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Створити умови комфорту.</strong> Встати з-за столу, зробити кілька глибоких вдихів, вийти на вулицю, пройтися навколо будівлі хвилин десять, умитися холодною водою.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text"><strong>Дослідити.</strong> Повернутися, спокійніше прочитати. Що я відчуваю? Що фактично відбувалося? Про що я думав? Що робив? Чи не намагався все контролювати, надмірно опікати, нав'язувати допомогу силою? Чи не крав я відповідальність? Чи не сприймав на свій рахунок надто багато? Чи справді це кінець світу? Як я згадуватиму це через рік?</div></div>
+      <div class="num-row"><div class="num-badge">4</div><div class="num-text"><strong>Діяти.</strong> Як ухвалити рішення зі спокійного стану, спираючись на реальність і свою відповідальність (турбота про себе, а не виправлення інших)? Що реально потрібно зробити? Де можу вибачитися, з ким поговорити, що відпустити?</div></div>
+    </div>
+    <p><strong>Приклад Дениса.</strong> Денис отримав невдоволений лист від клієнта. Його перша реакція — гнів і бажання негайно написати різку відповідь. Він розпізнає жар у грудях і думки на кшталт «як він посмів». Він встає з-за столу, виходить на вулицю, гуляє десять хвилин, вмивається. Повертаючись, перечитує лист спокійніше: критика неприємна, але частково справедлива — поставку справді затримали на добу (хоч вони й збільшили обсяг, щоб це компенсувати). Він визнає своє роздратування й розчарування, але розуміє: клієнт має право на власну думку, а його задача як фахівця — розв'язати проблему, а не доводити свою правоту. До цієї проблеми долучилося багато інших учасників процесу, тож не слід брати все на себе. Він пише спокійну відповідь: підтверджує отримання зворотного зв'язку, уточнює деталі й пропонує конкретні кроки.</p>
+    <p><strong>Метафора:</strong> ваша реакція — як каламутна вода в склянці, яку збовтали. Кроки відстороненості — це процес: ви ставите склянку на стіл, заспокоюєтеся, даєте каламуті осісти, досліджуєте, а потім вирішуєте, що робити з чистою водою.</p>
+    <p><strong>Починайте з малого.</strong> Принцип послідовності в навчанні нікому не скасовано: діти спочатку вчаться писати «закарлючки», потім літери, склади, слова й речення. Оберіть одну ситуацію, де ви зазвичай сильно реагуєте, і застосуйте ці чотири кроки. Не прагніть одразу до ідеалу: кожного разу, коли вдається зробити паузу й трохи заспокоїтися перед дією, — це вже перемога.</p>
+    <p><strong>Запитання для роздумів:</strong> який із чотирьох кроків здається вам найскладнішим і чому? Як ви можете підтримати себе у виконанні? Які конкретні дії допомагають особисто вам заспокоїтися й відновити рівновагу? Як ви можете нагадати собі про ці кроки в момент, коли емоції захльостують? Наприклад, надягнути каблучку на палець або обрати якийсь інший подразник-нагадування.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Чи справді все потребує негайної реакції -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Чи справді все потребує негайної реакції</h2>
+    <p>Переважна більшість ситуацій, які людині здаються екстреними, насправді такими не є: екстреність — це суб'єктивне ставлення до ситуації. Звичка до гострого кризового реагування змушує сприймати багато чого як невідкладне. Дуже мало проблем виграють від негайної, необдуманої реакції, здійсненої в стані паніки чи гніву. Навіть коли швидка реакція справді потрібна, вона буде ефективнішою зі спокійного стану розуму. Ті самі факти й ресурси доступні мені й у спокійному стані.</p>
+    <p>Винятки — ситуації реальної загрози життю чи здоров'ю: якщо перед вами різко гальмує машина, а ви за кермом, різко натиснути на гальмо — необхідно й рятівно. Але навіть там секундна пауза на глибокий вдих може допомогти діяти адекватніше. А якщо дитина розбила чашку, гнів і крик не потрібні негайно; краще зробити паузу, переконатися, що вона не поранилася, і спокійно разом прибрати осколки. Це схоже на пожежну тривогу, що спрацювала на мікродимок від підгорілої цибулі на пательні: проблема є, але це не означає, що слід викликати всі пожежні розрахунки міста.</p>
+    <p>Тренуйте навичку розрізняти ситуацію реальної фізичної небезпеки, що вимагає миттєвої рефлекторної дії, і ситуацію психологічного дискомфорту чи конфлікту, де пауза й обдумана відповідь завжди кращі. Запитайте: чи загрожує щось зараз моєму життю чи здоров'ю? Якщо ні — у вас є час на паузу. Пригадайте ситуації, коли вам здавалося, що треба реагувати негайно, а згодом ви зрозуміли, що поспіх був зайвим чи шкідливим (не звинувачуючи себе, а досліджуючи). Що найстрашніше, на вашу думку, може трапитися, якщо ви не відреагуєте миттєво? Як ви можете навчитися довіряти тому, що пауза не погіршить ситуацію, а допоможе знайти краще рішення?</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Ставлення до себе та чужі оцінки -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Ставлення до себе та чужі оцінки</h2>
+    <p>Гостре реагування рука об руку йде зі ставленням до самого себе: «я хороший, коли догоджаю, коли всім подобаюся, коли мною захоплюються». Власник таких переконань надзвичайно чутливий до зовнішніх оцінок, критики, відмов і поведінки інших; схильний сприймати все на особистий рахунок і вважати, що чужі слова — повне, детальне, об'єктивне віддзеркалення моїх недоліків і моєї нецінності. Але дії й слова інших людей — це дії й слова інших людей.</p>
+    <p>Така людина надмірно реагує на відмову чи несхвалення, сприймаючи їх як підтвердження своєї нікчемності, що викликає сильні негативні емоції: сором, провину, відчай. Але ви не можете бути нікчемним, навіть якщо захочете: людина безумовно цінна. «Нікчемним» може бути лише вчинок, та й то відносно якогось стандарту.</p>
+    <p>Такий також відчуває сором за поведінку близьких: наприклад, дитина йде з нетверезим татом чи мамою, соромиться й боїться зустріти однокласників. Але пиятика іншої людини — це проблема іншої людини; ви вже не та дитина. Почуватися відповідальним і поганим через неприйнятну поведінку близької людини — наче це кидає тінь на власну цінність — не потрібно: це не про вас, а про нього. Інакше людина стає маріонеткою, дозволяючи іншим смикати себе за ниточки невпевненості й провини.</p>
+    <p>Я не кажу, що впевненість у собі — це ігнорувати думку інших. Йдеться про те, що думка інших про мене не пов'язана з моєю цінністю: це їхня думка на основі їхнього досвіду й рівня розуміння. Хтось може сказати: «Урок надто довгий, міг би краще підготуватися». У людини є очікування й свої орієнтири, і це нормально. А я займаюся улюбленою справою й записую уроки, співзвучні мені за змістом, подачею й формою. Нормально, якщо як «текст» я підходжу не кожному читачеві: це не робить мене поганим.</p>
+    <p>Яке ставлення до себе ви обираєте кристалізувати? Що для вас означає думка, що ви цінні незалежно від того, що про вас думають інші?</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Відпустити контроль -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Відпустити контроль</h2>
+    <p>Гостре реагування пов'язане й зі схильністю все контролювати. Дуже важливо відпустити контроль, визнавши, що ви не можете контролювати все. Так само й я дозволяю собі відобразити те, що не вмістилося, у наступних випусках: цей урок уже достатньо хороший.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Підсумок -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Підсумок</h2>
+    <p>Цим уроком ми ввели поняття відстороненості й розрізнили двох людей: людину реакції та людину, що тренує відстороненість. Людина реакції робить інших відповідальними за свій внутрішній стан, реагує на домисли й старі страхи й платить за це спокоєм, ефективністю, здоров'ям, стосунками й самим собою. Відстороненість — не холод і не байдужість, а здатність створити паузу між зовнішнім стимулом і внутрішньою реакцією, щоб діяти зі спокою, з усвідомленого вибору. Чотири кроки — розпізнати, створити комфорт, дослідити, діяти — це навичка, яку можна тренувати поступово, починаючи з малого. Вам не потрібно сприймати чужі слова на свій рахунок: слова інших — це їхні фільтри й їхні історії, а ваша цінність від них не залежить. Я запрошую вас із сьогоднішнього дня перестати ранитися об кожне слово інших людей і перестати сприймати все на свій рахунок.</p>
+    <div class="final-quote">
+      <div class="final-text">Вам не потрібно сприймати чужі слова на свій рахунок: слова інших — це їхні фільтри й їхні історії, а <strong>ваша цінність від них не залежить</strong></div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
