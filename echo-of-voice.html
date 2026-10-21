@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<script src="theme.js" data-native="light"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Відлуння власного голосу</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Відлуння<br>власного голосу</h1>
+  <p class="page-subtitle">Нарцисизм: що це насправді і чому його плутають із низькою самооцінкою</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Нарцисизм — це зречення від своєї самості, зокрема від почуттів, емоцій і життя в самому собі, заради образу, який людина хоче транслювати</div>
+      <div class="hero-author">Барбара</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Вступ -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Вступ</h2>
+    <p>Я розглядаю поняття нарцисизму «від і до». Слово «нарцис» зовсім не страшне: нарцисизм є в кожному з нас, і це дуже багатогранне й захопливе поняття. Спершу я розберу, як формується нарцисизм і в чому особливість нарцисичної травми; потім — рівні нарцисизму, зокрема здоровий і дефіцитарний. Особливу увагу приділяю саме дефіцитарному, бо його часто сприймають як низьку самооцінку й невпевненість. Такі люди можуть бути надзвичайно емпатичними, але, як і герої міфу, глибоко відкидають самих себе. Далі — ключові особливості нарцисичної особистості, способи собі допомогти та найпоширеніші образи, у яких з'являються нарциси.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Міф про Нарциса і його ключовий сенс -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Міф про Нарциса і його ключовий сенс</h2>
+    <p>Поняття нарцисизму ввів Фройд, який був великим шанувальником давньогрецької міфології (так само як Едіпів комплекс і комплекс Електри). За міфом, Нарцис був напрочуд вродливим юнаком, у якого закохалася німфа Ехо. Богиня Гера через ревнощі прокляла Ехо й позбавила її голосу: тепер вона могла лише повторювати закінчення чужих фраз. Ехо не змогла висловити кохання й померла від нерозділеного кохання. У відповідь боги покарали Нарциса: змусили його закохатися у власне відображення. Віщун Тіресій передбачив, що він житиме, доки не побачить себе. Нахилившись до струмка, Нарцис побачив своє відображення, не зміг відірватися, помер від виснаження й перетворився на квітку.</p>
+    <p>Для нас важливо, що він закохався у власний образ після того, як відкинув кохання Ехо; закоханість у власний образ — покарання за нездатність любити. За Фройдом, нарцисичне лібідо не спрямоване на інших, тому нарциси приречені любити лише власний образ.</p>
+    <p>Є й інша інтерпретація, ключова для цієї лекції. Ехо — це відлуння нашого власного голосу. Якби Нарцис сказав їй «я тебе люблю», вона повернула б цю фразу, і він відчув би себе прийнятим та коханим. Але він зрікається власного голосу, який є частиною нашої самості, тобто того, якими ми є насправді, — на користь зовнішнього образу. У цьому весь драматизм нарцисизму: нарцисизм — це зречення від своєї самості, зокрема від почуттів, емоцій і життя в самому собі, заради образу, який людина хоче транслювати.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Як формується нарцисизм: два погляди -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Як формується нарцисизм: два погляди</h2>
+    <p>Є два погляди. Перший: нарцисизм — вроджена конструкція. Новонароджений зациклений на собі, його психіка недорозвинена, і він щиро переконаний, що світ обертається навколо нього, а мати — його продовження, послане, щоб задовольняти його потреби. Цей стан називають первинним нарцисизмом; з ним пов'язане поняття дитячого всемогутності — очікування, що мати завжди буде поруч. Сенс психологічного дорослішання в цій концепції — вирости з первинного нарцисизму до здатності любити інших.</p>
+    <p>Другий погляд: нарцисизм може бути лише вторинним, тобто виникати внаслідок порушення близькості, внаслідок психологічних травм від батьків. Батьки не змогли дати дитині достатньо любові й підтримки на емоційному рівні, не визнавали й не поважали її індивідуальність і намагалися формувати дитину за власними уявленнями. За цією концепцією дитячого всемогутності немає: дитина хоче, щоб її потреби побачили й задовольнили здоровим способом, а оскільки вона повністю залежить від батьків, інших способів у неї просто немає. Дитина не має влади над батьками, навпаки, батьки всемогутні щодо неї. Мені особисто більше відгукується друга концепція, бо в ній логічно народжується феноменологія нарцисичної травми.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Нарцисична травма й розщеплення особистості -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Нарцисична травма й розщеплення особистості</h2>
+    <p>Нарцисична травма — особлива травма, через яку формується психіка. Простими словами: нарцисична травма = травма відторгнення + досвід приниження. Те саме, що Нарцис зробив зі своєю самістю, роблять батьки в дитинстві майбутнього нарциса: вони відкидають саму сутність дитини заради образу, який хочуть бачити. Дитина відчуває сором за те, яка вона є, і розуміє, що компенсувати цей глибокий сором може, лише граючи образ того, якою її хочуть бачити. Як ілюстрацію можна згадати публічну людину, чий батько знецінював вибір професії одного з синів: за словами авторки, «грандіозний образ» такої людини колись був продиктований батьком.</p>
+    <p>Існує стереотип, що нарциси безмірно люблять себе. Насправді нарциси не вміють любити себе й не знають, що таке любов; усередині вони глибоко себе ненавидять, але компенсують це по-різному — або повним уходом у образ грандіозності, або усвідомленою компенсацією, залежно від рівня розладу.</p>
+    <p>Внаслідок батьківського відторгнення самості виникає глибокий сором — ключове переживання нарцисичної особистості. Особистість розщеплюється на два полюси: «я нікчемний», у якому живе сором, і «грандіозне Я». Сором для психіки руйнівний і майже нестерпний, тому вона винаходить стратегію, щоб із ним впоратися, — і формується другий образ, грандіозне Я. Це якраз про образ: у спілкуванні з нарцисом ви почуєте багато приписів, як я маю виглядати, поводитися, яким маю бути, і це завжди ідеалізоване уявлення: я неушкоджуваний і непереможний, не підвладний почуттям, мені не може бути боляче, я не можу бути слабким, усі ці «людські переживання» не про мене, я істота іншого рівня, мислю масштабно, усе тримаю під контролем, у мене грандіозні цілі й плани, а свої почуття й страждання залиште собі.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Рівні нарцисизму -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Рівні нарцисизму</h2>
+    <p>Уявімо пряму лінію. У нульовій точці — здоровий нарцисизм. Це нормальна потреба в увазі, визнанні, повазі, бажання бути хорошим для інших, тобто бажання позитивної оцінки від людей; потреба пишатися собою й мати досягнення; усвідомлення своєї цінності для інших, демонстрація світові своїх навичок і вмінь в очікуванні позитивного зворотного зв'язку, тобто потреба самореалізації.</p>
+    <p>Про формування здорового нарцисизму теж є два погляди. Якщо нарцисизм вроджений, він просто по-різному виражений у кожної людини. Якщо ж він є наслідком порушення прив'язаності, то здоровий нарцисизм залежить від контексту. Особистість формується в контексті, і самооцінка теж: у новонародженого самооцінки немає, дитина — порожня посудина, що поступово накопичує спершу батьківські оцінки, потім вчителів, ровесників тощо. У цьому розумінні нарцисичні люди — це люди, чия самооцінка організована навколо підтримання самоповаги через зовнішні підкріплення. Це нормальна історія: через зовнішні оцінки сформувалася наша самооцінка, тому кожен помічає в собі залишки цієї стратегії — важливість чужої думки, порівняння себе з іншими, щоб дійти висновку про себе. До цього додається оцінка себе як працівника, наших досягнень і результатів; оточення оцінює нас за статусом чи кількістю грошей. Тому я розумію здоровий нарцисизм як нормальну структуру особистості, що допомагає взаємодіяти з реальністю.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Дефіцитарний нарцисизм -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Дефіцитарний нарцисизм</h2>
+    <p>Проблеми починаються, коли самооцінка тримається виключно на цій структурі: ми постійно порівнюємо себе з кимось, відчуваємо сором, невідповідність, нікчемність, боїмося невдачі, боїмося будувати близькі стосунки, постійно критикуємо себе, не вміємо пишатися собою, знецінюємо себе, постійно прагнемо стати кращою версією себе. Тоді йдеться про дефіцитарний нарцисизм — нині дуже поширену тему. Дефіцитарні нарциси — це звичайні люди, а не ті страшні нарциси-психопати, яких ми зазвичай уявляємо. У них є емпатія, вони здатні будувати близькі, глибокі стосунки й можуть бути напрочуд добрими, але весь свій нарцисизм спрямовують на себе, тож страждають від цього. Згадуючи розщеплену структуру особистості: дефіцитарний нарцис більшу частину часу контактує з полюсом сорому, на основі якого формуються низька самооцінка, невпевненість, неповага до себе й самознецінення. Нарцисизм на прикордонному чи психотичному рівні, навпаки, дедалі більше йде у грандіозність.</p>
+    <p>Отже, дефіцитарний нарцисизм — це нарцисизм на рівні неврозу. Прикордонний нарцисизм — коли людина дедалі більше йде у грандіозний захист, що часто поєднується зі зниженою емпатією. Рівень психозу — це повний відрив від реальності. Прикордонний рівень організації особистості визначають за помітними проблемами в житті: через розлад людина не може будувати близькі стосунки, має постійні проблеми на роботі, труднощі з дисципліною, організацією тощо — тобто розлад прямо псує життя. Психоз — коли будь-якій людині видно, що з людиною щось не так: вона вважає себе Наполеоном чи Христом або її розшукує Інтерпол; коли додається параноїдальний радикал — «мене переслідують прибульці» чи «трагедія сталася, бо я поганий і світ карає за мої гріхи».</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Грандіозний нарцисизм: ознаки та пояснення -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Грандіозний нарцисизм: ознаки та пояснення</h2>
+    <p>Коротко про ознаки грандіозного нарцисизму: упевненість у власній особливості й праві на особливе ставлення, надмірна заздрість до чужих досягнень, перебування у фантазії «у мене має вийти все, чого я забажаю, дуже легко, а результати мають бути винятково грандіозними». Ключові переживання — нудьга й порожнеча, фантазії про світову владу, успіх, феноменальний розум і привабливість, надмірна потреба захоплення й споживче ставлення до інших людей.</p>
+    <p><strong>Чому нудьга й порожнеча.</strong> Усі почуття придушені. Відкидаючи свою самість, нарциси відкидають свої почуття, прив'язаності. Говорячи про нарцисизм, ми завжди говоримо про придушені почуття або великі заборони на них, бо почуття — це частина самості. Поле почуттів для нарцисів найнебезпечніше, бо це слабкість і вразливість: колись у дитинстві їх глибоко поранили, і вони дійшли висновку, що відчувати страшно; щоб не переживати знову біль відторгнення, краще заглушити почуття. Психіка працює так, що, придушуючи одне почуття (наприклад, смуток, бо це слабкість), вона придушує всі, і лишається порожнеча й нудьга. Єдина емоція, яка може яскраво виражатися, — гнів, причому у формі люті. Існує навіть термін «нарцисична лють» — величезний рівень люті, що часто виникає у відповідь на приниження або уявне приниження.</p>
+    <p><strong>Влада й контроль.</strong> Для нарциса влада й контроль стають захисними стратегіями проти приниження. Найбільший страх нарциса — бути приниженим, бо саме це він колись пережив у дитинстві; чим більше в тебе влади, тим менша ймовірність, що хтось тебе принизить чи оспорить авторитет. Тому нарцисів багато в політиці, бізнесі, медіа, акторському середовищі: вони все життя грають у свій грандіозний образ, а на цьому полі можна отримати багато захоплення.</p>
+    <p><strong>Контроль у дефіцитарних нарцисів.</strong> Друга копінг-стратегія — контроль, і він дуже властивий дефіцитарним нарцисам. Такі люди часто тривожні, бо перебувають у постійному очікуванні уявного приниження чи відторгнення, і контролюють як себе, так і оточення. Особливо це проявляється у сфері міжособистісних стосунків — це вразлива точка дефіцитарних нарцисів: на роботі їм зазвичай легше з собою впоратися, але саме у стосунках була отримана нарцисична травма, тому там вони поводяться суперечливо, скочуючись то в тривогу, то в уникання, прагнучи все контролювати. Це може доходити до абсурду: вирахування, через скільки хвилин потрібно відповісти на повідомлення; підрахунок, хто кому першим і скільки разів написав; перевірка телефонів; порівняння себе з жінками, з якими, імовірно, може спілкуватися чоловік. Щоб скомпенсувати тривогу й очікування відторгнення, з'являється контроль, зокрема контроль над собою: ідея, що я можу заполучити чоловіка, змінивши себе, — «мені треба стати ідеальною, щоб збудувати стосунки», «якщо ти та сама дівчина, він зробить усе для тебе». Це теж про контроль, бо в глибині лежить установка, що заради «тієї самої» чоловік змінюється й стає ідеальним, а я, виходить, не дотягую й мушу більше над собою працювати. Це різні маніпуляції та пікап — спроби контролювати своєю поведінкою почуття іншої людини, щоб було безпечно, нібито отримуючи гарантію. Сюди ж належать курси на тему «як бути цінною жінкою» і «як спокушати чоловіка». Це мильна бульбашка, бо своєю поведінкою ми не можемо контролювати іншу людину.</p>
+    <p><strong>Суспільство й нарцисичний радикал.</strong> Подібні продукти добре продаються, бо наше суспільство нарцисичне: економіка й західна культура побудовані так, що нам продають ідею успіху, люксу, багатства — спочатку відкритої, кричущої розкоші нульових, потім тихої розкоші (old money). Усе це про те, як створити образ багатої людини. Продажі й маркетинг будуються на ідеї, що треба придбати продукт, аби стати частиною спільноти й не бути відкинутим суспільством. Тому в величезної кількості людей виражений нарцисичний радикал.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Неочевидні симптоми дефіцитарного нарцисизму -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Неочевидні симптоми дефіцитарного нарцисизму</h2>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text"><strong>Внутрішня порожнеча — «діра» в психіці.</strong> Це відсутність здорової самооцінки: є лише два чорно-білі полюси. Нарциси часто не розуміють, хто вони як звичайна людина, які в них таланти й здібності. Вони не усвідомлюють своїх досягнень — усе знецінюється, бо не відповідає завищеному стандарту грандіозного образу. Знецінюються й особисті якості: доброта, щирість, людські прояви вважаються нікому не цікавими. У результаті лишається порожньо: «у мене немає самості, я не знаю, хто я».</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Нарцисична ненаситність.</strong> Я не можу присвоїти жодне своє досягнення, бо воно знецінюється, тож мені завжди мало. Ні я для самого себе, ні партнери ніколи не є достатніми. Якщо людина сувора до себе, вона сувора й до інших: знецінюючи себе, знецінює й інших. Тому дефіцитарним нарцисам важко будувати стосунки: усі люди «не підходять». Якщо я бачу якусь ваду в особистості іншого, я одразу знецінюю цю людину цілком, бо золотої середини немає: або ідеально, або ніяк. Тому дефіцитарні нарциси нерідко вступають у стосунки з грандіозними нарцисами, адже лише грандіозний нарцис може створити видимість чудового образу, ідеалу, реалізує фантазії, і в нього закохуються по вуха.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text"><strong>Нереалістичні вимоги ідеальності (у схематерапії — сценарій завищених стандартів).</strong></div></div>
+      <div class="num-row"><div class="num-badge">4</div><div class="num-text"><strong>Крихкість і нестійкість самооцінки — знову розщеплення: «я грандіозна» чи «я нікчемна».</strong> Або я бог, найкраща жінка на світі, заслуговую лише на мільярдера, чому він іще не поклав увесь світ до моїх ніг; або я падаю в відчуття, що я нічого не досягла, нічого не виходить, я ледача й можу лише лежати. Об'єктивної оцінки себе посередині немає.</div></div>
+      <div class="num-row"><div class="num-badge">5</div><div class="num-text"><strong>Відчуття власної нікчемності.</strong></div></div>
+      <div class="num-row"><div class="num-badge">6</div><div class="num-text"><strong>Самознецінення.</strong></div></div>
+      <div class="num-row"><div class="num-badge">7</div><div class="num-text"><strong>Синдром самозванця (це споріднені феномени).</strong></div></div>
+      <div class="num-row"><div class="num-badge">8</div><div class="num-text"><strong>Внутрішня критика.</strong> У психіці дефіцитарних нарцисів існує сильна субособистість самокритика. За теорією транзактного аналізу, у нас є внутрішня дитина, внутрішній батько й внутрішній дорослий; внутрішній батько буває або здоровий, підтримувальний, або хворий — критикуючий, знецінюючий, порівнюючий. Внутрішній діалог дефіцитарних нарцисів нерідко є взаємодією хворого батька з внутрішньою дитиною; такі люди можуть помітити, що близько 90% часу психологічно проводять у субособистості самокритика (різали хліб, розсипалися крихти — і внутрішній голос лає: «чому в тебе все не як у людей, іди прибирай»).</div></div>
+      <div class="num-row"><div class="num-badge">9</div><div class="num-text"><strong>Нарцисична прокрастинація.</strong></div></div>
+      <div class="num-row"><div class="num-badge">10</div><div class="num-text"><strong>Неспроможність докладати зусиль.</strong> Два ключові захисти нарциса — ідеалізація та знецінення. Дефіцитарні нарциси на старті чимось неймовірно загораються, провалюються в приємні фантазії («це буде справа мого життя, я збудую бізнес, піду вгору, заробляю багато»): психіка ідеалізує результат. Потім з'являються труднощі, вони розчаровуються у собі й у справі й знову нічого посередині: «я бездарність, як я могла подумати, що в мене вийде, бізнес — нісенітниця, конкуренція, кому це потрібно». Так з'являється неспроможність спокійно, послідовно, витримуючи дискомфорт і невдачі, рухатися до цілей. Нарцисична прокрастинація: я так ідеалізую результат, що планую собі двадцять тисяч завдань, усе має бути зроблено на десятку, ніяких спроб і прав на помилку. Психіка, зіткнувшись із такими очікуваннями, впадає у відчуття неймовірної тяжкості: треба сісти за роботу й рік із неї не вилазити, забити на особисте життя й відпочинок. Завдання стають непідйомними й страшними, бо я на 100% зазнаю невдачі (неможливо відповідати стандарту досконалості), а зіткнувшись із помилкою, потраплю в сором і знижу самооцінку, — і психіка обирає прокрастинацію. Для психіки вона логічна: вона ж не мазохістка, щоб відправляти вас туди, де вам буде тільки гірше.</div></div>
+      <div class="num-row"><div class="num-badge">11</div><div class="num-text"><strong>Нудьга.</strong> Якщо нарцис не може отримати бажане, він його знецінює, тобто штучно вбиває свою енергію, інтерес, емоцію в цьому місці, і лишається порожнеча: «ах, ти не зробив так, як я хочу, а мені й не дуже й хотілося». Якщо в стосунках сварка, обов'язково треба кинути першою, інакше такого приниження я не витримаю. Усе важливе, цікаве й вразливе вбивається.</div></div>
+      <div class="num-row"><div class="num-badge">12</div><div class="num-text"><strong>Нездатність отримувати задоволення від життя.</strong></div></div>
+      <div class="num-row"><div class="num-badge">13</div><div class="num-text"><strong>Відчуття, що життя минає повз.</strong> Дефіцитарний нарцис прагне все підкорити контролю, щоб було ефективно, продуктивно, логічно, раціонально, з найвищим коефіцієнтом корисної дії. Тоді будь-яка зупинка — втрата часу, відпочинок — марнування часу, а будь-яке розслаблення наближає мене до маси звичайних людей.</div></div>
+      <div class="num-row"><div class="num-badge">14</div><div class="num-text"><strong>Мрії про особливе ставлення.</strong> Навіть дефіцитарним нарцисам властиво мріяти й грати на відчутті власної особливості: на цьому тримається їхній грандіозний образ. Часто вони мріють про особливі стосунки: принц на білому коні, мільярдер на білому літаку, який сам «звалиться» у вікно й одразу побачить, який у мене глибокий духовний світ і яка я не така, як усі.</div></div>
+    </div>
+    <p><strong>Перфекціонізм як спроба уникнути звичайності.</strong> Перфекціонізм і завищені стандарти до себе — спроба уникнути відчуття власної звичайності: визнати, що я така, як усі, що в моєму житті будуть такі самі труднощі, що мої результати й досягнення, скоріш за все, лежатимуть у цілком звичайній площині і що малоймовірно, що я стану мільйонером у вісімнадцять, а до двадцяти п'яти матиму успішний бізнес, сім'ю, дітей і відпочинок на Мальдівах. Кожному нарцисові важливо пережити це, зіткнутися з реальністю, прийняти її правила. Лише коли ми розуміємо і сильні, і слабкі сторони, можна скласти оптимальну стратегію досягнення цілі: знаючи, що в мене виходить не дуже добре, я розумію ризики, заздалегідь «підстеляю соломку» — наймаю людей, консультуюся — і уникаю розчарування. Нарцисам визнати це дуже важко, бо вони одразу провалюються в сором: це не нормальна людська слабкість, а жах.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Стратегії дефіцитарних нарцисів у стосунках -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Стратегії дефіцитарних нарцисів у стосунках</h2>
+    <p>Перелік рис (я пропоную загинати пальці): схильність вимагати ідеальності від себе й від партнера, а якщо її немає — нападати; постійне очікування оцінки й відторгнення; заборона собі відкрито визнавати потребу в партнері й ділитися почуттями; думка, що «якби він хотів, він сам би здогадався» («якщо любить, то прочитає думки»); схильність регулювати дистанцію, боячись залежності, тобто уникати й віддалятися, уявно контролюючи ситуацію й загрозу; схильність замінювати людську присутність функціональним внеском; схильність обирати партнерів, яких можна ідеалізувати й за рахунок яких можна відновити свою особистість. Закохуючись у грандіозних нарцисів, дефіцитарні зливаються з їхнім грандіозним образом, добудовуючи свою особистість там, де порожнеча.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Інші типи нарцисизму -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Інші типи нарцисизму</h2>
+    <p>Нарцисизм поділяється за рівнем вираженості та за типом копінг-стратегії:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Соматичний</strong> — образ грандіозності будується на образі тіла: людині дуже важливо виглядати привабливо, вона багато вкладається у зовнішність, ходить у тренажерні зали й салони краси, схильна до пластичних операцій.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Церебральний</strong> — відчуття переваги через інтелект, знання й розум. Часто нарциси, які отримали травму відторгнення через те, що ровесники вважали їх непривабливими, йдуть у компенсацію саме в церебральний нарцисизм.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Спокусливий (сексуальний, «альфа-нарцисизм»)</strong> — «донжуани». Раніше дослідники називали такий характер фалічно-нарцисичним: самооцінка тримається на тому, наскільки я успішний у стосунках, не в глибоких, а за кількістю партнерів, яких мені вдасться спокусити. Такі люди багато працюють над собою: вчаться пікапу й спокушанню, доглядають за собою, інвестують у тіло й уміння підтримати розмову — стають професійними спокусниками.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Духовний</strong> — людина грає образ місії, посередника між світами, власника таємних знань.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Альтруїстичний</strong> — навпаки, грає образ рятівника й великомученика: «я жертвую всім заради вас», але допомога постійно виявляється «непомічною», і оточення бачить нещирість.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Прихований (скритий)</strong> — людина демонструє свою невпевнену частину: схильна скаржитися, підкреслювати, як усе погано й нічого не виходить, щоб оточення почало втішати й заспокоювати («та що ти, ти ж чудова»). Цією перевернутою стратегією нарцис отримує потрібні схвалення, визнання й захоплення.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Батьківський</strong> — батько чи мати хоче бачити в дитині власне продовження й виростити її схожою на себе, або каже: «ти ж моя дочка, у тебе все має бути на відмінно, ти ж особлива, ти не маєш мене зганьбити». Самооцінка батька залежить від того, наскільки успішна чи неуспішна дитина.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Посттравматичний</strong> — люди, які вийшли з аб'юзивних стосунків із нарцисом, помічають, що їхня особистість ніби скопіювала установки аб'юзера: партнер постійно порівнював із кимось, і я починаю порівнювати себе з усіма; він навіював, яким має бути «збудливий» образ жінки, і я поступово змінююся в цьому напрямі. Такий нарцисизм може бути дуже стійким, «корінням вп'ятися» в особистість, а у вкрай деструктивних стосунках навіть формувати комплексний посттравматичний стресовий розлад.</div></div>
+    </div>
+    <p>Кожен із цих типів може по-різному виражатися на прямій — від невротичного рівня, коли особистість не настільки патологізована нарцисизмом (наприклад, соматичний нарцисизм у формі занять спортом, догляду за здоров'ям і зовнішністю, випрасуваного одягу, продуманого образу й стилю), до рівня прикордонного розладу, коли той самий нарцис може використовувати й експлуатувати інших, наприклад через сексуальне спокушання, щоб постійно переконуватися у власній привабливості. Церебральний нарцис у межах норми багато часу вкладає в навчання й знання, а на прикордонному рівні чи рівні психозу може фантазувати, що він «другий Ілон Маск» і матиме відкриту сім'ю з багатьма дружинами, кожна з яких виконує свою функцію.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Ключові особливості за PDM-2 і DSM-5 -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Ключові особливості за PDM-2 і DSM-5</h2>
+    <p>PDM — діагностична модель, яка, на відміну від DSM, описує внутрішні процеси, тоді як DSM звертає увагу переважно на зовнішню частину. Характерне патогенне переконання про себе: «мені треба бути досконалим, щоб почуватися добре». Характерне патогенне переконання про інших: інші заздрять багатству, красі, владі й славі; чим більше цього в мене буде, тим краще я почуватимуся; ключ до щастя — у володінні матеріальними ресурсами. У DSM-5 є опис нарцисичного розладу особистості — це якраз наш прикордонний рівень функціонування.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Як розпізнати нарциса за власними емоціями -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Як розпізнати нарциса за власними емоціями</h2>
+    <p>Один із найпростіших способів визначити, яка людина поруч, — проаналізувати емоції, які з'являються в контакті з нею. Цим інструментом користуються психотерапевти. Це працює не завжди, але зазвичай у контакті з нарцисичною людиною виникають такі типи контрпереносу:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text"><strong>Нудьга, сонливість і відчуття власної невидимості.</strong> Нарцис весь час говорить про себе й абсолютно не цікавиться співрозмовником, тож співрозмовник починає нудьгувати від цього монологу.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Дратівливість</strong> — така поведінка поступово починає дратувати.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text"><strong>Бажання захиститися, страх, тривога</strong> — людина починає «закидати» маніпуляції, і ви ще раціонально не усвідомлюєте, що відбувається, але вже відчуваєте небезпеку в контакті.</div></div>
+      <div class="num-row"><div class="num-badge">4</div><div class="num-text"><strong>Зачарованість</strong> — як правило, трапляється з спокусливими нарцисами або з більш патологічними нарцисами, які спеціально вчаться стратегій зачарування.</div></div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Підсумок -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Підсумок</h2>
+    <p>Нарцисизм — це зречення від власної самості (зокрема почуттів) на користь образу. Здоровий нарцисизм — нормальна структура особистості; проблеми починаються, коли самооцінка тримається лише на зовнішніх підкріпленнях. Дефіцитарний нарцисизм, який часто сприймають за низьку самооцінку, — це нарцисизм, спрямований на себе: сором, самокритика, перфекціонізм, прокрастинація, контроль у стосунках і мрії про особливе. Допомогти собі можна, прийнявши власну звичайність, сильні й слабкі сторони та право на помилку.</p>
+    <div class="final-quote">
+      <div class="final-text">Допомогти собі можна, <strong>прийнявши власну звичайність, сильні й слабкі сторони та право на помилку</strong>.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>

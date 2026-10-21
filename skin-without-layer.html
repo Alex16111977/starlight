@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<script src="theme.js" data-native="light"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Шкіра без верхнього шару</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Шкіра без<br>верхнього шару</h1>
+  <p class="page-subtitle">Прикордонний розлад особистості: «Я тебе ненавиджу, але тільки не кидай мене»</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Мерилін описувала свою психіку як шкіру без верхнього шару: будь-яке слово чи критика відчувалися як удар по відкритій рані</div>
+      <div class="hero-author">Барбара Абломейко</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Вступ: про що я розповідаю -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Вступ: про що я розповідаю</h2>
+    <p>Я розглядаю прикордонний розлад особистості. У МКХ він називається емоційно нестійким розладом особистості прикордонного типу, у DSM — прикордонним розладом особистості (ПРО/ПРЛ); я користуюся саме цією назвою. Розповім про основні симптоми й критерії та про те, як так виходить, що жінки, яких асоціюють із цим розладом (принцеса Діана, Мерилін Монро, Анджеліна Джолі, Селена Гомес, Емі Вайнгауз, Брітні Спірс), «зводять із розуму весь світ», а всередині почуваються покинутими, непотрібними й самотніми.</p>
+    <p>Мерилін Монро писала, що завжди відчувала, ніби її не існує, що вона — лише те, що в ній бачать інші; описувала себе як невидимку або порожнє місце, яке наповнюється лише у світлі софітів чи в поглядах чоловіків. Принцеса Діана казала, що не любила себе, їй було соромно, що вона не справляється з тиском, вона завдавала собі ушкоджень, бо всередині було стільки болю, що хотілося покарати себе зовні, і це давало тимчасове полегшення.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Критерій 1: шалені зусилля уникнути покидання -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Критерій 1: шалені зусилля уникнути покидання</h2>
+    <p>За DSM діагноз ПРО ґрунтується на дев'яти ознаках. Перша — відчайдушні спроби уникнути реального або уявного покидання. Саме страх покидання є центральним у структурі розладу. Постійні відчуття самотності, покинутості, внутрішньої порожнечі й непотрібності — те, як люди з ПРО насправді почуваються. За даними, які я наводжу, приблизно 60% часу вони відчувають себе пригніченими й нікчемними, 50% — дуже злими, 60% — самотніми, 50% — незрозумілими; 45% часу — покинутими, 36% — зрадженими, 39% — маленькою дитиною. Від цього відчуття порожнечі й невидимості вони часто тікають в імпульсивну поведінку.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Приклад: Мерилін Монро -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Приклад: Мерилін Монро</h2>
+    <p>Мерилін відома великою кількістю романів і зрад. Для неї зради були «анестезією» від самотності й відбувалися саме тоді, коли вона почувалася покинутою. При цьому відчуття покинутості може бути уявним: партнер просто пішов на роботу чи у справах, а вона вже опинялася у стані непотрібності й полишеності — по суті, скочувалася до стану маленької дитини, яку покинув батько чи мати. Самотність сприймається як щось, що накриває з головою, проти чого неможливо протистояти: «Я маленький, беззахисний, а мій всемогутній батько залишає мене напризволяще».</p>
+    <p>Цей момент добре показаний у фільмі «Джіа»: героїня просить матір залишитися, мати відповідає, що їй треба їхати й що дочка вже доросла; дівчина спершу благає, а потім у відчаї кричить образи, щоб тут же знову просити не йти. Саме так люди з ПРО переживають покидання.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Як люди з ПРО справляються з болем покидання -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Як люди з ПРО справляються з болем покидання</h2>
+    <p>Кожен робить це по-різному. У випадку Мерилін це були зради й чоловіки, що ставали порятунком від болю й способом повернути ідентичність. Часто люди з ПРО вдаються до залежностей: заборонені речовини, алкоголь, азартні ігри (як у героїні «Джіа» та, за словами авторки, у випадку самої Анджеліни Джолі). Хтось розв'язує проблему через розлад харчової поведінки: принцеса Діана писала, що булімія допомагала їй упоратися з емоціями — вона поверталася до відчуття контролю над тілом і станом: у моменти болю багато їла, потім позбавлялася їжі й відчувала задоволення.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Чим зрада при ПРО відрізняється від зради нарциса -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Чим зрада при ПРО відрізняється від зради нарциса</h2>
+    <p>Нарцис може спокійно піти на такий вчинок і не відчувати докорів сумління. Люди з ПРО після імпульсивних вчинків, як правило, глибоко страждають від сорому й провини. Мерилін у листах нерідко називала себе зламаною чи поганою дівчинкою, відчуваючи провину за те, що не може збудувати стабільні стосунки. Після кожної близькості (зокрема з чоловіками своїх подруг) вона відчувала глибокий сором і самокритику, бо люди з ПРО — емпатичні, у них дуже глибоко розвинена емпатія.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Критерій 3: порушення ідентичності та порожнеча -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Критерій 3: порушення ідентичності та порожнеча</h2>
+    <p>Мерилін описувала свою психіку як шкіру без верхнього шару: будь-яке слово чи критика відчувалися як удар по відкритій рані. Така екстремальна чутливість виникає через надзвичайно слабкі межі его. Це приводить до третього критерію — порушення ідентичності: чітко й постійно нестабільний образ або відчуття себе. Люди з ПРО кажуть: «Я абсолютно не розумію, хто я». Але це не пошук себе: всередині живе переконання «я ніхто, мене не існує». Замість самості — порожнеча (це сьомий критерій), і від цього нестерпного відчуття вони постійно тікають.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Стосунки: ідеалізація й знецінення -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Стосунки: ідеалізація й знецінення</h2>
+    <p>У стосунках використовуються два психологічні захисти: ідеалізація та знецінення. Зустрічаючи чоловіка, жінка з ПРО бачить у ньому не просто живу людину, а рятівника — майже богоподібний образ, який врятує від порожнечі, самотності й нікчемності. Оскільки власної самості немає, вона прагне добудувати особистість через іншу людину. У книжці про Діану наведено її слова: наприкінці близьких стосунків принцеса виявляє в іншій людині негативні риси, хоч раніше бачила тільки хороше; Діана не могла прийняти, що в будь-яких стосунках бувають злети й падіння. Це розщеплене сприйняття й чорно-біле мислення: або ти ідеал, або ніхто.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Перейняття звичок партнера -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Перейняття звичок партнера</h2>
+    <p>Часто, починаючи спілкуватися чи будувати стосунки, такі люди перебирають звички й манеру поведінки іншого. Як ілюстрацію авторка називає ситуацію з блогеркою Поліною Неолі, яка розповідала, що зустрічалася з депресивним хлопцем, який завжди носив чорне, і сама не помітила, як змінила весь гардероб на чорний, хоча чорний колір їй ніколи не подобався. Це повне занурення в іншу людину.</p>
+    <p>Чоловіки нерідко шалено закохуються у таких жінок у відповідь: від них іде відчуття, що вони живуть на повну, «пішли й зробили». Вони з головою пірнають у нові стосунки й не думають, що буде потім. Поруч із такою людиною — нескінченна емоційна буря. Важливо розуміти: це бажання злитися — нездорове. Здоровий розвиток стосунків — спокійне поступове пізнавання одне одного, а злиття з головою для людини з ПРО — спроба добудувати особистість і закрити порожнечу.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Приклад: Мерилін і брати Кеннеді -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Приклад: Мерилін і брати Кеннеді</h2>
+    <p>Найяскравіша глава її життя — Кеннеді. Спершу вона зустрічалася з Джоном Кеннеді, потім із його братом Робертом. Вона мріяла стати першою леді: закохалася не лише в чоловіка, а й у себе саму поруч із ним, в образ першої леді при неймовірному президентові. Фантазії зайшли так далеко, що вона не розрізняла реальність і уяву: дзвонила дружині коханця й казала, що скоро буде замість неї. Її самооцінка залежала від того, який чоловік поруч. Селена Гомес писала, що її самооцінка повністю залежить від ставлення близьких і фанатів: вона довго була в залежних стосунках, бо боялася залишитися наодинці із собою й не знала, хто вона без когось поруч.</p>
+    <p>Коли Джон Кеннеді її кинув, Мерилін упала в глибоку депресію, і її ніби віддали під опіку Роберта Кеннеді, міністра юстиції. Вона повністю перемкнула всю увагу на Роберта. Цей механізм швидкого миттєвого закохування — перенесення: вся ідеалізація й фантазія переносяться на нову людину. Мерилін вже мріяла стати дружиною Роберта, хоч у нього була дружина, вірила, що він розлучиться, і в її щоденниках того періоду простежується месіанське очікування: вона бачила в ньому того, хто нарешті дасть їй стабільність. Тобто це зовсім не про кохання, а про перенесення потреби бути коханою — щоб не залишатися на самоті. Очікування були нереалістичні: вона чекала ідеального порятунку й розчинення в цьому коханні — буквально очікування принца на білому коні.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Цикл ідеалізації й знецінення -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Цикл ідеалізації й знецінення</h2>
+    <p>Люди з ПРО при знайомстві з новими людьми схильні одразу ставитися до них виразно позитивно, а потім ставлення змінюється на протилежне: цикл ідеалізації змінюється циклом знецінення. Причина: жодна людина не може відповідати завищеним очікуванням і фантазіям порятунку від власної порожнечі, яка переноситься на кожного нового. Тому такі люди нестабільні в міжособистісних стосунках — це другий критерій DSM. Знецінення тотальне: людина стає абсолютно нецікавою. Як ілюстрацію авторка згадує випадки, коли людину, яку спершу всюди показували й обдаровували, потім повністю «викреслюють» із життя.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Чим пограничник відрізняється від нарциса -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Чим пограничник відрізняється від нарциса</h2>
+    <p>Цикли ідеалізації та знецінення — це ще й класичні механізми нарцисів. Різниця така: нарцис знецінює й спокійно йде далі, а людина з ПРО сама щиро страждає від свого знецінення. У цей момент вона потрапляє в імпульсивні зміни настрою, спалахи нестерпної агресії. Вона думає: «Як я могла так помилитися в цій людині? Як я могла з усією душею ставитися до того, хто потім мене так зрадить?» І не розуміє, що проблема не в іншому, а у власних очікуваннях, які не пройшли перевірку реальністю.</p>
+    <p>У нарцисів те саме знецінення виникає, бо їхні очікування теж не проходять перевірку реальністю, але в них немає такої емоційності й розвинутої емпатії. Для нарцисів характерна емоційна холодність, їхня ключова історія — про образ: вони відчужені від своїх почуттів, ідуть в образ і в інших шукають насамперед ідеальний образ. Пограничника, навпаки, переповнюють почуття: він не вміє конструктивно з ними справлятися. Щоразу, коли руйнуються очікування, ніби руйнується частина його самого: «Я ж із тобою вже злився, я вже частина тебе, ми одне ціле, а ти, виявляється, такий нехороший. Геть із мого життя» — і ніби частина мене йде разом із тобою. Часто це виражається через самоушкоджувальну поведінку й залежності. Вони не можуть наростити «броню» й беземоційність, як нарциси, а навпаки, ще більше руйнують себе й виснажують власні ресурси. Тому відомий «клуб 27»: ці люди ніби згорають, пропускають усе крізь себе так глибоко, що вже до молодого віку в організму не залишається ресурсу. Трагічність ПРО в тому, що в цьому вирі вони тонуть насамперед самі, іноді затягуючи за собою інших.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Критерій 5: самоушкодження й суїцидальна поведінка -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Критерій 5: самоушкодження й суїцидальна поведінка</h2>
+    <p>П'ятий критерій — повторювана суїцидальна й саморуйнівна поведінка. Самоушкодження може слугувати різним цілям:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">позбутися емоційного болю за допомогою фізичного;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">позбутися відчуття нереальності, тобто дисоціації з власним тілом (Мерилін цікаво писала про відстороненість від свого тіла під час випадкових зв'язків: вона знала, що належить публіці й світу, бо більше нічого не мала, і це відчуття «нічийності» дозволяло легко вступати в нові зв'язки, не відчуваючи, що віддає щось особисте);</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">покарати себе, бо всередині багато сорому й провини;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">виразити гнів: коли накриває гнів від розчарування, він може обернутися проти себе, і завдання собі болю стає способом його пережити;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">контролювати почуття: «Я маленький, а почуття величезні», і через акти самоушкодження я «осідлую» цю бурю, вона стає зрозумілішою, зносною, контрольованою;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">зняти напруження.</div></div>
+    </div>
+    <p>Людям із ПРО також властиві суїцидальні сценарії, коли людина постійно перебуває у фантазіях про власну смерть; це може стати своєрідним «хобі», до якого вона постійно повертається, способом виразити величезне відчуття сорому. Такі фантазії можуть бути й проявом заклику про допомогу: людина уявляє, як оточення страждатиме, коли вона помре, як нарешті усвідомить, кого втратило, як «мене не цінували, і за це будуть жорстоко покарані».</p>
+    <p>Схожа історія з імпульсивністю: як і самоушкодження, вона часто є способом пережити нестерпні емоції. В основі лежить бажання вирватися за межі психологічно нестерпного стану або заглушити неприємні емоції, зокрема самотність і покинутість. Характерна риса: імпульсивні бажання реалізуються миттєво, що небезпечно і для самої людини, і для оточення.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Які партнери в людей з ПРО й чому бувають суперечливі дані -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Які партнери в людей з ПРО й чому бувають суперечливі дані</h2>
+    <p>«Я тебе ненавиджу, але не кидай мене» — хрестоматійна фраза для людей із ПРО. Про те, яких партнерів вони обирають, є різні й суперечливі дані. Деякі автори пишуть, що завдяки яскравій емпатії такі люди здатні обирати стабільних і надійних партнерів, які можуть дати те, чого вони шукають; відомо чимало випадків, коли люди з ПРО вступають у шлюб, довготривалі теплі стосунки, а їхня симптоматика поступово нівелюється (авторка згадує приклад Селени Гомес і її чоловіка, але надійність партнера, за її словами, окреме питання). Є й протилежні випадки: у Мерилін Монро чоловіки були тиранами й застосовували фізичне насильство; Артур Міллер вважав її просто красивою «білявою лялькою». Мерилін обирала дуже нарцисичних партнерів, яких легко ідеалізувати: спершу відомого бейсболіста, потім письменника Артура Міллера, потім братів Кеннеді — статусних чоловіків, за рахунок яких вона хотіла добудувати свою ідентичність. У фільмі «Джіа» героїня обирала досить адекватних люблячих партнерів, але навіть вони потрапляли під її знецінення.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Очікування злиття та «безвихідні запитання» -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Очікування злиття та «безвихідні запитання»</h2>
+    <p>Люди з ПРО нерідко чекають від іншого такого самого емоційного досвіду: вони хочуть бути на сто відсотків зрозумілими й вважають, що ідеальний партнер має міркувати й відчувати так само, як вони, злитися з ними в любовному екстазі й стати одним цілим. Партнери постійно переконуються, що на деякі запитання немає правильної відповіді. Наприклад, жінка питає: «Ти любиш мене тепер більше, ніж раніше?» Якщо відповісти «так, тепер більше», вона скаже: «Отже, раніше ти не любив мене по-справжньому» — і знецінить. Те саме станеться при протилежній відповіді. Єдиний спосіб якось відповісти правильно — підсвітити людині, що саме запитання не містить і не передбачає правильної відповіді й що в будь-якому разі відповідь її не задовольнить.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Чому знецінити вдається миттєво: емоційна амнезія -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Чому знецінити вдається миттєво: емоційна амнезія</h2>
+    <p>Ідеалізація й знецінення в один момент можуть здаватися дивними: людина трималася за тебе, з головою занурилася, а за секунду знецінила. Цьому є пояснення. У здоровому розвитку дитини відбувається інтерналізація: дитина поступово накопичує позитивні уявлення про батьків, і в якийсь момент їх стає достатньо, щоб усередині з'явився внутрішній образ доброго, люблячого, дбайливого батька чи матері. Тоді, навіть коли реальний батько йде, дитина не плаче й не руйнується, спокійно переживає розлуку. Люди з ПРО цієї здатності не розвивають: у них немає накопичених позитивних інтерналізацій. Якщо стається щось погане, усе позитивне автоматично забувається — це називається емоційною амнезією. Тому їм постійно потрібні підкріплення й докази любові від партнера.</p>
+    <p>Те саме з маленькими дітьми: вони не можуть визнати й витримати амбівалентність, що добра мати іноді може мене лаяти. Для дитини властиве розщеплене дихотомічне сприйняття: або мати хороша й задовольняє мої потреби, або погана, йде й залишає мене. Таке сприйняття зберігається й у людей із ПРО.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Перехідний об'єкт -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Перехідний об'єкт</h2>
+    <p>У них можна помітити й іншу особливість — перехідний об'єкт. Такі люди часто носять із собою м'яку іграшку або якийсь символ підтримувального батька чи матері, бо всередині цього образу немає, і потреба в ньому постійна. Зовнішній об'єкт у психології називають перехідним. Як приклад авторка згадує, що Поліна Неолі розповідала про ведмедика, з яким вона їздить і засинає навіть у таксі. Так само, як маленькій дитині іграшка колись замінювала образ батьків, у дорослому віці перехідний об'єкт замінює відсутні уявлення про хорошого батька чи матір і виконує функцію безпеки.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Дитинство людей із ПРО -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Дитинство людей із ПРО</h2>
+    <p>Психіка дитини з якоїсь причини не добудовується й застрягає в ранньому дитячому віці. Люди з ПРО нерідко так себе й описують: «Я почуваюся маленькою дівчинкою у великому дорослому світі, не розумію, як із ним упоратися». Мерилін у щоденниках називала себе поганою дівчинкою, коли її накривали напади самокритики. Дитинство таких людей — це дитинство в атмосфері нестабільності й небезпеки:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">холодний або відсутній батько чи мати; нерідко це дорослі діти алкоголіків;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">фізичне, емоційне, сексуальне насильство в дитинстві;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">рання смерть або втрата одного з батьків;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">батько чи мати, у яких самих діагностовано ПРО чи інші психологічні проблеми;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">дуже важкі соціальні умови, глибока бідність, у якій постійно доводилося виживати (Поліна Неолі розповідала, що жила в одній кімнаті з мамою, братом і бабусею);</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">ситуації, коли батьки багато працюють або нестабільні, і на плечі дитини лягає опіка над братами й сестрами, облаштування побуту чи важка праця.</div></div>
+    </div>
+    <p>Авторка згадує й випадки публічних персон, які демонстрували дуже схожу на ПРО поведінку: з одного боку, велику потребу приваблювати чоловіків і образ спокусливої «легкої ляльки», з другого — здатність жорстоко чинити з партнерами, різко кидаючи їх.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Мерилін Монро: образ як спосіб привертати увагу -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Мерилін Монро: образ як спосіб привертати увагу</h2>
+    <p>Весь образ Мерилін — дуже спокусливої сексуальної блондинки — був створений, щоб привертати чоловічу увагу, без якої вона не могла. Вона писала, що відбивається лише в очах чоловіків або камер. Ця історія пов'язана з досвідом покидання батьком: коли батько пішов із родини, мати була настільки зруйнована новиною, що віддала Мерилін до дитячого будинку, бо маленька дівчинка заважала їй влаштувати особисте життя й знайти іншого чоловіка. Ключова ідея — пошук романтичного кохання, на яке можна перенести роль батьків, у якому мене нарешті безумовно полюблять, як колись не полюбив батько чи мати. Через це на привабливість витрачається дуже багато зусиль. Мерилін — жінка, яка створила себе сама: робила пластичні операції, змінила імідж, працювала над ходою. Пишуть навіть, що вона спеціально підточувала підбори туфель, щоб вони ставали нестійкими, створюючи цим спокусливу, трохи хитку ходу з колисанням стегнами.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Підсумок -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Підсумок</h2>
+    <p>Такі вони, ці яскраві жінки з ПРО. Існують і чоловіки з ПРО, але їх приблизно вчетверо менше, ніж жінок, тож це, як правило, саме жіночий розлад, у який ми сьогодні заглянули глибше.</p>
+    <div class="final-quote">
+      <div class="final-text">Трагічність ПРО в тому, що в цьому вирі вони <strong>тонуть насамперед самі</strong>, іноді затягуючи за собою інших.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
