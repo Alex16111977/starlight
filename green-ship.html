@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<script src="theme.js" data-native="light"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Зелений корабель</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Зелений<br>корабель</h1>
+  <p class="page-subtitle">Тіло пам'ятає все: розділ дев'ятнадцятий</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Бажані хвилі заохочуються сигналом, небажані просто оминаються</div>
+      <div class="hero-author">Бессел ван дер Колк</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Епіграфи і лабораторія сну -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Епіграфи і лабораторія сну</h2>
+    <p>Розділ відкривають думка Готорна про електрику, що перетворила матеріальний світ на один великий нерв, і слова Вільяма Джеймса про те, що здатність знову й знову повертати блукаючу увагу лежить в основі розуму, характеру й волі.</p>
+    <p>Влітку після першого курсу медичної школи я підробляв у лабораторії дослідження сну Ернеста Гартмана в Державній лікарні Бостона: кріпив учасникам електроди, вмикав самописець, який уночі креслив їхню мозкову активність, і будив їх у фазі швидкого сну, щоб записати сновидіння. Ці спостереження підготували ґрунт для відкриттів, описаних у розділі про ДРОР. Проте надія, що ЕЕГ допоможе зрозуміти роль електричної активності мозку в психічних проблемах, довго лишалася здебільшого нездійсненою.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Електричні контури мозку -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Електричні контури мозку</h2>
+    <p>Ще до фармакологічної революції було відомо, що мозок працює і на хімічних, і на електричних сигналах, але панування ліків на кілька десятиліть майже вбило інтерес до електрофізіології. Електричну активність мозку вперше зареєстрував 1924 року німецький фахівець Ганс Бергер; колеги спершу кепкували, та згодом ЕЕГ стала незамінною в діагностиці епілепсії. Бергер помітив, що різним видам розумової діяльності відповідають різні хвилі, і сподівався пов'язати психічні проблеми з порушеннями ЕЕГ. Надії зросли 1938 року, коли в надмірно активних та імпульсивних дітей знайшли уповільнені хвилі в лобових частках. Закономірність багато разів підтвердили, і 2013 року американське управління з нагляду за ліками визнало її біомаркером СДУГ. Уповільнена лобова активність пояснює проблеми з виконавчими функціями: раціональний мозок не контролює емоційний. Те саме трапляється, коли через насильство й травму емоційні центри постійно чекають небезпеки.</p>
+    <p>На початку кар'єри я надсилав пацієнтів на ЕЕГ, але висновки на кшталт «неспецифічні аномалії у скроневій частці» мало що казали, а виправити їх можна було лише ліками, які давали більше побічних ефектів, ніж користі. Тож 2000 року я кинув це робити.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Дослідження Макфарлейна -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Дослідження Макфарлейна</h2>
+    <p>Мій інтерес відродило дослідження приятеля Александера Макфарлейна. Травмованим пацієнтам і здоровим австралійцям показували послідовності зображень (наприклад, тромбон серед столів і стільців) і просили знайти зайве; жодне зображення не стосувалося травми. У здорових основні відділи мозку працювали узгоджено: фільтрація, фокусування, аналіз. У травмованих хвилі були недостатньо скоординовані, не виникало картини, що допомагає зосередитися на завданні й відсіяти зайве, а ключовий сигнал обробки інформації був слабкий.</p>
+    <p>Це пояснило, чому багатьом людям із травмою важко вчитися на досвіді й повноцінно брати участь у житті, і нагадало слова П'єра Жане 1889 року: травматичний стрес — це хвороба, за якої людина не може повноцінно жити в теперішньому. Дивлячись фільм «Володар бурі», я згадав, що солдати під надзвичайним стресом діяли гранично зібрано, а в цивільному житті не могли впоратися навіть з вибором продуктів. За деякими оцінками, до 80% ветеранів, які вступають до коледжу за законом про права військовослужбовців, його не закінчують, і проблеми з увагою цьому сприяють. Постало нове питання: чи можна змінити ці викривлені хвилі?</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Знайомство з методом і мій сеанс -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Знайомство з методом і мій сеанс</h2>
+    <p>2007 року на конференції про дітей із розладом прив'язаності я познайомився з Себерн Фішер, яка майже десять років застосовувала нейробіологічний зворотний зв'язок. Вона показала малюнки десятирічного хлопчика до й після терапії: через перепади настрою й труднощі самоорганізації його не могли втримати в школі, а перший сімейний портрет відповідав рівню трирічної дитини. Після двадцяти сеансів він став рідше втрачати самовладання, а малюнки докладнішими; ще за два з половиною місяці й двадцять сеансів поведінка нормалізувалася. Я не бачив методу, який так різко змінював би мозок за такий короткий час, і охоче погодився на демонстрацію.</p>
+    <p>У кабінеті в Нортгемптоні Себерн закріпила електроди на моїй голові й правому вусі. Невеликий ноутбук фіксував «електричну симфонію» мозку швидше й точніше за обладнання лабораторії Гартмана вартістю в мільйон доларів. Зворотний зв'язок дає мозку змогу спостерігати власну роботу і підштовхує його віддавати перевагу певним частотам, створюючи нову картину, що сприяє саморегуляції; можливо, ми вивільняємо заблоковані параметри коливань і сприяємо утворенню нових.</p>
+    <p>Я побачив щось на кшталт гри з кольоровими космічними кораблями. Вони хаотично рухалися, зупинялися, коли я кліпав, і рухалися один за одним, коли я спокійно дивився. Я намагався змусити зелений корабель обігнати інших, але чим більше напружувався, тим більше він відставав. Себерн порадила розслабитися, і коли я відкинувся в кріслі, сигнали стали регулярнішими, а мій корабель вирвався вперед. Це схоже на спостереження за обличчям співрозмовника: усмішка заохочує продовжувати, а нудьга підказує змінити тему. Бажані хвилі заохочуються сигналом, небажані просто оминаються.</p>
+    <p>Коли Себерн перемістила електроди на ліву брову, я відчув уважність і зібраність (стимулювалися бета-хвилі в лобовій корі, що відповідає за пильність); на тімені — більшу відстороненість і увагу до відчуттів тіла. За її словами, ми сподіваємося вплинути на контури, які запускають і підтримують стани страху, сорому й гніву; їхня постійна активація й визначає травму. Коли контур страху розслабляється, мозок менш схильний до автоматичних стресових реакцій, і ми можемо самі обирати реакції.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Історія методу -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Історія методу</h2>
+    <p>Технологія не нова. Наприкінці 1950-х Джо Каміа з Чиказького університету виявив, що люди навчаються за допомогою зворотного зв'язку розпізнавати альфа-хвилі розслаблення, а дехто за чотири дні досягав стовідсоткової точності. Першу наукову роботу про користь методу при патологічних станах провів Баррі Стерман з Каліфорнійського університету в Лос-Анджелесі: навчені ним коти не реагували судомами на токсичний компонент ракетного палива, який вивчали на замовлення НАСА. 1971 року Стерман застосував пристрій до першої людини, двадцятитрирічної Мері Фербанкс, що з восьми років страждала на епілепсію; після трьох місяців занять її напади майже припинилися, а систематичне дослідження опублікували 1978 року.</p>
+    <p>Наприкінці 1970-х нові психотропні препарати привели нашу галузь до хімічної моделі мозку, і метод розвивався уривками, переважно в Європі, Росії й Австралії. У США є близько десяти тисяч практиків, але масштабних досліджень немає: причина в кількох конкуруючих системах і обмеженому комерційному потенціалі, адже страховка покриває лише деякі застосування.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Ліза -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Ліза</h2>
+    <p>Себерн влаштувала мені зустріч із трьома пацієнтами, і слухаючи двадцятисемирічну Лізу, що вивчала медсестринську справу, я повністю відчув потенціал терапії. Вона була чарівна, допитлива, явно розумна, мала іронічний гумор і здавалася напрочуд врівноваженою для людини з такою історією: роки в притулках і лікарнях психічного здоров'я, часті виклики швидкої після передозувань ліків і завдання собі шкоди.</p>
+    <p>Вона згадувала, що колись заздрила дітям, які могли передбачити, коли батьки лютуватимуть: у її домі закономірності не було, і мати могла зірватися будь-коли, а батько пішов, коли їй було три роки. Слово «катування» доречне для опису пережитого нею насильства. У дванадцять вона втекла, а після другої втечі втрутилася служба захисту дітей. Шість років вона провела в лікарнях психічного здоров'я, притулках, прийомних сім'ях і на вулиці. Через дисоціацію й саморуйнівну поведінку опікуни жахалися, а вона не пам'ятала своїх вчинків і здобула репутацію брехухи-маніпуляторки; їй просто бракувало слів, щоб пояснити, що з нею відбувається. У вісімнадцять вона почала самостійне життя без сім'ї, освіти, грошей і навичок. Тоді вона зустріла Себерн, яка щойно придбала перше обладнання й запропонувала спробувати.</p>
+    <p>Спершу Ліза ходила з відсутнім поглядом, тягаючи за собою гарбуз, і була явно «не тут». Розмовна терапія була неможливою: щойно торкалися болісного, вона закривалася чи панікувала, а спроби говорити про дитинство закінчувалися зривами, безсонням і відмовою від їжі. Вона не могла заплющити очі, коли поруч хтось був, і розумом розуміла, що небезпеки нема, але тіло не давало розслабитися: вона застрягла в стані невідворотного шоку. Після статевого дозрівання стало гірше: вона знаходила на собі ушкодження, люди знали її під різними іменами, були провали в пам'яті, а в дзеркалі вона не впізнавала себе. Ніхто не вірив. Коли їй було сімнадцять, вона серйозно поранила себе, але фахівцям не змогла пояснити, як це сталося, бо не пам'ятала; вони були переконані, що дисоціативного розладу не існує. Після повноліття Ліза припинила приймати призначені ліки: за її словами, вони допомагають не всім, а їй не підходили.</p>
+    <p>Коли вона почала нейрозворотний зв'язок, усе стало чіткішим. Себерн вперше пробувала його на пацієнтці з дисоціацією. Вони зустрічалися двічі на тиждень і стимулювали узгодженіші хвилі в правій скроневій частці, центрі страху. За кілька тижнів Ліза стала менш напруженою серед людей і перестала боятися спускатися в підвальну пральню. Потім настав прорив: дисоціації припинилися. Раніше в голові постійно гули тихі розмови, і вона боялася шизофренії; за півроку голоси вщухли. «Я інтегрувала своє "я", усі мої особистості об'єдналися».</p>
+    <p>Зі стабільнішим відчуттям себе Ліза змогла говорити про минуле й уперше пройти психотерапію. Раніше їй бракувало дистанції й вона не могла належно заспокоїтися, а тому й вибудувати прив'язаність до психотерапевта. Це важливе спостереження: багато пацієнтів то кидають, то поновлюють лікування, бо перебувають у такому ж стані. Заходячи до кімнати, Ліза запам'ятовувала всі виходи й подробиці про людину, відчайдушно стежачи за всім, що може зашкодити. Тепер вона сприймає людей зовсім інакше. Її чіткість і ясний розум переконали мене, що в нашому центрі травми варто вивчити цей метод.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Початок роботи в нашому центрі -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Початок роботи в нашому центрі</h2>
+    <p>Ми обрали одну з п'яти систем, і вісім співробітників та троє інструкторів почали відпрацьовувати метод одне на одному. Коли я стимулював у колеги Майкла діапазон 11–14 Гц над сенсомоторною зоною, після сеансу він розповів, що завжди відчував нервозність серед людей і хронічне гнітюче відчуття небезпеки, яке зникло: він почувався захищеним, розслабленим, відкритим. Наступні три роки колишній сором'язливий Майкл дивував групу ідеями й зробив великий внесок у програму.</p>
+    <p>У першому дослідженні взяли участь сімнадцять пацієнтів, яким попереднє лікування не допомогло. Мішенню була права скронева ділянка, надто бурхливо реагуюча при травматичному стресі. За два з половиною місяці провели по двадцять сеансів. Через алекситимію пацієнтам було важко оцінити результат, але вони говорили діями: приходили вчасно навіть крізь заметіль, і ніхто не вибув. Знизилися бали за шкалою ПТСР, покращилися комфорт у взаємодії з людьми, емоційний баланс і самосвідомість; вони краще спали, були спокійнішими й зібранішими.</p>
+    <p>Об'єктивні зміни поведінки надійніші за самооцінку. Мій перший пацієнт із цим методом, чоловік за сорок, у стані відчуття непорозуміння й покинутості імпульсивно шукав випадкових сексуальних контактів, через що розпався його шлюб і в нього виявили ВІЛ. Він пережив насильство в дитинстві, але усвідомлення цього зв'язку за три з половиною роки психотерапії нічого не змінило. Через тиждень після початку нейрозворотного зв'язку після сварки з новою дівчиною він замість звичного місця знайомств поїхав на рибалку. Наступні два з половиною місяці він знаходив розраду в риболовлі й навіть узявся ремонтувати будиночок біля озера. Коли через відпустки ми пропустили три тижні, імпульсивна поведінка повернулася — нова модель ще не закріпилася. Ми продовжили на пів року, і тепер, через чотири роки, він приходить лише на профілактичні прийоми, а непереборного потягу немає. Чому його мозок почав шукати розради в риболовлі, ми не знаємо; метод змінює нейронні контури, і розум вчиться іншої взаємодії зі світом.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Основи: мозкові хвилі -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Основи: мозкові хвилі</h2>
+    <p>Кожна лінія на ЕЕГ відображає активність частини мозку; вимірюють амплітуду та частоту (кількість коливань за секунду, у герцах).</p>
+    <p>Дельта-хвилі (2–5 Гц) переважають у сні. Надлишок їх у неспанні затуманює мислення й послаблює критичне мислення та контроль спонукань; надмірна повільна лобова активність є у 80% дітей зі СДУГ і в багатьох дорослих із ПТСР. Тета-хвилі (5–8 Гц) характерні для гіпнагогічного стану, гіпнотичного трансу й мислення, вільного від логіки, що уможливлює нові асоціації; мінус у тому, що вони з'являються й тоді, коли ми «не в собі» чи пригнічені. Альфа-частоти супроводжуються спокоєм, знайомим тим, хто практикує медитацію; один пацієнт назвав метод «прокачаною медитацією». Найчастіше я використовую альфа-стимуляцію, щоб допомогти надто заціпенілим чи збудженим людям досягти зосередженого розслаблення. Національний військово-медичний центр імені Уолтера Ріда запровадив апарати з альфа-стимуляцією для солдатів із ПТСР, але даних про ефективність на момент написання книги не було. Бета-хвилі (13–20 Гц) спрямовують увагу назовні й дають змогу зосередитися на завданні, а вищі за 20 Гц пов'язані з надмірним збудженням, тривожністю та постійним скануванням оточення в пошуках небезпеки.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Допомога мозку зосередитись -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Допомога мозку зосередитись</h2>
+    <p>Метод стимулює творчість, контроль над тілом і внутрішню усвідомленість навіть у дуже успішних людей. Він, мабуть, більше вивчався для покращення фізичних показників, ніж для лікування психічних проблем: Лен Зайчковський тренував з його допомогою канадську хокейну команду, тренер італійського «Мілана» вчив гравців залишатися розслабленими під час перегляду своїх помилок (кілька з них потрапили до збірної Італії, що виграла чемпіонат світу 2006 року), а програма «Підкорюй п'єдестал» перед Олімпіадою 2010 року у Ванкувері включала його і принесла Канаді найбільше золотих медалей. Музичні здібності теж покращуються: після десяти сеансів студенти Королівського музичного коледжу отримали на 10% вищі оцінки суддів.</p>
+    <p>Щонайменше 36 досліджень показали, що метод ефективно й швидко діє при СДУГ, майже не поступаючись традиційним ліками; але якщо мозок навчений нових форм взаємодії, подальше лікування не потрібне, тоді як медикаменти не змінюють активності мозку й потребують постійного прийому.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Кількісна ЕЕГ і травма -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Кількісна ЕЕГ і травма</h2>
+    <p>Кількісна ЕЕГ відстежує хвилі з точністю до мілісекунди й будує кольорову карту, де видно, яких частот у кожній ділянці більше чи менше, і наскільки добре ділянки взаємодіють. Є бази даних здорових людей і пацієнтів, а обладнання, на відміну від фМРТ, недороге й компактне. Метод показує необґрунтованість діагностичних категорій DSM: ярлики не пов'язані з особливостями активності мозку, а такі стани, як дезорієнтація, збудження чи дисоціація, відповідають певним закономірностям. Пацієнтам допомагає бачити, де в мозку є осередки, що відповідають за проблеми з концентрацією чи емоційним контролем: вони перестають звинувачувати себе за невдалий самоконтроль. За словами Еда Гемліна, швидше й ефективніше навчаються ті, хто розуміє зв'язок між зворотним зв'язком і власними діями, а змінюючи силою думки активність власного мозку, люди набувають віри у свої можливості.</p>
+    <p>У пацієнтів із тривалим травматичним стресом ми часто бачимо надмірну активність правої скроневої частки (центру страху) разом із надлишком повільних хвиль у лобовій частці: розумовою діяльністю керує перезбуджений емоційний мозок. Зниження активності центру страху зменшує симптоми ПТСР і покращує виконавчі функції. В інших підвищена активність виникає після заплющення очей, у когось таламус не відсіює зайвого. Ми вчимо різні ділянки генерувати інші картини.</p>
+    <p>Макфарлейн за дорученням Міністерства оборони Австралії вивчав зміни в нормальному мозку після бойових дій в Іраку й Афганістані: кількісну ЕЕГ робили 179 частинам за чотири місяці до кожної операції й через чотири місяці після. Чим довше солдати були в зоні бойових дій, тим більше знижувалася альфа-активність у задній частині мозку, що відстежує положення тіла й регулює сон та голод, — це відповідає стану постійного збудження. З кожною операцією хвилі в передній частині сповільнювалися, і розвивалася картина, схожа на СДУГ: збудження більше не допомагало фокусуватися, а лише викликало неспокій. Чи розвинеться ПТСР, поки невідомо.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Проблеми навчання -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Проблеми навчання</h2>
+    <p>Жорстоке й зневажливе поводження в дитинстві порушує сенсорну інтеграцію і може призвести до розладів навчання (зокрема, до порушень зв'язку між центрами слуху та обробки мови й зорово-моторної координації). Вони проявляються в наших підлітків після виправлення поведінкових проблем. Ліза описувала затримку в обробці звуку: «Відстанеш на частку секунди, і вже каша». Нейрозворотний зв'язок допоміг їй утримувати інформацію й орієнтуватися за картою: на початку лікування вона мала доїхати з Амгерста до Нортгемптона, менше десяти миль, але кілька миль ішла пішки автострадою, бо не могла зорієнтуватися за розкладом і не відчувала плину часу. Постає питання: як допомогти людям засвоїти сприйняття простору й часу, що закладається в перші роки життя й може бути порушене ранньою травмою? Ні ліки, ні традиційна психотерапія не стимулюють потрібну для цього нейропластичність, якщо критичний момент розвитку втрачено.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Стимуляція альфа- і тета-хвиль -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Стимуляція альфа- і тета-хвиль</h2>
+    <p>Ця різновидність вводить людину в гіпнагогічний стан, подібний до гіпнотичного трансу. Тета-хвилі повертають розум до внутрішнього світу уяви, альфа-хвилі з'єднують внутрішнє і зовнішнє, і стимуляція йде по черзі. Головна мета лікування ПТСР — щоб теперішнє перестало сприйматися як раз за разом пережите минуле. Стан трансу послаблює умовні зв'язки між подразниками й реакціями (наприклад, гучним тріском і загрозою загибелі) і дає змогу створити нові асоціації: той самий тріск можна пов'язати з феєрверком, який дивишся ввечері з пляжу в колі близьких. Деякі пацієнти бачать незвичні образи чи прозріння, інші просто розслаблюються; будь-який стан, у якому можна спокійно сприймати образи й почуття, пов'язані зі страхом і безпорадністю, відкриває нові горизонти.</p>
+    <p>Євген Пеністон і Павло Кулькосакі з медичного центру для ветеранів у Колорадо лікували 29 ветеранів війни у В'єтнамі, які 12–15 років страждали на ПТСР. П'ятнадцятьох випадково обрали для альфа-тета-стимуляції, чотирнадцять отримували стандартну допомогу (ліки, індивідуальну й групову терапію). Усіх в середньому госпіталізували понад п'ять разів. Результати 1991 року були одними з найкращих в історії лікування ПТСР: поменшало симптомів, фізичних скарг, депресії, тривожності й підозріливості. За 30 місяців спостережень лише троє з п'ятнадцяти скаржилися на болісні спогади й кошмари, одному довелося лягти до лікарні, чотирнадцятеро значно зменшили дози ліків. У контрольній групі симптоми посилилися в кожного, кожного щонайменше двічі госпіталізували, десятеро збільшили дози ліків. Результати підтвердили інші вчені, але поза колом фахівців дослідження отримало напрочуд мало уваги.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Залежності -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Залежності</h2>
+    <p>Від третини до половини людей з тяжкою травмою мають проблеми з алкоголем чи наркотиками; половина жертв автоаварій теж. Речовини дають тимчасове полегшення, але при відмові настає перезбудження, що посилює спогади, кошмари й дратівливість. Вийти з цього замкненого кола можна двома шляхами: впоратися із симптомами ПТСР (наприклад, за допомогою ДРОР) або зняти перезбудження, яке спричиняють і ПТСР, і відмова від речовин; препарати на кшталт налтрексону допомагають лише подекуди. Одна з перших моїх пацієнток, яка мала давню кокаїнову залежність і пережила в дитинстві сексуальне насильство, подолала потяг уже за два сеанси й п'ять років не вживала наркотиків; я ніколи не бачив такого швидкого одужання. Більшість досліджень цієї теми старші за двадцять років, а в США нових майже немає. Від 75 до 80% пацієнтів після детоксикації зриваються. У дослідженні Пеністона й Кулькосакі п'ятнадцять ветеранів із ПТСР і алкоголізмом проходили альфа-стимуляцію: за три роки вісім повністю кинули пити, більшість стали менш пригніченими, добрішими, стабільнішими й задоволенішими, а всі, хто отримував стандартне лікування, знову потрапили до лікарні протягом півтора року. Щоб розкрити повний потенціал методу, потрібно значно більше досліджень.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Майбутнє -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Майбутнє</h2>
+    <p>У практиці я застосовую метод насамперед для перезбудження, дезорієнтації та проблем із концентрацією в пацієнтів із травмою розвитку. Він дає результати також при головному болю напруги, наслідках травми мозку, тривожності, паніці, аутизмі, судомах та афективних розладах. Станом на 2013 рік його застосовують у сімнадцяти військових і ветеранських закладах для лікування ПТСР. Френк Даффі з Бостонської дитячої лікарні зазначив, що в літературі немає даних про невдалі дослідження, і будь-який препарат з таким спектром застосування негайно здобув би визнання. 2010 року директор Національного інституту психічного здоров'я Томас Інсел опублікував статтю «Несправні контури», що закликала розглядати мозок з погляду ритмів і електричної взаємодії; 2013 року інститут перестав орієнтуватися на категорії DSM і звернувся до вивчення людського коннектому — усіх нейронів та їхніх зв'язків, — аналогічно геному й мікробіому.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Слово Лізи -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Слово Лізи</h2>
+    <p>Підсумовуючи, Ліза сказала: метод заспокоїв її й поклав край дисоціації. Тепер вона може користуватися почуттями й більше не є їхньою заручницею: їй може бути сумно через пережите, але вона з цим справляється. Вона вже не відчуває постійної тривоги, а коли відчуває, то розуміє, що це відлуння минулого. Вона може думати про любов, близькість і потяг, більше не готується щомиті тікати чи давати відсіч, а її тиск знизився. Метод дав їй змогу вибудовувати стосунки й жити так, як хочеться, бо вона більше не в полоні минулого.</p>
+    <p>Через чотири роки після знайомства Ліза закінчила медичне училище однією з найкращих і працює медсестрою на повну ставку в місцевій лікарні.</p>
+    <div class="final-quote">
+      <div class="final-text">Метод дав їй змогу вибудовувати стосунки й жити так, як хочеться, бо вона <strong>більше не в полоні минулого</strong>.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<script src="theme.js" data-native="light"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Внутрішня родина</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Внутрішня<br>родина</h1>
+  <p class="page-subtitle">Тіло пам'ятає все: розділ сімнадцятий</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Кожен із нас складається з різних частин</div>
+      <div class="hero-author">Бессел ван дер Колк</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Мері та Джейн -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Мері та Джейн</h2>
+    <p>На початку кар'єри близько трьох місяців до мене щотижня ходила Мері, сором'язлива самотня дівчина зі слабким здоров'ям, яка розбиралася з наслідками насильства в ранньому дитинстві. Одного дня я відчинив двері приймальні й побачив її в зухвалій позі: у міні-спідниці, з пофарбованим у вогненно-руде волоссям і невдоволеним виразом. «Мене звати Джейн, і я прийшла попередити, щоб ви не вірили дурницям, які розповідає Мері». На щастя, я не став сперечатися й вислухав її; того сеансу я познайомився не лише з Джейн, а й з ображеною маленькою дівчинкою та злим підлітком. Це був початок довгого й продуктивного лікування.</p>
+    <p>Випадок Мері став моїм першим знайомством із дисоціативним розладом ідентичності (раніше його називали розладом множинної особистості). Внутрішнє розщеплення з окремими особистостями — лише крайній край широкого спектра психічного життя: кожен знає відчуття, що в ньому борються різні бажання чи частини, а в людей із травмою це особливо виражене, бо їм доводилося вдаватися до крайніх заходів, щоб вижити. Вивчення цих частин і примирення з ними — важливий крок зцілення.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Адаптація до травми має свою ціну -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Адаптація до травми має свою ціну</h2>
+    <p>Коли нас принижують, ми спрямовуємо всю енергію на захист: пригнічуємо почуття, плануємо помсту або стаємо настільки успішними й впливовими, щоб ніхто більше не міг нам зашкодити. Багато видів поведінки, що класифікуються як психічні проблеми (деякі манії, нав'язливі потяги, панічні атаки) і більшість саморуйнівних форм поведінки спочатку були стратегіями самозахисту. Вони так заважають нормальному життю, що і фахівці, і пацієнти нерідко вважають повне зцілення неможливим, а тоді лікування зводиться до підбору ліків, подекуди довічних. Продуктивніше сприймати агресію чи депресію, зарозумілість чи апатію як набуту поведінку: у певний момент людина вирішила, що для виживання їй треба бути грубою, непомітною чи взагалі здатися. Як і травматичні спогади, ці адаптації тривають, доки організм не відчує себе в безпеці й не інтегрує всі частини себе, що б'ються з травмою. Я не перестаю захоплюватися такими людьми, знаючи, скільки сил вони витрачають на виживання і яку ціну платять — відсутність люблячих стосунків зі своїм тілом, розумом і душею.</p>
+    <p>Багатьом дітям безпечніше ненавидіти себе, ніж ризикувати стосунками з дорослими, від яких вони залежать, виявляючи злість чи намагаючись втекти. Тому вони виростають у дорослих, переконаних, що не варті любові: лише так їхній незрілий мозок міг пояснити таке ставлення. Вони виживають через заперечення, ігнорування й відсікання величезних пластів реальності: забувають жорстокість, придушують гнів і відчай, блокують тілесні відчуття, а в них лишається застигла в часі дитяча складова, що тримається за ненависть до себе.</p>
+    <p>Придушення емоцій корисне в короткостроковій перспективі: воно допомагає зберегти самовладання, щоб врятувати побратима чи подбати про дітей. Проблеми приходять пізніше. Солдат, що бачив загибель друга на міні, може викинути це з голови, але зриватиметься на дівчині або впадатиме в заціпеніння, коли її ласка змушує його відчути, що він втрачає контроль: розум автоматично пов'язує це з безпорадністю в мить смерті друга. Тоді вступає інша захисна частина й створює відволікальний маневр: він злиться й вважає винною її. Основне завдання зцілення, як говорилося в тринадцятому розділі, — навчитися жити зі спогадами, не піддаючись їм; але більший виклик — перебудувати систему розуму, створену, щоб упоратися з найгіршим, і знову звернутися до частин, що виробили захисні моделі.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Мозок — це мозаїка -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Мозок — це мозаїка</h2>
+    <p>Кожен із нас складається з різних частин: зараз частина мене не проти подрімати, інша хоче писати далі, а ображена листом третя хоче надіслати дошкульну відповідь. Коли вранці ми бачимо над начальником грозову хмару, одразу розуміємо, що чекає: у цієї його злої частини своя інтонація, лексикон і поза, не такі, як учора. Ці частини — не просто почуття, а окремі сутності з власними переконаннями, цілями й ролями. Те, як добре ми ладнаємо із собою, залежить від внутрішніх управлінських якостей: чи прислухаємося до різних частин і не даємо їм заважати одна одній. Коли Маргарет під час сварки кричить «Я тебе ненавиджу!», зненавидіти чоловіка в цю мить може лише частина, яка тимчасово затьмарює любов, що повернеться, коли вона побачить його спустошення.</p>
+    <p>Усі школи психології визнають субособистості під різними назвами. Вільям Джеймс 1890 року писав, що свідомість може розділятися на співіснуючі частини, які ігнорують одна одну; Юнг вважав психіку саморегульованою системою. Сучасна нейробіологія підтвердила, що розум — це спільнота: Майкл Газзаніга, дослідник розщепленого мозку, дійшов висновку, що розум складається з напівавтономних модулів, а Марвін Мінскі з МТІ вважав, що в мозку існує спільнота різних розумів, які, як члени родини, можуть співпрацювати, не знаючи одне про одного.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Терапія внутрішніх сімейних систем -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Терапія внутрішніх сімейних систем</h2>
+    <p>Психотерапевти, які бачать у людині складну особистість із потенціалами, можуть допомогти пізнати систему внутрішніх частин і подбати про уражені складові «я». Є кілька таких підходів, зокрема модель структурної дисоціації Онно ван дер Гарта й Еллерта Ненгейса, робота Кеті Стіл і Річарда Клуфта. Через 20 років після знайомства з Мері я зустрів Річарда Шварца, який розробив терапію внутрішніх сімейних систем (ВСС): його підхід дав мені системний спосіб працювати з розщепленими частинами особистості. Ідея в тому, що розум кожного схожий на родину, члени якої мають різний ступінь зрілості, збудливості, мудрості й болю; зміна в одному елементі неминуче відбивається на всіх інших.</p>
+    <p>При травмі система «я» розпадається, і частини розбиваються на два табори, що борються між собою: ненависть до себе й почуття власної величі, люблячий догляд і ненависть, пасивність і лють. ВСС розглядає їх як окрему мисленнєву систему зі своєю історією, потребами й картиною світу. Травма наділяє їх переконаннями й емоціями, що виводять з природного корисного стану. У кожному з нас є по-дитячому прості, люблячі й грайливі частини, і від насильства страждають саме вони: заморожуються, забираючи в себе біль, жах і зраду. Це робить їх токсичними, і їх треба заперечувати, тож їх замикають; у ВСС їх називають вигнанцями. Інші частини об'єднуються, щоб захистити внутрішню родину від вигнанців, і ці захисники забирають у вигнанців частину енергії. Керівники (прискіпливі перфекціоністи) стежать, щоб ми ні з ким не зблизилися або були максимально продуктивними. Пожежники — рятувальники, що автоматично реагують, коли досвід провокує вигнану емоцію. У кожної частини свої спогади, переконання й тілесні відчуття: одні тримають сором, інші — гнів, треті — радість, четверті — самотність чи безнадійну покірність, і всі вони виконують роль: захищати «я» від жаху, пов'язаного зі страхом знищення.</p>
+    <p>Дітям, які виражають біль вчинками, нерідко ставлять діагнози на кшталт опозиційно-зухвалого розладу чи розладу поведінки. Ці ярлики не враховують, що гнів і відстороненість — грані відчайдушних спроб вижити; лікування, яке лише контролює поведінку, не торкаючись причини, у найкращому разі неефективне, а в гіршому — шкідливе. У дорослих частини не інтегруються спонтанно, а вигнані можуть навіть не знати про інших. Багато чоловіків, розбещених у дитинстві священниками, у моїй практиці приймали анаболічні стероїди й проводили безліч часу в спортзалах, ховаючи слабкість і страх, і лише коли почувалися безпечно, я знайомився з наляканими дітьми всередині них. ВСС дає змогу говорити про такі частини, не розглядаючи їх як психічні симптоми, а усвідомлення, що кожна несе тягар минулого й виконує функцію, допомагає перестати їх боятися. За Шварцем, якщо припустити, що в людини є внутрішнє прагнення до здоров'я, то за хронічних проблем щось заважає доступу до ресурсів, тому роль психотерапевта — співпраця, а не навчання чи суперечки. Перший крок — запевнити систему, що всі її частини вітаються, навіть ті, що мають руйнівні чи суїцидальні нахили, бо вони з'явилися, щоб захистити «я».</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Самоуправління -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Самоуправління</h2>
+    <p>У основі зцілення від травми лежить розвиток усвідомленого самоуправління. Самоусвідомлення дозволяє спостерігати за внутрішнім ландшафтом із співчуттям і цікавістю й спрямовує нас до кращого догляду за собою. Будь-яка система ефективна лише за компетентного керівництва; те саме з внутрішньою родиною. Система жертви насильства відрізняється відсутністю ефективного управління й балансу: її частини працюють на застарілих переконаннях, наприклад, що й тепер небезпечно розкривати секрети про дитинство. Коли «я» втрачає контроль, у ВСС це називають змішуванням: «я» ототожнює себе з окремою частиною («я хочу вбити себе» замість «частина мене хоче...»).</p>
+    <p>Шварц робить два твердження. По-перше, «я» не треба створювати наново: під захисними частинами в людей із травмою лежить непошкоджена сутність, спокійна й цікава, збережена від руйнування захисниками. Щойно ті зрозуміють, що можуть безпечно розслабитися, «я» з'явиться спонтанно, і частини стануть союзниками. По-друге, усвідомлене «я» — не пасивний спостерігач, а диригент оркестру, що допомагає реорганізувати систему й змусити частини поводитися гармонійно. Нейробіологія підтверджує, що це не лише метафора: методики самоусвідомлення збільшують активність медіальної префронтальної кори й знижують активність мигдалеподібного тіла, тобто посилюють контроль над емоційним мозком.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Знайомство з внутрішнім ландшафтом -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Знайомство з внутрішнім ландшафтом</h2>
+    <p>Психотерапевт допомагає розкласти незрозумілу мішанину на окремі сутності: «ця частина поводиться як маленька дитина, а ця зріліша, але почувається жертвою». Потім пацієнтів просять попросити кожну захисну частину при появі тимчасово відступити, щоб побачити, що вона захищає. Коли це повторюється, частини відокремлюються від «я», і людина вчиться стримувати гнів, страх чи відразу, звільняючи місце цікавості. Їх просять визначити, які частини задіяні в проблемі (почуття нікчемності, відторгнення, помста), і тоді може прийти образ: покинута дитина, старий, медсестра чи морський піхотинець. Психотерапевт питає: «Що ви відчуваєте щодо цієї частини?» Якщо відповідь різка («я її ненавиджу»), це означає, що з «я» змішалася інша частина; її просять відступити, дякують за пильність і запевняють, що вона може повернутися, коли знадобиться. Далі питають, що пацієнт відчуває до раніше відкинутої частини, і можна познайомитися з нею ближче: скільки їй років, чому вона так відчуває. Коли набирається критична маса «я», діалоги відбуваються спонтанно, і психотерапевт може лише зрідка запитувати: «Що ви скажете цій частині?»</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Джоан: керівники й пожежники -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Джоан: керівники й пожежники</h2>
+    <p>Джоан звернулася через неконтрольовані перепади настрою й почуття провини через численні інтрижки, остання з яких була з інструктором із тенісу. «З першокласного професіонала я перетворююся на хникаючу дитину, потім на розлючену жінку, потім на безжальну машину для знищення їжі, і все за десять хвилин». На першому сеансі вона розкритикувала мій кабінет: напад був її найкращим захистом, вона готувалася знову постраждати. Єдиним способом подолати захисну поведінку було виявити особливий інтерес до її життя й показати, що я приймаю ті її частини, яких вона найбільше соромиться. Я запитав, чи помічає вона частину, що любить критикувати, і що вона відчуває до цього внутрішнього критика; це дозволило їй почати відокремлюватися від нього. Вона ненавиділа критика, бо він нагадував її матір; а коли я спитав, що він може захищати, злість змінилася цікавістю. Вона боялася матері в дитинстві, а внутрішній критик захищав її від мене й намагався випередити критику матері.</p>
+    <p>За кілька тижнів вона розповіла, що в початковій школі зазнала сексуального насильства з боку хлопця матері. Вона навчилася зникати під час насильства, ніби парячи над кімнатою, а потім жила нормальним шкільним життям. Проблеми почалися в підлітковому віці: вона холодно ставилася до хлопців, що добре до неї ставилися, а близькість мала з тими, хто викликав відразу й сором; булімія замінювала їй насолоду, а секс із чоловіком викликав нудоту. Усі її інтрижки закінчувалися однаково: серед близькості вона згорталася клубком і хникала, як маленька дівчинка, а потім не хотіла мати нічого спільного з коханцем. Хоча спогади були відокремлені, вона несвідомо їх відтворювала. Я не намагався пояснювати їй причини; ключову роль грало «розгойдування» з тринадцятого розділу. Щоб упоратися з болем, вона мала залучити внутрішню силу й любов; я не міг дати їй турботи, якої вона була позбавлена в дитинстві, і будь-який психотерапевт, що намагається заповнити цю порожнечу, опиняється не тією людиною, не в тому місці й не в той час. Терапія мала зосередитися на її стосунках зі своїми частинами, а не зі мною.</p>
+    <p>Ми виявили багатьох субособистостей: агресивну дитину, розпусного підлітка, суїцидальну частину, одержимого керівника, манірного мораліста. Керівник мав не допустити, щоб Джоан принизили чи кинули. Одні керівники агресивні, як її критик, інші прагнуть досконалості й закликають бути пасивними; вони контролюють доступ до емоцій, щоб система не була перевантажена, і на це йде величезна енергія. Деякі керівники дуже кмітливі: прискіпливий керівник Джоан сприяв її професійному успіху, а серед моїх пацієнтів чимало здібних учителів і медсестер, чиї колеги були б вражені, дізнавшись про їхні приховані боріння. Джоан поступово зрозуміла, що суперечливі почуття — нормально і що ненависть паралізувала лише частину неї. Але після негативної оцінки на роботі вона почала картати себе й відчула слабкість; коли я попросив її розповісти, де в тілі ця безсила частина, вона відмовилася, бо не переносить цю плаксиву нікчемну дівчину. Я не став тиснути, але вона пішла пригнічена, наступного дня переїла, викликала в себе блювання й на наступному сеансі заявила, що хоче вбити себе; її здивувала моя щира цікавість і те, що я її не засуджував. Знову з'явилися критик («вона огидна»), частина, що казала «ніхто ніколи мене не полюбить», і критик, який радив просто збільшити дозу ліків. Ці керівники, захищаючи вразливих, лише завдавали шкоди. На моє запитання, що станеться, якщо вони відступлять, Джоан відповіла: «Люди ненавидітимуть мене, і я опинюся сама на вулиці». Виник спогад: мати погрожувала віддати її в притулок, де вона більше не побачить сестер і собаку. Коли я спитав, що вона відчуває до цієї наляканої дівчинки, Джоан заплакала й сказала, що їй її шкода. Я вважав, що ми заспокоїли систему, але з цим сеансом я поспішив.</p>
+    <p>Наступного тижня вона не прийшла: ми активували вигнанців, і пожежники розбушувалися. Того вечора вона пішла в бар, підчепила чоловіка, повернулася пізно, п'яна, відмовилася розмовляти з чоловіком, а вранці вдавала, ніби нічого не сталося. Пожежники готові на все, аби позбавити людину емоційного болю; керівники прагнуть контролю, а пожежники готові знищити дім, аби зупинити пожежу. Я зустрічав пожежників, що виявлялися залежністю від покупок, алкоголю, комп'ютерних ігор, невірністю чи нав'язливим спортом. Важливо пам'ятати, що вони відчайдушно намагаються захистити систему. На відміну від керівників, їх не втримаєш: вони вигукують образи й вибігають із кімнати. Вони вважають, що почуття вигнанців зруйнують «я», і не знають про ефективніші способи безпеки. Навіть коли людина перестає переїдати чи завдавати собі шкоди, пожежники знаходять інші способи саморуйнування, і лише коли «я» знову візьме кермо, вся система перестане відчувати загрозу.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Вигнанці й звільнення минулого -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Вигнанці й звільнення минулого</h2>
+    <p>Вигнанці — це смітник токсичних відходів системи: вони несуть спогади, відчуття, переконання й емоції травми та переживання «Господи, мені кінець!», тому випускати їх небезпечно. Вони проявляються стискальними тілесними відчуттями чи емоційною бездушністю. Як більшість жертв інцесту, Джоан ненавиділа своїх вигнанців. Коли вони перемагають керівників, наше «я» змішується з ними, ми бачимо себе й світ їхніми очима й віримо, що світ такий і є, не підозрюючи, що свідомість захоплена. Стримування вигнанців, однак, придушує й найчутливіші, креативні, здатні до близькості, життєрадісні й грайливі частини, які постраждали найбільше. Вони отримують подвійний удар: до травми додається образа від відторгнення. Приховуючи й зневажаючи їх, Джоан прирекла себе на безрадісне життя без близькості.</p>
+    <p>Через кілька місяців нам знову вдалося достукатися до вигнаної дівчинки, що зберігала приниження, збентеження й сором. Тепер Джоан достатньо довіряла й мала досить відчуття «я», щоб спокійно спостерігати за собою-дитиною. З моєю допомогою вона вирвала дівчинку з рук кривдника й забрала її в безпечне місце, рішуче сказавши обидчику, що більше не підпустить його. Вона не відторгла дитину, а активно її звільнила. Як і в ДПДГ, розв'язання травми стало результатом здатності звернутися до уяви й переграти сцени, у яких вона застигала від страху багато років тому: безпорадну пасивність замінили рішучі дії під керівництвом «я». Почавши контролювати власні пориви, Джоан усвідомила порожнечу стосунків із чоловіком Браяном і почала наполягати на змінах. Після кількох спільних сеансів я став зустрічатися з Браяном окремо. ВСС допомагає членам родини курувати одне одного, спостерігаючи взаємодію їхніх частин: Браян пишався, що довго терпів поведінку Джоан, але коли вона захотіла більше близькості, відчув тиск і власну неспроможність, і виявилася його панічна частина, що відгородила його від почуттів. Він розповів, що ріс у родині алкоголіків, де така поведінка була звичайною. Згодом з'явилися захисник, що боявся жінок, і турботлива частина, яка доглядала матір і молодших дітей; нарешті Браян був готовий до зустрічі зі своїм вигнанцем — наляканою дитиною без матері. Це дуже стислий переказ довгого процесу, але ВСС допомогла Джоан і Браяну почути себе й одне одного з позиції цікавого, співчутливого «я» і більше не бути замкненими в минулому.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Самоспівчуття: ВСС при ревматоїдному артриті -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Самоспівчуття: ВСС при ревматоїдному артриті</h2>
+    <p>Нансі Шадік з Об'єднаного Бостонського медичного центру, дізнавшись про ВСС на семінарі Шварца, вирішила використати її в дослідженні психосоціальної допомоги хворим на ревматоїдний артрит (РА), аутоімунне захворювання з хронічним болем і втратою рухливості: ліки сповільнюють його, але не лікують, а життя з РА веде до депресії, тривоги й самотності. Я стежив за дослідженням з особливим інтересом через зв'язок, який бачу між травмою й аутоімунними хворобами. Разом зі старшим фахівцем із ВСС Нансі Соел вона організувала дев'ятимісячне рандомізоване дослідження: одна група проходила групові й індивідуальні сеанси ВСС, контрольна отримувала регулярні листи й дзвінки про симптоми; обидві приймали звичайні ліки й оглядалися фахівцями, які не знали, хто до якої групи належить. Пацієнтів вчили приймати й розуміти свій страх, безпорадність і злість, ставитися до цих почуттів як до членів внутрішньої родини й вести внутрішній діалог, розпізнаючи біль, думки й емоції з цікавістю й співчуттям.</p>
+    <p>Швидко виникла проблема: як і багато травмованих людей, пацієнти з РА були схильні до алекситимії: ніколи не скаржилися на біль, поки він не ставав нестерпним, а на питання про самопочуття відповідали «нормально». Їхні стоїчні частини допомагали впоратися з хворобою, але водночас тримали їх у запереченні, і деякі так придушували відчуття, що не могли ефективно взаємодіяти з фахівцями. Щоб зрушити з місця, наставники у театральній манері знайомили їх із частинами системи «я»: переставляли меблі й реквізит, що уособлювали керівників, вигнанців і пожежників. За кілька тижнів учасники почали розповідати про керівників, що змушували терпіти, стиснувши зуби, бо нікому не цікаво слухати скарги; а коли просили стоїчну частину відступити, розпізнавали озлоблену частину, що хотіла кричати, апатичну, якій не хотілося вставати з ліжка, і вигнанця, що вважав себе нікчемним, бо йому не дозволяли говорити. Майже всім у дитинстві затикали рота. Індивідуальні сеанси допомагали застосовувати модель до повсякденних проблем: одна жінка усвідомила, що може дбати про себе, не доводячи себе до знемоги.</p>
+    <p>Після дев'яти місяців перша група за власною оцінкою показала значне покращення порівняно з контрольною: менше болю в суглобах, краща фізична дієздатність і самоспівчуття, менше пригніченості та більше віри в себе. Через рік вона зберегла результат за рівнем сприйманого болю й симптомами депресії, хоча об'єктивні медичні тести вже не фіксували покращень за показниками болю й дієздатності. Іншими словами, змінилася передусім здатність жити зі своєю хворобою. Шадік і Соел дійшли висновку, що ключовим був наголос на самоспівчутті. Раніше когнітивно-поведінкова терапія й методики самоусвідомлення теж полегшували біль, запалення й депресію при РА, але жодне дослідження не ставило головного питання: чи сприяє зростання психологічної захищеності нормалізації роботи імунної системи?</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Пітер: звільнення вигнаної дитини -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Пітер: звільнення вигнаної дитини</h2>
+    <p>Пітер, фахівець у престижному медичному центрі, у прекрасній фізичній формі, зі самовпевненістю, що часом переходила в зарозумілість, явно не страждав на ПТСР. Він прийшов, щоб дізнатися, як допомогти дружині бути менш образливою: вона погрожувала піти, якщо він не розбереться зі своєю бездушністю. Він пишався тим, що ординатори змагаються за можливість працювати з ним, а персонал його побоюється; називав себе гранично чесним науковцем, не потребував любові, лише поваги, вважав фахівців шарлатанами й був рішуче налаштований ніколи не бачити себе жертвою, хоча дитинство мав нелегке. Я подумав, чи не знайдемо ми керівників, одержимих владою, які зазвичай створюються для захисту від безпорадності. Його батько пережив голокост, бував жорстоким і вимогливим, але мав і м'яку сентиментальну сторону; про матір Пітер уперше усвідомив, що замість щирої турботи вона старанно клопоталася по дому, хоч і заперечував, що це його хвилювало. Він поклявся жити так, щоб у житті не було відторгнення й приниження, а за іронією щодня зустрічався з ними. Дружина розповіла, що він постійно її критикує й емоційно не відкривається, а родина ходить навколо нього навшпиньки; вона була налаштована піти, якщо він не вдасться до радикальних заходів. Вперше за весь час він занепокоївся й запевнив, що хоче розібратися.</p>
+    <p>На наступному сеансі я попросив його розслабитися, заплющити очі, спрямувати увагу всередину й запитати свою критичну частину, чого вона намагається не допустити своїми судженнями. Спершу він сказав, що це безглуздо, бо прийшов по перевірену психотерапію; я запевнив, що це перевірений метод. Приблизно за хвилину він прошепотів: «Щоб мені не заподіяли болю»: критик вважав, що тих, хто критикує, не посміють кривдити. Я попросив подякувати критику за захист, і плечі Пітера розслабилися, а дихання стало глибшим. Він визнав, що на нарадах почувається самотнім і зневаженим, і виявив цю частину в центрі грудей. Попросивши критика показати, що той захищає, він побачив сцену з минулого: батько б'є маленького хлопчика, яким був він сам, а дорослий Пітер стоїть осторонь і думає, як нерозумно було цьому хлопчакові провокувати батька. До хлопчика він відчував зневагу, а критик почав його обзивати. Коли я попросив критика відступити, Пітер закрився й сказав, що навряд чи ще колись прийде. Проте наступного тижня він з'явився: дружина подала на розлучення, і він був спустошений і наляканий перспективою втратити сім'ю.</p>
+    <p>Він знову зазирнув усередину й виявив частину, що страшенно боялася покинутості. Спершу знову була відраза до слабкості хлопчика, але коли я попросив умовити цю частину відступити, Пітер побачив себе маленьким у батьківському домі, що самотньо кричав від жаху, і кілька хвилин мовчки плакав. Були й інші сцени: як він біг обійняти батька чи отримував ляпас від матері. Час від часу він перебивав розповідь, виправдовуючи батьків: вони ж пережили голокост; я просив ці частини піти в іншу кімнату, і йому щоразу вдавалося повернутися до горя. Я попросив сказати хлопчикові, що тепер він розуміє, як тому було жахливо, а потім показати, що дбає про нього: після умовлянь він обійняв хлопчика, і мене здивувало, що цей на вигляд грубий і бездушний чоловік точно знав, як про нього подбати. Нарешті я запропонував повернутися до сцени й забрати хлопчика з собою: дорослий Пітер дав відсіч батькові й відвів хлопчика на кемпінг, де той під його наглядом гасав із поні.</p>
+    <p>На цьому наша робота не закінчилася. Коли дружина забрала документи, колишні звички частково повернулися, і час від часу ми знову зверталися до цього самотнього хлопчика, особливо коли Пітерові було боляче. Цей етап ВСС називається розвантаженням: догляд за вигнаними частинами до повного одужання. З кожним разом колись їдкий внутрішній критик усе більше розслаблявся й з судді перетворився на наставника, Пітер почав відновлювати стосунки з родиною та колегами, а головні болі напруги припинилися. Одного разу він сказав, що все доросле життя намагався відпустити минуле, і зауважив іронію: для цього йому спершу треба було з ним зблизитися.</p>
+    <div class="final-quote">
+      <div class="final-text">Одного разу він сказав, що все доросле життя намагався відпустити минуле, і зауважив іронію: <strong>для цього йому спершу треба було з ним зблизитися</strong>.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>

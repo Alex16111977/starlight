@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<script src="theme.js" data-native="light"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Глибока пам'ять</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Глибока<br>пам'ять</h1>
+  <p class="page-subtitle">Тіло пам'ятає все: розділ дванадцятий</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Щоб зрозуміти травму, треба знайти мужність слухати</div>
+      <div class="hero-author">Бессел ван дер Колк</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Як суспільство раз у раз «забуває» про травму -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Як суспільство раз у раз «забуває» про травму</h2>
+    <p>Інтерес науки до психологічної травми за останні півтора століття дуже коливався. Після смерті Шарко 1893 року Фройд почав шукати причини психічних хвороб у внутрішніх конфліктах, захисних реакціях і інстинктах, і медицина втратила цікавість до теми. Мортон Прінс, який вчився разом з Вільямом Джеймсом і П'єром Жане, скаржився, що ті, кого цікавлять наслідки травми, схожі на молюсків, змиваних припливом у бухті. Втім, про травму забули ненадовго: Перша світова війна принесла сотні тисяч людей зі дивними психологічними симптомами, втратою пам'яті й непоясненими хворобами. Кінематограф закарбував цих солдатів на плівці, і сьогодні на YouTube видно їхні дивні пози, тики, налякані обличчя: фізичні прояви травми, збережені водночас у розумі й тілі.</p>
+    <p>На початку війни британці запровадили діагноз «військовий невроз», що давав право на лікування й пенсію, тоді як схожа «неврастенія» не давала нічого, і вибір залежав від поглядів фахівця. Після величезних втрат на Соммі 1916 року військове керівництво розривалося між співчуттям до солдатів і прагненням перемогти, і 1917-го вийшов наказ узагалі не вживати слів «військовий невроз» (солдатам радили писати «ще не діагностовано»); фахівцеві польових госпіталів Чарльзу Майєрсу відмовили в публікації статті. Німці вважали це вадою характеру й боролися з нею болісними методами, зокрема електрошоком, а в 1922 році британський звіт Саутборо оголосив, що добре вишколені війська не страждають від такого розладу, а хворі були недисциплінованими солдатами. Відомості про ефективне лікування зникли з літератури.</p>
+    <p>У США ветерани Першої світової спершу були героями, але обіцяну премію їм відклали до 1945 року, а 1932-го, у розпал Великої депресії, армія за наказом президента Гувера розігнала табір безробітних ветеранів у Вашингтоні, які вимагали виплат.</p>
+    <p>Хоч фахівці й політики відвернулися від солдатів, жахи війни закарбувалися в літературі: роман Ремарка «На Західному фронті без змін» (1929) говорив від імені цілого покоління, для якого дім став чужим світом, і нацисти спалили його одним із перших. Заперечення наслідків війни й нетерпимість до слабкості сприяли піднесенню фашизму й мілітаризму в 1930-х, а безжальне ставлення до німецьких травмованих ветеранів підготувало ґрунт для знецінення прав людини при нацизмі.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Нове обличчя травми -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Нове обличчя травми</h2>
+    <p>Друга світова війна підштовхнула Майєрса й Кардінера до публікації звітів про Першу світову, що стали посібниками для фахівців нового конфлікту. Основним методом був гіпноз (його показує фільм Джона Г'юстона «Хай буде світло», 1946). Травма проявлялася інакше: замість тиків і паралічів Першої світової солдати були налякані й скуті, а тіло пам'ятало все: розлади шлунка, прискорене серцебиття, паніку. Під гіпнозом вони знаходили слова для страху, провини тих, хто вижив, і суперечливої відданості. Прояви травматичного стресу залежать від культури. Військові стверджували, що не війна робить чоловіків хворими, а хворі чоловіки непридатні для війни, і Жермен Ґрір, яка розбиралася зі стражданнями свого батька-ветерана, згодом вивчала сексуальне домінування в його різних проявах.</p>
+    <p>Коли я працював у лікарні для ветеранів, мене дивувало, що відділення психічного здоров'я було повне молодих ветеранів В'єтнаму, а коридори загальної медицини заповнювали старі. У 1983 році я опитав ветеранів Другої світової в медпунктах: у більшості за моєю шкалою був ПТСР, але лікували їх від соматичних проблем. Вони скаржилися на шлункові коліки й біль у грудях, а не на кошмари й напади люті. Скарги пацієнта залежать від поведінки фахівця: коли той на розповідь про кошмари призначає флюорографію, пацієнт розуміє, що допомогу отримає, зосередившись на фізичних симптомах. Як і мої родичі, що воювали або були в полоні, ці чоловіки неохоче ділилися пережитим. Після війни військові й цивільні лідери засвоїли важливі уроки: план Маршалла Європі, закон про права військовослужбовців (освіта й житло для мільйонів ветеранів), расова інтеграція армії, мережа закладів для ветеранів. Проте психологічні наслідки війни лишилися невизнаними, а травматичні неврози зникли з офіційних діагнозів: остання наукова праця про військову травму після Другої світової вийшла 1947 року.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Повторне відкриття травми -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Повторне відкриття травми</h2>
+    <p>Коли я почав працювати з ветеранами В'єтнаму, у бібліотеці лікарні для ветеранів не було жодної книги про психологічну травму. Але В'єтнамська війна породила численні дослідження й організації та ввела ПТСР у професійну літературу, а водночас стався вибух суспільного інтересу. У клінічному підручнику 1974 року стверджувалося, що інцест трапляється вкрай рідко (одна людина на 1,1 мільйона) і навіть може мати «плюси». Нова феміністична хвиля у поєднанні з обізнаністю про травму ветеранів змусила заявити про себе десятки тисяч жертв дитячого насильства: виникли групи підтримки, вийшли бестселери на кшталт «Мужність зцілення» (1988) і книга Джудіт Герман «Травма і зцілення» (1992).</p>
+    <p>Навчений гірким досвідом, я боявся нової хвилі заперечення травми, як це вже бувало після 1917 і 1947 років. Так і сталося: на початку 1990-х у впливових газетах і журналах США та Європи з'явилися статті про «синдром хибної пам'яті», нібито в пацієнтів із психічними проблемами створювалися докладні хибні спогади про сексуальне насильство. У них із упевненістю стверджувалося, що немає доказів того, що травму запам'ятовують інакше, ніж звичайні події. Я пам'ятаю дзвінок із лондонського тижневика: я розповів про дослідження втрати пам'яті у жертв залізничних аварій 1860–1870-х, про праці Майєрса й Ріверса щодо солдатів Першої світової і про статтю 1944 року про наслідки евакуації з Дюнкерка, де понад 10% обстежених солдатів страждали від сильної втрати пам'яті. А наступного тижня журнал повідомив читачам, що доказів часткової чи повної втрати спогадів про травму немає.</p>
+    <p>Проблема відстрочених спогадів не викликала суперечок, коли Майєрс і Кардінер описали її після Першої світової, чи коли йшлося про Дюнкерк, ветеранів В'єтнаму та пожежу в нічному клубі. Проте в 1980-х і на початку 1990-х, коли про аналогічні проблеми почали писати стосовно дітей і жінок, що зазнали домашнього насильства, судові позови жертв перенесли питання з науки в політику й право. Скандали про педофілію в католицькій церкві стравлювали експертів із пам'яті одне з одним по судах США, Європи й Австралії. Експерти від церкви стверджували, що спогади про сексуальне насильство в дитинстві недостовірні й можуть бути хибними, внесеними в розум надмірно співчутливими, довірливими або зацікавленими психотерапевтами. Я працював із кількома дорослими, які, як Джуліан, пам'ятали насильство з боку священників; приблизно в половині випадків їхні позови відхилили.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що каже наука про забуті спогади -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Що каже наука про забуті спогади</h2>
+    <p>Насправді за понад сто років з'явилися сотні публікацій про те, як придушені спогади про травму виринають через роки чи десятиліття, у людей, що пережили природні катастрофи, нещасні випадки, війну, викрадення, катування, концтабори, фізичне й сексуальне насильство. Повна втрата пам'яті найтиповіша для сексуального насильства в дитинстві: їй підлягають від 19 до 38% жертв. Особливих розбіжностей тут немає: DSM-3 ще 1980 року закріпив поняття дисоціативної амнезії, а втрата пам'яті є одним із критеріїв ПТСР від початку.</p>
+    <p>Дуже промовисте дослідження провела Лінда Мейєр Вільямс. Вона опитала 206 дівчат віком 10–12 років, які потрапили на невідкладну допомогу після сексуального насильства, а через сімнадцять років відшукала 136 з них і повторно опитала. Понад третина (38%) не пам'ятала про насильство, зафіксоване в медичній картці, і лише 12% казали, що ніколи не зазнавали насильства в дитинстві; понад дві третини повідомили про інші випадки. Забували частіше ті, хто був молодшим і постраждав від знайомої людини. 16% з тих, хто пам'ятав насильство, повідомили, що колись забували, а потім згадали; вони були молодшими на момент події й рідше мали підтримку матерів. Відновлені спогади за точністю майже не відрізнялися від тих, що ніколи не зникали: усі відображали основні факти, але жодна історія не збігалася з записами повністю. Відновлені спогади зазвичай вбудовуються в пам'ять у зміненому вигляді, особливо під час повторних переказів: сам процес розповіді трансформує історію, а той сенс, який ми надаємо життю, впливає на зміст спогадів.</p>
+    <p>Чому майже сотня шанованих учених, що вивчають пам'ять, підтримала апеляцію у справі священника, назвавши придушені спогади псевдонаукою? Через те, що втрату й відкладене повернення спогадів про травму ніколи не відтворювали в лабораторії, дехто з когнітивістів уперто заперечував це явище або ставив під сумнів точність відновлених спогадів. Але те, що фахівці бачать у відділеннях невідкладної допомоги, клініках психічного здоров'я і на полі бою, суттєво відрізняється від того, що вчені спостерігають у безпечних лабораторіях. Приміром, в експерименті «дитина, загублена в торговому центрі» вдавалося навіяти спогад про подію, якої не було: близько чверті учасників згодом пригадували, що були налякані, і навіть додавали подробиці, але без несвідомого жаху, який відчуває справді загублена дитина. Інші дослідження показали ненадійність показань свідків: людей питали, чи бачили вони знак зупинки, дітей, у що був одягнений чоловік, що заходив у клас, і від самих запитань залежало, що згадає свідок. Це ставить під сумнів поліцейські й судові практики, але має мало стосунку до травматичних спогадів. Лабораторні події не рівнозначні обставинам, у яких формуються травматичні спогади: відчуття жаху й безпорадності при ПТСР не можна знову викликати. Роджер Пітмен показував студентам Гарварду жорстокий документальний фільм про смерті, але в здорових добровольців він не спричинив ПТСР. Щоб вивчати травматичні спогади, треба вивчати спогади людей, які справді пережили травму.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Звичайні й травматичні спогади: наше дослідження -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Звичайні й травматичні спогади: наше дослідження</h2>
+    <p>У 1994 році ми з колегами з Массачусетської лікарні провели систематичне порівняння спогадів про безневинні й жахливі події. За оголошенням у газетах, пральнях і студентських профспілках («З вами сталося щось жахливе, і думки про це не дають вам спокою? Ми заплатимо 10 доларів») відгукнулося 76 добровольців. Спершу ми питали про подію, яку людина ніколи не забуде, але спогади про яку не болісні: народження доньки, весілля, спортивна перемога, випускний. Потім про сенсорні деталі: чи раптом виринали яскраві образи, запахи, відчуття? Відповіді були заперечними. Коли ж питали про травму, яка привела до дослідження (багато хто пережив насильство), відповіді були дуже емоційними: наприклад, одна жінка сказала, що більше не ходить на вечірки, бо запах спиртного з подиху викликає в неї відчуття, ніби все повторюється, а інша не може бути близькою з чоловіком, бо певний дотик одразу повертає її в минуле.</p>
+    <p>Було дві головні відмінності: у структурі спогадів і в фізичній реакції на них. Весілля чи народження дітей згадувалися як історії з початком, серединою й кінцем, і ніхто не повідомляв про періоди повного забування. Травматичні спогади були безладними: учасники надто яскраво пам'ятали окремі деталі (запах, рану на чолі), але не могли відновити послідовність подій. Ми питали й про те, як вони пам'ятали травму в три моменти часу. Одразу після події всі казали, що не могли точно описати, що сталося: люди після аварій у приймальних відділеннях просто мовчки сидять, застигнувши від жаху. Потім з'являлися яскраві болісні спогади, повні образів, звуків, відчуттів і емоцій. З часом більшість починала знаходити в них сенс і могла розповісти про те, що сталося, і спогади ставали рідшими. До моменту дослідження 85% могли розповісти зв'язну історію з початком, серединою й кінцем. Найбільш уривчастими були розповіді п'ятьох, які пережили насильство в дитинстві: їхні спогади й далі приходили образами, тілесними відчуттями й сильними емоціями.</p>
+    <p>Тож наше дослідження підтвердило двосистемну пам'ять, описану Жане понад сто років тому: травматичні спогади дисоційовані, відчуття не складаються в єдину історію. Але ще важливіше, що повне пригадування травми з усіма почуттями не обов'язково веде до її розв'язання, як стверджували Брейєр і Фройд 1893 року: мова не завжди замінює дію. Більшість учасників могли розповісти зв'язну історію, відчуваючи біль, але їх і далі переслідували нестерпні образи й тілесні відчуття. Подібні невтішні результати показує ефективність експозиційної терапії, основи когнітивно-поведінкової терапії: у більшості пацієнтів і через три місяці після курсу лишаються тяжкі симптоми ПТСР. Можливість висловити пережите може змінити людину, але вона не завжди усуває яскраві спогади, покращує концентрацію чи робить людину менш чутливою до розчарувань.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Почути пацієнта -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Почути пацієнта</h2>
+    <p>Ніхто не хоче згадувати травму, і суспільство тут нічим не відрізняється від самих жертв: нам усім хочеться жити в безпечному й передбачуваному світі, а постраждалі нагадують, що це не завжди так. Щоб зрозуміти травму, треба знайти мужність слухати. Лоуренс Лангер, працюючи у відеоархіві свідчень Голокосту при Єльському університеті, писав, що слухання свідків дає змогу скласти мозаїку свідчень, що постійно розчиняються в шарах незавершеності. Один свідок сказав, що описати це неможливо тому, хто не пережив такої жорстокості. Шарлотта Дельбо, яка вижила в Освенцимі, описувала подвійне існування: людина, яка була в таборі, ніби не вона, тієї, що сидить навпроти вас, це не турбує, настільки відрізняються «глибока» й «звичайна» пам'ять; без такого розділення вона не змогла б повернутися до життя. Лангер зауважує, що життя триває водночас у двох напрямках: майбутнє не може вирватися з обіймів спогадів, обтяжених горем. Суть травми в тому, що вона непереборна, немислима й нестерпна, і кожному пацієнтові потрібно, щоб ми забули про своє уявлення про норму й визнали подвійну реальність, у якій відносно безпечне й передбачуване теперішнє співіснує з руйнівним усюдисущим минулим.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Історія Ненсі -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Історія Ненсі</h2>
+    <p>Рідко кому вдавалося висловити цю двоїстість так яскраво, як Ненсі, керівниці сестринської служби однієї з лікарень Середнього Заходу, що кілька разів приїздила до Бостона на консультації. Невдовзі після народження третьої дитини їй зробили звичайну амбулаторну лапароскопічну операцію, але анестезії було замало: вона прокинулася й усвідомлювала чимало з того, що відбувалося, не маючи змоги ні поворухнутися, ні закричати, бо їй ввели м'язовий релаксант. За оцінками, інтранаркозне пробудження в тій чи іншій мірі трапляється приблизно в 30 тисяч хірургічних пацієнтів у США щороку. Ненсі не хотіла судитися з фахівцями: їй потрібно було повністю усвідомити пережите, щоб звільнити від його втручань своє повсякденне життя. Далі вона розповіла про свій шлях одужання в листах.</p>
+    <p>Спочатку вона не знала, що з нею сталося: вдома була ніби в тумані, не почувалася по-справжньому живою, спала дедалі менше, не могла користуватися нагрівальними приладами, не могла зосередитися, була надміру тривожною. Четверту ніч після операції вона зрозуміла, що її «сон» пов'язаний із розмовами, які вона чула в операційній, і раптом знову опинилася там, відчуваючи страх і жах. Відтоді спогади почали просочуватися в її життя: вона боялася засинати, відчувала жах від синього кольору, накидалася на чоловіка, спала по дві-три години, схудла за три тижні на десять кілограмів і почала думати про смерть. Коли вона повернулася на роботу в лікарню, вигляд людини в хірургічному костюмі в ліфті викликав бажання тікати, а потім майже нестримний напад люті; вона навчилася «майстерно» уникати тригерів: не заходила в ліфт чи їдальню й оминала поверхи з хірургією.</p>
+    <p>Поступово з уривчастих спогадів Ненсі склала цілісну картину: вона згадала бадьорі слова медсестер, короткий сон після анестезії, сміх бригади в момент початку операції, а потім біль, який вона відчувала, не маючи змоги подати знак. Їй здавалося, що вона в камері тортур, її світ звузився до маленької бульбашки навколо операційного столу, а минуле й майбутнє зникли, залишилися лише страх, біль і самотність. Потім вона почула, як хтось із бригади просив додати препарат і не вписувати цього в карту. В останньому листі вона намагалася передати екзистенційну суть травми: час згортається, минуле зливається з теперішнім, ніби її фізично перенесли назад; безневинні символи (наприклад, предмети, що нагріваються) сприймаються як знаряддя тортур, а побачивши людину в хірургічному костюмі, вона дисоціює. Шлюб руйнувався, бо чоловік став для неї втіленням байдужих людей із операційної. Вона жила в двоїстому стані: тіло огортала пелена нечутливості, але дотик маленької дитини повертав її в реальність; на роботі вона справлялася блискуче, але життя мало відчуття фальші. Щоразу, згадуючи подію, вона знаходила нову деталь, але вже не вважала, що треба знати все, і розуміла: переживаючи це знову, вона допомагає собі усвідомити, що вижила.</p>
+    <p>Перші ознаки одужання з'явилися, коли їй знадобилася інша, серйозніша операція. Вона обрала бостонську лікарню, попросила про попередню зустріч із хірургічною бригадою і про те, щоб я міг бути присутнім. Уперше за багато років я одягнув хірургічний костюм і супроводжував її в операційну під час анестезії. Цього разу вона прокинулася, почуваючись у безпеці. Через два роки, коли я просив дозволу використати її історію, Ненсі відповіла, що та операція, на жаль, не поклала край її стражданням. Але приблизно через півроку вона прийняла два рішення, які виявилися далекоглядними: перейшла з когнітивно-поведінкової на психодинамічну психотерапію й записалася на пілатес. Її фахівець пояснив, що вирішив не «лікувати» її, бо вона справлялася з дітьми й роботою і мала достатньо життєвих сил, щоб зцілитися самій, якщо створити для цього середовище. Година раз на тиждень стала її прихистком, де вона поступово зрозуміла, що з нею сталося, і відтворила цілісний, умиротворений образ себе. Пілатес допоміг відновитися фізично, а жінки, з якими вона тренувалася, прийняли її й дали соціальну підтримку, якої їй бракувало. Зміцнивши ці три складові (психологічну, фізичну й соціальну), вона створила відчуття внутрішньої захищеності й контролю та прив'язала свої спогади до далекого минулого, дозволивши теперішньому й майбутньому розгортатися.</p>
+    <div class="final-quote">
+      <div class="final-text">Зміцнивши ці три складові (психологічну, фізичну й соціальну), вона <strong>створила відчуття внутрішньої захищеності й контролю</strong> та прив'язала свої спогади до далекого минулого, дозволивши теперішньому й майбутньому розгортатися.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>

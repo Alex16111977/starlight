@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<script src="theme.js" data-native="light"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Діагноз, якого немає</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Діагноз,<br>якого немає</h1>
+  <p class="page-subtitle">Тіло пам'ятає все: розділ дев'ятий</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Хронічний стрес не минає безслідно, і ми часто лікуємо сьогодні те, що сталося п'ятдесят років тому</div>
+      <div class="hero-author">Бессел ван дер Колк</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Проблема діагнозу -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Проблема діагнозу</h2>
+    <p>Від того, як ми визначаємо проблеми таких пацієнтів, як Мерилін, Мері й Кеті, залежить і лікування. Під час лікування вони зазвичай збирають п'ять-шість не пов'язаних між собою діагнозів: той, хто бачить перепади настрою, призначає препарати для біполярного розладу; хто бачить відчай, дає антидепресанти; хто бачить непосидючість, ставить СДУГ і дає стимулятори; а коли відома травма, з'являється ПТСР. Кожен із цих діагнозів частково правильний, але жоден не пояснює, хто ці люди й від чого вони страждають.</p>
+    <p>Наша галузь прагне діагностувати розлади так точно, як онкологічні чи інфекційні хвороби, але через складність розуму, мозку й стосунків ми далекі від такої точності. Те, що вважають «не так» із людиною, залежить більше від світогляду фахівця й від того, що оплатять страхові компанії, ніж від перевірюваних фактів. Посібник DSM (третє видання вийшло 1980 року) сам попереджав, що його категорії надто неточні для суду чи страхування, проте став наймогутнішим інструментом: за ним страхують, розподіляють гранти, будують навчальні програми, а його ярлики проникли в масову культуру й принесли Американській асоціації понад сто мільйонів доларів. Чи отримали від цього співмірну користь пацієнти?</p>
+    <p>Діагноз визначає лікування, а хибне лікування може бути катастрофічним; крім того, діагноз стає довічним ярликом, який впливає на самосприйняття. Пацієнти говорять про свій «розлад», наче про довічний вирок. Діагнози не враховують ні талантів, ні творчих здібностей, які люди розвинули, щоб вижити, і нерідко це просто перелік симптомів, через який людей сприймають як некерованих.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Дослідження разом із Джудіт Герман -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Дослідження разом із Джудіт Герман</h2>
+    <p>У 1985 році я почав співпрацювати з Джудіт Герман. Нас здивувало, скільки пацієнтів із прикордонним розладом особистості (ПРО) розповідали про жахливе дитинство. Для ПРО типові нестабільні стосунки, різкі перепади настрою, самоушкодження й повторні спроби суїциду. Грант на дослідження зв'язку з дитячою травмою нам не дали, тож ми провели його за власні кошти за підтримки Кріса Перрі, який дозволив опитати п'ятдесят п'ять амбулаторних пацієнтів і порівняти дані з його великою базою.</p>
+    <p>Як говорити про травму? Напряму питати про насильство не можна, тому ми розробили опитувальник, що починався з простого: з ким ви живете, хто платить за рахунки й готує. Потім питання ставали особистішими: на кого ви покладаєтеся, коли хворієте, з ким говорите, коли сумно (деякі відповідали: «мій собака», «мій психотерапевт» чи «ніхто»). Далі йшли запитання про дитинство: хто жив у домі, як часто ви переїжджали, хто про вас дбав, хто був ласкавий. Ключове питання, якого, наскільки я знаю, раніше не ставили: чи був у дитинстві хтось, із ким ви почувалися захищеним? Кожен четвертий не міг згадати нікого. Тільки потім питали про правила й покарання вдома. До цього моменту люди зазвичай відкривалися: хтось був свідком насильства над рідними, хтось ночами залишався сам, хтось зростав, рано беручи на себе обов'язки дорослого. Їм нікуди було втекти й ні до кого звернутися, і все ж вони витримували, а вранці ішли до школи, ніби все гаразд. Ми зрозуміли, що дисоціація й відчайдушне чіпляння за будь-кого, хто може допомогти, були спочатку способами впоратися з нестерпними емоціями й жорстокістю.</p>
+    <p>Кріс Перрі зіставив відповіді з даними гарвардської бази й запросив нас до кабінету, поклавши зверху карикатуру про вчених, які не розуміють дельфінів, що говорять іспанською: результати переконали його, що ПРО неможливо зрозуміти без мови травми. 81% пацієнтів із діагнозом ПРО повідомили про жорстоке чи зневажливе ставлення в дитинстві, здебільшого до семи років. Це згодом підтвердив Мартін Тейчер. Ми однозначно підтвердили висновки Джона Боулбі: страх бути покинутим не є наслідком прихованої агресії, його причина в реальних зрадах і погрозах покинути; постійна лють пов'язана зі зневагою, а сильний внутрішній конфлікт довкола гніву виникає, коли виражати його заборонено чи небезпечно. Коли дитина мусить відрікатися від сильних переживань, наслідком стає хронічна недовіра до людей, пригнічена цікавість і сумніви в тому, що відбувається насправді.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Самоушкодження і відчуття захищеності -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Самоушкодження і відчуття захищеності</h2>
+    <p>Під час стажування мене не раз викликали до жінки, яка завдавала собі поранень і казала, що їй стає легше. Мене відтоді цікавило, чому одні справляються з тривогою тенісом чи наспівуванням, а інші шкодять власному тілу. Дослідження показало, що фізичне чи сексуальне насильство в дитинстві значно підвищує ймовірність повторних спроб суїциду й самоушкодження. Я припустив, що такі думки починаються рано, діти знаходять розраду в планах утекти через смерть чи заподіяти собі біль, а самоушкодження може бути відчайдушною спробою здобути хоч якийсь контроль.</p>
+    <p>Через три роки лікування близько двох третин пацієнтів помітно покращали. Ті, хто й далі шкодив собі, не пам'ятали, щоб хтось у дитинстві давав їм відчуття безпеки: їх зраджували, постійно переселяли, залишали напризволяще. Я зробив висновок: якщо збереглися спогади про відчуття захищеності поруч із кимось, сліди тієї прив'язаності можуть знову активуватися в гармонійних стосунках чи психотерапії. А якщо їх немає, то рецептори в мозку, що реагують на людську доброту, могли просто не розвинутися, і тоді постає питання, як навчитися заспокоюватися й «заземлюватися» у власному тілі (до цього я повернуся в п'ятій частині).</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Комплексний ПТСР, якого немає в посібнику -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Комплексний ПТСР, якого немає в посібнику</h2>
+    <p>Наше дослідження показало групу травмованих людей, відмінну від ветеранів і жертв нещасних випадків, для яких створювали діагноз ПТСР. Люди на кшталт Мерилін і Кеті, як і діти з нашої клініки, не обов'язково пам'ятають травму чи зациклюються на конкретних спогадах, але поводяться так, ніби перебувають у небезпеці: кидаються з крайнощів у крайнощі, не можуть зосередитись, постійно злі на себе й на інших. Головна відмінність від ветеранів у тому, що дитяча травма завадила розвитку психічних здібностей, які дорослі солдати мали ще до травми.</p>
+    <p>Роберт Спітцер, який керував створенням DSM-3, запропонував порівняти різні групи травмованих людей, і керівником дослідження призначили мене. Ми опитали 525 пацієнтів у п'яти містах: тих, хто в дитинстві пережив насильство від опікунів, недавніх жертв домашнього насильства й людей, що недавно пережили природну катастрофу. Дорослі, які зазнали насильства в дитинстві, мали проблеми з концентрацією, ненавиділи себе, перебували в постійній напрузі, мали складнощі в стосунках, проблеми з пам'яттю, саморуйнівну поведінку й безліч медичних проблем; у людей, що пережили катастрофи, такі симптоми траплялися рідко.</p>
+    <p>Робоча група з ПТСР для четвертого видання проголосувала дев'ятнадцять голосів проти двох за новий діагноз для травми в стосунках між людьми, комплексний ПТСР. Але в остаточній редакції (1994) його не було, і з нами ніхто не консультувався. Через це чимало пацієнтів досі не мають точного діагнозу, а фахівці й дослідники не можуть розробляти відповідні методи лікування: не придумаєш лікування хвороби, якої немає. Наслідки жорстокого поводження значно серйозніші за наслідки ураганів чи аварій, але система діагностики досі їх ігнорує, так само як страждання ветеранів ігнорували до 1980 року.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Приховане лихо: дослідження несприятливого дитячого досвіду -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Приховане лихо: дослідження несприятливого дитячого досвіду</h2>
+    <p>Відповідь, як перетворити новонароджену дитину з безмежним потенціалом на безхатька, випадково знайшов Вінсент Феліті. Він керував відділенням профілактики в «Кайзер Перманенте» в Сан-Дієго і клінікою лікування ожиріння. Його пацієнтка, санітарка, схудла за 51 тиждень майже на 125 кілограмів, а потім різко набрала вагу, щойно її постать привернула небажану увагу колеги. Вона розповіла Феліті про пережите в дитинстві. Коли він докладніше опитав інших пацієнтів з ожирінням, виявилося, що більшість у дитинстві зазнали сексуального насильства. Дехто з колег відповів на його доповідь недовірою, але епідеміолог із Центрів контролю й профілактики захворювань (CDC) запропонував масштабніше дослідження, і разом із «Кайзер Перманенте» було проведено найбільше дослідження несприятливого дитячого досвіду (ACE) під керівництвом Роберта Анди й Феліті.</p>
+    <p>Пацієнти, понад п'ятдесят тисяч, проходили обстеження, а десять нових запитань охоплювали фізичне й сексуальне насильство, емоційну й фізичну занедбаність і родинні проблеми, як-от розлучення, хвороба, залежність чи ув'язнення батьків. Із 25 тисяч запрошених 17 421 погодилися відповісти. Здебільшого це були білі, середнього віку, освічені люди із середнього класу з хорошою страховкою, але лише третина не мала жодного несприятливого досвіду. Кожен десятий часто зазнавав образ і приниження, більш ніж чверть зазнавала фізичного насильства, 28% жінок і 16% чоловіків зазнали сексуальних домагань у дитинстві, а кожен восьмий бачив, як б'ють матір. Кожна ствердна відповідь давала бал (до десяти). Із тих, хто мав такий досвід, 87% набрали щонайменше два бали, а кожен шостий із усіх — чотири й більше. Випадки несприятливого досвіду пов'язані між собою: нема родин, де є лише одна проблема, і з кожним новим видом негативні наслідки зростали.</p>
+    <p>Наслідки спершу проявлялися в школі: понад половина людей із чотирма й більше балами мала проблеми з навчанням чи поведінкою (серед нульових лише 3%). Діти не «переростали» травми: високі бали корелювали з прогулами на роботі, фінансовими проблемами й нижчим доходом. Хронічна депресія вражала 66% жінок і 35% чоловіків із чотирма й більше балами, а серед нульових лише близько 12%. Частіше призначали антидепресанти й знеболювальні (до речі, антидепресанти допомагають краще тим, хто не зазнавав жорстокого поводження). Ризик спроб самогубства зростав експоненційно: у найвищій групі на 5000% порівняно з нульовою. Чим ізольованішою й незахищенішою почувається людина, тим частіше смерть здається єдиним виходом. Люди з чотирма балами в сім разів частіше мали проблеми з алкоголем, а при шести й більше ризик вживання ін'єкційних наркотиків був на 4600% вищим. Жінки з чотирма й більше балами зазнавали зґвалтування у дорослому віці у 33% випадків проти 5% при нулі. Дівчатка, що були свідками домашнього насильства, мають значно вищий ризик самі потрапити в насильницькі стосунки, а хлопчики з таких родин у сім разів частіше самі жорстоко поводяться з партнерками. Бали також передбачали куріння, ожиріння, небажані вагітності й інфекції, що передаються статевим шляхом. Серед людей із шістьма балами й більше на 15% частіше траплялися хвороби з десятки основних причин смерті в США, удвічі частіше рак і вчетверо частіше емфізема. Хронічний стрес не минає безслідно, і ми часто лікуємо сьогодні те, що сталося п'ятдесят років тому.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Коли проблема є рішенням -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Коли проблема є рішенням</h2>
+    <p>Через дванадцять років Феліті знову зустрів ту жінку: після баріатричної операції й втрати 44 кг у неї з'явилися суїцидальні думки, і знадобилося п'ять госпіталізацій та інтенсивне лікування. Ожиріння, яке вважають головною проблемою охорони здоров'я, для багатьох може бути особистим розв'язанням інших проблем. Якщо сприймати чиєсь рішення лише як проблему, яку треба прибрати, шанси на успіх падають майже до нуля, а ризик нових проблем зростає. Одна жінка, яка пережила насильство, сказала: «Я допустила ожиріння, але мені потрібно було бути такою». Зайва вага захищає і чоловіків: двоє охоронців у в'язниці швидко повернули вагу, бо повними почувалися безпечніше, а пацієнт, якого в дитинстві били, сказав, що побої припинилися, коли він набрав вагу. Автори ACE дійшли висновку: від кожного способу адаптації (куріння, алкоголь, наркотики, ожиріння) важко відмовитися, а довгострокові ризики можуть давати короткочасну особисту вигоду; те, що лежить на поверхні, часто лише індикатор справжньої проблеми, прихованої за соромом, таємницею й нерідко амнезією.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Найбільша проблема країни -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Найбільша проблема країни</h2>
+    <p>Коли Роберт Анда вперше представляв результати, він не стримав сліз: він зрозумів, що вони вказують на найсерйознішу й найдорожчу проблему охорони здоров'я в США, насильство над дітьми. Сукупні витрати на неї, за його оцінкою, перевищують витрати на лікування раку чи хвороб серця. Викорінення дитячого насильства зменшило б поширеність депресії більш ніж удвічі, алкоголізму на дві третини, а самогубств, ін'єкційної наркоманії й домашнього насильства на три чверті, а також різко знизило б потребу у в'язницях.</p>
+    <p>Після офіційного звіту США 1964 року про шкоду куріння розпочалися десятиліття кампаній, і частка курців упала з 42% дорослих 1965 року до 19% у 2010-му, а у 1975–2000 роках, за оцінками, вдалося запобігти майже 800 тисячам смертей від раку легенів. Дослідження ACE такого ефекту не мало. Щоденна реальність дітей на кшталт Мерилін майже не змінилася, тільки тепер вони отримують великі дози психотропних препаратів, які роблять їх покірнішими, але шкодять здатності відчувати задоволення, виявляти цікавість, розвиватися й ставати повноцінними членами суспільства.</p>
+    <div class="final-quote">
+      <div class="final-text"><strong>Викорінення дитячого насильства</strong> зменшило б поширеність депресії більш ніж удвічі, алкоголізму на дві третини, а самогубств, ін'єкційної наркоманії й домашнього насильства на три чверті, а також різко знизило б потребу у в'язницях.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>

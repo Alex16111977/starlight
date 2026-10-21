@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<script src="theme.js" data-native="light"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Мистецтво і культура</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;scroll-behavior:smooth}
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.28) 0%,rgba(40,80,200,.16) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+.nav-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px}
+.nav-card{background:rgba(52,58,94,.10);border:1px solid rgba(52,58,94,.22);border-radius:20px;padding:32px 28px;text-decoration:none;transition:all .4s;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:12px;opacity:0;animation:riseIn .8s ease forwards;box-shadow:0 4px 24px rgba(0,0,0,.3),inset 0 1px 0 rgba(52,58,94,.08)}
+.nav-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.5),transparent);opacity:1;transition:opacity .4s}
+.nav-card:hover{background:rgba(52,58,94,.16);border-color:rgba(52,58,94,.35);transform:translateY(-6px);box-shadow:0 8px 32px rgba(0,0,0,.4),0 0 20px rgba(138,176,255,.08),inset 0 1px 0 rgba(52,58,94,.12)}
+.nav-card:hover::before{opacity:1}
+.nav-card:hover .nav-card-title{color:#fff}
+.nav-card:hover .nav-card-arrow{opacity:1;transform:translateX(4px)}
+.nav-card:nth-child(1){animation-delay:.05s}
+.nav-card:nth-child(2){animation-delay:.1s}
+.nav-card:nth-child(3){animation-delay:.15s}
+.nav-card:nth-child(4){animation-delay:.2s}
+.nav-card:nth-child(5){animation-delay:.25s}
+.nav-card:nth-child(6){animation-delay:.3s}
+.nav-card:nth-child(7){animation-delay:.35s}
+.nav-card:nth-child(8){animation-delay:.4s}
+.nav-card:nth-child(9){animation-delay:.45s}
+.nav-card:nth-child(10){animation-delay:.5s}
+.nav-card:nth-child(n+11){animation-delay:.55s}
+.nav-card-emoji{font-size:32px;margin-bottom:4px}
+.nav-card-top{display:flex;align-items:center;justify-content:space-between}
+.nav-card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:22px;letter-spacing:.05em;color:#fff;transition:color .4s}
+.nav-card-arrow{font-size:14px;color:rgba(52,58,94,.85);opacity:.5;transition:all .4s;font-weight:200}
+.nav-card-desc{font-size:12px;font-weight:300;line-height:1.7;color:rgba(52,58,94,.75)}
+.nav-card-more{align-self:flex-start;margin-top:2px;padding:5px 13px;border-radius:100px;background:rgba(122,95,190,.10);border:1px solid rgba(122,95,190,.28);font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:#3f4a9e;transition:all .4s}
+.nav-card:hover .nav-card-more{background:rgba(122,95,190,.18);border-color:rgba(122,95,190,.5)}
+/* Divider */
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+/* Footer */
+.sig{text-align:center;padding:40px 0 60px;position:relative;z-index:10;display:flex;align-items:center;gap:16px;justify-content:center}
+.sig-line{width:40px;height:1px;background:rgba(52,58,94,.15)}
+.sig-text{font-size:11px;font-weight:400;letter-spacing:0.16em;color:#242844;text-transform:uppercase;white-space:nowrap}
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+/* sl-light-v1 — світла тема */
+html{color:rgba(52,58,94,.9)!important}
+.nav-card-title,.nav-card:hover .nav-card-title{color:#242844!important}
+.nav-card-arrow{color:rgba(52,58,94,.85)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.content{position:relative;z-index:10;max-width:960px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+.intro{opacity:0;animation:riseIn 1s .9s ease forwards;margin-bottom:64px;text-align:center;max-width:680px;margin-left:auto;margin-right:auto}
+.intro p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(52,58,94,.82);margin-bottom:14px}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section{margin-bottom:8px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.06em;color:#242844;margin-bottom:6px;position:relative;padding-left:20px;line-height:1.25}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#5261c2;box-shadow:0 0 12px rgba(82,97,194,.4)}
+.category-label{font-size:11px;font-weight:400;letter-spacing:.16em;color:rgba(52,58,94,.78);text-transform:uppercase;margin:0 0 20px 20px;line-height:1.7}
+.section .nav-grid{margin-top:0}
+.jump{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:0 auto 48px;max-width:820px}
+.jump a{font-size:12px;font-weight:400;letter-spacing:.04em;color:#3f4a9e;text-decoration:none;padding:6px 14px;border-radius:100px;background:rgba(122,95,190,.10);border:1px solid rgba(122,95,190,.28);transition:all .3s}
+.jump a:hover{background:rgba(122,95,190,.18);border-color:rgba(122,95,190,.5)}
+@media(max-width:560px){.content{padding:40px 20px 80px}.header{margin-bottom:48px}.category-label{margin-left:0}.section-title{padding-left:16px}.jump{margin-bottom:36px}}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Мистецтво і культура</h1>
+  <p class="page-subtitle">Стилі, музика, кіно, люди й ідеї</p>
+
+  <div class="intro">
+    <p>Від ренесансу до стріт-арту, від теорії музики до філософії — те, що варто знати, щоб краще бачити, чути й розуміти.</p>
+  </div>
+
+  <nav class="jump" aria-label="Блоки на сторінці"><a href="#b1"><span class="sl-emo">🖼️</span> Стилі й течії</a><a href="#b2"><span class="sl-emo">👁️</span> Дивитися й розуміти</a><a href="#b3"><span class="sl-emo">🎼</span> Музика</a><a href="#b4"><span class="sl-emo">🎬</span> Кіно, театр, ностальгія</a><a href="#b5"><span class="sl-emo">👤</span> Люди, які змінили світ</a><a href="#b6"><span class="sl-emo">💡</span> Ідеї й філософія</a></nav>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" id="b1">
+    <h2 class="section-title"><span class="sl-emo">🖼️</span> Стилі й течії</h2>
+    <p class="category-label">Від ренесансу до стріт-арту</p>
+    <div class="nav-grid">
+      <a class="nav-card" href="renaissance.html">
+        <div class="nav-card-emoji">🏛️</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Ренесанс</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Коли людина повернулась у центр — Леонардо, Мікеланджело, Рафаель</div>
+      </a>
+      <a class="nav-card" href="baroque.html">
+        <div class="nav-card-emoji">🕯️</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Барокко</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Драма, тіні, плоть — Караваджо, Рембрандт, Артемізія</div>
+      </a>
+      <a class="nav-card" href="impressionism.html">
+        <div class="nav-card-emoji">🌅</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Імпресіонізм</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Враження, що змінили світ — від Моне до Берти Морізо</div>
+      </a>
+      <a class="nav-card" href="post-impressionism.html">
+        <div class="nav-card-emoji">🌻</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Постімпресіонізм</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Те, що почалось після — Ван Гог, Сезанн, Гоген, Сера</div>
+      </a>
+      <a class="nav-card" href="art-nouveau.html">
+        <div class="nav-card-emoji">🌿</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Ар-нуво</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Коли краса стала рослинною — Клімт, Муха, Гауді, Тіффані</div>
+      </a>
+      <a class="nav-card" href="abstraction.html">
+        <div class="nav-card-emoji">🔷</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Абстракція</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Коли мистецтво стало вільним — Кандінський, Малевич, Ротко</div>
+      </a>
+      <a class="nav-card" href="surrealism.html">
+        <div class="nav-card-emoji">🌙</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Сюрреалізм</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Подорож у несвідоме — Далі, Магрітт, Кало, Каррінгтон</div>
+      </a>
+      <a class="nav-card" href="pop-art.html">
+        <div class="nav-card-emoji">🍌</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Поп-арт</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Коли супермаркет став музеєм — Воргол, Ліхтенштейн, Кусама</div>
+      </a>
+      <a class="nav-card" href="street-art.html">
+        <div class="nav-card-emoji">🎭</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Стріт-арт</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Коли стіна стала музеєм — Бенксі, Баскіа, Харінг, JR</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" id="b2">
+    <h2 class="section-title"><span class="sl-emo">👁️</span> Дивитися й розуміти</h2>
+    <p class="category-label">Як читати картину, ходити в музей і бачити кадр</p>
+    <div class="nav-grid">
+      <a class="nav-card" href="read-painting.html">
+        <div class="nav-card-emoji">🖼️</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Як дивитись на картину</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Без академізму — як читати зображення і не соромитись своєї реакції</div>
+      </a>
+      <a class="nav-card" href="museum.html">
+        <div class="nav-card-emoji">🚪</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Як ходити в музей</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Щоб не вийти з нього втомленою — практичний гайд</div>
+      </a>
+      <a class="nav-card" href="photography.html">
+        <div class="nav-card-emoji">📸</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Фотографія</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Як один кадр розповідає все — мова зображень</div>
+      </a>
+      <a class="nav-card" href="ukrainian-art.html">
+        <div class="nav-card-emoji">🌾</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Українське мистецтво</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Кольори, що тримали націю — Малевич, Архипенко, Приймаченко</div>
+      </a>
+      <a class="nav-card" href="japanese-art.html">
+        <div class="nav-card-emoji">🗾</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Японське мистецтво</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Краса в недосконалому — Хокусай, ваби-сабі, ма</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" id="b3">
+    <h2 class="section-title"><span class="sl-emo">🎼</span> Музика</h2>
+    <p class="category-label">Звук, голос, жанри й настрій</p>
+    <div class="nav-grid">
+      <a class="nav-card" href="music.html">
+        <div class="nav-card-emoji">🎼</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Теорія музики</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Звук, ноти, лад, ритм, гармонія — 7 розмов про основи</div>
+        <div class="nav-card-more">+7 сторінок</div>
+      </a>
+      <a class="nav-card" href="music-perception.html">
+        <div class="nav-card-emoji">👂</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Сприйняття музики</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Як ми її чуємо і чому реагуємо — слух, мозок, пам'ять</div>
+        <div class="nav-card-more">+4 сторінки</div>
+      </a>
+      <a class="nav-card" href="music-genres.html">
+        <div class="nav-card-emoji">🎷</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Жанри музики</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Класика, джаз, електроніка, народна — різні мови одного мистецтва</div>
+        <div class="nav-card-more">+4 сторінки</div>
+      </a>
+      <a class="nav-card" href="music-voice.html">
+        <div class="nav-card-emoji">🎤</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Голос і слух</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Інструмент, який завжди з тобою — анатомія, тренування, навичка</div>
+        <div class="nav-card-more">+3 сторінки</div>
+      </a>
+      <a class="nav-card" href="music-instruments.html">
+        <div class="nav-card-emoji">🎹</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Інструменти</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Як обрати свій, фортепіано vs гітара, сімейства інструментів</div>
+        <div class="nav-card-more">+3 сторінки</div>
+      </a>
+      <a class="nav-card" href="music-composition.html">
+        <div class="nav-card-emoji">✍️</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Композиція</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Як народжуються твори — від першої пісні до сонатної форми</div>
+        <div class="nav-card-more">+3 сторінки</div>
+      </a>
+      <a class="nav-card" href="music-history.html">
+        <div class="nav-card-emoji">📜</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Історія музики</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Епохи, бунти, цифрова ера — дзеркало кожного часу</div>
+        <div class="nav-card-more">+3 сторінки</div>
+      </a>
+      <a class="nav-card" href="listening-mood.html">
+        <div class="nav-card-emoji">🎧</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Музика і настрій</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Що слухати в різних станах — шість підбірок під настрій</div>
+      </a>
+      <a class="nav-card" href="ukulele.html">
+        <div class="nav-card-emoji">🎶</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Укулеле</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Чотири струни, які лікують — чому саме цей інструмент</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" id="b4">
+    <h2 class="section-title"><span class="sl-emo">🎬</span> Кіно, театр, ностальгія</h2>
+    <p class="category-label">Мова екрана, сцена й спогади, які не відпускають</p>
+    <div class="nav-grid">
+      <a class="nav-card" href="cinema.html">
+        <div class="nav-card-emoji">🎬</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Кіно</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Мова кіно, режисери, стилі — як дивитись фільми глибше</div>
+        <div class="nav-card-more">+5 сторінок</div>
+      </a>
+      <a class="nav-card" href="theatre.html">
+        <div class="nav-card-emoji">🎭</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Театр</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Найстаріше мистецтво і чому воно досі живе</div>
+      </a>
+      <a class="nav-card" href="nostalgia.html">
+        <div class="nav-card-emoji">🧸</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Ностальгія</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">90-ті, старі ігри, шкільні роки — спогади, які не відпускають</div>
+        <div class="nav-card-more">+4 сторінки</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" id="b5">
+    <h2 class="section-title"><span class="sl-emo">👤</span> Люди, які змінили світ</h2>
+    <p class="category-label">Біографії, постаті й ті, хто формує наш час</p>
+    <div class="nav-grid">
+      <a class="nav-card" href="minds.html">
+        <div class="nav-card-emoji">👤</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Люди, які змінили світ</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Науковці, мислителі, художники — короткі історії</div>
+      </a>
+      <a class="nav-card" href="biographies.html">
+        <div class="nav-card-emoji">📖</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Біографії</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Письменники, філософи, підприємці, жінки і композитори — 40 життів</div>
+      </a>
+      <a class="nav-card" href="portraits.html">
+        <div class="nav-card-emoji">🎭</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Особистості і постаті</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Фріда, Тесла, Мандела, Малала, Фрейд — глибокі історії, що надихають</div>
+        <div class="nav-card-more">+5 сторінок</div>
+      </a>
+      <a class="nav-card" href="modern.html">
+        <div class="nav-card-emoji">⚡</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Сучасні постаті</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Ті, хто формує наш час — AI, культура, спорт, Україна</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" id="b6">
+    <h2 class="section-title"><span class="sl-emo">💡</span> Ідеї й філософія</h2>
+    <p class="category-label">Від Сократа до Макіавеллі — століття думки</p>
+    <div class="nav-grid">
+      <a class="nav-card" href="ideas.html">
+        <div class="nav-card-emoji">💡</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Великі ідеї</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Філософія, історія, ключові концепції людства</div>
+      </a>
+      <a class="nav-card" href="philosophy.html">
+        <div class="nav-card-emoji">🏛️</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Уся філософія</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Від Фалеса до Леніна — 26 століть думки за одну сторінку</div>
+      </a>
+      <a class="nav-card" href="socrates.html">
+        <div class="nav-card-emoji">🏺</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Сократ</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Сорок думок під його іменем, розібраних по темах — і шість, які насправді не його</div>
+      </a>
+      <a class="nav-card" href="plato.html">
+        <div class="nav-card-emoji">🌓</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Платон</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Чому він писав діалогами, а не трактатами — і що насправді означає міф про печеру</div>
+      </a>
+      <a class="nav-card" href="buddhism-hell.html">
+        <div class="nav-card-emoji">☸️</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Пекло, яке закінчиться</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Шістнадцять пекел, Мара і карма — чому в буддизмі немає ні Бога, ні вічної кари</div>
+      </a>
+      <a class="nav-card" href="machiavelli.html">
+        <div class="nav-card-emoji">🗡️</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Макіавеллі</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Верту, фортуна і необхідність — і чому «мета виправдовує засоби» він не писав</div>
+      </a>
+      <a class="nav-card" href="mythology.html">
+        <div class="nav-card-emoji">🏛️</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Міфологія</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">5 культур + архетипи — як людство пояснювало світ до науки</div>
+        <div class="nav-card-more">+6 сторінок</div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="sig"><div class="sig-line"></div><span class="sig-text">Est. 2026</span><div class="sig-line"></div></div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+
+/* Animate cards on scroll */
+const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.style.animationPlayState='running'}})},{threshold:.1});
+document.querySelectorAll('.nav-card').forEach(el=>{el.style.animationPlayState='paused';observer.observe(el)});
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<script src="theme.js" data-native="light"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Світ і суспільство</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;scroll-behavior:smooth}
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.28) 0%,rgba(40,80,200,.16) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+.nav-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px}
+.nav-card{background:rgba(52,58,94,.10);border:1px solid rgba(52,58,94,.22);border-radius:20px;padding:32px 28px;text-decoration:none;transition:all .4s;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:12px;opacity:0;animation:riseIn .8s ease forwards;box-shadow:0 4px 24px rgba(0,0,0,.3),inset 0 1px 0 rgba(52,58,94,.08)}
+.nav-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.5),transparent);opacity:1;transition:opacity .4s}
+.nav-card:hover{background:rgba(52,58,94,.16);border-color:rgba(52,58,94,.35);transform:translateY(-6px);box-shadow:0 8px 32px rgba(0,0,0,.4),0 0 20px rgba(138,176,255,.08),inset 0 1px 0 rgba(52,58,94,.12)}
+.nav-card:hover::before{opacity:1}
+.nav-card:hover .nav-card-title{color:#fff}
+.nav-card:hover .nav-card-arrow{opacity:1;transform:translateX(4px)}
+.nav-card:nth-child(1){animation-delay:.05s}
+.nav-card:nth-child(2){animation-delay:.1s}
+.nav-card:nth-child(3){animation-delay:.15s}
+.nav-card:nth-child(4){animation-delay:.2s}
+.nav-card:nth-child(5){animation-delay:.25s}
+.nav-card:nth-child(6){animation-delay:.3s}
+.nav-card:nth-child(7){animation-delay:.35s}
+.nav-card:nth-child(8){animation-delay:.4s}
+.nav-card:nth-child(9){animation-delay:.45s}
+.nav-card:nth-child(10){animation-delay:.5s}
+.nav-card:nth-child(n+11){animation-delay:.55s}
+.nav-card-emoji{font-size:32px;margin-bottom:4px}
+.nav-card-top{display:flex;align-items:center;justify-content:space-between}
+.nav-card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:22px;letter-spacing:.05em;color:#fff;transition:color .4s}
+.nav-card-arrow{font-size:14px;color:rgba(52,58,94,.85);opacity:.5;transition:all .4s;font-weight:200}
+.nav-card-desc{font-size:12px;font-weight:300;line-height:1.7;color:rgba(52,58,94,.75)}
+.nav-card-more{align-self:flex-start;margin-top:2px;padding:5px 13px;border-radius:100px;background:rgba(122,95,190,.10);border:1px solid rgba(122,95,190,.28);font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:#3f4a9e;transition:all .4s}
+.nav-card:hover .nav-card-more{background:rgba(122,95,190,.18);border-color:rgba(122,95,190,.5)}
+/* Divider */
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+/* Footer */
+.sig{text-align:center;padding:40px 0 60px;position:relative;z-index:10;display:flex;align-items:center;gap:16px;justify-content:center}
+.sig-line{width:40px;height:1px;background:rgba(52,58,94,.15)}
+.sig-text{font-size:11px;font-weight:400;letter-spacing:0.16em;color:#242844;text-transform:uppercase;white-space:nowrap}
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+/* sl-light-v1 — світла тема */
+html{color:rgba(52,58,94,.9)!important}
+.nav-card-title,.nav-card:hover .nav-card-title{color:#242844!important}
+.nav-card-arrow{color:rgba(52,58,94,.85)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.content{position:relative;z-index:10;max-width:960px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+.intro{opacity:0;animation:riseIn 1s .9s ease forwards;margin-bottom:64px;text-align:center;max-width:680px;margin-left:auto;margin-right:auto}
+.intro p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(52,58,94,.82);margin-bottom:14px}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section{margin-bottom:8px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.06em;color:#242844;margin-bottom:6px;position:relative;padding-left:20px;line-height:1.25}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#5261c2;box-shadow:0 0 12px rgba(82,97,194,.4)}
+.category-label{font-size:11px;font-weight:400;letter-spacing:.16em;color:rgba(52,58,94,.78);text-transform:uppercase;margin:0 0 20px 20px;line-height:1.7}
+.section .nav-grid{margin-top:0}
+.jump{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:0 auto 48px;max-width:820px}
+.jump a{font-size:12px;font-weight:400;letter-spacing:.04em;color:#3f4a9e;text-decoration:none;padding:6px 14px;border-radius:100px;background:rgba(122,95,190,.10);border:1px solid rgba(122,95,190,.28);transition:all .3s}
+.jump a:hover{background:rgba(122,95,190,.18);border-color:rgba(122,95,190,.5)}
+@media(max-width:560px){.content{padding:40px 20px 80px}.header{margin-bottom:48px}.category-label{margin-left:0}.section-title{padding-left:16px}.jump{margin-bottom:36px}}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Світ і суспільство</h1>
+  <p class="page-subtitle">Не про себе — про світ</p>
+
+  <div class="intro">
+    <p>Як влаштований світ, що вплела в нього історія й закони і про що варто знати, щоб бачити й захищатися.</p>
+  </div>
+
+  <nav class="jump" aria-label="Блоки на сторінці"><a href="#b1"><span class="sl-emo">🗺️</span> Як влаштований світ</a><a href="#b2"><span class="sl-emo">🏺</span> Історія</a><a href="#b3"><span class="sl-emo">🏙️</span> Міста, подорожі, пенсія</a><a href="#b4"><span class="sl-emo">⚖️</span> Закони, документи, права</a><a href="#b5"><span class="sl-emo">🌐</span> Мова і слова</a><a href="#b6"><span class="sl-emo">⚠️</span> Темні сторони суспільства</a></nav>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" id="b1">
+    <h2 class="section-title"><span class="sl-emo">🗺️</span> Як влаштований світ</h2>
+    <p class="category-label">Країни, економіка, влада, ресурси й новини</p>
+    <div class="nav-grid">
+      <a class="nav-card" href="world.html">
+        <div class="nav-card-emoji">🗺️</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Як влаштований світ</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Країни, економіка, геополітика — простими словами</div>
+      </a>
+      <a class="nav-card" href="countries.html">
+        <div class="nav-card-emoji">🌍</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Цікаві факти про країни</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Японія, Індія, Бразилія, Скандинавія, Бутан, Перу — дев'ять історій, що дивують</div>
+        <div class="nav-card-more">+9 сторінок</div>
+      </a>
+      <a class="nav-card" href="geopolitics.html">
+        <div class="nav-card-emoji">🌏</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Геополітика далі</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Росія, Близький Схід, Китай vs Індія, ОПЕК — глобальна шахівниця</div>
+        <div class="nav-card-more">+5 сторінок</div>
+      </a>
+      <a class="nav-card" href="power.html">
+        <div class="nav-card-emoji">👑</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Влада і політика</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Диктатори, демократія, пропаганда, лобізм, ООН — без шкільної нудьги</div>
+        <div class="nav-card-more">+5 сторінок</div>
+      </a>
+      <a class="nav-card" href="resources.html">
+        <div class="nav-card-emoji">⛏️</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Ресурси</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Нафта, метали, вода — основа світової економіки</div>
+      </a>
+      <a class="nav-card" href="africa.html">
+        <div class="nav-card-emoji">🌍</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Африка</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Континент, який вирішить XXI століття</div>
+      </a>
+      <a class="nav-card" href="climate.html">
+        <div class="nav-card-emoji">☁️</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Зміни клімату</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Що реально відбувається — спокійно і фактично, без паніки</div>
+      </a>
+      <a class="nav-card" href="news.html">
+        <div class="nav-card-emoji">📰</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Як читати новини</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Не потонути в інфошумі і відрізняти важливе</div>
+      </a>
+      <a class="nav-card" href="media.html">
+        <div class="nav-card-emoji">📡</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Медіа</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Як влаштований інформаційний світ і як у ньому жити свідомо</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" id="b2">
+    <h2 class="section-title"><span class="sl-emo">🏺</span> Історія</h2>
+    <p class="category-label">Від давніх цивілізацій до України</p>
+    <div class="nav-grid">
+      <a class="nav-card" href="history.html">
+        <div class="nav-card-emoji">🗺️</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Історія просто</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Війни, імперії, колоніалізм і XX століття — закономірності, які повторюються</div>
+        <div class="nav-card-more">+4 сторінки</div>
+      </a>
+      <a class="nav-card" href="ancients.html">
+        <div class="nav-card-emoji">🏺</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Стародавні цивілізації</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Греція, Єгипет, Рим, Китай — чотири світи, що зробили нас</div>
+        <div class="nav-card-more">+4 сторінки</div>
+      </a>
+      <a class="nav-card" href="ukraine.html">
+        <div class="nav-card-emoji">🌻</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Україна</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Тисячоліття історії і її вплив на світ</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" id="b3">
+    <h2 class="section-title"><span class="sl-emo">🏙️</span> Міста, подорожі, пенсія</h2>
+    <p class="category-label">Простір і гроші на довгу дистанцію</p>
+    <div class="nav-grid">
+      <a class="nav-card" href="city.html">
+        <div class="nav-card-emoji">🏙️</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Як влаштоване місто</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Інфраструктура, урбанізм, транспорт — місто як живий організм</div>
+      </a>
+      <a class="nav-card" href="cities.html">
+        <div class="nav-card-emoji">🏙️</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Міста і архітектура</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Будівлі, мегаполіси, метро, квартири — як простір формує життя</div>
+        <div class="nav-card-more">+5 сторінок</div>
+      </a>
+      <a class="nav-card" href="travel.html">
+        <div class="nav-card-emoji">✈️</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Подорожі</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Як їздити дешево, культурний шок і переїзд в іншу країну</div>
+      </a>
+      <a class="nav-card" href="pension.html">
+        <div class="nav-card-emoji">🏦</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Пенсія</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Як працює система і чому варто думати про це зараз</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" id="b4">
+    <h2 class="section-title"><span class="sl-emo">⚖️</span> Закони, документи, права</h2>
+    <p class="category-label">Те, чого не вчили в школі, — а треба</p>
+    <div class="nav-grid">
+      <a class="nav-card" href="law.html">
+        <div class="nav-card-emoji">⚖️</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Закони і право</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">8 розділів — від базових принципів до прав в інтернеті й систем світу</div>
+        <div class="nav-card-more">+8 сторінок</div>
+      </a>
+      <a class="nav-card" href="documents.html">
+        <div class="nav-card-emoji">📋</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Документи і права</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">П'ять практичних розмов про закон і власні права — без юридичної мови</div>
+        <div class="nav-card-more">+5 сторінок</div>
+      </a>
+      <a class="nav-card" href="documents-essential.html">
+        <div class="nav-card-emoji">📄</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Документи людини</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Які документи мусить знати і мати кожен дорослий</div>
+      </a>
+      <a class="nav-card" href="labor-rights.html">
+        <div class="nav-card-emoji">💼</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Трудові права</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Що роботодавець не має права робити — і що ти можеш зробити</div>
+      </a>
+      <a class="nav-card" href="tenant-rights.html">
+        <div class="nav-card-emoji">🏠</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Права орендаря</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">На що звертати увагу при оренді квартири — щоб не залишитись без грошей</div>
+      </a>
+      <a class="nav-card" href="consumer-rights.html">
+        <div class="nav-card-emoji">🛒</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Права споживача</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Повернення, гарантія, обман — як захистити себе як покупця</div>
+      </a>
+      <a class="nav-card" href="theft-fraud.html">
+        <div class="nav-card-emoji">🚨</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Якщо обікрали або ошукали</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Перші 24 години — що робити, куди звертатись і чого не робити</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" id="b5">
+    <h2 class="section-title"><span class="sl-emo">🌐</span> Мова і слова</h2>
+    <p class="category-label">Як ми говоримо — і що це означає</p>
+    <div class="nav-grid">
+      <a class="nav-card" href="language.html">
+        <div class="nav-card-emoji">🌐</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Як вчити мову</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">6 частин — від біології мозку до інтенсиву на шість місяців</div>
+        <div class="nav-card-more">+6 сторінок</div>
+      </a>
+      <a class="nav-card" href="language-thought.html">
+        <div class="nav-card-emoji">🗣️</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Мова і мислення</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Як мова, якою ти говориш, впливає на те, як ти думаєш</div>
+      </a>
+      <a class="nav-card" href="vocabulary.html">
+        <div class="nav-card-emoji">📖</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Словниковий запас</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Чому просто багато читати не працює — і три кроки, які переводять слово в мовлення</div>
+      </a>
+      <a class="nav-card" href="words-hurt.html">
+        <div class="nav-card-emoji">📢</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Чому слова ранять</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Наука про вербальну агресію — і як говорити інакше</div>
+      </a>
+      <a class="nav-card" href="silence.html">
+        <div class="nav-card-emoji">🤫</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Мовчання</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Коли не говорити — це теж комунікація</div>
+      </a>
+      <a class="nav-card" href="dying-languages.html">
+        <div class="nav-card-emoji">🌐</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Мови, які зникають</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">І що ми втрачаємо разом з ними</div>
+      </a>
+      <a class="nav-card" href="write-a-comment.html">
+        <div class="nav-card-emoji">✍️</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Три кроки до коментаря</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Урок англійської від Mr V: як написати коментар — слушна позиція, аргументи і структурований текст із вступом, основною частиною та висновком</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" id="b6">
+    <h2 class="section-title"><span class="sl-emo">⚠️</span> Темні сторони суспільства</h2>
+    <p class="category-label">Знати, щоб бачити і захищатись</p>
+    <div class="nav-grid">
+      <a class="nav-card" href="bullying.html">
+        <div class="nav-card-emoji">⚠️</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Булінг</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Як це працює, що робить з жертвою і що реально допомагає</div>
+      </a>
+      <a class="nav-card" href="cults.html">
+        <div class="nav-card-emoji">🕯️</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Секти</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Як звичайні люди потрапляють — Ліфтон, Хассан, BITE-модель</div>
+      </a>
+      <a class="nav-card" href="scams.html">
+        <div class="nav-card-emoji">🎣</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Шахрайство</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Психологія обману — Чалдіні, Конікова, як не стати жертвою</div>
+      </a>
+      <a class="nav-card" href="addiction.html">
+        <div class="nav-card-emoji">🎰</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Залежності</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Алкоголь, нікотин, телефон — одна природа за Габором Маті</div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="sig"><div class="sig-line"></div><span class="sig-text">Est. 2026</span><div class="sig-line"></div></div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+
+/* Animate cards on scroll */
+const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.style.animationPlayState='running'}})},{threshold:.1});
+document.querySelectorAll('.nav-card').forEach(el=>{el.style.animationPlayState='paused';observer.observe(el)});
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>

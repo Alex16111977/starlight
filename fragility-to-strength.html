@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<script src="theme.js" data-native="light"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Від крихкості до сили</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Від крихкості<br>до сили</h1>
+  <p class="page-subtitle">Пограничні стани й ПРЛ: від крихкості до сили</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Психіка людини в пограничному стані — не зламаний механізм, а надчутливий інструмент, який просто не навчили калібрувати</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- BODY -->
+  <!-- intro -->
+  <div class="section" style="animation-delay:.9s">
+    <p>Цей навчальний матеріал має підтримувальний характер. Він призначений для самопізнання, для трохи точнішого розуміння інших людей і для розвитку психологічної стійкості. Тема — пограничні стани як особливий спосіб організації психіки, при якому людина проживає життя з підвищеною емоційною чутливістю. Мета — дати дорожню карту внутрішнього світу людини, у якої почуття часто захльостують через край, а межі між «я» й «інший» здаються розмитими. Замість боротьби із собою чи думки «я зламаний, гірший за інших» — розпізнавання механізмів власних реакцій.</p>
+    <p><strong>Чому саме «стани», а не «розлад»:</strong> психічне здоров'я — це не точка, а шкала. Пограничні риси в різні періоди життя і залежно від складу особистості може виявляти кожен. Слово «розлад» звучить як вирок, а поняття «стану» показує динамічний процес, на який можна впливати. Легко любити інших, будучи ситим і виспаним, і набагато важче, коли в кімнаті починає підвищуватися температура.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Діагностичний блок: десять тверджень -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Діагностичний блок: десять тверджень</h2>
+    <p>Кожне твердження оцінюється за шкалою від 1 («взагалі не про мене») до 10 («точно про мене»):</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text">Емоції змінюються миттєво — від безмежного щастя до глибокого відчаю за лічені хвилини.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text">Людей ділиш на святих і лиходіїв; одна й та сама людина може перейти з однієї категорії в іншу від однієї фрази чи вчинку.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text">Мучливий страх, що близькі зараз покинуть, і схильність перевіряти їхні почуття на міцність.</div></div>
+      <div class="num-row"><div class="num-badge">4</div><div class="num-text">Незрозуміла порожнеча всередині, яку хочеться негайно заповнити їжею, покупками, спілкуванням, екстримом.</div></div>
+      <div class="num-row"><div class="num-badge">5</div><div class="num-text">Не знаєш, який ти насправді; особистість — набір масок для різних людей.</div></div>
+      <div class="num-row"><div class="num-badge">6</div><div class="num-text">На дрібні невдачі чи критику реагуєш як на катастрофу світового масштабу.</div></div>
+      <div class="num-row"><div class="num-badge">7</div><div class="num-text">Часто робиш імпульсивні вчинки, про які потім шкодуєш.</div></div>
+      <div class="num-row"><div class="num-badge">8</div><div class="num-text">Гнів такої сили, що його важко контролювати, навіть коли привід незначний.</div></div>
+      <div class="num-row"><div class="num-badge">9</div><div class="num-text">Сумніваєшся в реальності своїх почуттів: «Може, я все це вигадую?»</div></div>
+      <div class="num-row"><div class="num-badge">10</div><div class="num-text">Відчуття «людини без шкіри», для якої будь-які контакти зі світом болісні, — оголений нерв.</div></div>
+    </div>
+    <p>Додатково вводиться шкала згоди від 1 до 10: із матеріалом, зі мною як спікером і з собою. Середній показник близько 5 — норма: із чимось погоджуєшся, щось цікаво, щось не влазить ні в які ворота, але загалом корисно. Якщо стає зовсім не в моготу, примушувати себе просуватися не потрібно. Матеріал має план і послідовний характер: наступні пункти спираються на попередні. Вправи не вимагають обов'язкового виконання: можна нічого не робити, просто «провібрувати» темою. Рекомендація — не вводити все одразу, а обрати одну тему чи вправу, що найбільше відгукнулася, і прожити з нею тиждень. Малі, але регулярні зміни працюють краще, ніж спроба почати нове життя з чистого аркуша з наступного понеділка.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 1. Що таке пограничний стан і чим він відрізняється від перепаду настрою -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">1.</span> Що таке пограничний стан і чим він відрізняється від перепаду настрою</h2>
+    <p>Пограничний стан — це не просто тимчасова зміна настрою. Це специфічний спосіб організації психіки, при якому внутрішня система регуляції емоцій працює без потрібного фільтра чи захисного шару: оголений чутливий нерв, що дратується навіть від сонячного світла.</p>
+    <p>Звичайні перепади настрою трапляються в кожного у відповідь на зовнішні події (вдарився пальцем об ніжку дивана). Пограничний стан характеризується тотальністю й глибиною: коли погано, здається, що так було завжди й буде вічно. Звичайний поганий настрій — як хмара, що пропливає мимо; пограничний стан — різка зміна клімату, коли за хвилину штиль перетворюється на руйнівний ураган, і в моменті здається, що ураган був завжди й буде вічно. Відмінність також в інтенсивності, швидкості виникнення реакції і в тому, як довго не можеш охолонути.</p>
+    <p>В основі лежить підвищена психічна проникність. Якщо психіку уявити як будинок, у більшості людей є стіни, вікна й двері, які можна зачинити. У пограничному стані стін майже немає, і будь-яка зовнішня інформація (випадковий погляд перехожого, затримка відповіді в повідомленнях) одразу потрапляє в центр управління й викликає масштабну тривогу. Це як закипілий чайник, що вмикає систему пожежогасіння й заливає все піною. Це не поганий характер, а особливість нервової системи, психічного апарату, який не встиг чи не зміг виробити механізми автоматичного заспокоєння. Через це на утримання себе в рівновазі йде колосальна кількість енергії, тоді як в інших людей енергія йде на життя й творчість.</p>
+    <p>Як відрізнити пограничну реакцію від звичайного настрою — відстежувати час повернення в норму. Подразнення від дивана минає за десять хвилин після зникнення подразника. Погранична реакція може тримати в полоні годинами чи днями, залишаючи емоційне похмілля.</p>
+    <p><strong>Вправа.</strong> У момент сплеску поставити собі питання: чи відповідає емоція, що мене охопила, силі приводу, чи вона захопила мене повністю, а привід уже не пам'ятаю? Правильної чи неправильної відповіді тут немає — досить самого процесу питання. Ведення робочого зошита:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">записати три останні випадки різкої зміни настрою;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">який був привід, тригер, стимул;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">на скільки балів за шкалою 1–10 підскочив емоційний стан;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">скільки часу знадобилося, щоб знову відчути спокій.</div></div>
+    </div>
+    <p>Мета — поступово переводити абстрактне страждання в конкретні цифри, що вмикає раціональну частину мозку й трохи знижує інтенсивність переживання. Не вимагати від себе одразу світових рекордів: поступово вдихати життя в давно невикористовувані м'язи. Також: чутливість — не поломка, а особливість налаштування, що вимагає дбайливого поводження й особливих навичок керування. Помітивши в собі ознаки, не вішати ярлик «жах-кошмар»: не вийшло — не означає, що все тотально погано.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 2. Чому емоції відчуваються як опік третього-четвертого ступеня -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">2.</span> Чому емоції відчуваються як опік третього-четвертого ступеня</h2>
+    <p>Емоційна шкіра тонша, ніж в оточення, тому будь-які стимули сприймаються без належної амортизації. Критика, відмова чи навіть холодність у голосі не дуже близької людини читаються психікою як пряма загроза існуванню. Де інший отримає легку подряпину, тут є ризик стекти кров'ю від глибокої душевної рани. Система сповіщення про небезпеку працює в режимі гіперчутливості й видає сигнал тривоги там, де насправді безпечно: закипілий чайник — не привід евакуювати хмарочос.</p>
+    <p>Часто це пов'язано з тим, що в минулому почуття не отримували належного підтвердження. Якщо в дитинстві казали «не плач, це не боляче» чи «ти все вигадуєш», психіка не навчилася довіряти своїм реакціям і калібрувати їхній масштаб, і будь-яка іскра ризикує викликати пожежу. Людина не перебільшує свої страждання: біль реальний, навіть коли привід збоку здається незначним. Переконувати себе, що біль нереальний, — не найкраща затія.</p>
+    <p><strong>Що робити в момент «опіку».</strong> Перемкнути увагу з причини болю на фізичні відчуття. Завдання — не передумати чи змінити емоцію, а фізично остудити систему: вмитися прохолодною водою, потримати кубики льоду, умочити палець у холодну воду, торкнутися холодного. Робота з температурою змушує нервову систему переключитися з емоційного болю на фізичний сигнал і дає миттєвий перепочинок.</p>
+    <p><strong>«Амортизатори» заздалегідь.</strong> Скласти в спокійному стані список дій, що фізично допомагають відчути безпеку: важка ковдра («обіймає обладунком»), гарячий чай у долонях, певна музика, обійми самого себе, перебування в тиші й затишку. Як ці дії відчуваються в тілі? Скласти список заздалегідь, а не в момент, коли дія потрібна, — він стане готовим маршрутом безпеки на випадок «пожежі», коли логічно мислити дуже важко або неможливо. Висока чутливість — важкий дар, але вона ж дає здатність до глибокої емпатії й тонкого сприйняття світу.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 3. Складний характер чи пограничний стан -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">3.</span> Складний характер чи пограничний стан</h2>
+    <p>Різниця — у стабільності й передбачуваності. Складний характер — набір певних рис, що проявляються постійно (завжди впертий, буркотливий, дотошний). Пограничний стан — це нестабільність як єдина константа: єдине, що в цій людині стабільне, — її нестабільність. Немає твердого ядра особистості, «я» ніби зібране з шматочків, що не завжди ладнають. Характер — рельєф місцевості, пограничний стан — сипучі піски, де ґрунт йде з-під ніг у найнесподіваніший момент.</p>
+    <p>Ключова ознака — дифузна ідентичність: важко відповісти «хто я», цінності, цілі, навіть смаки змінюються залежно від того, з ким спілкуєшся. При складному характері людина зазвичай розуміє, хто вона й звідки, і її це влаштовує (чи ні). У пограничному стані людина почувається хамелеоном, що підлаштовується під середовище, щоб не бути відкинутим, і при цьому втрачає себе. Ще один маркер — якість стосунків: вони нагадують американські гірки з ідеалізацією на початку й повним знеціненням наприкінці.</p>
+    <p><strong>Самодослідження.</strong> Наскільки самооцінка залежить від останньої розмови чи повідомлення? Якщо після похвали почуваєшся генієм, а після дрібного зауваження — нікчемою, це ознака пограничної динаміки, а не риса характеру. Характер більш автономний від думки оточення.</p>
+    <p><strong>Вправа з двома колонками.</strong> Розділити аркуш на дві частини:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">ліворуч — що в мені часто змінюється (настрій, бажання, думка про себе);</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">праворуч — що в мені залишається незмінним попри все (любов до певної їжі, знання мов, факти біографії, світ очей, смаки). Назвати щонайменше десять пунктів.</div></div>
+    </div>
+    <p>Мета — почати формувати те саме тверде ядро, з'єднуючи розрізнені частини особистості через неспростовні факти. Розуміння, що труднощі — це стан, а не вада характеру, знімає величезний тягар провини й відкриває шлях до змін.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 4. Панічний страх самотності і водночас відштовхування близьких -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">4.</span> Панічний страх самотності і водночас відштовхування близьких</h2>
+    <p>Болісний парадокс — дилема дикобразів: дикобразам холодно, вони хочуть притулитися один до одного, але щойно зближуються, починають колоти один одного голками. Близькість тут — і єдиний порятунок, і смертельна загроза. Самотність відчувається як анігіляція: якщо мене ніхто не бачить і не любить, мене не існує. А коли партнер підходить надто близько, виникає страх поглинання: що інша людина захопить мою територію, підкорить своїй волі або побачить мою недосконалість і першою покине.</p>
+    <p>Тому близьких відштовхують не тому, що не люблять, а як превентивний удар: «Я кину тебе раніше, ніж ти зрозумієш, який я поганий, і кинеш мене». Або: «Я влаштую скандал, щоб перевірити, чи витримаєш ти мене справжнього, чи підеш при першій же скруті». Це часто призводить до самоздійсненного пророцтва: люди справді йдуть, не витримавши постійної напруги, що лише підтверджує страх самотності.</p>
+    <p><strong>Практика.</strong> Розпізнавати моменти, коли страх близькості маскується під роздратування чи гнів — коли раптом хочеться припинити спілкування або образити близького. Зупинитися й спитати: «Що я відчуваю насправді — злість до іншого чи переляк від того, що ми стали надто близькі?» Визнання «мені страшно» замість атаки на іншого — величезний крок до стабільності.</p>
+    <p><strong>Вправа.</strong> Уявити внутрішнього захисника, що відштовхує людей, щоб тебе захистити, — і написати йому короткий лист: «Дорогий мій внутрішній захиснику, від чого саме ти намагаєшся мене захистити, коли я починаю сваритися з дорогою мені людиною?» Писати відповіді, що приходять першими. Завдання — почати відокремлювати справжнє бажання близькості від автоматичних захисних реакцій. Припустити, що можлива близькість, яка не душить, і самотність, що не лякає. Шлях до цього — поступове вибудовування внутрішніх меж.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 5. Порожнеча -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">5.</span> Порожнеча</h2>
+    <p>Відчуття порожнечі — це не відсутність почуттів, а відсутність безперервності власного «я»: як фільм, у якому кадри не склеєні. Пам'ятаєш, що було вчора, але не відчуваєш емоційного зв'язку з тією людиною, якою був учора. Порожнеча виникає там, де мала б бути структура особистості: уподобання, стійкі смисли, розуміння свого місця у світі, цілі, сильні й слабкі сторони. Коли зникають зовнішні стимули (робота, спілкування, розваги), лишаєшся наодинці з «діркою». Часто порожнеча — результат того, що в дитинстві потреби й емоції не віддзеркалювалися значущими дорослими, і людина не навчилася розуміти, що відчуває. Внутрішня кімната здається порожньою, бо в ній не розставлені меблі смислів: де мій диван?</p>
+    <p>Люди часто намагаються заповнити вакуум чимось екстремальним: переїданням, імпульсивними витратами, випадковими зв'язками, навіть фізичним болем — щоб бодай на мить відчути себе живим.</p>
+    <p><strong>Вправа.</strong> Перестати боротися з порожнечею й негайно її затикати. Коли вона приходить, побути з нею три хвилини, описуючи як фізичне явище: де в тілі, якого кольору, температури, форми, на що схожа. Дописати без роздумів, по п'ять продовжень кожної фрази:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">«Моя порожнеча схожа на…»</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">«Моя порожнеча стає більшою, коли я…»</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">«Моя порожнеча стає меншою, коли я…»</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">«Якби моя порожнеча могла говорити, вона б сказала…»</div></div>
+    </div>
+    <p>Назване словами невиразне відчуття стає менш лякаючим і дає трохи контролю. Порожнеча — не ознака дефектності, а вільний простір, який з часом можна навчитися наповнювати справжніми смислами.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 6. Чому думка про себе змінюється кілька разів на день -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">6.</span> Чому думка про себе змінюється кілька разів на день</h2>
+    <p>Бракує цілісного образу «я». Самовідчуття — не монолітна статуя, а набір миттєвих фотографій. Якщо на «фотографії» зараз ти помилився, то почуваєшся нікчемою цілком, а не просто тим, хто помилився. Отримав комплімент — миттєво стаєш великим і всемогутнім. Не сформований внутрішній клей, що об'єднує достоїнства й недоліки в одну стійку картину. Наявність недоліків не перекреслює достоїнств, і навпаки: людина — сукупність як достоїнств, так і недоліків, їхній унікальний малюнок. Через чутливість до зовнішніх оцінок «я» поводиться як флюгер: куди дме вітер чужої думки чи миттєвого настрою, туди й розвертається самооцінка. Не можна спертися на минулі успіхи, коли погано зараз, бо це «погане я» повністю витісняє «хороше я». Це виснажує: щодня доводиться заново доводити собі, що існуєш і чогось вартий.</p>
+    <p><strong>Вправа «детектив».</strong> Створити архів фактів про себе, що не залежать від емоцій: професійні навички, уподобання в музиці, їжі, одязі, стабільні звички (хоча б раз на день чищу зуби). Коли самооцінка падає в нуль — відкривати список і читати як сторонній документ: «Ах так, у мене ж є факти, незалежні від емоцій, за які можна триматися».</p>
+    <p><strong>Письмова вправа «Я — не лише мої почуття».</strong> Написати десять речень, що починаються зі слів «Я той, хто…». Вживати те, що було правдою для тебе і рік тому, і зараз: «Я той, хто любить запах лісу після дощу», «Я той, хто вміє готувати певну страву», «Я той, хто любить певні серіали й альбоми». Це міст між різними станами: під шаром мінливих емоцій є незмінна основа. Емоція прийшла й піде; усе, що здається вічним, тимчасове; а неспростовне залишається.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 7. Розщеплення: чорно-біле мислення -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">7.</span> Розщеплення: чорно-біле мислення</h2>
+    <p>Розщеплення — захисний механізм психіки. У пограничному стані світ здається настільки складним і небезпечним, що психіка його спрощує, щоб вижити: хороший, ідеальний — безпечний; поганий, жахливий — його треба відштовхнути. Проблема в тому, що живі люди й реальні ситуації завжди містять суміш якостей. Не бачачи цієї суміші, прирікаєш себе на нескінченний цикл зачарувань і розчарувань. Розщеплення спрацьовує автоматично, щоб позбавити тривоги невизначеності, але позбавляє можливості будувати глибокі стабільні зв'язки.</p>
+    <p>Рух — від розщеплення до цілісності: утримувати і хороше, і погане, і переваги, і недоліки в одному. Це означає вчитися утримувати в голові дві протилежні думки одночасно («тренувати біцепс, щоб їх утримувати»): «Ця людина вчинила зі мною неуважно, але вона все ще мій друг, який багато разів мені допомагав». «Я люблю цю людину, і водночас вона мене дратує» — а не «якщо дратує, значить не люблю». Нормально, коли людей любиш і водночас вони тебе дратують: хіба одне без одного можливе?</p>
+    <p><strong>Мовний прийом.</strong> Людина — істота не лише біологічна, а й мовна. Вводити в мову сполучники «і при цьому», «і водночас» замість «але», що перекреслює сказане раніше. Дитяча жорстокість не робить дітей поганими: діти жорстокі, і водночас це діти. Зробив необережний крок — і я продовжую бути достатньо хорошою людиною.</p>
+    <p><strong>Вправа.</strong> Згадати людину, ситуацію чи фільм, які оцінюєш на 100% погано. Назвати три дрібні деталі, що є якщо не позитивними, то хоча б нейтральними. До 100% чорного додати «усмішку вокаліста між піснями». Так мозок тренується помічати відтінки, поступово знижуючи градус емоційного накалу. Так само: що хорошого і що поганого в цьому самому матеріалі?</p>
+    <p>Світ стає безпечнішим не тоді, коли розділений на добрих і злих, а коли ти досить міцний, щоб витримувати його неоднозначність. Людина поводиться некоректно — і водночас є цінною, має хороші якості; можна обирати, чому з цього казати «так», а чому «ні». Це не означає всім усе прощати: «Є хороші якості, але цей пункт зі мною неприйнятний, тому скорочуватиму спілкування — не тому, що ти тотально жахливий».</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Вставка: чому це називається «пограничним» -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Вставка: чому це називається «пограничним»</h2>
+    <p>У класичній науці про психіку довго існували два береги: невроз (умовно здорові, але страждаючі люди, що зберігають зв'язок з реальністю, відокремлюють внутрішній світ від зовнішніх фактів і утримують цілісність «я») і психоз (важкий розпад психіки, галюцинації, втрата контакту з дійсністю). Термін «пограничний» закріпився, бо такі люди перебували на самому кордоні двох материків. Вони не невротики: їхні страждання глибші, а особистість менш стійка; звичайна терапія розмовами часто не допомагала, а викликала ще більший хаос. І не психотики: у звичайному стані вони чудово розуміють, хто вони й де перебувають. Але в стресі (голод, тригер) можуть ненадовго сповзати в психотичні стани. Пограничні стани — «третя сторона на карті психіки».</p>
+    <p>Три ключові лінії фронту, що проходять усередині людини:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text"><strong>Межа реальності.</strong> Людина розуміє реальність, але почуття постійно її спотворюють: «Фактично ти запізнився на п'ять хвилин — це реальність, але я відчуваю, що ти мене ненавидиш і кидаєш».</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Межа між «я» і «ти».</strong> Дуже тонкі межі: важко зрозуміти, де закінчуються мої почуття й починаються чужі; звідси злиття і страх поглинання.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text"><strong>Межа між внутрішнім і зовнішнім.</strong> Внутрішній біль настільки сильний, що сприймається як зовнішня загроза, і людина бореться зі своїми почуттями так, ніби це реальні вороги ззовні.</div></div>
+    </div>
+    <p>Спочатку термін використовували як тимчасовий діагноз-папку для випадків, які фахівці не могли пояснити. Згодом стало зрозуміло, що це не недороблений психоз, а самостійна, дуже стабільна у своїй нестабільності структура особистості. Розуміння «пограничності» знімає провину: ти не поганий і не божевільний, ти просто живеш на території, де постійно дмуть вітри з двох різних полюсів, і це вимагає більшої майстерності в управлінні своїм психічним кораблем.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 8. «Я невидимка і ненастоящий»: дисоціація, деперсоналізація -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">8.</span> «Я невидимка і ненастоящий»: дисоціація, деперсоналізація</h2>
+    <p>Це запобіжник: коли рівень емоційного болю перевищує можливості психіки його переробити, мозок відключає зв'язок з реальністю чи з тілом, щоб не «згоріти» від інтенсивності почуттів. Дивишся на свої руки й не впізнаєш їх; почуваєшся актором у поганому кіно, де все навколо — декорації; дивишся на себе збоку, як у грі від третьої особи. До цього додається звичка підлаштовуватися під оточення: якщо світові постійно показуєш лише те, що він хоче бачити, справжнє «я» виявляється замкненим усередині, не отримує підживлення від реального контакту з людьми й з часом здається, що його немає. Це не ознака божевілля, а крик психіки про те, що їй надто боляче або що вона занадто довго ховалася.</p>
+    <p><strong>Вправа 5-4-3-2-1.</strong> Повернутися в тіло, щоб не провалитися в голову:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">знайти очима й назвати п'ять предметів;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">чотири відчуття, які можна відчути тактильно (сиджу на кріслі, спиною відчуваю спинку, передпліччя на підлокітниках, подушечками пальців проводжу по столу);</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">три звуки, до яких можна прислухатися;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">два запахи;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">один смак.</div></div>
+    </div>
+    <p>Далі: сформулювати твердження, що підтверджують реальність прямо зараз («мої ноги на підлозі», «я відчуваю, як долоні торкаються прохолоди столу», «я дихаю»). Письмово записати п'ять тверджень, що підтверджують твою реальність: фізичний акт письма й концентрація на поточному моменті повертають із небуття. Ти існуєш, навіть коли цього не відчуваєш. Тіло — твій надійний дім, навіть якщо в ньому тимчасово вимкнули світло.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 9. Спалахи гніву, які не вдається контролювати -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">9.</span> Спалахи гніву, які не вдається контролювати</h2>
+    <p>Гнів у пограничному стані порівнюють із вибухом парового котла: накопичена напруга прориває назовні, коли захисні механізми більше не справляються. За ним часто стоїть вторинна реакція на страх чи біль: страшно, що кинуть, або боляче від холодного тону співрозмовника, а показувати вразливість небезпечно, і гнів слугує щитом («краще здаватися агресивним і сильним, ніж маленьким і пораненим»). Гнів часто непропорційний приводу: психіка реагує не на поточну ситуацію, а на всі схожі з минулого одразу — кричиш не на партнера за недостатньо чисто вимиту чашку, а на всю неувагу, яку коли-небудь терпів. Після спалаху приходить випалююче почуття сорому, що лише посилює пограничну динаміку.</p>
+    <p>У гніву є фізичні провісники: стиснута щелепа, жар у грудях, прискорене дихання. Завдання — помітити іскорку до того, як почнеться пожежа.</p>
+    <p><strong>Правило «стоп-кадр».</strong> Фізично вийти з кімнати, де відбувається конфлікт, і сказати вголос: «Друже, мені потрібно 10 хвилин, щоб охолонути, потім продовжимо». Ці 10 хвилин життєво важливі, щоб префронтальна кора мозку, раціональна частина, встигла ввімкнутися.</p>
+    <p><strong>Щоденник провісників.</strong> Описати останній спалах гніву: що я відчув у тілі за хвилину до того, як почав кричати чи бити посуд, де саме в тілі зародився гнів. Так вчишся розпізнавати початок нападу на стадії, коли ним ще можна керувати. Гнів — сигнал про порушені межі або про приховану біль; завдання — навчитися чути, що він шепоче.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 10. Ризиковані вчинки і саморуйнування, коли погано -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">10.</span> Ризиковані вчинки і саморуйнування, коли погано</h2>
+    <p>Коли емоційний біль стає нестерпним, психіка шукає будь-який спосіб швидко «перемкнути канал»: ризикована їзда, бездумні витрати, випадкові зв'язки, заподіяння собі шкоди. Парадоксально, це способи «самодопомоги», які мозок обрав за дефіциту інших інструментів: фізичний біль чи різкий викид адреналіну діють як потужний анестетик для душевних страждань, а реальна небезпека здається менш страшною, ніж чорна діра всередині. Іншою причиною є бажання хоч так відчути себе живим, коли настає порожнеча й заціпеніння: «якщо мені боляче й страшно — отже, я існую». Це замкнене коло: руйнуєш життя чи тіло, щоб урятуватися від болю, а наслідки приносять новий біль і сором.</p>
+    <p>Завдання — замінити небезпечне саморуйнування на безпечну інтенсивність: прохолодний душ, інтенсивні присідання до знемоги, крик у подушку, написати на папері все найлютіше й буйне, що нагромадилося, про себе й про інших — і порвати цей папір. Подзвонити людині й просто поговорити про погоду. Такі дії дають сильний тілесний відгук, але не руйнують здоров'я і соціальне життя. Наявність алгоритму, продуманого заздалегідь, знижує ймовірність, що в момент імпульсу буде обрано звичний шкідливий шлях. Прагнення припинити біль — прояв волі до життя, навіть якщо зараз воно обирає деструктивні форми.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 11. Як довіряти людям, коли здається, що зрадять -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">11.</span> Як довіряти людям, коли здається, що зрадять</h2>
+    <p>Довіра в пограничних станах — не бінарний перемикач «довіряю / не довіряю», а процес поступового тестування реальності. Починається з визнання своєї гіпербуджості: «Так, я гіпербудний, я дуже боюся, що мене кинуть». Очікування зради — не пророцтво, а захисний екран, сформований минулим досвідом, коли світ справді здавався небезпечним; крізь лінзу, що збільшує підозрілі деталі й ігнорує ознаки надійності, шукаєш підтвердження своїм переконанням.</p>
+    <p>Щоб тренувати «м'яз довіри», перестати вимагати від людей стовідсоткових гарантій: їх не існує, і це боляче визнати. Виробляти дозовану довіру, спостерігаючи за фактами, а не за страхами. Недовіра працює як превентивний захист: підсвідомо шукаєш вади в поведінці іншого, щоб підготуватися до удару; партнер відчуває підозру й віддаляється, а ти вписуєш це як підтвердження страху. Цикл розривається через усвідомлення: довіра — це ризик, який не можна повністю виключити, але можна мінімізувати. Завдання не в тому, щоб знайти ідеально надійну людину навіки, а в тому, щоб стати тим, хто зможе пережити розчарування, не руйнуючись до основи.</p>
+    <p>Ділити довіру на сфери й шари: довіряти колезі в робочих питаннях, але не вручати йому глибоких особистих таємниць; довіряти партнеру вірність, але не довіряти планування бюджету. Коли дрібниш довіру, страх тотальної зради слабшає, бо ризик стає керованим.</p>
+    <p><strong>Вправа «піраміда довіри».</strong> Накреслити піраміду з трьох рівнів:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">нижній, найширший — люди, яким довіряєш побутові дрібниці (вчасно прийти, вчасно сказати);</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">середній — ті, кому довіряєш свої думки й почуття;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">верхній — ті, кому довіряєш свою вразливість.</div></div>
+    </div>
+    <p>Поруч із кожним ім'ям записати конкретний факт-дію, що підтверджує цю довіру. Так відбувається перехід від крайнощів «усі зрадять, нікому довіряти не можна» до збору конкретних доказів надійності в поточному житті. Довіра — як м'яз: зміцнюється не за відсутності страху, а в процесі дій, зроблених попри нього.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 12. Розчинення в інших і втрата меж -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">12.</span> Розчинення в інших і втрата меж</h2>
+    <p>Злиття з партнером відчувається як єдиний спосіб відчути безпеку й цілісність: поруч зі значущою людиною ніби «позичаєш» її особистість, упевненість, межі, бо власні здаються надто крихкими. Якщо між «я» і «ти» немає дистанції, ти не підеш, а я не залишуся в порожнечі. Це супроводжується відмовою від власних інтересів, думок і навіть фізичних потреб; починаєш передбачати бажання іншого раніше, ніж він сам їх усвідомить, стаючи його тінню. Проблема — надчутливість до будь-яких змін стану партнера: його поганий настрій сприймається як твоя провина чи кінець стосунків; життя перетворюється на нескінченний моніторинг чужих реакцій.</p>
+    <p><strong>Помічати, коли «я» замінюється на «ми».</strong> Якщо не знаєш, чого хочеш на вечерю, поки не звіришся з думкою партнера, — це сигнал не справжнього кохання, а втрати меж.</p>
+    <p><strong>Практика.</strong> Починати з відновлення тілесних меж: помічати, де закінчується моє тіло і починається простір іншого; це мій холод, мій голод, моя втома. Вправа: скласти список із десяти пунктів, що належать лише тобі й у які нікого не пускаєш (таємниці, музика, самотні прогулянки, книжки, блокнот, думки). Поруч із кожним дописати: «Це тільки моє, і це робить мене мною». Регулярно підтверджувати своє право на автономію: бути окремим — не означає бути покинутим; це означає існувати. Здорові стосунки можливі лише між двома окремими людьми; зберігаючи себе, робиш зв'язок міцнішим, а не слабшим.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 13. Хронічні провина й сором -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">13.</span> Хронічні провина й сором</h2>
+    <p>Провина і сором у пограничних станах часто стають фоновим шумом життя. Їх важливо розрізняти. Провина — за конкретний вчинок: «я вчинив погано, але загалом я хороша людина; треба вибачитися, компенсувати завдану шкоду, зробити висновки». Це функціональна провина. Сором б'є по самій особистості: «що б я не зробив, я загалом поганий, дефектний». Після емоційного спалаху чи імпульсивного вчинку накриває хвиля самобичування, яка буває руйнівнішою за саму подію; сором змушує ще більше закриватися або вчиняти ще деструктивніші дії, щоб заглушити біль від ненависті до себе. Замкнене коло: провина — сором — провина — сором. Його підтримує внутрішній критик, який не знає співчуття: вимагає недосяжної досконалості й карає за кожну слабкість. Сором — це спроба психіки виправитися через страждання («я так сильно себе ненавидітиму, що наступного разу не помилюся»). Це не працювало ні разу, бо сором лише паралізує й позбавляє ресурсів для змін.</p>
+    <p>Визнати: моя поведінка — результат не зіпсованості, а поки що дефіциту навичок саморегуляції в гострі моменти. Перестати годувати сором мовчанням: він живе в секретах і темряві.</p>
+    <p><strong>Прийом «факти без епітетів».</strong> Коли накриває сором, описати ситуацію фактами, прибравши оцінні прикметники. Замість «я жахлива, бо зірвалася на крик, я дно тупе й гниле» — «Я відчув сильну напругу й не втримав гучний голос. Неприємно, але це не визначає мене як особистість».</p>
+    <p><strong>Вправа «лист співчуття».</strong> Уявити людину, яку дуже любиш і поважаєш, що опинилася у твоїй ситуації й зробила ту саму помилку. Написати їй лист підтримки: що б ти сказав, щоб її втішити й підбадьорити? Тепер прочитати цей лист так, ніби звертаєшся до самого себе. Іншому співчувати легше, ніж собі. Ніхто не ідеальний: усі «дають джазу», перегинають, забувають, лукавлять, соромляться, заздрять. Помилки — не плями на сутності, а інформація про те, де поки не вистачило стійкості.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 14. Чому дрібна невдача сприймається як кінець світу -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">14.</span> Чому дрібна невдача сприймається як кінець світу</h2>
+    <p>Це прямий наслідок емоційної дизрегуляції. Для людини в пограничному стані немає шкали інтенсивності подій: усе або нормально, або катастрофа. Дрібна невдача (неправильно виконана робота, спізнення на п'ять хвилин, недосолений обід, навіть уявна невдача) провалюється в ту саму внутрішню рану, що й великі втрати. Миттєво виникає ланцюжок: «помилився в дрібниці — значить, ні на що не здатний — значить, мене всі відкинуть — значить, помру на самоті». Мозок добудовує ланцюжок від дрібної події до глобального страху за лічені миті, бо немає внутрішніх «подушок безпеки» — стійкого відчуття власної цінності, що не залежить цілком від поточних успіхів. Тоді кожна невдача сприймається не як ізольований епізод, а як вирок особистості, і здається, що картковий будиночок життя руйнується від найменшого подуву вітру.</p>
+    <p><strong>Прийом масштабування.</strong> При невдачі поставити собі питання: чи буде це важливо через тиждень? Через місяць, рік, п'ять років? Чи загрожує це моєму виживанню прямо зараз? Відповіді повертають події реальний розмір (як правило, через тиждень уже забудеш, через що так страждав).</p>
+    <p><strong>Вправа «контейнер для помилок».</strong> Взяти аркуш А4 горизонтально. У центрі в кружечку записати сьогоднішню невдачу. Від неї провести стрілки й сформулювати три можливі шляхи вирішення ситуації (виправити або залишити як є — світ не трісне; навіть «забити й нічого не робити» — це теж варіант). Нижче записати три причини, чому життя триває попри цю подію (планета обертається, клітини діляться, фотосинтез ніхто не скасовував, нічого страшного не сталося з людиною, про яку я колись погано подумав). Важливо, наскільки ці причини раціональні, об'єктивні, конкретні. Так мозок переходить із режиму панічної атаки в режим «я вже вирішую задачу», тренується здатність витримувати помилки. Невдача — фрагмент досвіду, а не фінал твоєї історії; ти більший за суму всіх своїх промахів.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 15. Як відрізнити справжні бажання від підлаштовування під очікування оточення -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">15.</span> Як відрізнити справжні бажання від підлаштовування під очікування оточення</h2>
+    <p>Розмитість власного «я» призводить до того, що стаєш експертом із чужих бажань, цілком забуваючи про свої. Підлаштовування — стратегія виживання: боїшся, що справжнє «хочу» зайде в конфлікт із бажаннями інших, і тебе відкинуть. З часом це стає автоматичним настільки, що щиро перестаєш розуміти, подобається тобі фільм чи ти просто заразився захватом співрозмовника.</p>
+    <p><strong>Ознаки.</strong> Справжні бажання завжди мають тілесний відгук і відчуваються як стабільність; нав'язані часто супроводжуються напругою, метушнею, легкою нудотною тривогою — бажанням догодити. Справжнє бажання зберігається, навіть коли залишаєшся на самоті; адаптація випаровується, щойно зникає об'єкт, під який підлаштовувався.</p>
+    <p><strong>Пауза вибору.</strong> Коли про щось просять чи пропонують зробити (чи не зробити), не відповідати миттєво. Взяти добу, ну годину, ну хвилину: «Друже, я зараз спрямую увагу всередину себе, побуду з цим добу, завтра на охололу голову зможу відповісти, подобається мені це чи ні». Прислухатися до тіла: чи немає відчуття стиснення, бажання сховатися? Тіло може дати відповідь раніше, ніж голова придумає соціально схвалювану маску. Пристрасть керує розумом; потрібно охолонути.</p>
+    <p><strong>Вправа.</strong> Згадати три справи за останній тиждень, коротко описати кожну і відповісти на питання: хто був ініціатором (я чи інша людина)? Що б я відчув, якби відмовився це робити? Чи приносило це мені радість у процесі — а не лише тоді, коли отримав похвалу? Так виявляються патерни догоджання і поступово відокремлюються власні потреби: що ти хочеш, що для тебе важливо, яке твоє тверде ядро. Відмовляти боляче й тривожно — але є ядро, в яке вдруковуєшся і яке робиш щільнішим. Навіть якщо оглядаючись назад бачиш, що життя минуло під вантажем чужих очікувань і догоджання, — твоє «я» не зникло, воно просто затихло. Кожен маленький чесний вибір повертає право бути собою, навіть із тривогою й страхом.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 16. Чому важко в стабільних стосунках без драм і скандалів -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">16.</span> Чому важко в стабільних стосунках без драм і скандалів</h2>
+    <p>Стабільність у стосунках для людини в пограничному стані часто сприймається як лякаюча тиша перед бурею або ознака того, що партнер став байдужим. Інтенсивність емоцій (пристрасть чи шалена сварка) — еквівалент справжності й доказ того, що ти ще важливий для іншого. Коли настає спокій, система оповіщення читає це як покинутість, емоційну смерть; скандал стає способом «розбудити» партнера, отримати яскраву реакцію: «він тут, він на мене реагує, значить, я існую, значить, мене люблять». Інший механізм — високий базовий рівень тривоги: так звик жити в режимі виживання, що мирні, передбачувані стосунки здаються чужорідним середовищем. Драма — звичний ландшафт, де знаєш, як діяти; у стабільності почуваєшся безпорадним, бо не розумієш правил гри. Безсвідомо можна навіть провокувати конфлікти, щоб повернути стосунки в знайомий хаос.</p>
+    <p><strong>Практика.</strong> Переструктурувати ставлення до слова «нудно»: коли наступного разу здасться, що стосункам чогось бракує, і захочеться вколоти партнера й спровокувати скандал, — замінити слово «нудно» словом «безпечно». Що, якщо це не нудно, а стабільно, передбачувано й безпечно? Визнати, що бажання драми — лише запит на підтвердження зв'язку, і замість суперечки прямо сказати: «Мені зараз страшно, що ми віддаляємося. Побудь зі мною поруч. Як у тебе справи?»</p>
+    <p><strong>Вправа.</strong> Згадати останній великий конфлікт, який ініціював на порожньому місці. На аркуші А4 горизонтально:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">ліворуч — що ти отримав у моменті, запустивши скандал (увагу партнера, скидання напруги);</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">праворуч — довгострокову ціну (недовіра, спустошення на три дні, соромно за сказане й зроблене, провина).</div></div>
+    </div>
+    <p>Візуалізація реальної ціни деструктивної поведінки допомагає префронтальній корі перехопити імпульс наступного разу. Гарантій з першого разу немає, але вже в одній ситуації з двадцяти можна помітити: «Що це я зараз збираюся зробити? Яка ціна?» — і видихнути. Спокій і стабільність, навіть «нудьга» — не відсутність кохання, а безпечний простір, де кохання може рости без ризику згоріти у вогні постійних драм.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 17. Постійне чекання підступу: «надто добре, щось станеться» -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">17.</span> Постійне чекання підступу: «надто добре, щось станеться»</h2>
+    <p>У пограничному стані щастя відчувається як небезпечна вразливість. Мозок працює за принципом: якщо розслаблюся й повірю, що все добре, удар буде ще болючішим, тому краще бути напоготові. Очікування підступу — спроба психіки контролювати біль: якщо заздалегідь передбачити катастрофу, її можна запобігти або вона принаймні не застане зненацька. Радість стає «підставою», після якої буде розплата. Часто цей патерн коріниться в досвіді непередбачуваного середовища: у дитинстві за похвалою могло слідувати покарання, за періодами тепла — періоди холодної байдужості. Психіка просто не довіряє гарній погоді; живеш у гіпербудності й не можеш по-справжньому напитися ресурсом, енергією, спокоєм навіть від сприятливих періодів, витрачаючи їх на будівництво барикад проти уявного ворога.</p>
+    <p><strong>Тренувати здатність витримувати радість.</strong> Коли помічаєш, що настав хороший момент, і одразу слідом приходить думка «це скоро точно закінчиться», — взяти паузу й записати в зошиті: «Зараз достатньо добре. І так, можливо, колись стане гірше. Але прямо в цю секунду мені достатньо добре». Не боротися з тривогою, а дозволити радості співіснувати з тривогою: хвилювання й водночас спокій і радість.</p>
+    <p><strong>Вправа.</strong> Сформулювати факти з поточної реальності, що говорять про безпеку й те, що все достатньо в порядку, — без оцінок, лише факти: «У мене є їжа в холодильнику. Близька людина вранці посміхнулася мені. Частину завдань на сьогодні я вже виконав». Мозок тренується помічати реальні докази стабільності, і вплив катастрофічних фантазій поступово знижується. Людина часто страждає не від самих подій, а від монстра, якого породжує власна інтерпретація. Має право на радість без обов'язку за неї платити: благополуччя — не пастка, а природний стан, до якого можна звикнути.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 18. Як заземлюватися, коли почуття захльостують -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">18.</span> Як заземлюватися, коли почуття захльостують</h2>
+    <p>Заземлення — екстрене гальмо для лімбічної системи. Коли почуття захльостують, кров відпливає від думаючого мозку до виживаючого. Щоб повернути керування, переключити увагу з внутрішнього шторму на зовнішні фізичні константи. Заземлення не прибирає емоцію миттєво, але створює дистанцію між тобою і почуттям, щоб не втопитися в ньому. Основний принцип — активувати органи чуття через конкретні подразники: у пограничному стані почуття схоже на галюцинацію («світ руйнується»), а фізичні відчуття (холод, тиск, смак) — єдине, що лишається по-справжньому реальним. Зосередитися на них — повернутися в «тут і зараз», де, швидше за все, фізично нічого не загрожує («я сиджу на стільці, я вдома»).</p>
+    <p>Способи:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Фізичний опір:</strong> сісти на стілець і натиснути стопами в підлогу, долонями в стегна чи підлокітники скільки вистачає сил; відчути твердість опори й те, як гравітація тримає тіло. Це сигнал мозку: «я на твердій землі, я у фізичній безпеці, я тут». Той, хто пробував під час паузи лягти на землю на 5–10 хвилин, відчував, що голова приходить до ладу.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Запах:</strong> понюхати ефірну олію; смак: кислий (чай із лимоном).</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Предмет-якір.</strong> Обрати вдома предмет із приємними тактильними відчуттями (м'який плед, важка ковдра, холодний камінчик, важка книжка) і описати п'ятьма реченнями його властивості: температуру, фактуру, вагу. У моменти стресу згадувати цей опис — предмет стане якорем, що допомагає вилетіти з простору паніки, дисоціації, деперсоналізації.</div></div>
+    </div>
+    <p>Емоції — як погода, а заземлення — фундамент будинку: яка б сильна не була буря, фундамент лишається на місці.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 19. Чому відчуваю себе маленькою беззахисною дитиною в тілі дорослого (емоційна регресія) -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">19.</span> Чому відчуваю себе маленькою беззахисною дитиною в тілі дорослого (емоційна регресія)</h2>
+    <p>У моменти стресу чи зіткнення з тригером (зовнішнім стимулом, що запускає внутрішню реакцію) психіка відкочується до того віку, коли вперше відчув таку вразливість і не зміг упоратися. Можна бути успішним керівником, міцним турботливим батьком, але в конфлікті з близькою людиною раптом відчути себе п'ятирічною дитиною, яка хоче сховатися чи кричати від безсилля. Доросла частина — префронтальна кора — тимчасово «засинає», залишаючи керування дитячій наляканій частині. Багато етапів емоційного дозрівання пройдено з пропусками: якщо в дитинстві не допомогли переробити страх чи лють (ігнорування, емоційно незрілі батьки, стрес), ці почуття «законсервувалися» в первісному вигляді, і коли активуються, відчуваються так само: величезними, всепоглинаючими, нестерпними. Ти не прикидаєшся дитиною — ти справді проживаєш досвід із тієї точки минулого, де розвиток зупинився через біль. Вхід у регресію супроводжується думками «я нічого не можу, мені ніхто не допоможе, я зовсім один».</p>
+    <p><strong>Як себе повернути.</strong> Фізично підтвердити свій дорослий статус: подивитися на свої руки, усвідомити свій вік, нагадати собі: «Я повнолітній громадянин, податки плачу». Потримати ключі від квартири, паспорт. Згадати, з якими завданнями ти вже впорався, які навички маєш (водіння, читання, письмо, розуміння звуків). Заговорити вголос спокійним упевненим голосом, звертаючись до себе по імені: «Дорогий Альберте (поставте своє ім'я), я бачу, що тобі зараз страшно й хвилююче. Але я тут, я з тобою, я дорослий, я подбаю про нас».</p>
+    <p><strong>Вправа «внутрішня дитина».</strong> Розділити аркуш навпіл. Ліворуч — від імені внутрішньої дитини записати все, що її зараз лякає («я так боюся, що вийду на сцену, мене засміють»). Праворуч — відповідь від дорослої частини. Доросла частина не повинна сперечатися («все буде добре, не парся») і не забороняти боятися («не бійся, ти ж чоловік»). Вона має сказати: «Я тебе чую. Розумію, що тобі страшно, і розумію чому. Я з тобою в цьому. Я тебе тут не залишу». Так активується процес «донашування» частин особистості, що застрягли в дитячих травмах: їм потрібен не той, хто скаже «все гаразд», не той, хто закличе «давай, не будь ганчіркою», а той, хто просто поруч. Бути дорослим — не значить ніколи не боятися, а мати достатньо внутрішніх ресурсів, щоб обійняти свою налякану внутрішню дитину. Для вправи можна поставити поруч власну дитячу фотографію, де тобі п'ять-сім років.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 20. Як розвинути внутрішню стійкість, якщо її ніколи не було -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">20.</span> Як розвинути внутрішню стійкість, якщо її ніколи не було</h2>
+    <p>Нейропластичність: мозок здатен створювати нові нейронні зв'язки й способи реагування в будь-якому віці. Стійкість — не вроджений дар, а навичка, яка тренується, як м'язи в спортзалі. Якщо в дитинстві не було надійної опори, її доведеться вибудувати самостійно у дорослому віці — цеглинка за цеглинкою. Починається це з формування внутрішнього контейнера — здатності утримувати сильні почуття всередині, не даючи їм негайно виплеснутися в дію чи зруйнувати тебе. Спочатку вчишся витримувати емоцію 10 секунд, потім хвилину, потім годину, не намагаючись скинути її руйнівною імпульсивною дією. З кожним разом, коли проживаєш бурю, не руйнуючи себе і стосунки, стійкість зростає.</p>
+    <p>Починати з малих «ваг», як у залі, не чекаючи великої катастрофи. Тренуватися на малих незручностях: коли довго їде ліфт — не провалюватися в ненависть до нього, а стояти й дивитися, як змінюються цифри; помічати роздратування: «Я бачу це роздратування. Я відчуваю його. Я витримую його». Так само, коли хтось підрізав на дорозі або в магазині закінчилася улюблена позиція. Не забороняти собі це відчуття, а досліджувати, витримувати, спостерігати, не даючи йому захопити тотальне керування. Кожне таке витримування — внесок у банк внутрішньої сили.</p>
+    <p><strong>Щоденна фіксація.</strong> Наприкінці дня записувати один випадок, коли ти не піддався імпульсу й зумів зберегти відносний спокій, або піддався, але швидко повернувся до спокою: що це була за ситуація, який імпульс, чого хотілося зробити, що зробив натомість. Так перестаєш бути жертвою обставин і поступово береш життя у свої руки. Стійкість — не відсутність тріщин, а знання того, що ти здатен відновитися після будь-якого удару.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 21. Як спілкуватися з близькими, щоб вони розуміли мої особливості -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">21.</span> Як спілкуватися з близькими, щоб вони розуміли мої особливості</h2>
+    <p>Спілкування ефективне, коли ти передаєш близьким не звинувачення, а інформацію про свою внутрішню погоду. Близькі налякані не вами, а непередбачуваністю ваших реакцій: коли ви раптом вибухаєте чи йдете в себе, вони читають це як атаку чи байдужість і починають захищатися у відповідь. Тому давати їм «інструкцію з експлуатації» своїх станів — але в моменти, коли ви спокійні.</p>
+    <p>Ключ — перехід від деструктивних дій до вербалізації. Замість того щоб гримнути дверима: «Я зараз відчуваю, що мене просто затоплює гнів. Мені потрібно хвилин 10 побути одному, щоб не наговорити зайвого». Це дає партнеру розуміння, що відбувається, і впевненість, що його не кидають, — це твої внутрішні процеси, а не наслідок того, що він поганий. Коли близькі розуміють, що за агресією стоїть страх втрати, їм легше виявити співчуття, а не зустрічну агресію (звісно, за умови, що у них є терпіння, запит і бажання це враховувати).</p>
+    <p><strong>Формула: стан + причина (якщо ясна) + потреба.</strong> Наприклад: «Я зараз почуваюся оголеним нервом, вразливою через проблеми на роботі, тому будь-яка дрібниця мене зачіпає. Не критикуй мене сьогодні, будь ласка. Просто обійми мене й побудь зі мною поруч».</p>
+    <p><strong>Вправа.</strong> Сформулювати типові «пограничні» дії, у яких не раз провалювався (мовчати годинами; кричати про розрив «ти мене більше ніколи не побачиш»; критикувати зовнішність партнера). До кожної дописати: що ти відчуваєш у цей момент насправді і як це можна сказати словами: «Мені боляче», «Я боюся, що не потрібен тобі», «Я почуваюся покинутим», «Мені страшно, що ти мене розлюбиш». Переводячи дії в слова, будуєш міст між внутрішнім хаосом і свідомістю іншої людини, перетворюючи конфлікт на можливість близькості. Вразливість — не слабкість, а потужна сила у стосунках: коли ти відкриваєш своє обличчя, іншим більше не треба боятися твоєї маски.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 22. Чому я часто сумніваюся в реальності своїх спогадів і почуттів -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">22.</span> Чому я часто сумніваюся в реальності своїх спогадів і почуттів</h2>
+    <p>Це схоже на самогазлайтинг: почуття настільки інтенсивні, що переписують сприйняття реальності в режимі реального часу. У гніві минуле здається низкою кривд, і щиро не пам'ятаєш нічого хорошого; у закоханості, біохімічно, забуваєш про колишні конфлікти і все в яскравих барвах. Через різкі контрасти виникає відчуття «я вигадую чи перебільшую свої стани», особливо коли буря вщухає. Часто це пов'язано з минулим, коли оточення заперечувало почуття: «тобі насправді не боляче, ти вічно капризуєш, мені видніше, чого ти хочеш». Не навчився довіряти внутрішньому компасу: психіка починає сумніватися в собі, щоб уникнути конфлікту з реальністю («легше повірити, що я збожеволів, ніж визнати, що зі мною вчинили несправедливо»).</p>
+    <p><strong>Щоденник фактів.</strong> Коли відбувається щось важливе й виникає сильний емоційний сплеск, записати сухі факти: час, місце, що було сказано, що відчув. Це ніби зовнішній жорсткий диск: у моменти сумнівів можна повернутися до записів і переконатися, що це було насправді. Вправа: обрати подію за минулий тиждень, у реальності якої сумніваєшся або вона здається смутною, і описати максимально детально, залучаючи всі органи чуття: що бачив, що чув, який був запах, яка температура, що відчував; факти, деталі, цифри. Така деталізація відновлює нейронні зв'язки між подією й пам'яттю і повертає твердий ґрунт під ногами. Почуття мають право на існування, навіть коли здаються надмірними: почуття — чесна відповідь на те, що відбувається.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 23. Як перестати ненавидіти себе за імпульсивні рішення -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">23.</span> Як перестати ненавидіти себе за імпульсивні рішення</h2>
+    <p>Ненависть до себе за імпульсивність — пастка, що лише підживлює пограничну динаміку: ненавидиш себе за зрив → сором викликає нову порцію нестерпного болю → щоб його заглушити, знову робиш імпульсивний вчинок → цикл запускається знову. Щоб розірвати коло, зрозуміти: імпульс — не ознака дурості чи порочності, а аварійний вихід, який мозок обирає, коли не бачить іншого способу вижити. Самосострадання — не самовиправдання. Це визнання того, що в той момент не було інших інструментів. Заднім числом усі розумні. Уявіть, що ви керуєте потужним спортивним автомобілем із дуже чутливою педаллю газу, у якого періодично відмовляють гальма: було б дивно ненавидіти машину за те, що її заносить на поворотах. Замість самобичування — інженерна робота: зміцнення гальмівної системи (префронтальної кори).</p>
+    <p>Замінити питання «чому я це зробив?» (що неминуче веде до звинувачень) на «яку проблему я намагався вирішити цією дією?» Імпульсивна покупка могла бути спробою впоратися з самотністю. Різкий дзвінок колишньому чи колишній — спробою вгамувати тривогу анігіляції («я зараз зникну, якщо цього не зроблю»). Коли розумієш приховану мету, можна знайти здоровіший спосіб її досягти наступного разу: як я ще можу впоратися з самотністю, витримуючи її, замість імпульсивних покупок? Як вгамувати тривогу зникнення?</p>
+    <p><strong>Вправа.</strong> Згадати недавній імпульсивний вчинок: що сталося (факт); яка нестерпна емоція йому передувала (страх, порожнеча, лють)? Написати: «Я прощаю себе за цей вибір. Тоді в ту хвилину мені було дуже боляче. Я просто хотів урятуватися хоч так. Тепер я знаю, що мені було боляче, і це було відчай. Наступного разу я спробую ось які дії, щоб підтримати себе в такій ситуації». Мета — зняти заряд сорому й звільнити енергію, що йшла на самобичування, спрямувавши її на реальну зміну поведінки. Ненависть і сором минуле не виправлять; лише дбайливе ставлення до себе сьогоднішнього дає шанс на інше завтра.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 24. Як вибудовувати внутрішній контейнер для емоцій -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">24.</span> Як вибудовувати внутрішній контейнер для емоцій</h2>
+    <p>Внутрішній контейнер — здатність витримувати емоцію, спостерігати за нею, не стаючи нею. У пограничному стані ти і є своя емоція: якщо сумно — перетворюєшся на саму смуток. Контейнування створює простір між «я» і моїм почуттям. Це як дивитися на грозу з вікна теплого будинку: бачиш блискавки, чуєш грім, бачиш чорні хмари, але залишаєшся сухим і в безпеці. Ти не є гроза — ти той, хто за грозою спостерігає. Навичка потребує часу й практики сповільнення.</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Називати почуття:</strong> «Я відчуваю лють, я відчуваю злість, я відчуваю заздрість» — замість «я є X». Називання емоцій залучає лобові частки мозку, які гальмують лімбічну систему. Чим більше слів для тонких відтінків почуттів, тим міцнішим стає контейнер. Раз-два на день ставити собі питання: «Що я зараз відчуваю?», користуватися таблицею з назвами почуттів; прислухатися до тіла: де, як, на що схоже, підібрати слово.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Розширення простору:</strong> коли накочує сильна емоція, уявити, що всередині тіла стає дуже просторо, а це почуття — просто гість, що зайшов у величезну залу. Гість — не господар; він може кричати й танцювати, але не зруйнує стін, до яких навіть не дотягнеться. Глибоко дихати, уявляючи, як із кожним вдихом зала стає ще більшою.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Правила контейнера:</strong> «Тут можна відчувати все», «Тут почуття не перетворюються на дію негайно» (відчувати злість не значить чинити злі вчинки; її можна конструктивно втілити в творчість), «Тут я завжди в безпеці». Як виглядає твій контейнер, якої він форми, з якого матеріалу — зала з вогнищем чи барвиста? Ментальний образ дає психіці конкретну опору в моменти хаосу.</div></div>
+    </div>
+    <p>Здатність витримувати шторми й грози росте щоразу, коли дозволяєш почуттю просто бути: не проганяючи його і не підкоряючись йому.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 25. Перший крок до внутрішньої рівноваги і стабільності -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">25.</span> Перший крок до внутрішньої рівноваги і стабільності</h2>
+    <p>Перший крок — радикальне прийняття своєї особливості. Стабільність починається не зі спроби «стати як усі» чи «виправитися», а з припинення боротьби із самим собою. Прийняття — не капітуляція, а визнання вихідних даних: «Так, у мене висока чутливість, моя психіка влаштована ось так, має пограничну структуру. Я це враховую, адаптую, працюю з цим». Тоді перестаєш витрачати колосальні ресурси на опір реальності. Завдання — не позбутися пограничних станів назавжди (чутливість — частина особистості), а навчитися майстерно керувати ними.</p>
+    <p><strong>Режим малих перемог.</strong> Обрати одну сферу (реакція на спізнення; вечірня рутина чи ранкові ритуали; стосунки з певною людиною) і тренувати там стійкість. Поступово ці острівці стабільності розширюватимуться, доки не утворять цілий континент нового, достатньо передбачуваного, достатньо хорошого, стабільного й яскравого життя.</p>
+    <p><strong>Щоденна дія-якір.</strong> Обрати одну невелику дію, яку робитимеш щодня незалежно від настрою: застелити ліжко, десятихвилинна прогулянка, невеликий запис у гарному зошиті. Вона стане першим якорем стабільності: коли все довкола руйнується, є маленька дія, що нагадує «я тут, я контролюю принаймні це, я існую».</p>
+    <p><strong>Лист зобов'язань перед собою.</strong> Почати так: «Я визнаю свою чутливість. Я обіцяю більше не карати себе за неї. Мій перший крок до стабільності — [маленька дія]. Я буду робити цю дію, щоб побудувати дім для своєї душі, в якому мені буде достатньо добре й тепло». Поставити дату й підпис. Така угода з собою має велику психологічну силу, це офіційний старт шляху від хаосу до структури й гармонії. Шлях у тисячу кілометрів починається з першого кроку. Рішення бути на своєму боці, незважаючи ні на що: у тебе є ти.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Додатково: пограничність — це не лише біль -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Додатково: пограничність — це не лише біль</h2>
+    <p>Погранична організація — ще й великий ресурс, якщо спрямувати його в потрібне русло. Це надемпатичність: відчуваєш нюанси чужих емоцій там, де інші проходять повз, — це робить чудовим другом, партнером і фахівцем у сфері «людина — людина», у допомагаючих професіях. Творчість: внутрішня рухливість, інтенсивність, оголений нерв можуть бути паливом для творчості; чимало серйозних творів мистецтва створено людьми з пограничним світовідчуттям. Глибина радості й захвату: палітра життя багатша. Завдання не в тому, щоб знищити в собі пограничність, а в тому, щоб стати вмілим серфером на цих високих хвилях.</p>
+    <p><strong>Вправа «через рік».</strong> Уявити себе через рік: ти навчився користуватися емоційним контейнером, заземлюватися, говорити про почуття, краще розумієш свої особливості. Описати свій день із цього стану: як прокидаєшся, як реагуєш на дрібні й недрібні невдачі, як спілкуєшся з близькими. Створення позитивного образу майбутнього дає додаткове натхнення працювати в цьому напрямку — заради якості життя, а не боротьби із симптомами. Будьте дбайливі до себе: ви вже проробили величезну роботу, навіть помислили про це.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Підсумок: пограничні стани і пограничний розлад особистості -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Підсумок: пограничні стани і пограничний розлад особистості</h2>
+    <p>Пограничні стани, про які йшлося:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">відсутність чіткого розуміння «хто я»: уявлення про себе суперечливі й змінюються залежно від оточення;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">розщеплення: світ ділиться на чорне й біле, без здатності бачити нюанси та протиріччя водночас;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">будь-який стрес сприймається як катастрофа через «оголений нерв» — у психіки немає захисної шкіри, буферної зони;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">емоційні гойдалки: перехід від захвату до глибокого відчаю за лічені секунди;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">відчуття чорної діри, порожнечі, яку нічим не заповнити — їжею, покупками, людьми, емоціями;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">озлоблений настрій, що поєднує тугу, роздратування й гнів;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">підсвідомий страх зникнути чи зруйнуватися при зіткненні з труднощами і невдачами;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">страх покинутості: панічна реакція навіть на короткочасну розлуку чи холодність партнера;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">страх поглинання, цикл ідеалізації і знецінення;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">імпульсивні й аутоагресивні стани (завдання собі фізичного болю чи створення ситуацій, де людина страждає, щоб заглушити душевний біль).</div></div>
+    </div>
+    <p>Більшість цих станів знайома кожній людині в моменти сильної кризи й горя. Про пограничність як про організацію особистості в цілому говорять тоді, коли ці стани є постійними й основним способом життя людини, а не тимчасовою реакцією на тяжку подію.</p>
+    <p>Пограничні стани — широка смуга на спектрі людської психіки: в них можна в тій чи іншій мірі провалюватися залежно від ситуації та стану здоров'я. Пограничний розлад особистості — клінічний діагноз, який ставиться, коли ці стани стають хронічними, тотальними й серйозно руйнують життя людини. Це специфічний спосіб роботи психічного апарату, при якому три ключові сфери перебувають у постійній кризі: емоції (неспроможність регулювати інтенсивні почуття — реакція 100 зі 100 на подразник у 2 бали), стосунки (постійні гойдалки від божества до нікчеми, викликані страхом покинутості) і самовідчуття (відсутність стабільного образу «я», звідси порожнеча чи відчуття себе хамелеоном). Пограничні механізми стають єдиним і постійним способом виживання психіки.</p>
+    <p>Психіка людини в пограничному стані — не зламаний механізм, а надчутливий інструмент, який просто не навчили калібрувати. Жити в такому стані — щодня звершувати подвиг, справляючись з інтенсивністю почуттів, яку інші навіть не здатні уявити. Завдання — не знищити свою чутливість, а збудувати навколо неї достатній, міцний внутрішній дім і пам'ятати, що крихкість може стати силою — від крихкості до сили, коли навчишся нею керувати.</p>
+    <div class="final-quote">
+      <div class="final-text">Завдання — не знищити свою чутливість, а збудувати навколо неї достатній, міцний внутрішній дім і пам'ятати, що <strong>крихкість може стати силою</strong> — від крихкості до сили, коли навчишся нею керувати.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>

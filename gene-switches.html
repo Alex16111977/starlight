@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<script src="theme.js" data-native="light"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Перемикачі генів</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Перемикачі<br>генів</h1>
+  <p class="page-subtitle">Тіло пам'ятає все: розділ десятий</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Тіло пам'ятає все навіть на найглибшому рівні</div>
+      <div class="hero-author">Бессел ван дер Колк</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Теза, яку заперечують дані -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Теза, яку заперечують дані</h2>
+    <p>Наша галузь відмовилася визнати діагноз травматичного розладу розвитку, мотивуючи це тим, що ідея про значні порушення розвитку через ранній несприятливий досвід тримається радше на клінічній інтуїції, ніж на фактах. Моя позиція протилежна: ранні жорстокість і занедбаність мають довготривалий вплив на розвиток мозку, а дитяче насильство є злом, яке треба визнати й подолати, якщо ми хочемо хоч щось зробити з насильством у суспільстві. Сотні тисяч таких дітей потрапляють у системи опіки, лікарні й в'язниці, а потім у списки одержувачів допомоги, і на них витрачаються величезні кошти без помітного результату.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Діти, за якими стоять діагнози -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Діти, за якими стоять діагнози</h2>
+    <p>Ентоні, якому було два з половиною роки, направили до нашого центру з дитсадка: він кусав і штовхав вихователів, не спав удень, плакав, бився головою об стіну й розгойдувався. Агресія чергувалася зі ступором. Поруч із ним мати постійно казала йому «не поводься як маленький» і відштовхувала, коли він тулився до неї, а ще вважала, що він робить усе це «їй на зло». Вона сама зростала серед байдужості й насильства, а про сина говорила як про копію його нікчемного батька. Без допомоги йому поставили б депресію, реактивний розлад прив'язаності, СДУГ і ПТСР, жоден із яких не пояснив би, що він до смерті наляканий і не вірить, що мати здатна його захистити.</p>
+    <p>П'ятнадцятирічна Марія виросла в закладах опіки (понад двадцять змін місця від восьми років) і пережила різні форми насильства. У документах її описували як мовчазну, мстиву, імпульсивну, схильну до самоушкодження дівчину з вибуховим характером; сама вона називала себе нікому не потрібним сміттям. Після кількох невдалих курсів лікування її залучили до іпотерапії: щодня вона чистила гриву коня й вчилася виїздки. Через два роки вона закінчила школу й вступила до коледжу. За її словами, допомогла їй «кінь, про якого вона піклувалася»: вперше вона почувалася захищеною, мала емоційний зв'язок із живою істотою, а згодом почала говорити з іншими дітьми й педагогом.</p>
+    <p>Тринадцятирічна Вірджинія була всиновлена, потім пройшла через кілька прийомних сімей, зазнала насильства з боку опікунів і потрапила до нас після тринадцяти екстрених госпіталізацій через суїцидальні спроби. Персонал вважав її замкнутою, владною, вибуховою. Сама вона казала, що почувається огидною й хоче померти, а в картці було перелічено біполярний розлад, СДУГ, опозиційний розлад та інші діагнози. Але ким вона є насправді і як допомогти їй жити? Допомогти їм ми зможемо лише тоді, коли правильно визначимо, що з ними відбувається, і зробимо більше, ніж розроблятимемо нові ліки й шукатимемо «ген хвороби».</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Гени, епігенетика і досвід -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Гени, епігенетика і досвід</h2>
+    <p>Спокусливо списати все на «погані гени». Тридцять років досліджень шизофренії, на які витрачено мільйони, не знайшли єдиної генетичної комбінації, як і для інших психічних розладів, а пошуки генів травматичного стресу поки не дали переконливих відповідей. Будь-який результат залежить від спільної дії багатьох генів, а головне, гени не незмінні: життєві події запускають біохімічні сигнали, які вмикають і вимикають їх через приєднання метильних груп, не змінюючи самої структури гена. Це метилювання, і воно може передаватися нащадкам: це епігенетика. Тіло пам'ятає все навіть на найглибшому рівні.</p>
+    <p>Один із найвідоміших експериментів провів Майкл Мінні (університет Макгілла): те, скільки мати-щур вилизує й вичісує щенят у перші дванадцять годин, назавжди визначає роботу стресових систем мозку й навіть конфігурацію понад тисячі генів. Щурята, яких активно вилизували, ростуть сміливішими, виробляють менше гормонів стресу, швидше відновлюються, мають міцніші зв'язки в гіпокампі й краще орієнтуються в лабіринтах. Схожі епігенетичні зміни спостерігалися в дітей, чиї матері під час вагітності пережили довге відключення опалення під час снігової бурі в Квебеку. Мойше Шіф порівняв сотню дітей із найбільш і найменш привілейованих верств Англії: соціальній нерівності відповідали різні епігенетичні профілі, але в дітей, які зазнали жорстокого поводження, в обох групах були однакові зміни у 73 генах.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Макаки Стівена Суомі -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Макаки Стівена Суомі</h2>
+    <p>Стівен Суомі понад сорок років вивчає, як риси характеру передаються в поколіннях макак-резусів, які мають 95% спільних з людьми генів. Вони, як люди, живуть у складних соціальних групах, виживають лише ті, хто підлаштовується під потреби зграї, а їхня прив'язаність нагадує людську: малюкам потрібен тісний контакт із матір'ю, і вони повертаються до неї, коли лякаються. Суомі виділив два проблемні типи: нервових, тривожних мавп і надміру агресивних, яких зграя б'є й уникає. Різницю в збудженні, гормонах стресу й обміні серотоніну видно вже в перші тижні й вона мало змінюється з віком. Нервові особини пізніше пили, щоб заспокоїтися, а агресивні напивалися до непритомності.</p>
+    <p>Але середовище також вирішує. Тривожні самки в стійких групах часто стають дбайливими матерями, а агресивні матері постійно карають дітей і заважають їм заводити друзів. Щоб відділити гени від виховання, дослідники забирали малюків у біологічної матері: ті, кого виростили серед ровесників, чіплялися одне за одного, мало досліджували світ, були нервовими, мали сильніші кортизолові реакції й гірший обмін серотоніну, ніж генетично агресивні мавпи, виховані матерями. Тож для приматів дитячий досвід впливає на фізіологію не менше за спадковість. У мавп і людей є дві варіації гена транспортера серотоніну, довга й коротка. Коротка пов'язана в людей з імпульсивністю, агресією, спробами самогубства й депресією; але мавпи з короткою алеллю, виховані дбайливою матір'ю, поводилися нормально, а виховані з ровесниками ставали агресивними й ризикованими. Так само Алек Рой показав, що люди з короткою алеллю частіше мають депресію лише тоді, коли в дитинстві зазнавали насильства чи занедбаності. Дітям із чуйними батьками генетично зумовлені проблеми не розвиваються, і навіть батьки з генетичними вразливостями можуть захистити наступне покоління, якщо мають підтримку.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Національна мережа з дитячого травматичного стресу -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Національна мережа з дитячого травматичного стресу</h2>
+    <p>Майже для кожної хвороби існує ініціативна група, але до 2001 року, коли Конгрес затвердив Національну мережу з дитячого травматичного стресу, не було масштабної організації для дослідження й лікування дитячої травми. У 1998 році мене запросив фонд Натана Камінгса, зацікавлений впливом травми на навчання. Я зазначив, що знання вже є, але немає платформи для їх застосування й ніхто систематично не навчає вихователів, психологів і соціальних працівників особливостей розвитку травмованих дітей. За кілька місяців ми зібрали експертів (серед них представників міністерств охорони здоров'я та юстиції й радника сенатора Теда Кеннеді) й вирішили, що потрібна національна організація, яка займатиметься і дослідженнями, і навчанням учителів, суддів, священників, прийомних батьків та працівників пробації. Законопроєкт ухвалили сенатом за двопартійної підтримки, і з 2001 року мережа зросла із сімнадцяти організацій до понад 150 центрів по всій країні, з понад 8300 партнерами.</p>
+    <p>Дані майже двох тисяч дітей і дорослих підтвердили наші підозри: більшість зросла в вкрай неблагополучних родинах, понад половина зазнавала емоційного насильства чи опіки дорослого, що не міг задовольняти їхні потреби, майже половина тимчасово втрачала опікуна, близько 50% були свідками домашнього насильства, а чверть самі зазнали сексуального чи фізичного насильства. Вони виявилися схожими на дорослих пацієнтів Феліті з високими балами за шкалою ACE.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Сила діагнозу -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Сила діагнозу</h2>
+    <p>У 1970-х не існувало способу класифікувати симптоми сотень тисяч ветеранів В'єтнаму, і фахівці імпровізували. Визнання ПТСР у DSM-3 (1980) призвело до масштабних досліджень і дієвих методів лікування, корисних не тільки ветеранам, а й постраждалим від зґвалтування, нападів і аварій: лише у 2007–2010 роках Міністерство оборони витратило понад 2,7 млрд доларів на лікування й дослідження ПТСР. Діагноз ПТСР має чіткий «сюжет»: людину раптово захльостує жахлива подія, яка далі повторюється у спогадах і змінює нервову систему. Він підходить і дитині після разового потрясіння (укусу собаки чи стрілянини в школі), якщо вона живе в безпеці й має підтримку.</p>
+    <p>Проте 82% травмованих дітей мережі не відповідають критеріям ПТСР. Через замкнутість, підозріливість чи агресію вони отримують діагнози «опозиційно-зухвалий розлад» чи «деструктивний розлад дисрегуляції настрою», а до двадцяти років накопичують чотири-п'ять і більше безглуздих ярликів. Лікування, якщо воно є, залежить від моди (препарати, поведінкова чи експозиційна терапія) й часто лише шкодить.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Травматичний розлад розвитку -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Травматичний розлад розвитку</h2>
+    <p>Ми проаналізували базу майже двадцяти тисяч дітей і 130 найактуальніших досліджень із даними про понад сто тисяч людей, а протягом чотирьох років робоча група з дванадцяти фахівців запропонувала діагноз «травматичний розлад розвитку». Спільні риси цих дітей: гостре порушення емоційної регуляції (настрій миттєво перемикається, спалахи люті й паніки змінюються відстороненістю й дисоціацією, а заспокоїтися й описати почуття вони не можуть); проблеми з увагою й концентрацією; труднощі у ставленні до себе й до інших. Біологічна система, що постійно накачує тіло гормонами стресу, породжує проблеми зі сном, головні болі, необґрунтований біль, підвищену чутливість до дотиків і звуків, труднощі з мовою й дрібною моторикою. Щоб зняти напругу, діти гойдаються або завдають собі шкоди. Усю енергію вони витрачають на самоконтроль, тому їм важко вчитися, а через покинутість вони чіпляються за людей, навіть за кривдників, вважають себе нікчемними й щиро себе ненавидять, не довіряють нікому, і їм важко заводити друзів.</p>
+    <p>Ми опублікували перші статті, створили оцінювальну шкалу й зібрали дані про понад 350 тисяч дітей та їхніх батьків. У лютому 2009 року ми подали пропозицію до Американської асоціації, зазначивши, що через відсутність точного діагнозу такі діти мають у середньому три-вісім супутніх діагнозів, а це марнує кошти, заважає розумінню причин і веде до лікування лише окремих складових, а не цілого. Керівники програм психічного здоров'я з усієї країни підтримали нас листом. Проте Мет'ю Фрідман, голова відповідного підкомітету DSM, повідомив, що в DSM-5 цього діагнозу, найімовірніше, не буде: комісія вирішила, що немає «порожньої діагностичної ніші»; мільйон дітей на рік, які зазнають жорстокості й занедбаності, нею не вважалися. А твердження про відсутність проспективних досліджень хибне: ми долучили до пропозиції кілька таких.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Два проспективні дослідження -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Два проспективні дослідження</h2>
+    <p>Алан Сруф із колегами з 1975 року майже тридцять років вивчав 180 дітей і їхні родини в Міннесоті: бідних першороділь, за якими спостерігали від трьох місяців до народження дитини, а за дітьми аж до їхнього тридцятиріччя. Ні характер матері, ні неврологічні особливості, ні IQ, ні темперамент дитини наперед не визначали, чи розвинуться серйозні поведінкові проблеми. Ключовим був характер взаємин між батьками й дитиною. Нечутливість і нав'язливість батьків у шість місяців передбачали проблеми з гіперактивністю й увагою в садку й далі. Дорослі не лише підтримують прийнятний рівень збудження дитини, а й допомагають їй розвинути власну здатність його регулювати. Діти, яких регулярно доводили до перезбудження, не навчилися керувати системами збудження й гальмування й очікували втрати контролю; до пізнього підліткового віку половина з них мала психічні проблеми. Діти непередбачуваних батьків були тривожними, вимогливими й боялися змін. Жорстоке поводження в ранньому віці вело до проблем зі шкільною поведінкою, труднощів із ровесниками й браку співчуття, а далі до порочного кола ізоляції й несхвалення. Найважливішим фактором психологічної стійкості була захищеність поруч із дорослими в перші два роки життя; за словами Сруфа, стійкість дорослого можна передбачити навіть із того, наскільки милими мати вважала дитину у два роки.</p>
+    <p>Друге дослідження, Франка Патнема й Пенелопи Трікет (з 1986 року), стежило за 84 дівчатками, достовірно зазнавшими сексуального насильства з боку члена родини, і контрольною групою ровесниць. Двадцять років їх обстежували шість разів, і 96% учасниць залишилися до кінця. Пережили насильство дівчата мали значно більше негативних наслідків: когнітивні порушення, депресію, дисоціацію, проблеми зі статевим розвитком, ожиріння, схильність до самоушкодження, більше проблем зі здоров'ям, частіше кидали школу, мали порушені реакції стресових гормонів і різні, на вигляд не пов'язані діагнози. Через три роки контрольні дівчата, згадуючи найгірше за рік, знову виявляли хвилювання, а постраждалі були відчужені й нічого не виражали; і рівень кортизолу в них був значно нижчий. З часом тіло пристосовується до хронічної травми, а емоційний ступор заважає оточенню помітити тривогу, та й сама дитина може її не помічати, тому не вживає захисних заходів. Постраждалі рідко мали друзів до статевого дозрівання, пропускали «школу» дівчачих дружніх стосунків, зрад і примирень, яка навчає соціальних навичок, і не мали підтримувальної групи. Статеве дозрівання в них починалося майже на півтора року раніше, а рівень статевих гормонів був у три-п'ять разів вищий. Ці дані допомагають зрозуміти підлітків у нашому центрі, наприклад пацієнтку, яка після втечі з групового дому знову стала жертвою насильства. Такі підлітки не вміють висловлювати потреби й продумувати захист, живуть у світі дій, і пояснити їхню поведінку ярликами не вдається.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- DSM-5: збірна солянка ярликів -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">DSM-5: збірна солянка ярликів</h2>
+    <p>Коли DSM-5 вийшов у травні 2013 року, він мав близько трьох сотень розладів і 945 сторінок, а також нові категорії для проблем тяжкої дитячої травми (деструктивну дисрегуляцію настрою, несуїцидальне самоушкодження, переривчастий вибуховий розлад тощо). До кінця XIX століття фахівці класифікували хвороби за видимими проявами, поки Пастер і Кох не показали, що багато хвороб викликають невидимі мікроорганізми, і медицина стала лікувати причини. DSM-5, на мою думку, відкотив нашу галузь до практики початку минулого століття, описуючи поверхневі явища й ігноруючи першопричини. Перевірки в американському науковому журналі показали, що йому бракує надійності, тобто відтворюваності результатів; проте посібник вийшов за графіком, а асоціація, що заробила на попередньому виданні 400 мільйонів доларів, розраховувала на схожий прибуток. Коли фахівці не можуть домовитися, що з пацієнтом, лікування буде хибним: не видаляють апендикс при каменях у нирках, не можна ставити опозиційний розлад там, де корінь поведінки в захисті від реальної небезпеки. Британське психологічне товариство, асоціації психологів і консультантів скаржилися, що DSM-5 шукає джерело страждань у самих людях, не помічаючи соціальної етіології. Ігнорувати покинутих і скривджених дітей і шукати лише фізіологічні відхилення та «несправні гени» — це тупик, як колись звинувачення «жахливих матерів».</p>
+    <p>У квітні 2013-го директор Національного інституту психічного здоров'я Томас Інсел оголосив, що інститут більше не підтримуватиме діагностику за симптомами DSM, і пов'язав фінансування з проєктом «Критерії дослідницьких доменів» (RDoC), що розглядає розлади як хвороби мозку, і сподівається на точну медицину, як у лікуванні раку. Але психічні розлади не можна порівнювати з раком: люди соціальні істоти, наш мозок, розум і тіло налаштовані на взаємодію, і саме ці механізми ламаються при більшості психічних розладів. Нейронні зв'язки мають значення, але не можна ігнорувати стосунки, які в дитинстві формують розум і мозок. Щоб зрозуміти, як ми стаємо собою, мало переліку складників: потрібно розуміти процес розвитку й сумісний вплив усіх чинників.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що змінить діагноз і що робити -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Що змінить діагноз і що робити</h2>
+    <p>Після відмови асоціації тисячі фахівців надіслали до нашого центру невеликі пожертви, і за кілька років ми опитали сотні дітей, біологічних і прийомних батьків та працівників у п'яти центрах. Діагноз дав би змогу сфокусувати дослідження, лікування й фінансування на головному: глибокій емоційній і біологічній дисрегуляції, зруйнованій чи нездоровій прив'язаності, проблемах із увагою та труднощах самоідентифікації. Ці проблеми охоплюють практично всі діагностичні категорії й виходять за їхні межі, і без роботи з ними успіху не буде. Наше завдання — використати знання про нейропластичність, щоб перепрограмувати мозок людей, яких життя навчило бачити в оточенні загрозу, а себе вважати безпорадними. Соціальна підтримка є біологічною потребою, а не альтернативою, і лежить в основі профілактики й лікування. Усвідомлення впливу травми на розвиток дитини не має вести до звинувачення батьків: усі батьки потребують допомоги, і майже всі розвинені країни, окрім США, гарантують її сім'ям.</p>
+    <p>Джеймс Хекман, лауреат Нобелівської премії, показав, що якісні програми для малечі, які залучають батьків, із часом з надлишком окупаються. Психолог Девід Олдс у 1970-х запустив у Балтіморі програму домашніх візитів медсестер до матерів у бідних родинах, і через двадцять років діти таких матерів були здоровішими, рідше зазнавали жорстокості, частіше закінчували школу, рідше потрапляли до в'язниці й краще заробляли. Економісти підрахували, що кожен вкладений долар заощаджує сім доларів на допомозі, охороні здоров'я, лікуванні залежностей і в'язницях. До мене часто звертаються чиновники скандинавських країн, Британії, Німеччини та Нідерландів по новітні напрацювання щодо лікування травмованих дітей, адже там уже є гарантована мінімальна зарплата, оплачувана відпустка для обох батьків і якісні дитсадки. У Норвегії у в'язницях 71 особа на 100 тисяч населення, у Нідерландах 81, у США 781, хоча рівень злочинності й вартість медицини там нижчі; 70% в'язнів Каліфорнії зростали в прийомних сім'ях, а США витрачають на ув'язнених 84 мільярди доларів на рік, приблизно 44 тисячі на людину. Північноєвропейські країни натомість допомагають батькам виховувати дітей у безпечному й передбачуваному середовищі, і результати успішності й злочинності свідчать про ефективність таких інвестицій.</p>
+    <div class="final-quote">
+      <div class="final-text">Соціальна підтримка є <strong>біологічною потребою</strong>, а не альтернативою, і лежить в основі профілактики й лікування.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>

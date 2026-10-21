@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<script src="theme.js" data-native="light"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Тіло і здоров'я</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;scroll-behavior:smooth}
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.28) 0%,rgba(40,80,200,.16) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+.nav-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px}
+.nav-card{background:rgba(52,58,94,.10);border:1px solid rgba(52,58,94,.22);border-radius:20px;padding:32px 28px;text-decoration:none;transition:all .4s;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:12px;opacity:0;animation:riseIn .8s ease forwards;box-shadow:0 4px 24px rgba(0,0,0,.3),inset 0 1px 0 rgba(52,58,94,.08)}
+.nav-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.5),transparent);opacity:1;transition:opacity .4s}
+.nav-card:hover{background:rgba(52,58,94,.16);border-color:rgba(52,58,94,.35);transform:translateY(-6px);box-shadow:0 8px 32px rgba(0,0,0,.4),0 0 20px rgba(138,176,255,.08),inset 0 1px 0 rgba(52,58,94,.12)}
+.nav-card:hover::before{opacity:1}
+.nav-card:hover .nav-card-title{color:#fff}
+.nav-card:hover .nav-card-arrow{opacity:1;transform:translateX(4px)}
+.nav-card:nth-child(1){animation-delay:.05s}
+.nav-card:nth-child(2){animation-delay:.1s}
+.nav-card:nth-child(3){animation-delay:.15s}
+.nav-card:nth-child(4){animation-delay:.2s}
+.nav-card:nth-child(5){animation-delay:.25s}
+.nav-card:nth-child(6){animation-delay:.3s}
+.nav-card:nth-child(7){animation-delay:.35s}
+.nav-card:nth-child(8){animation-delay:.4s}
+.nav-card:nth-child(9){animation-delay:.45s}
+.nav-card:nth-child(10){animation-delay:.5s}
+.nav-card:nth-child(n+11){animation-delay:.55s}
+.nav-card-emoji{font-size:32px;margin-bottom:4px}
+.nav-card-top{display:flex;align-items:center;justify-content:space-between}
+.nav-card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:22px;letter-spacing:.05em;color:#fff;transition:color .4s}
+.nav-card-arrow{font-size:14px;color:rgba(52,58,94,.85);opacity:.5;transition:all .4s;font-weight:200}
+.nav-card-desc{font-size:12px;font-weight:300;line-height:1.7;color:rgba(52,58,94,.75)}
+.nav-card-more{align-self:flex-start;margin-top:2px;padding:5px 13px;border-radius:100px;background:rgba(122,95,190,.10);border:1px solid rgba(122,95,190,.28);font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:#3f4a9e;transition:all .4s}
+.nav-card:hover .nav-card-more{background:rgba(122,95,190,.18);border-color:rgba(122,95,190,.5)}
+/* Divider */
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+/* Footer */
+.sig{text-align:center;padding:40px 0 60px;position:relative;z-index:10;display:flex;align-items:center;gap:16px;justify-content:center}
+.sig-line{width:40px;height:1px;background:rgba(52,58,94,.15)}
+.sig-text{font-size:11px;font-weight:400;letter-spacing:0.16em;color:#242844;text-transform:uppercase;white-space:nowrap}
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+/* sl-light-v1 — світла тема */
+html{color:rgba(52,58,94,.9)!important}
+.nav-card-title,.nav-card:hover .nav-card-title{color:#242844!important}
+.nav-card-arrow{color:rgba(52,58,94,.85)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.content{position:relative;z-index:10;max-width:960px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+.intro{opacity:0;animation:riseIn 1s .9s ease forwards;margin-bottom:64px;text-align:center;max-width:680px;margin-left:auto;margin-right:auto}
+.intro p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(52,58,94,.82);margin-bottom:14px}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section{margin-bottom:8px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.06em;color:#242844;margin-bottom:6px;position:relative;padding-left:20px;line-height:1.25}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#5261c2;box-shadow:0 0 12px rgba(82,97,194,.4)}
+.category-label{font-size:11px;font-weight:400;letter-spacing:.16em;color:rgba(52,58,94,.78);text-transform:uppercase;margin:0 0 20px 20px;line-height:1.7}
+.section .nav-grid{margin-top:0}
+.jump{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:0 auto 48px;max-width:820px}
+.jump a{font-size:12px;font-weight:400;letter-spacing:.04em;color:#3f4a9e;text-decoration:none;padding:6px 14px;border-radius:100px;background:rgba(122,95,190,.10);border:1px solid rgba(122,95,190,.28);transition:all .3s}
+.jump a:hover{background:rgba(122,95,190,.18);border-color:rgba(122,95,190,.5)}
+@media(max-width:560px){.content{padding:40px 20px 80px}.header{margin-bottom:48px}.category-label{margin-left:0}.section-title{padding-left:16px}.jump{margin-bottom:36px}}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Тіло і здоров'я</h1>
+  <p class="page-subtitle">Повсякдення, яке тримає, і тіло без міфів</p>
+
+  <div class="intro">
+    <p>Від сну й харчування до краси, циклу й руху — усе, з чого складається звичайний день у тілі. Обери блок і почни з того, що зараз найближче.</p>
+  </div>
+
+  <nav class="jump" aria-label="Блоки на сторінці"><a href="#b1"><span class="sl-emo">😴</span> Сон і ритм доби</a><a href="#b2"><span class="sl-emo">🔋</span> Енергія, цикл, гормони</a><a href="#b3"><span class="sl-emo">🥗</span> Харчування й кухні світу</a><a href="#b4"><span class="sl-emo">⚖️</span> Вага, кето, голодування</a><a href="#b5"><span class="sl-emo">🥣</span> Їжа й емоції</a><a href="#b6"><span class="sl-emo">🌺</span> Краса</a><a href="#b7"><span class="sl-emo">🫀</span> Тіло й розум</a><a href="#b8"><span class="sl-emo">🧬</span> Здоров'я без міфів</a></nav>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" id="b1">
+    <h2 class="section-title"><span class="sl-emo">😴</span> Сон і ритм доби</h2>
+    <p class="category-label">Як спати, прокидатися і жити за своїм годинником</p>
+    <div class="nav-grid">
+      <a class="nav-card" href="sleep.html">
+        <div class="nav-card-emoji">😴</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Сон</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Якість сну, ритм і його вплив на емоційний стан</div>
+      </a>
+      <a class="nav-card" href="sleep-paralysis.html">
+        <div class="nav-card-emoji">🌙</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Сонний параліч</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Страшно, але не небезпечно — що це і як зупинити</div>
+      </a>
+      <a class="nav-card" href="dreams.html">
+        <div class="nav-card-emoji">💭</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Сни</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Про що говорить твій мозок уночі — і як їх читати</div>
+      </a>
+      <a class="nav-card" href="sleep-deprivation.html">
+        <div class="nav-card-emoji">😪</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Хронічне недосипання</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Що воно реально робить з мозком — і як відновлюватись</div>
+      </a>
+      <a class="nav-card" href="chronotypes.html">
+        <div class="nav-card-emoji">⏰</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Жайворонки і сови</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Наука про хронотипи — чому світ налаштований проти сов</div>
+      </a>
+      <a class="nav-card" href="chronobiology.html">
+        <div class="nav-card-emoji">⏰</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Хронобіологія</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Внутрішній годинник і як з ним жити</div>
+      </a>
+      <a class="nav-card" href="morning.html">
+        <div class="nav-card-emoji">🌅</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Ранок</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Як почати день без стресу й поспіху</div>
+      </a>
+      <a class="nav-card" href="seasons.html">
+        <div class="nav-card-emoji">🍂</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Сезонність</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Осінь без депресії, весняне оновлення і літня тривога</div>
+      </a>
+      <a class="nav-card" href="seasonal-depression.html">
+        <div class="nav-card-emoji">❄️</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Сезонна депресія</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Чому взимку важче</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" id="b2">
+    <h2 class="section-title"><span class="sl-emo">🔋</span> Енергія, цикл, гормони</h2>
+    <p class="category-label">Чому настрій і сили змінюються — і що з цим робити</p>
+    <div class="nav-grid">
+      <a class="nav-card" href="female-cycle.html">
+        <div class="nav-card-emoji">🌸</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Жіночий цикл і психологія</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Як він впливає на настрій і енергію</div>
+      </a>
+      <a class="nav-card" href="hormones-mood.html">
+        <div class="nav-card-emoji">🧬</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Гормони і настрій</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Естроген, прогестерон, кортизол</div>
+      </a>
+      <a class="nav-card" href="energy.html">
+        <div class="nav-card-emoji">🔋</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Енергія та вигорання</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Як не доводити себе до виснаження</div>
+      </a>
+      <a class="nav-card" href="chronic-fatigue.html">
+        <div class="nav-card-emoji">😴</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Хронічна втома</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Коли втомлений навіть після сну — що тіло намагається сказати</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" id="b3">
+    <h2 class="section-title"><span class="sl-emo">🥗</span> Харчування й кухні світу</h2>
+    <p class="category-label">Базові принципи, японська й середземноморська кухні, кава й шоколад</p>
+    <div class="nav-grid">
+      <a class="nav-card" href="nutrition.html">
+        <div class="nav-card-emoji">🥗</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Як правильно харчуватись</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Базові принципи: тарілка, нутрієнти, режим, вода — без фанатизму</div>
+      </a>
+      <a class="nav-card" href="food-plan.html">
+        <div class="nav-card-emoji">🌿</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Мій план харчування</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Як правильно поєднувати: льон, чіа, хумус, кефір, горіхи, шоколад і все інше</div>
+      </a>
+      <a class="nav-card" href="breakfast.html">
+        <div class="nav-card-emoji">🍳</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Сніданок</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Час вітру, жири зранку і вечірній голод: чому сніданок задає режим на весь день — і п'ять продуктів, які його збивають</div>
+      </a>
+      <a class="nav-card" href="myths-food.html">
+        <div class="nav-card-emoji">🥩</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Кето, голодування і міфи про їжу</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Нутриціолог відповідає: чому кето — це ліки, а не стиль життя, і що насправді розганяє метаболізм</div>
+      </a>
+      <a class="nav-card" href="japan-rules.html">
+        <div class="nav-card-emoji">🍱</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">10 японських правил</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Японія проти США: цукор 15 кг проти 70, об'єм замість калорій, тепла вода перед їжею і подача в маленьких мисочках</div>
+      </a>
+      <a class="nav-card" href="mediterranean-diet.html">
+        <div class="nav-card-emoji">🫒</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Середземноморська дієта</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Наука про довголіття — від селян Криту до блакитних зон</div>
+      </a>
+      <a class="nav-card" href="japanese-cuisine.html">
+        <div class="nav-card-emoji">🍣</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Японська кухня</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Чому вона найздоровіша у світі — філософія тарілки і "хара хачі бу"</div>
+      </a>
+      <a class="nav-card" href="coffee.html">
+        <div class="nav-card-emoji">☕</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Кава</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Як маленьке зерно змінило світову економіку — від ефіопських кіз до Starbucks</div>
+      </a>
+      <a class="nav-card" href="chocolate.html">
+        <div class="nav-card-emoji">🍫</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Шоколад</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Від валюти ацтеків до плитки в магазині — тисячолітня історія</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" id="b4">
+    <h2 class="section-title"><span class="sl-emo">⚖️</span> Вага, кето, голодування</h2>
+    <p class="category-label">Без тортур і міфів — що працює</p>
+    <div class="nav-grid">
+      <a class="nav-card" href="weight-loss.html">
+        <div class="nav-card-emoji">⚖️</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Схуднути здорово</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Без тортур і повернення назад — наука про дефіцит, білок, сон і психологію зривів</div>
+      </a>
+      <a class="nav-card" href="weight-truth.html">
+        <div class="nav-card-emoji">🩺</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Правда про вагу</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Про целюліт, вісцеральний жир, оземпік, голодування і план на 4 тижні</div>
+      </a>
+      <a class="nav-card" href="fat-burning-foods.html">
+        <div class="nav-card-emoji">🥒</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Продукти, що «спалюють жир»</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Міф про негативну калорійність — і сім продуктів, які працюють інакше</div>
+      </a>
+      <a class="nav-card" href="ketosis.html">
+        <div class="nav-card-emoji">🔥</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Кетоз</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Чому тіло любить спалювати жир замість цукру</div>
+      </a>
+      <a class="nav-card" href="keto-start.html">
+        <div class="nav-card-emoji">🥑</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Кето-старт</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Покроковий план переходу на кетогенну дієту</div>
+      </a>
+      <a class="nav-card" href="fasting-window.html">
+        <div class="nav-card-emoji">⏳</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Вікно голодування</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Яку схему інтервального голодування обрати — і як до неї прийти поступово</div>
+      </a>
+      <a class="nav-card" href="fat-bomb.html">
+        <div class="nav-card-emoji">🧈</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Жирова бомба</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Приклади страв на кето — і критерій справжнього кетозу</div>
+      </a>
+      <a class="nav-card" href="keto-details.html">
+        <div class="nav-card-emoji">🧂</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Деталі, які важать</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Найважливіші щоденні поради щодо кето-дієти та інтервального голодування</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" id="b5">
+    <h2 class="section-title"><span class="sl-emo">🥣</span> Їжа й емоції</h2>
+    <p class="category-label">Чому ми їмо не тільки від голоду</p>
+    <div class="nav-grid">
+      <a class="nav-card" href="food.html">
+        <div class="nav-card-emoji">🍽️</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Їжа</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Усвідомлене харчування та зв'язок тіла з емоціями</div>
+      </a>
+      <a class="nav-card" href="eating-mind.html">
+        <div class="nav-card-emoji">🥣</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Їжа: мозок і емоції</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Чому ми їмо не тільки від голоду</div>
+      </a>
+      <a class="nav-card" href="eating-relationship.html">
+        <div class="nav-card-emoji">⚖️</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Стосунки і межі</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Здорово — і коли вже стає важко</div>
+      </a>
+      <a class="nav-card" href="eating-mindful.html">
+        <div class="nav-card-emoji">🌿</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Усвідомленість і тіло</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Дім, у якому ти живеш</div>
+      </a>
+      <a class="nav-card" href="eating-disorders.html">
+        <div class="nav-card-emoji">🥄</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Харчова залежність</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Гіперконтроль, перфекціонізм, фасадна сім'я — і чому прибрати симптом без причини не працює</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" id="b6">
+    <h2 class="section-title"><span class="sl-emo">🌺</span> Краса</h2>
+    <p class="category-label">Зсередини й без фанатизму</p>
+    <div class="nav-grid">
+      <a class="nav-card" href="beauty.html">
+        <div class="nav-card-emoji">🌺</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Краса зсередини</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Дотик, ритуали, дзеркало, сон і чесний догляд</div>
+      </a>
+      <a class="nav-card" href="beauty-deeper.html">
+        <div class="nav-card-emoji">💛</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Краса. Глибше</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Культурні стандарти, вік, прийняття і вираження себе</div>
+      </a>
+      <a class="nav-card" href="beauty-natural.html">
+        <div class="nav-card-emoji">🌿</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Природна краса</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Що це насправді — і чи існує вона</div>
+      </a>
+      <a class="nav-card" href="beauty-minimal.html">
+        <div class="nav-card-emoji">🤍</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Мінімалізм у красі</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Менше продуктів — більше результату</div>
+      </a>
+      <a class="nav-card" href="beauty-food.html">
+        <div class="nav-card-emoji">🥑</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Їжа і шкіра</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Зв'язок зсередини — що шкіра любить і ненавидить</div>
+      </a>
+      <a class="nav-card" href="beauty-sleep.html">
+        <div class="nav-card-emoji">😴</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Сон і краса</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Чому це найкращий засіб — і безкоштовний</div>
+      </a>
+      <a class="nav-card" href="beauty-identity.html">
+        <div class="nav-card-emoji">💫</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Маніфестація зовнішності</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Зовнішність не маніфестують напряму: сприйняття, нервова система та ідентичність — і чому щаслива людина не буває непривабливою</div>
+      </a>
+      <a class="nav-card" href="style.html">
+        <div class="nav-card-emoji">🌺</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Краса і стиль</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Знайти свій стиль, дистанція з красою, догляд як любов</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" id="b7">
+    <h2 class="section-title"><span class="sl-emo">🫀</span> Тіло й розум</h2>
+    <p class="category-label">Психосоматика, рух, медитація</p>
+    <div class="nav-grid">
+      <a class="nav-card" href="bodymind.html">
+        <div class="nav-card-emoji">🫀</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Психологія тіла</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Стрес, психосоматика, дихання, мова тіла — як тіло й розум розмовляють</div>
+        <div class="nav-card-more">+5 сторінок</div>
+      </a>
+      <a class="nav-card" href="movement.html">
+        <div class="nav-card-emoji">🏃</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Рух і тіло</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Фізична активність як інструмент психічного здоров'я</div>
+      </a>
+      <a class="nav-card" href="meditation.html">
+        <div class="nav-card-emoji">🧘</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Медитація</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Тренування уваги, не порожньої голови</div>
+      </a>
+      <a class="nav-card" href="vipassana.html">
+        <div class="nav-card-emoji">👁️</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Віпассана</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Давня техніка спостереження: мораль, концентрація, мудрість — і покроковий гайд</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" id="b8">
+    <h2 class="section-title"><span class="sl-emo">🧬</span> Здоров'я без міфів</h2>
+    <p class="category-label">Як влаштоване тіло: імунітет, гени, мікробіом — і перша допомога</p>
+    <div class="nav-grid">
+      <a class="nav-card" href="microbiome.html">
+        <div class="nav-card-emoji">🦠</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Мікробіом</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Трильйони бактерій у тобі, які керують настроєм, апетитом і імунітетом</div>
+      </a>
+      <a class="nav-card" href="blood-types.html">
+        <div class="nav-card-emoji">🩸</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Група крові</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Що вона насправді означає — і чому варто знати свою</div>
+      </a>
+      <a class="nav-card" href="epigenetics.html">
+        <div class="nav-card-emoji">🧬</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Епігенетика</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Чому гени — не вирок, а лише ноти, з яких ти граєш свою музику</div>
+      </a>
+      <a class="nav-card" href="genes.html">
+        <div class="nav-card-emoji">🧬</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Гени</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Що це таке і чи можна змінити долю — епігенетика, реальні цифри</div>
+      </a>
+      <a class="nav-card" href="immunity.html">
+        <div class="nav-card-emoji">🌡️</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Чому ми хворіємо</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Як насправді працює імунітет — дві лінії оборони, міфи, що допомагає</div>
+      </a>
+      <a class="nav-card" href="antibiotics.html">
+        <div class="nav-card-emoji">💊</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Антибіотики</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Чому їх не можна їсти просто так — резистентність і правила</div>
+      </a>
+      <a class="nav-card" href="allergies.html">
+        <div class="nav-card-emoji">🤧</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Алергія</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Чому її стає все більше — і що з цим робити</div>
+      </a>
+      <a class="nav-card" href="firstaid.html">
+        <div class="nav-card-emoji">🚑</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Перша допомога</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Що робити в критичних ситуаціях — без паніки</div>
+      </a>
+      <a class="nav-card" href="folk-remedies.html">
+        <div class="nav-card-emoji">🌿</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Народні способи</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Що з бабусиних рецептів реально працює — з вердиктом науки</div>
+        <div class="nav-card-more">+5 сторінок</div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="sig"><div class="sig-line"></div><span class="sig-text">Est. 2026</span><div class="sig-line"></div></div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+
+/* Animate cards on scroll */
+const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.style.animationPlayState='running'}})},{threshold:.1});
+document.querySelectorAll('.nav-card').forEach(el=>{el.style.animationPlayState='paused';observer.observe(el)});
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<script src="theme.js" data-native="light"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Розширена версія тебе</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Розширена<br>версія тебе</h1>
+  <p class="page-subtitle">Тіло пам'ятає все: розділ двадцятий</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Акторська гра — спосіб використати тіло, щоб знайти своє місце в житті</div>
+      <div class="hero-author">Бессел ван дер Колк</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Епіграф і історія мого сина -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Епіграф і історія мого сина</h2>
+    <p>Епіграф належить Тіні Пакер: суть акторської гри не в тому, щоб вжитися в роль, а в тому, щоб знайти цього персонажа в собі; він — розширена версія тебе самого.</p>
+    <p>Багатьох знайомих мені вчених до пошуку нових способів лікування надихали хвороби власних дітей. Одужання мого сина Ніка від загадкової хвороби, яку за браком точнішої назви називають синдромом хронічної втоми, переконало мене в лікувальних можливостях театру. Більшу частину сьомого й восьмого класів він провів у ліжку, виснажений хворобою й ліками, дедалі більше ненавидів себе й відчував ізоляцію. Мати помітила невеликий підйом сил близько п'ятої вечора, і ми записали його на вечірнє заняття з театру імпровізації. Він прив'язався до групи, отримав першу роль міцного хлопця, готового до бійки, і я бачив, як удома він походжає, приміряючи роль впливової людини. Роль Фонзі в «Щасливих днях», увага дівчат і визнання глядачів стали поворотним моментом його одужання.</p>
+    <p>На відміну від психотерапевтів, що говорили з ним про гнітючі почуття, театр дав змогу фізично відчути, як це — бути кимось іншим, а не надмірно чутливим хлопчиком із проблемами навчання. Ставши членом групи, він на тілесному рівні відчув себе сильним і вмілим, і я переконаний, що ця нова версія спрямувала його до життя продуктивного, люблячого дорослого. Наше відчуття належності й контролю визначається стосунками з тілом та його ритмами: сном, їжею, тим, як ми сидимо й ходимо. Щоб віднайти голос, треба бути у власному тілі, дихати на повні груди й мати зв'язок із внутрішніми відчуттями. Це протилежність і дисоціації, коли людина залишає тіло, і депресії, коли лежиш перед телевізором. Акторська гра — спосіб використати тіло, щоб знайти своє місце в житті.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Театр війни -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Театр війни</h2>
+    <p>Перетворення Ніка було не першим, коли я бачив зцілювальну силу театру. 1988 року троє моїх ветеранів із ПТСР раптом виявили приплив життєвих сил і оптимізму, а їхні родинні стосунки налагодилися; я зарахував це собі в заслугу, а потім дізнався, що всі троє брали участь в одній театральній постановці. Щоб привернути увагу до проблем бездомних ветеранів, вони вмовили драматурга Девіда Мемета щотижня писати з ними сценарій за їхнім досвідом, а Мемет запросив Аль Пачино, Дональда Сазерленда й Майкла Дж. Фокса на вечір «Начерки про війну». Можливість вийти на сцену з професійними акторами, розповісти про війну й прочитати свої вірші була для них продуктивнішою за будь-яку психотерапію.</p>
+    <p>Із давніх часів люди використовували колективні церемонії, щоб упоратися з найсильнішими почуттями. Давньогрецький театр виріс з релігійних ритуалів із танцями, співами й постановками міфів, а в V столітті до нашої ери посідав центральне місце в громадському житті; глядачі сиділи півколом, щоб бачити емоції одне одного. Грецька драма могла слугувати ритуальним відновленням цілісності психіки ветеранів: Есхіл шість разів побував на війні, Софокл був генералом у війнах проти Персії, а його «Аякс», що завершується смертю героя, описує травматичний стрес мов за підручником. Військова служба була обов'язковою для афінян, тож і публіка, і виконавці ролей були солдатами.</p>
+    <p>2008 року письменник і режисер Браян Доерріс організував читання сцени з «Аякса» для п'ятисот морських піхотинців у Сан-Дієго й був вражений тим, як її сприйняли. Так виник проект «Театр війни»: за фінансування Міністерства оборони США п'єсу поставили понад 200 разів, а після вистав відбувається загальне обговорення. Я був на читанні в Кембриджі (Массачусетс) невдовзі після публікації даних про 27-відсоткове зростання кількості самогубств серед ветеранів: ветерани В'єтнаму, дружини військових, колишні військові з Іраку й Афганістану вишикувалися перед мікрофоном і, цитуючи рядки п'єси, розповідали про безсонні ночі, залежність і відчуження від рідних. Після події глядачі обіймалися й розмовляли у вестибюлі. Як сказав Доерріс, кожному, хто стикався з великим болем чи смертю, грецька драматургія зрозуміла.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Колективний ритм -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Колективний ритм</h2>
+    <p>Колективні рухи й музика надають життю ширшого сенсу за межами особистої долі. Релігійні ритуали повсюдно містять ритмічні рухи: молитви біля Стіни плачу, спів на месі, медитація в русі, мусульманські молитви п'ять разів на день. Музика була опорою руху за громадянські права: пісня «Ми переможемо» об'єднувала людей, які поодинці налякані, а разом стають гучними захисниками прав. Силу колективних ритмів я бачив на слуханнях архієпископа Десмонда Туту для Комісії правди й примирення в Південній Африці 1996 року, де все супроводжувалося піснями й танцями. Свідки розповідали про немислимі речі, а коли не могли впоратися з емоціями, Туту переривав виступ, і всі разом молилися, співали й танцювали, доки свідок не опановував себе. Це дозволяло періодично поринати в жах і зрештою знайти слова. Те, що вдалося уникнути кривавої помсти, я вважаю заслугою Туту й комісії.</p>
+    <p>Книга Вільяма Макніла «Keeping Together in Time» про історичну роль танцю й військового вишколу, де він називав це м'язовим зв'язком, відповіла на питання, що давно не давало мені спокою: як голландські селяни й рибалки здобули незалежність від Іспанської імперії. Партизанська війна здавалася приреченою, бо погано дисципліновані солдати дезертирували під вогнем. Усе змінилося, коли очільником став принц Моріс Оранський: прочитавши римський посібник з тактики, він дізнався, що генерал Лікург запровадив стройовий крок, якому Плутарх приписував непереможність римлян, і наказав ввести стройову підготовку під барабани й флейти. Цей ритуал дав солдатам згуртованість і цілеспрямованість та дозволив виконувати складні маневри. Практика поширилася Європою, і американська армія донині щедро витрачає кошти на оркестри, що марширують.</p>
+    <p>Нейробіолог Яак Панксепп розповів мені про естонську «співочу революцію». У червні 1987 року понад десять тисяч учасників фестивалю в Таллінні, взявшись за руки, заспівали пісні, заборонені пів століття радянської окупації; 11 вересня 1988 року 300 тисяч людей, чверть населення, піснею публічно вимагали незалежності. 1991 року було відновлено Естонську Республіку, а коли прийшли радянські танки, люди живими ланцюгами захищали телевізійні й радіостанції.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Лікування травми театром -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Лікування травми театром</h2>
+    <p>Дивовижно, як мало досліджень присвячено впливу колективних церемоній на розум і мозок та їхній здатності запобігати або полегшувати травму. Проте за останні десятиліття я мав змогу ознайомитися з трьома програмами лікування травми театром і вивчити їх: «Urban Improv» та натхненна нею програма «Травмадрама» в бостонських державних школах і наших реабілітаційних центрах; проект «Можливість» Пола Гріффіна в Нью-Йорку; театральна організація «Шекспір і компанія» в Леноксі (Массачусетс) з програмою для неповнолітніх правопорушників «Шекспір у суді». За відмінностями в основі всіх них те саме: зіткнення з болісними реаліями життя й символічне переосмислення через колективну гру.</p>
+    <p>Кохання й ненависть, агресія й відмова від боротьби, вірність і зрада властиві і театру, і травмі. Наша культура вчить відгороджуватися від справжніх почуттів, а за словами Тіни Пакер, акторська майстерність змушує йти проти цього: не лише глибоко переживати, а й щосекунди передавати почуття аудиторії. Травмовані бояться глибоких переживань, бо ті ведуть до втрати контролю, а суть театру — надати емоціям голос і приміряти ролі. Суть травми в тому, що людина почувається покинутою й відрізаною від людства; театр дає змогу разом з іншими відчути реалії людської природи. За словами Пола Гріффіна, трагедія вся складається зі спроб людей упоратися зі зрадою, насильством і руйнуванням, тому діти з прихистків легко розуміють Ліра, Макбета чи Гамлета. Травмовані бояться конфліктів, а в театрі конфлікт центральний. При травмі людина намагається забути страх і безпорадність, а театр дозволяє висловити правду й поділитися нею з аудиторією.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Поступове занурення -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Поступове занурення</h2>
+    <p>Ці програми призначені не для амбітних акторів, а для озлоблених, наляканих і неспокійних підлітків чи відчужених, вигорілих ветеранів із залежністю. Вони приходять на репетицію, плюхаються в крісло, переживаючи, що інші одразу зрозуміють, які вони невдахи. Травмовані підлітки загальмовані, погано вступають у контакт, їм важко висловлювати думки, у них проблеми з координацією, і їм нема до чого прагнути. Вони надто перезбуджені, щоб звертати увагу на довколишнє, їх легко спровокувати, і вони виражають почуття діями, а не словами. Усі режисери сходяться на тому, що головний секрет — діяти поступово, крок за кроком утягуючи їх у процес.</p>
+    <p>Режисери сходяться на тому, що головний секрет — діяти поступово. Кевін Коулман, директор «Шекспіра і компанії», розповів: спершу ми просимо підлітків пройтися кімнатою, потім даємо дедалі складніші завдання (пройтися на носках, на п'ятах, задки, упасти й скрикнути, якщо на когось наштовхнулися), і після тридцяти завдань вони вже розмахують руками й роблять повноцінну розминку. Якщо поквапитися, вони «битимуться об стіну». Потім ми просимо не зустрічатися ні з ким поглядом, далі непомітно придивлятися до людей, потім на мить зустрітися поглядом і відвести очі, а тоді затримати погляд: занадто довго — це коли хочеться або зустрічатися з людиною, або побитися. Зазвичай вони так довго нікому в очі не дивляться, бо не знають, чи можна довіряти; треба домогтися, щоб вони не боялися дивитися на людей і щоб на них дивилися.</p>
+    <p>У травмованих підлітків яскраво виражена втрата синхронізації із довкіллям. У «Травмадрамі» ми використовуємо дзеркальні вправи: один піднімає руку, партнер повторює; вони помічають відмінність власних рухів від чужих і стають менш зациклені на тому, що про них подумають, підлаштовуючись до чужих переживань серцем, а не мозком. Сміх наприкінці вправи — надійний знак, що учасники почуваються в безпеці. Особливо важка вправа, коли партнер із зав'язаними очима довіряється тобі як поводирю: спершу їх вистачає на 10–20 секунд, поступово час доходить до п'яти хвилин, а дехто після вправи мусить трохи походити сам. Травмованим дітям і ветеранам соромно, коли на них дивляться, вони тримаються на відстані. Завдання режисера, як і психотерапевта, — не поспішати, щоб актори встановили зв'язок одне з одним і зі своїм тілом; театр відкриває нові способи взаємодії зі світом.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- «Urban Improv» -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">«Urban Improv»</h2>
+    <p>Мій син полюбив театральну групу при давній бостонській організації «Urban Improv» (UI), а після першого курсу коледжу дізнався, що програма UI із запобігання насильству, в рамках якої з 1992 року проведено сотні занять у школах, отримала грант на оцінку ефективності, і запропонував мене керівником дослідження. Я їздив по школах з режисером, чотирма акторами-педагогами й музикантом. Сценки відображали щоденні проблеми учнів (невизнання однолітками, заздрість, злобу, сімейні розбіжності, а для старших — любовні стосунки, гомофобію й насильство однолітків). У типовій виставі актори зображали, як школярі в їдальні виганяють новачка зі столу; у момент вибору режисер зупиняв дію, і хтось із класу заміняв актора й показував свою поведінку. Учні спостерігали проблеми збоку й пробували різні рішення, а потім обговорювали в групах, що було спільного з їхньою школою і як добиватися поваги.</p>
+    <p>Наш центр оцінював програму для четвертокласників і восьмикласників у сімнадцяти школах. Четвертокласники-учасники значно рідше билися й виходили з себе, були поступливішими, упевненішими й уважнішими, а восьмикласники — ні. Вони були зажатими й закритими, а старші діти вдвічі частіше стикалися з травмами: кожен восьмикласник у цих школах бідних районів був свідком насильства, і ті, хто пережив його найбільше, були агресивнішими, а програма майже не вплинула на їхню поведінку.</p>
+    <p>Тож ми розробили довшу й інтенсивнішу програму зі сценаріями про ті самі випадки насильства й акцентом на командній роботі та емоційній регуляції. Актори UI вчили наших психологів імпровізації й дзеркального повторення, а ми розповідали їм про тригери травми та її відтворення. Взимку й навесні 2005 року ми випробували її у школі для підлітків із виправних закладів, які надивилися жорстокості. Я ніколи не бачив таких агресивних і похмурих підлітків; у сценках, де героям загрожувала небезпека, вони неминуче ставали на бік агресора й виявляли зневагу до потенційних жертв, бо не дозволяли слабкості собі і не приймали її в інших.</p>
+    <p>Спершу актори хотіли опустити руки, але витримали, і до мого величезного здивування учнів вдалося переконати поступово пробувати нові ролі: наприкінці деякі навіть зголошувалися грати безпорадних чи наляканих персонажів, а кілька учнів сором'язливо вручили акторам малюнки на знак вдячності. Спроба ввести «Травмадраму» у шкільну програму для восьмикласників в Бостоні зазнала невдачі через бюрократію, але вона триває в реабілітаційних програмах, тоді як музика, театр, мистецтво й спорт далі зникають зі шкіл.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Проект «Можливість» -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Проект «Можливість»</h2>
+    <p>У проекті Пола Гріффіна в Нью-Йорку немає готових сценаріїв: упродовж дев'яти місяців по три години на тиждень учасники пишуть власний мюзикл і показують його кільком сотням людей. За двадцять років проект має постійних учасників і стійкі традиції. Кожну постановочну групу складають нещодавні випускники, які з професійними акторами, танцюристами й музикантами розробляють сценарії, ескізи декорацій, хореографію й репетирують з новим класом; вони слугують прикладом. За словами Пола, учні вступають, думаючи, що від них нічого не залежить, а програма змінює їхні погляди на майбутнє.</p>
+    <p>2010 року Пол почав програму для підлітків із прийомних сімей, особливо проблемної групи молоді: за п'ять років після повноліття близько 60% потрапляють під кримінальну відповідальність, 75% живуть на допомогу й лише 6% закінчують коледж. Він дав мені нове бачення їхнього життя: система опіки — як інша країна зі своєю мовою, а життя цих підлітків «перевернуте з ніг на голову»: захищеність і любов, які інші вважають даністю, їм доводиться створювати самим, а грубість і цинізм знайоміші за відгукливість. Покинутим дітям складно довіряти, а достукатися до них неможливо без довіри. Вони змушені звітувати перед багатьма людьми, тому розважливі й навчені маніпулювати. «Сталість» у світі опіки — порожнє слово, а для підлітків найкраща сталість — стійка група друзів. Іншим порожнім словом Пол вважає незалежність, протиставляючи її взаємозалежності: молодих людей не можна лишати наодинці в дорослому світі, їх треба вчити будувати стосунки. Він вважає цих дітей природженими акторами: щоб грати трагічні ролі, треба створювати реальність, повну болю, а іншої вони не знають.</p>
+    <p>На першій репетиції групи встановлюють правила: відповідальність і повага, симпатії вітаються, сексуальні контакти в групі заборонені. Потім вони разом рухаються й співають, підлаштовуючись одне під одного, а Пол вимагає внеску: «Про що був би ваш мюзикл? Покарання, помста, зрада, втрата? Вам вирішувати». Усе, що вони кажуть, записується, і слова учнів стають діалогами й піснями. Група розуміє: якщо добре висловити переживання, їх почують. Коли сценарій готовий, біль, самотність і страх перестають бути центральними, і діти стають акторами, співаками, танцюристами, хореографами, режисерами світла. Можливість проявити себе — найкращі ліки від травматичної безпорадності, і це стосується кожного: коли на роботі проблеми чи йде близька людина, допомагає можливість порухатися й зайнятися справою, що вимагає зосередженої уваги. У школах і програмах бідних районів про це забувають: хочуть, щоб діти поводилися нормально, не створюючи умов, у яких вони почувалися б нормальними.</p>
+    <p>Театр також вчить причинно-наслідкового зв'язку. Життя дітей у прийомних сім'ях непередбачуване: зрив через тригер, арешт батьків на їхніх очах, переїзд, покарання за поведінку, схвалену в попередній родині. У постановці вони бачать наслідки своїх рішень. За словами Пола, щоб дати відчуття контролю, треба дати можливість керувати власною долею, а не вирішувати все за них: цим дітям не можна просто допомогти, виправити чи врятувати, треба працювати пліч-о-пліч. «Ми зцілюємо травму, жодного разу не згадавши цього слова».</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- «Шекспір у суді» -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">«Шекспір у суді»</h2>
+    <p>Підлітки в «Шекспірі у суді» — неповнолітні правопорушники, засуджені за бійки, крадіжки й розпивання спиртного, яких суд округу Беркшир зобов'язав до десяти тижнів інтенсивних занять по чотири вечори на тиждень. Ніхто з них раніше не знав Шекспіра, і приходять вони озлоблені й упевнені, що краще було б у в'язницю. Натомість вони вчать репліки Гамлета, Марка Антонія чи Генріха V і ставлять скорочену шекспірівську п'єсу перед родичами, друзями й представниками ювенальної юстиції.</p>
+    <p>Не маючи слів для наслідків важкого дитинства, вони звикли виражати емоції насильством. Битви на мечах, як і бойові мистецтва, дають змогу практикувати стриману агресію, а щоб не поранити одне одного, доводиться домовлятися словами. Багатьом складно формулювати думки, дехто з труднощами читає; нецензурні слова — не лише спосіб здаватися крутими, а брак інших слів для себе й почуттів. Відкриваючи багатство мови, вони часто отримують щире задоволення. Режисер читає слова по одному, а актори вимовляють реплики на одному диханні; спершу багатьом ледве вдається видушити рядок, але слова поступово набувають глибини й відлуння. Ідея в тому, щоб актор відчув, що ці слова означають для нього, який вплив він чинить на інших і що відбувається з ним, коли він чує репліки.</p>
+    <p>Я переконався, що цей процес змінює життя, на занятті акторів «Шекспіра і компанії» у медичному центрі для ветеранів у штаті Нью-Йорк. Ларрі, п'ятдесятидев'ятирічний ветеран В'єтнаму, який за рік 27 разів лягав на детоксикацію, зголосився грати Брута в «Юлії Цезарі» й спершу бурмотів репліку, ніби боявся, що про нього подумають. Режисер шепотів йому на вухо запитання: що ти пам'ятаєш? що не хочеш пам'ятати? Ти коли-небудь падав за правосуддя? Тебе коли-небудь вражали в бою? Тобі завдавали удару в спину? А ти? Ларрі вискочив із кімнати, але наступного дня повернувся, і, весь у поті, з калатаючим серцем, поступово дозволив собі відчути кожне слово. Після програми він уперше за багато років влаштувався на роботу, і через пів року ще працював. Для зцілення від травми необхідно навчитися переживати глибокі емоції.</p>
+    <p>Мова репетицій переходить і в розмови учнів поза сценою. Коулман зауважує, що вони часто кажуть «я відчуваю, що…», плутаючи емоції із судженнями: на запитання, яке це було, відповідають «круто» чи «погано», а це віддаляє від емоційної частини мозку. Тому після сценки він питає: «Чи помітили ви у собі особливі почуття?», і вони вчаться казати: «Я розлютився», «Мені було страшно». Чим більше помічають, тим більше цікавості виявляють. Діти вчаться стояти рівно, ходити сценою й говорити так, щоб було чути, а на виставі відкривають, наскільки можуть собі довіряти. Кевін розповів про дівчину, що грала Офелію: вона постійно тікала з прийомних сімей і із занять, і поліція знову й знову повертала її, але в день вистави вона, притискаючи до грудей кошик для паперів на випадок нудоти від хвилювання, вирішила не тікати.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Психотерапія і театр -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Психотерапія і театр</h2>
+    <p>Одного разу я чув, як Тіна Пакер, виступаючи перед фахівцями з лікування травми, сказала: у психотерапії й театрі найважливішу роль відіграє інтуїція; вона протилежна дослідженню, коли ми намагаємося вийти за межі особистого досвіду, навіть досвіду пацієнтів, щоб об'єктивно перевірити припущення. Психотерапію робить ефективною глибокий суб'єктивний відгук і живе в нашому тілі глибоке відчуття істинності. Я все ще сподіваюся, що колись нам вдасться спростувати Тіну й поєднати силу інтуїції з науковими методами.</p>
+    <p>Едвард, педагог «Шекспіра і компанії», розповів про курси Пакер, на яких він був початківцем. Після ранкових вправ для глибокого дихання він помітив, що в певному місці грудної клітки щоразу відчуває хвилю суму. Увечері він готував промову з «Річарда II», де короля змушують віддати корону. Згадавши, що мати під час вагітності зламала ребра, а він народився передчасно і в дитинстві лежав у лікарні в кисневій палатці, він почав дратуватися від розпитувань Тіни, а коли вона згадала голки, закричав і спробував утекти, але двоє акторів його втримали. Тіна сказала: «Ти — твоя мати, і ти народжуєш себе. Ти мусиш переконати цього малюка, що він не помре».</p>
+    <p>Виголошуючи промову Річарда, він зрозумів, що його внутрішній немовля такий самий, як Річард: він не був готовий залишити свій трон. Було відчуття, ніби його тіло покинули мегатонни напруги, і він зміг виразити те, чого не давала виразити дитина, яка не могла дихати й боялася померти. Задум Тіни був геніальним: ніби повернувшись у часі, він змінив історію. Того вечора він уперше в житті відчув повноцінну тілесну близькість в присутності іншої людини і знає, що це стало можливим, бо він вивільнив напруженість у власному тілі, що дозволило йому активніше взаємодіяти зі світом.</p>
+    <div class="final-quote">
+      <div class="final-text">Ми зцілюємо травму, <strong>жодного разу не згадавши цього слова</strong></div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>

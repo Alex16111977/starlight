@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<script src="theme.js" data-native="light"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Слово на долоні</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Слово<br>на долоні</h1>
+  <p class="page-subtitle">Тіло пам'ятає все: розділ чотирнадцятий</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Повноцінне спілкування — пряма протилежність травмі</div>
+      <div class="hero-author">Бессел ван дер Колк</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що обрали ті, хто вижив 11 вересня -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Що обрали ті, хто вижив 11 вересня</h2>
+    <p>Після терактів 11 вересня 2001 року кілька організацій зібрали експертні групи, щоб порекомендувати найкращі методи допомоги тим, хто пережив травму. Я хотів скористатися нагодою й порівняти різні підходи, але колеги виявилися консервативнішими й рекомендували лише дві форми лікування: психоаналітичну терапію та когнітивно-поведінкову. Психоаналіз потрапив до списку, бо Мангеттен лишається одним з оплотів фрейдизму, а когнітивно-поведінкову терапію легко розкласти на кроки й описати єдиним протоколом, тому її люблять дослідники.</p>
+    <p>Люди на ці рекомендації майже не відгукнулися. Спенсер Ет у 2002 році за допомогою студентів-медиків опитав 225 людей, які вибралися з веж-близнюків. На питання, що допомогло найбільше, вони назвали голковколювання, масаж, йогу та ДПДГ — саме в такому порядку. Найдієвішими виявилися способи, що знімають фізичні наслідки травми. Звідси просте питання: яка користь від розмов про травму, якщо головне в ній словами не передати?</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Віра в слова і її межі -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Віра в слова і її межі</h2>
+    <p>Віра психотерапевтів у зцілення розмовою сягає 1893 року, коли Фрейд і Брейєр написали, що симптом зникає, щойно вдається повністю відновити спогад про подію разом із почуттями й розповісти про це. Насправді все складніше. Травматичну подію майже неможливо описати: 11 вересня закарбувалося в пам'яті не історіями, а образами, які крутилися в головах і на екранах, доки мер Джуліані та медіа не допомогли скласти спільну хроніку.</p>
+    <p>Лоуренс Аравійський писав про війну, що біль надто гострий, а смуток надто глибокий для наших тіл; коли почуття сягають такої позначки, розум німіє, а пам'ять тьмяніє. І все ж шлях із цього стану лежить через слова, підібрані одне за одним, доки вся історія не буде розказана.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Кінець мовчанню -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Кінець мовчанню</h2>
+    <p>Активісти перших кампаній про СНІД вигукували, що мовчання дорівнює смерті. Те саме стосується травми: мовчання поглиблює ізоляцію й убиває душу. Коли людина здатна сказати вголос «мене зґвалтували», «мене бив чоловік», «батьки називали це дисципліною», «після Іраку я сам не свій» — це знак, що зцілення почалося. Здається, що мовчанням можна тримати горе, жах і сором під контролем, але насправді слова дають зовсім інший, справжній контроль. Недарма першою справою Адама було дати імена всім живим істотам.</p>
+    <p>Я знаю це зі свого досвіду. Поки я не дозволив собі згадати, як мене, трирічного, батько замикав у погребі за пустощі, я постійно боявся залишатися сам. Лише коли я зміг розповісти про почуття того хлопчика й пробачити йому переляк і покору, я навчився отримувати задоволення від самотності.</p>
+    <p>Коли нас слухають і розуміють, змінюється наша фізіологія: можливість висловити складні почуття й побачити, що їх сприйняла інша людина, активує лімбічну систему й дає прозріння. У відповідь на мовчання й нерозуміння ми, навпаки, втрачаємо наснагу. Боулбі казав, що те, чим не можна поділитися з матір'ю, не можна сказати й собі. Людина, яка приховує від себе, що в дитинстві її розбестив дядько, реагуватиме на найменші тригери, як тварина під час грози: організм захищається від уявної небезпеки, а вона не розуміє чому. Апатія змінюється дратівливістю, і причина лишається невідомою.</p>
+    <p>Таємниці — це війна із собою: приховування почуттів забирає величезну енергію, виснажує мотивацію, породжує тугу та відчуженість, а гормони стресу тим часом викликають головний і м'язовий біль, проблеми з кишківником і нераціональну поведінку. Лише знайшовши джерело цих реакцій, можна користуватися почуттями як сигналами. Психологиня Еда Фоа створила опитувальник посттравматичних уявлень про себе: типові твердження — «я мертвий усередині», «я назавжди змінився на гірше», «в мене немає майбутнього». Головне завдання — дозволити собі знати те, що ти знаєш, і для цього потрібна величезна відвага.</p>
+    <p>Ветеран В'єтнаму Карл Марлантіс описує внутрішній розкол: частина його колись ласувала насильством, але в нього є й протилежні частини, якими він пишається. На шляху одужання йому довелося навчитися говорити правду, якою б мучливою вона не була. Він почав інтегрувати відокремлену частину досвіду, коли по-справжньому уявив собі тамтешню дитину своєю дитиною: прийшов нестерпний сум, а разом із ним — зцілення. Я вважаю, що поєднання суму чи гніву з дією мало б бути стандартною процедурою для солдатів, яким доводилося вбивати. Для цього досить груп під керівництвом колеги, який пройшов кілька днів навчання з групового лідерства: поділившись жахом, можна відновити відчуття належності до людства. Ветерани, яких я лікував, після такої групи самі розповідали, що почали відкриватися своїм дівчатам.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Диво самопізнання: Гелен Келлер -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Диво самопізнання: Гелен Келлер</h2>
+    <p>Знаходити слова для почуттів буває мучливо, тому історія Гелен Келлер мене надихає. У 19 місяців вона втратила зір і слух і стала диким самотнім створінням. Через п'ять років родина запросила напівсліпу вчительку Енн Саллівен, яка вчила дівчинку тактильної абетки, виводячи слова на її долоні. Понад два місяці прориву не було, аж доки Енн не виписала слово «вода» на одній руці Гелен, тримаючи другу під струменем із колонки. Пізніше Гелен писала, що це слово розбудило її душу: розум був темною кімнатою, що чекала слів, аби запалити лампу думок. Вивчивши назви речей, вона створила внутрішню картину невидимого світу й віднайшла саму себе; через півроку почала вживати «я».</p>
+    <p>Це нагадує мені дітей, які зазнали насильства: поки вони не відчули себе в безпеці й не знайшли слів, вони схожі на привидів. Тактильними спогадами Гелен було неможливо поділитися, а мова зробила її частиною суспільства. Це відображає суть стосунків психотерапевта й пацієнта: пошук слів там, де їх раніше не було, щоб розділити з іншою людиною найглибші почуття та біль. Цей резонанс — ключ до зцілення ізоляції, особливо якщо інші ігнорували чи змушували мовчати. Повноцінне спілкування — пряма протилежність травмі.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Дві системи самосприйняття -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Дві системи самосприйняття</h2>
+    <p>Той, хто йде до психотерапевта, швидко стикається з обмеженнями мови. У власному психоаналізі я, хоч і добре говорю й можу розповідати цікаві історії, усвідомив, як важко глибоко відчувати й водночас ділитися відчуттям. Я мав вибір: знову внутрішньо проживати сцени з минулого або послідовно викладати спогади аналітикові. Вибираючи друге, я втрачав зв'язок із собою й зосереджувався на його думці. Найменший натяк на сумнів чи осуд — і я замикався та намагався повернути схвалення.</p>
+    <p>Нейровізуалізація показала, що в нас дві окремі форми самосприйняття. Одна, автобіографічне «я», простежує нас крізь час і зв'язує досвід в історію; її основа — мова, а історії змінюються в міру розповідання. Друга сприймає «я» в теперішньому, головно через тілесні відчуття, хоча в безпеці й без поспіху ми можемо знайти слова і для них. Ці системи розташовані в різних, майже не пов'язаних ділянках мозку; лише система самосвідомості в медіальній префронтальній корі здатна впливати на емоційний мозок. У групах ветеранів я бачив, як вони розходяться: чоловіки розповідали страшні історії, а їхні тіла випромінювали гордість і належність до групи; пацієнти розповідають про щасливі родини, а в них сутуляться плечі й напружується голос. Одна система створює історію для публіки, інша фіксує, як ми насправді сприймаємо ситуацію в глибині душі. Саме до неї треба достукатися, потоваришувати й примиритися.</p>
+    <p>Нещодавно ми з ординаторами опитували молоду жінку зі скроневою епілепсією, яку обстежували після кризи, що загрожувала її життю. Вона відповідала сухо й без емоцій: діагноз поставили в п'ять років, вона втратила роботу, відчуває себе нікчемною. Тоді я спитав, як було маленькій дівчинці дізнатися, що з її мозком щось не так. Стиснутим голосом вона сказала, що найгіршим було те, що після діагнозу батько більше не хотів мати з нею справу, і їй довелося впоратися самій. Про ту дівчинку вона відгукнулася різко: та була дурною, плаксивою й залежною і мала взяти себе в руки. Я зазначив, що ця частина колись допомогла їй вижити, і попросив дозволу сказати наляканій покинутій дівчинці, як їй було самій. Жінка заплакала й після довгого мовчання сказала, що вона цього не заслуговувала і їй мали допомогти. Потім знову перемкнулася й гордо розповіла про свої досягнення. Історія для оточення й внутрішні переживання нарешті зійшлися.</p>
+    <p>Історії про травму зменшують ізоляцію, пояснюють страждання й допомагають діагностувати такі проблеми, як безсоння, напади люті чи кошмари, а ще дозволяють знайти винного (мій учитель Елвін Семрад казав, що світом рухає ненависть). Але історії ховають важливіше: травма докорінно змінює людей, вони перестають бути собою, і виразити це надзвичайно важко. Мова виникла, щоб повідомляти про довкілля, а не ділитися внутрішніми почуттями; мовний центр мозку розташований якнайдалі від центру самосприйняття. Джером Каган порівнював опис глибоких переживань із спробою дістати з колодязя крихкі кришталеві фігурки в боксерських рукавицях. Коли слів бракує, можна звернутися до тілесної системи самосприйняття, яка говорить мовою відчуттів, інтонацій і м'язової напруги. Коли пацієнт каже, що йому було вісім, коли батько пішов із сім'ї, я прошу його зазирнути всередину: що він відчуває, розповідаючи про цього хлопчика, і де в тілі це відчувається? Тоді все починає змінюватися.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Записки самому собі -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Записки самому собі</h2>
+    <p>Ще один дієвий спосіб дістатися до внутрішнього світу почуттів — писати. Більшість із нас колись виливала душу в гнівних чи сумних листах людям, які нас зрадили, і від цього майже завжди легшало, навіть якщо листа не надсилали. Коли пишеш собі, не треба думати про чужу думку, можна просто слухати власні думки. Зазвичай ми поводимося стримано, а поруч із тими, з ким не почуваємося безпечно, наш внутрішній соціальний редактор вмикає тривогу. Якщо відіслати його на деякий час, можна ввійти в подобу трансу й зв'язати дві частини мозку.</p>
+    <p>Методика вільного письма: оберіть будь-який предмет перед очима як власний тест Роршаха, запишіть першу асоціацію й пишіть далі, не зупиняючись, не перечитуючи й нічого не виправляючи. Дерев'яна ложка може викликати спогад про томатний соус із бабусею, а може — про дитячі побої; чайник, що передається з покоління в покоління, — про померлих близьких чи сімейну відпустку, де любов мішалася зі сварками. Мої пацієнти нерідко приносять записки й малюнки про спогади, до обговорення яких ще не готові. Я хвалю їх за відвагу, а отримане допомагає планувати лікування, зокрема вирішити, чи підключати соматичне переживання, нейробіологічний зворотний зв'язок або ДПДГ.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Дослідження Пеннебейкера -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Дослідження Пеннебейкера</h2>
+    <p>Першу систематичну перевірку того, чи можна зцілювати травму словами, провів у 1986 році Джеймс Пеннебейкер з Техаського університету в Остіні, перетворивши вступне заняття з психології на експеримент. Студентів поділили на три групи: одні писали про поточні події, другі — про факти стресової чи травматичної події, треті — про факти, почуття та вплив події на життя. Чотири дні поспіль по 15 хвилин вони писали наодинці. Студенти поставилися до цього дуже серйозно: ділилися секретами, дехто плакав. З 200 учасників 65 писали про дитячу травму; про сексуальну травму до 17 років повідомили 22 % жінок і 10 % чоловіків, і ті, хто пережив її, за попередній рік провели в лікарні майже вдвічі більше днів, ніж решта.</p>
+    <p>Найбільше виграла група, що писала і про факти, і про емоції: звернень по медичну допомогу в неї стало на 50 % менше, покращилися настрій і здоров'я, зросла оптимістичність. Студенти казали, що експеримент допоміг краще зрозуміти себе й подарував душевний спокій. У наступному дослідженні 72 студенти розповідали під запис про найнеприємнішу подію або про плани на день, а науковці стежили за тиском, пульсом, м'язовою напругою й температурою долонь. Під час розповіді показники в тих, хто дозволив собі відчути емоції, зростали, але після неї збудження було нижчим, ніж на початку, а зниження тиску тримало півтора місяця. Дослідження Університету штату Огайо показало схожий результат для імунітету: у тих, хто писав про травму, поліпшилася активність Т-лімфоцитів і природних кілерів. Подібні експерименти зі школярами, мешканцями будинків літніх людей, в'язнями, людьми з артритом, молодими матерями й жертвами зґвалтування показують те саме: здоров'я поліпшується, коли можна писати про неприємне минуле.</p>
+    <p>Мене зацікавило, що, розповідаючи про сокровенне, люди часто змінюють голос та інтонацію: одна жінка розповідала про плани на день високим, майже дитячим голосом, а про те, як узяла гроші з каси, — тихим низьким. Змінювався й почерк: тип літер, нахил, натиск, а про найпотаємніші страхи він ставав дитячішим і примітивнішим. У клініці ми називаємо це перемиканнями: змінюються голос, вираз обличчя, рухи, інколи наче й сам характер — сором'язливість змінюється агресією, поступливість — розв'язністю. Якщо ставитися до таких пацієнтів, ніби вони прикидаються, вони замикаються й шукають допомоги вже не словами, а діями. У сімнадцятому розділі побачимо, що для одужання і пацієнт, і психотерапевт мають усвідомити, як ці стани допомогли пережити те, що сталося.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Мистецтво, музика, танець -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Мистецтво, музика, танець</h2>
+    <p>Тисячі спеціалістів із художньої, музичної та танцювальної терапії чудово працюють із дітьми, що зазнали насильства, солдатами з ПТСР, жертвами інцесту, біженцями й людьми, які пережили тортури. Є чимало свідчень ефективності експресивних терапій, але нам мало відомо, як саме вони допомагають і на які аспекти посттравматичного стресу діють, а для наукового підтвердження потрібні великі ресурси. Можливо, те, що вони долають безмовність, що супроводжує жах, і є причиною їхнього застосування в різних культурах.</p>
+    <p>Одне з небагатьох порівнянь невербальної творчості з письмом провели Пеннебейкер і Анна Кранц, фахівчиня з танцювально-рухової терапії. Одну групу студентів просили виразити спогади про неприємні події рухом, а потім описати їх письмово; друга танцювала без письма, третя виконувала звичайні вправи. Усі через три місяці почувалися здоровішими й щасливішими, але реальні покращення виявили лише в першій. Симптоми ПТСР не вивчали. Дослідники зробили висновок, що виразити травму недостатньо — для зцілення її треба передати словами. Втім, ми досі не знаємо, чи завжди це так: у дослідженнях, що вимірювали саме симптоми ПТСР, результати були розчаровуючими. Пеннебейкер пояснив, що більшість таких досліджень проводили в групах, де пацієнти діляться історіями між собою, тоді як сенс вправи в тому, щоб писати собі й дозволити собі усвідомити те, чого роками уникав.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Обмеженість мови -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Обмеженість мови</h2>
+    <p>Травма опановує і слухачів, і оповідачів. Пол Фассел у книзі про Першу світову влучно описав зону тиші, яку створює травма: мова не заважає описати війну, проте солдати мовчать, бо ніхто не хоче слухати страшне. Нечутне стало для нас «неописуваним», хоч насправді воно просто потворне. Розмови про біль не завжди об'єднують: сім'ї й організації інколи відштовхують тих, хто виносить сміття з хати, а друзям набридають ті, хто застряг у горі. Тому постраждалі замикаються, а їхні історії стають завченими й відредагованими, щоб не викликати відторгнення. Тож так важливі групи підтримки на кшталт Анонімних Алкоголіків: відгукувальна спільнота робить зцілення можливим. Водночас потрібен і професійний психотерапевт, навчений вислуховувати жахливі подробиці.</p>
+    <p>Мені самому довелося переконатися, як важко слухати. Коли ветеран вперше розповів про дитину, вбиту ним у В'єтнамі, мені спалахнув спогад із дитинства про розповідь батька про жорстокість нацистів, і реакція була така нестерпна, що довелося перервати сеанс. Тому психотерапевтам потрібна власна інтенсивна терапія, щоб піклуватися про себе й лишатися емоційно відкритими, навіть коли історії викликають гнів чи відразу.</p>
+    <p>Ще одна проблема в тому, що люди, які пережили травму, самі втрачають мову, коли відключаються мовленнєві центри. Я бачив це в судах у справах іммігрантів і на процесі щодо масових убивств у Руанді: свідки від нахлинулих емоцій не можуть вимовити ані слова або впадають у паніку, і суд часто відхиляє їхні показання як безладні й уривчасті. Ті, хто намагається розповісти гладко, здаються ухильними й недостовірними. На моїх очах десяткам людей відмовили в політичному притулку, бо вони не змогли чітко пояснити, чому його просять, а багатьом ветеранам відмовило управління у справах ветеранів.</p>
+    <p>Збентеження й мутизм — звичайна річ у кабінеті психотерапевта. Ми розуміємо, що пацієнти не витримають, якщо витягувати з них подробиці, тому навчилися «розгойдуватися» (за висловом Пітера Левіна): не уникаємо подробиць, а вчимо поступово занурюватися у спогади дедалі глибше. Спершу ми визначаємо внутрішні острівці безпеки в тілі: частини, пози чи рухи, що допомагають заземлитися, коли людина застрягла чи налякана. Зазвичай вони лежать поза зоною блукаючого нерва, який передає сигнали паніки в груди, живіт і горло. Я можу спитати про відчуття в руках і попросити ними порухати; коли помічаю, що груди напружилися, а дихання стало ледь помітним, зупиняю пацієнта й повертаю до рук, дихання чи вправ із цигун. Комусь допомагає відчуття тиску тіла на стілець чи ступні на підлогу. Так люди відкривають власні острівці безпеки й повертають контроль, а це готує ґрунт для розгойдування між пізнанням і безпекою, мовою й тілом, минулим і теперішнім.</p>
+    <p>Але опрацювання спогадів — лише початок одужання. Люди з ПТСР гірше концентрують увагу й засвоюють нову інформацію. В експерименті Александра Макфарлейна просили за хвилину назвати якнайбільше слів на певну літеру: звичайні люди називали в середньому 15, пацієнти з ПТСР — три-чотири, і вагалися навіть перед нейтральними словами на кшталт «морозиво» чи «велосипед». З часом більшість людей із ПТСР перестають довго копирсатися в минулому: їм вистачає проблем у теперішньому, і навіть ті, хто успішно працює й виховує дітей, витрачають на буденні справи набагато більше сил, ніж решта.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Чому розмова не завжди допомагає: когнітивний підхід -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Чому розмова не завжди допомагає: когнітивний підхід</h2>
+    <p>Ще один підступ мови — ілюзія, що мислення легко виправити, якщо воно недостатньо раціональне. Когнітивна складова КПТ — підхід «згори вниз»: психотерапевт ставить під сумнів чи переосмислює негативні установки, наприклад, порівнює почуття провини за власне зґвалтування з реальними обставинами або страх сісти за кермо зі статистикою дорожньої безпеки. Я згадую збентежену жінку, яка прийшла по допомогу щодо свого двомісячного немовляти, яке, на її думку, надто егоїстичне. Лекція про розвиток дитини чи про альтруїзм їй навряд чи допомогла б, поки вона не мала зв'язку з власною наляканою покинутою частиною, що виражалася як страх залежності.</p>
+    <p>Травмовані люди справді мають ірраціональні думки: «я сама винна, бо була сексуальною», «мені не слід було йти цією вулицею». Найкраще ставитися до них як до когнітивних спогадів. Не слід сперечатися з ними так само, як не сперечаються з людиною, що переслідують яскраві спогади про аварію: це залишкові сліди травматичної події, думки, які виникли в момент травми чи невдовзі після неї й були знову активовані стресом. Їх найкраще лікувати за допомогою ДПДГ, якій присвячено наступний розділ.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Стати кимось -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Стати кимось</h2>
+    <p>Люди втрачають контроль над тілом, коли розповідають свої історії та страждають від когнітивних спогадів, бо їхній мозок змінився. Фрейд і Брейєр помітили, що травма не просто спричиняє симптоми: спогад про неї діє як стороннє тіло, що лишається активним довго після потрапляння, подібно до скалки, що викликає інфекцію, де більшою проблемою є реакція організму, а не сама скалка. Сучасна нейробіологія підтверджує ідею Фрейда: багато свідомих думок — це складні раціоналізації потоку інстинктів, рефлексів, мотивів і прихованих спогадів із підсвідомості. Травма порушує роботу ділянок мозку, що керують сприйняттям і його обробкою, а здорове самосприйняття («ось що я думаю, відчуваю, і ось що зі мною відбувається») потребує гармонійної взаємодії між ними.</p>
+    <p>Майже кожне дослідження травмованих пацієнтів із візуалізацією мозку виявляє аномальну активність острівця. Ця ділянка інтерпретує сигнали від внутрішніх органів, м'язів і суглобів, створюючи відчуття перебування у власному тілі, і може передавати сигнали мигдалеподібному тілу, яке запускає реакцію «бий або тікай», без жодної когнітивної участі. Людина просто почувається заведеною й не може зосередитися або відчуває наближення лиха. Ці відчуття народжуються глибоко в мозку, і раціональним мисленням з ними не впоратися.</p>
+    <p>Коли ми постійно відмахуємося від джерела тілесних відчуттів, виникає алекситимія — нездатність відчувати й описувати те, що з нами відбувається. Лише відновивши зв'язок із тілом, можна знову зрозуміти власні пріоритети й цінності. Коли структури, що дозволяють зосереджуватися й активно себе захищати, зазнають нездоланного шоку, наслідком стають перезбудження або емоційна відчуженість із позатілесними переживаннями. Іншими словами, внаслідок травми людина сприймає себе або кимось іншим, наче в чужому тілі, або взагалі нікім. Щоб подолати травму, треба повернути зв'язок із власним тілом. Мова неодмінно потрібна: самоусвідомлення тримається на здатності впорядковувати спогади в єдине ціле, а для цього потрібні справні зв'язки між свідомим мозком і системами самосприйняття, які травма часто пошкоджує. Повну історію можна розповісти лише після відновлення цих структур, після того, як людина знову стає кимось.</p>
+    <div class="final-quote">
+      <div class="final-text">Повну історію можна розповісти лише після відновлення цих структур, після того, як людина <strong>знову стає кимось</strong>.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>

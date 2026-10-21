@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<script src="theme.js" data-native="light"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Природа і наука</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;scroll-behavior:smooth}
+*{margin:0;padding:0;box-sizing:border-box}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(80,60,180,.28) 0%,rgba(40,80,200,.16) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(180,80,120,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+.nav-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px}
+.nav-card{background:rgba(52,58,94,.10);border:1px solid rgba(52,58,94,.22);border-radius:20px;padding:32px 28px;text-decoration:none;transition:all .4s;position:relative;overflow:hidden;display:flex;flex-direction:column;gap:12px;opacity:0;animation:riseIn .8s ease forwards;box-shadow:0 4px 24px rgba(0,0,0,.3),inset 0 1px 0 rgba(52,58,94,.08)}
+.nav-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.5),transparent);opacity:1;transition:opacity .4s}
+.nav-card:hover{background:rgba(52,58,94,.16);border-color:rgba(52,58,94,.35);transform:translateY(-6px);box-shadow:0 8px 32px rgba(0,0,0,.4),0 0 20px rgba(138,176,255,.08),inset 0 1px 0 rgba(52,58,94,.12)}
+.nav-card:hover::before{opacity:1}
+.nav-card:hover .nav-card-title{color:#fff}
+.nav-card:hover .nav-card-arrow{opacity:1;transform:translateX(4px)}
+.nav-card:nth-child(1){animation-delay:.05s}
+.nav-card:nth-child(2){animation-delay:.1s}
+.nav-card:nth-child(3){animation-delay:.15s}
+.nav-card:nth-child(4){animation-delay:.2s}
+.nav-card:nth-child(5){animation-delay:.25s}
+.nav-card:nth-child(6){animation-delay:.3s}
+.nav-card:nth-child(7){animation-delay:.35s}
+.nav-card:nth-child(8){animation-delay:.4s}
+.nav-card:nth-child(9){animation-delay:.45s}
+.nav-card:nth-child(10){animation-delay:.5s}
+.nav-card:nth-child(n+11){animation-delay:.55s}
+.nav-card-emoji{font-size:32px;margin-bottom:4px}
+.nav-card-top{display:flex;align-items:center;justify-content:space-between}
+.nav-card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:22px;letter-spacing:.05em;color:#fff;transition:color .4s}
+.nav-card-arrow{font-size:14px;color:rgba(52,58,94,.85);opacity:.5;transition:all .4s;font-weight:200}
+.nav-card-desc{font-size:12px;font-weight:300;line-height:1.7;color:rgba(52,58,94,.75)}
+.nav-card-more{align-self:flex-start;margin-top:2px;padding:5px 13px;border-radius:100px;background:rgba(122,95,190,.10);border:1px solid rgba(122,95,190,.28);font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:#3f4a9e;transition:all .4s}
+.nav-card:hover .nav-card-more{background:rgba(122,95,190,.18);border-color:rgba(122,95,190,.5)}
+/* Divider */
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+/* Footer */
+.sig{text-align:center;padding:40px 0 60px;position:relative;z-index:10;display:flex;align-items:center;gap:16px;justify-content:center}
+.sig-line{width:40px;height:1px;background:rgba(52,58,94,.15)}
+.sig-text{font-size:11px;font-weight:400;letter-spacing:0.16em;color:#242844;text-transform:uppercase;white-space:nowrap}
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+/* sl-light-v1 — світла тема */
+html{color:rgba(52,58,94,.9)!important}
+.nav-card-title,.nav-card:hover .nav-card-title{color:#242844!important}
+.nav-card-arrow{color:rgba(52,58,94,.85)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.content{position:relative;z-index:10;max-width:960px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+.intro{opacity:0;animation:riseIn 1s .9s ease forwards;margin-bottom:64px;text-align:center;max-width:680px;margin-left:auto;margin-right:auto}
+.intro p{font-size:14px;font-weight:200;line-height:1.9;color:rgba(52,58,94,.82);margin-bottom:14px}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section{margin-bottom:8px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.06em;color:#242844;margin-bottom:6px;position:relative;padding-left:20px;line-height:1.25}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#5261c2;box-shadow:0 0 12px rgba(82,97,194,.4)}
+.category-label{font-size:11px;font-weight:400;letter-spacing:.16em;color:rgba(52,58,94,.78);text-transform:uppercase;margin:0 0 20px 20px;line-height:1.7}
+.section .nav-grid{margin-top:0}
+.jump{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:0 auto 48px;max-width:820px}
+.jump a{font-size:12px;font-weight:400;letter-spacing:.04em;color:#3f4a9e;text-decoration:none;padding:6px 14px;border-radius:100px;background:rgba(122,95,190,.10);border:1px solid rgba(122,95,190,.28);transition:all .3s}
+.jump a:hover{background:rgba(122,95,190,.18);border-color:rgba(122,95,190,.5)}
+@media(max-width:560px){.content{padding:40px 20px 80px}.header{margin-bottom:48px}.category-label{margin-left:0}.section-title{padding-left:16px}.jump{margin-bottom:36px}}
+</style>
+</head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Природа і наука</h1>
+  <p class="page-subtitle">Коли реальність дивніша за фантастику</p>
+
+  <div class="intro">
+    <p>Квантова фізика, підземна мережа лісів, восьминоги, загадки людства й майбутнє, яке вже наступає — усе це простими словами.</p>
+  </div>
+
+  <nav class="jump" aria-label="Блоки на сторінці"><a href="#b1"><span class="sl-emo">🌀</span> Дивна фізика</a><a href="#b2"><span class="sl-emo">🔬</span> Наука простими словами</a><a href="#b3"><span class="sl-emo">🌿</span> Живий світ</a><a href="#b4"><span class="sl-emo">🐾</span> Розум тварин</a><a href="#b5"><span class="sl-emo">🔍</span> Таємниці й загадки</a><a href="#b6"><span class="sl-emo">🚀</span> Майбутнє й технології</a></nav>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" id="b1">
+    <h2 class="section-title"><span class="sl-emo">🌀</span> Дивна фізика</h2>
+    <p class="category-label">Квантова реальність, час, чорні діри й питання, що здаються простими</p>
+    <div class="nav-grid">
+      <a class="nav-card" href="quantum.html">
+        <div class="nav-card-emoji">🌀</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Квантова фізика</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Коли реальність не така, як здається — суперпозиція, заплутаність, спостерігач</div>
+      </a>
+      <a class="nav-card" href="time-relative.html">
+        <div class="nav-card-emoji">⏳</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Час</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Чому він відносний — Ейнштейн, GPS, парадокс близнюків</div>
+      </a>
+      <a class="nav-card" href="black-holes.html">
+        <div class="nav-card-emoji">🌌</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Чорні діри</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Найдивніші об'єкти Всесвіту — і чому ми ще не все зрозуміли</div>
+      </a>
+      <a class="nav-card" href="magnet.html">
+        <div class="nav-card-emoji">🧲</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Магніт</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">І чому ніхто до кінця не знає, як він працює — Фейнман не міг пояснити</div>
+      </a>
+      <a class="nav-card" href="sky-blue.html">
+        <div class="nav-card-emoji">🌈</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Чому небо блакитне</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">І інші "прості" питання, які виявляються глибокими</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" id="b2">
+    <h2 class="section-title"><span class="sl-emo">🔬</span> Наука простими словами</h2>
+    <p class="category-label">Космос, океан і людина — без формул</p>
+    <div class="nav-grid">
+      <a class="nav-card" href="science.html">
+        <div class="nav-card-emoji">🔬</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Наука простими словами</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Космос, фізика, біологія, мозок — без формул</div>
+      </a>
+      <a class="nav-card" href="human-science.html">
+        <div class="nav-card-emoji">🧬</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Наука про людину</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Нейропластичність, біль, сміх і сльози — як ми влаштовані</div>
+      </a>
+      <a class="nav-card" href="ocean.html">
+        <div class="nav-card-emoji">🌊</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Океан і вода</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Глибини, припливи, життя без світла і чому води стає менше</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" id="b3">
+    <h2 class="section-title"><span class="sl-emo">🌿</span> Живий світ</h2>
+    <p class="category-label">Ліси, гриби, бджоли й екосистеми — все пов'язано</p>
+    <div class="nav-grid">
+      <a class="nav-card" href="nature.html">
+        <div class="nav-card-emoji">🌿</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Природа і тварини</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Дельфіни, ліси, екосистеми, бджоли — чотири історії про тих, без кого нас би не було</div>
+        <div class="nav-card-more">+4 сторінки</div>
+      </a>
+      <a class="nav-card" href="mushrooms.html">
+        <div class="nav-card-emoji">🍄</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Гриби</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Підземна мережа, що тримає планету — третє царство життя і Wood Wide Web</div>
+      </a>
+      <a class="nav-card" href="forests.html">
+        <div class="nav-card-emoji">🌳</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Ліси</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Чому дерева спілкуються — підземний інтернет із грибів</div>
+      </a>
+      <a class="nav-card" href="ecosystem.html">
+        <div class="nav-card-emoji">🦋</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Як влаштована екосистема</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Все пов'язано — і вилучи одну ланку, посиплеться все</div>
+      </a>
+      <a class="nav-card" href="bees.html">
+        <div class="nav-card-emoji">🐝</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Бджоли</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Чому без них зникне третина їжі — і чому вони вже зникають</div>
+      </a>
+      <a class="nav-card" href="dolphins.html">
+        <div class="nav-card-emoji">🐬</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Дельфіни</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Чому вони майже як люди — імена, дзеркала, культура</div>
+      </a>
+      <a class="nav-card" href="predators.html">
+        <div class="nav-card-emoji">🦁</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Хижаки і баланс</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Чому вони не з'їдають все підряд — Йєллоустоун, піраміда життя</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" id="b4">
+    <h2 class="section-title"><span class="sl-emo">🐾</span> Розум тварин</h2>
+    <p class="category-label">Собаки, ворони, слони й восьминоги — інші розуми поруч</p>
+    <div class="nav-grid">
+      <a class="nav-card" href="dogs.html">
+        <div class="nav-card-emoji">🐕</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Собаки</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Чому вони розуміють нас краще, ніж люди — нюх, дзеркальні нейрони, дружба</div>
+      </a>
+      <a class="nav-card" href="crows.html">
+        <div class="nav-card-emoji">🐦</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Ворони</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Птахи, які вирішують задачі краще за дітей — інструменти, пам'ять, ігри</div>
+      </a>
+      <a class="nav-card" href="elephants.html">
+        <div class="nav-card-emoji">🐘</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Слони</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Пам'ять, горе і емпатія — як вони горюють, що пам'ятають, як спілкуються</div>
+      </a>
+      <a class="nav-card" href="octopus.html">
+        <div class="nav-card-emoji">🐙</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Восьминіг</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Найдивніший розум на планеті — мозок у щупальцях, окрема еволюція</div>
+      </a>
+      <a class="nav-card" href="animals.html">
+        <div class="nav-card-emoji">🐕</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Тварини і людина</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Чому тварини лікують, зоотерапія і психологія власників</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" id="b5">
+    <h2 class="section-title"><span class="sl-emo">🔍</span> Таємниці й загадки</h2>
+    <p class="category-label">Без істерії і без зневаги</p>
+    <div class="nav-grid">
+      <a class="nav-card" href="mysteries.html">
+        <div class="nav-card-emoji">🔍</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Загадки людства</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">П'ять найвідоміших таємниць — без істерії і без зневаги</div>
+        <div class="nav-card-more">+5 сторінок</div>
+      </a>
+      <a class="nav-card" href="easter-island.html">
+        <div class="nav-card-emoji">🗿</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Острів Пасхи</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Звідки 887 кам'яних статуй і куди зникла ціла цивілізація</div>
+      </a>
+      <a class="nav-card" href="bermuda-triangle.html">
+        <div class="nav-card-emoji">🔺</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Бермудський трикутник</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Міф чи реальність — і чому він живе вже 60 років</div>
+      </a>
+      <a class="nav-card" href="ufo.html">
+        <div class="nav-card-emoji">👽</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">НЛО</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Що уряди приховують і що Пентагон визнав у 2023</div>
+      </a>
+      <a class="nav-card" href="atlantis.html">
+        <div class="nav-card-emoji">🏛️</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Атлантида</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Легенда чи реальна цивілізація — і чому міф пережив 2400 років</div>
+      </a>
+      <a class="nav-card" href="nostradamus.html">
+        <div class="nav-card-emoji">🔮</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Нострадамус</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Передбачення чи майстерна ілюзія — і чому ми хочемо в це вірити</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <div class="section" id="b6">
+    <h2 class="section-title"><span class="sl-emo">🚀</span> Майбутнє й технології</h2>
+    <p class="category-label">Куди ми йдемо: ШІ, енергія, роботи</p>
+    <div class="nav-grid">
+      <a class="nav-card" href="future.html">
+        <div class="nav-card-emoji">🚀</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Майбутнє</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">AI, біотех, клімат, космос — куди ми йдемо</div>
+        <div class="nav-card-more">+3 сторінки</div>
+      </a>
+      <a class="nav-card" href="energy-future.html">
+        <div class="nav-card-emoji">⚡</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Енергія майбутнього</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Сонце, вітер, атом і батареї — звідки візьметься світло завтра</div>
+        <div class="nav-card-more">+4 сторінки</div>
+      </a>
+      <a class="nav-card" href="robots.html">
+        <div class="nav-card-emoji">🤖</div>
+        <div class="nav-card-top">
+          <div class="nav-card-title">Роботи і ШІ</div>
+          <span class="nav-card-arrow">→</span>
+        </div>
+        <div class="nav-card-desc">Як технології змінюють працю і що з цього вийде</div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<div class="sig"><div class="sig-line"></div><span class="sig-text">Est. 2026</span><div class="sig-line"></div></div>
+
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+
+/* Animate cards on scroll */
+const observer=new IntersectionObserver((entries)=>{entries.forEach(e=>{if(e.isIntersecting){e.target.style.animationPlayState='running'}})},{threshold:.1});
+document.querySelectorAll('.nav-card').forEach(el=>{el.style.animationPlayState='paused';observer.observe(el)});
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
