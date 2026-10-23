@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<script src="theme.js" data-native="light"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Остання свобода</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Остання<br>свобода</h1>
+  <p class="page-subtitle">Сказати життю "Так!": частина друга. Життя в таборі</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Питання про смисл життя слід поставити інакше: не чого ми чекаємо від життя, а чого життя чекає від нас</div>
+      <div class="hero-author">Віктор Франкл</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- BODY -->
+  <!-- Апатія: душевна броня -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Апатія: душевна броня</h2>
+    <p>Через кілька днів шок змінюється другою фазою, відносною апатією, коли в душі щось відмирає. В'язня мучить безмежна туга за близькими, огида до всього навколо (багнюка між бараками, чистка вигрібних ям, удар палицею за спробу втертися від бризок), але дедалі більше все глушиться. Спершу він не міг дивитися на катування товаришів, потім спокійно дивиться, як б'ють хворого з гарячкою за «симуляцію», як медик пінцетом відриває почорнілі пальці дванадцятирічного хлопчика з відмороженими ногами. Франкл розповідає, як, лежачи в бараку тифозних, спокійно доїдав суп, поки з вікна на нього дивився мертвий сусід, з яким вони розмовляли дві години тому, а інші в'язні відразу ділили його картоплини, черевики й шпагат. Єдине, чого він тоді здивувався, це власної нечутливості. Така апатія необхідна «захисна броня».</p>
+    <p>Тілесний біль був не головним, найболючішим було приниження. Так само й покарану дитину ображає не стільки сама кара, скільки несправедливість. Конвоїр кинув у нього каменем, як нагадують худобі про обов'язки, лише тому, що він зупинився висякатися. Бригадир на двадцятиградусному морозі кричав, що він «ніколи не працював», і Франкл відповів, що був медиком і більшу частину роботи робив безплатно в лікарні для бідних, за що й отримав побої. Йому допоміг капо, якому Франкл під час довгих маршів як психолог давав поради щодо його любовних історій і сімейних конфліктів. Капо дав йому місце поряд із собою в голові колони, де менше ковзають і падають на льоду, а ще лише зачерпував на дні казана гущу супу. Цей епізод Франкл вважає доказом, що навіть в апатії людина здатна на спалах обурення: образа від нахабного брутала стала для нього полегшенням. Іноді траплялися й бригадири, які співчували.</p>
+    <p>Апатія була не лише психологічним механізмом, а й наслідком голоду й недосипання, а також нестачі нікотину й кофеїну.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Мрії, голод і сексуальність -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Мрії, голод і сексуальність</h2>
+    <p>Душевне життя звужувалося, перетворювалося на регресію: в'язні мріяли про хліб, торт, цигарки й гарячу ванну. Кошмарний сон не міг бути гіршим за реальність: Франкл якось уже хотів розбудити товариша, що стогнав уві сні, але передумав, бо ніякий кошмар не гірший за табір.</p>
+    <p>Центром думок був голод. Щойно пильність охорони слабшала, в'язні говорили про їжу, обмінювалися рецептами й складали меню майбутніх обідів, поки хтось не сигналізував шифром, що йде конвоїр. Франкл вважав ці розмови шкідливими, бо тільки роздратовують організм, пристосований до мізерного раціону. Їжа складалася з миски води замість супу, маленького шматка хліба (300 грамів, а практично менше) і мізерної добавки. Він описує, як організм поїдає сам себе: зникає жир, потім м'язи, люди стають скелетами. Ввечері, роздягаючись, кожен думав, що його тіло вже труп. Найкращі, пише він, тужили за нормальним харчуванням не заради смаку, а щоб позбутися недостойного людини стану, коли не можна думати ні про що, крім їжі. Про хліб суперечили безкінечно: одні радили з'їдати порцію одразу (гарантія від крадіжки), інші ділити. Франкл став прибічником другого варіанту, бо найтяжчою миттю доби було пробудження за три пронизливі свистки, коли розпухлі ноги не влазили в мокрі черевики, і тоді шматочок збереженого хліба в кишені давав хоч слабку втіху.</p>
+    <p>Голод заглушував сексуальні потяги. На відміну від інших закритих чоловічих установ, тут майже не було скабрезності й сексуальних сновидінь, хоча тужливе кохання снилося часто.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Знецінення всього, що не допомагає вижити -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Знецінення всього, що не допомагає вижити</h2>
+    <p>У більшості в'язнів панувала відсутність сентиментальності. Франкл усвідомив це, коли ешелон віз його з Аушвіца в баварську філію Дахау через рідний Відень. Через заґратоване віконце він благав «старожилів» пустити його на хвилину глянути на вулицю, де він жив, і почув іронічну відмову: «Ти там стільки жив, то вже надивився». Зі знецінення відмерли духовні запити, лишилися дві сфери: політика (чутки з фронту, що раз у раз породжували надію й глибоке розчарування) та релігія. Релігійні потяги були глибоко щирі. Найбільше вражали молитви в закутку барака або вагоні для худоби на дорозі з роботи.</p>
+    <p>Взимку й навесні 1945 року в таборах лютував висипний тиф, перехворіли майже всі. Щоб не марити, Франкл не спав ночами й подряпував стенографічними знаками на клаптиках паперу відновлення рукопису, який у нього відібрали при дезінфекції. Найстрашніше, що розповідали про нього: хворий у передсмертній гарячці хотів помолитися, але забув слова молитви.</p>
+    <p>Одного разу він побував на спіритичному сеансі, куди запросив головний медик табору, як фахівця. Писар написав латинське «vae victis» (горе переможеним), не знаючи латини. Франкл пояснює це як підсвідомість: колись він чув ці слова.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Втеча у внутрішній світ: любов, природа, мистецтво, гумор -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Втеча у внутрішній світ: любов, природа, мистецтво, гумор</h2>
+    <p>Деякі, переважно тонкі й чутливі люди, змогли відійти у внутрішнє життя. Ось чому тендітні іноді витримували табір краще за міцних. Франкл розповідає про ранковий марш під конвоєм, коли сусід пробурмотів: «Якби наші дружини нас бачили! Сподіваюся, їм у їхньому таборі краще». І перед ним постав образ дружини, яскравіше, ніж будь-коли в нормальному житті. Він розмовляв із нею, чув її відповіді, бачив усмішку, і ця усмішка сяяла ясніше за сонце, що сходило. Тоді його пронизало: «Любов є тим останнім і вищим, що виправдовує наше існування», у найтяжчій ситуації, коли єдине, що лишається, це страждання, людина може «здійснити себе» через споглядання образу коханого. Йому стало відчутно, що значить, «ангели щасливі любовним спогляданням». Потім осінила друга думка: любов проникає в духовну суть, а не в тілесне буття, тому йому не потрібно знати, жива дружина чи ні, щоб розмовляти з нею, бо любов «міцна, як смерть» (Пісня над піснями). Про її долю він ще не знав.</p>
+    <p>Інші втікали в минуле: у спогадах про звичайні речі, як їхати трамваєм, відчиняти двері, підняти слухавку, запалити світло. Ці дрібниці зворушували до сліз. Збереження внутрішнього життя виражалося й у чутливості до краси: сонце на вершинах Зальцбурзьких гір за ґратами вагона, акварель Дюрера в світлі на стовбурах, захід сонця з калюжами на плацу, після якого хтось сказав: «Як прекрасний міг би бути світ!»</p>
+    <p>Він описує «Монолог на світанку»: у канаві, серед сірого неба й сірого снігу, він знову й знову ставить небесам питання про смисл страждань і відчуває, як дух проривається крізь сірий туман, а на питання, чи є смисл, лунає тверде тріумфальне «Так». У ту мить у вікні далекого дому спалахує вогник, «Et lux in tenebris lucet», і він знову довбає землю.</p>
+    <p>У таборі було й «мистецтво»: рідкісні вечірні концерти в прибраному бараці, де кілька пісень і віршів на кілька хвилин давали відволіктися. Співак, що виконував італійські арії в обідню перерву, отримував подвійну порцію супу, причому знизу, тобто з горохом. Франкл якось аплодував віршам звірячого капо-вбивці, де «любов римується з кров'ю, а пристрасть із владою», бо інакше це могло б коштувати життя. Другої ночі в Аушвіці його розбудила скрипка старости, що грала сумне танго, і Франкл заплакав: саме в цей день дружині виповнилося 24.</p>
+    <p>Нарешті, гумор як «зброя душі в боротьбі за самозбереження»: створює дистанцію між людиною й ситуацією. Франкл «тренував» приятеля-медика: вони щодня вигадували кумедні історії про майбутнє, наприклад, як медик, оперуючи шлунок, почує крик «Жвавіше, жвавіше!», яким у таборі підганяли при приході начальства. Інші мріяли, що в гостях попросять господиню зачерпнути суп із дна.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Відносність страждання й щастя -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Відносність страждання й щастя</h2>
+    <p>Страждання заповнює всю душу, як газ заповнює весь об'єм приміщення, незалежно від розміру. Отже, воно відносне, як і радість. Франкл розповідає, як в'язні раділи, коли в дорозі до Дахау потяг минув розвилку на Маутгаузен, і як у новому таборі всю ніч стояли на плацу під дощем, але були збуджено щасливі: тут немає печі, отже, й газової камери. Він завидував арештантам, що проходили повз, бо в них є лазня, зубні щітки й листи від рідних. Повітряна тривога була для нього, як для боксера гонг, що врятував від нокауту. Щастя, за Шопенгауером, є «негативним щастям», відсутністю нещастя, це «коли найгірше обійшло стороною». Справжні радості траплялися дуже рідко: за кілька тижнів він двічі пережив мить істинної радості, наприклад, коли кухар Ф. наливав суп «не дивлячись на обличчя», чесно, не віддаючи переваги землякам. Франкл додає, що не береться засуджувати тих, хто допомагав найближчим: «нехай спершу спитає себе, як би вчинив сам».</p>
+    <p>Коли вже після звільнення йому показали ілюстровану газету з фотографією виснажених в'язнів на нарах і спитали, чи це не жахливо, Франкл не жахнувся, бо пригадав, що такий барак для хворих із полегшеним режимом був для нього щастям, а гірше було повертатися з нічної зміни.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Тиф, добровільний вибір і робота з хворими -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Тиф, добровільний вибір і робота з хворими</h2>
+    <p>Коли наближалася нічна зміна, що означала вірну смерть, головний медик запропонував йому добровільно поїхати медиком у табір тифозних. Всупереч порадам друзів, Франкл погодився, бо знав, що в будь-якій іншій команді скоро загине, а «якщо вмирати, то нехай моя смерть матиме якийсь сенс»: він вирішив, що допомагати товаришам як медик розумніше, ніж повільно гинути непродуктивним землекопом. «Це був тверезий розрахунок, а не героїчна жертва».</p>
+    <p>У таборі тифозних він раз у раз пробирався в закуток за бараком і сидів на кришці водопровідного люка, дивлячись крізь колючий дріт на цвітучі баварські поля. Там він «дозволяв собі тугу й мрії». Для роботи з хворими він мав мізерні ліки: п'ять-десять таблеток ерзац-аспірину на п'ятдесят хворих. У тяжких випадках давав півтаблетки, в найтяжчих нічого, а в легких «добре слово за відсутності кращого». Одного разу цей люк урятував трьох в'язнів, які сховалися в ньому від облави; Франкл сидів зверху й так «співчутливо» дивився на охоронців і кидав камінці в отвір огорожі, що ті пішли.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Людина як номер, гра долі -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Людина як номер, гра долі</h2>
+    <p>Табір неухильно вів до знецінення людського життя: хворих відправляли на двоколісних тачках, і якщо хтось уже помер, його додавали до купи, бо «число має відповідати списку», а за номером стоїть людина, доля, біографія, ім'я, нікому не потрібні. Юнак зі списку добровільно помінявся ім'ям і номером, щоб не розлучатися з братом, і це ще одне свідчення того, що людина була лише номером у списку.</p>
+    <p>Прийнявши принцип «на запитання відповідай правдиво, а про те, про що не питають, мовчи» (на питання про професію казав «медик» без уточнення), Франкл у перший день в Аушвіці кілька разів перегруповувався з бараку в барак, поки знову не опинився серед земляків. Він побачив, скільки варіантів долі могло здійснитися за хвилини. Ще кілька епізодів: коли формували ешелон хворих, його внесли до списку медиком, але ніхто не знав, чи це не уловка; охочі могли вписатися в нічну зміну, і 82 вписалися, а ешелон потім скасували, і більшість із цих 82 загинули в найближчі два тижні. Головний медик шепнув, що Франкл ще може викреслити себе зі списку до десятої вечора, але він сказав: «Я залишуся біля хворих товаришів». Друг ридав, і Франкл зробив усний заповіт: «Скажи їй: ми щодня про неї говорили; я нікого не любив більше за неї; те недовге щастя з нею переважує навіть усе, що доведеться пережити». Він змусив друга вивчити це напам'ять.</p>
+    <p>Ешелон справді пішов у табір для хворих, а ті, хто лишився в старому таборі, зіткнулися з голодом, в якому почався канібалізм.</p>
+    <p>Франкл наводить притчу про смерть у Тегерані: слуга побачив Смерть і попросив у господаря найшвидшого коня, щоб ввечері бути в Тегерані, а Смерть потім сказала господареві: «Я не лякала його, я здивувалася, що він ще тут, бо маю зустрітися з ним увечері в Тегерані».</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Втеча, яка не відбулася, і останні дні табору -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Втеча, яка не відбулася, і останні дні табору</h2>
+    <p>Апатія й відчуття «іграшки долі» відбирали ініціативу, а дилема «втікати чи ні» була для в'язня пекельною. Коли фронт наблизився, колега запропонував втікати разом: під приводом консиліуму вони мали вийти з табору, а потім у лісі їх чекали форма й документи від бійця опору. План зірвався, і вони пішли шукати рюкзаки в порожньому жіночому бараці, де Франкл знайшов рюкзак, стару зубну щітку і жіночий труп. Але, роблячи обхід хворих, він побачив погляд свого земляка, що вмирав: той наче вгадав і дорікав. Франкл порушив власний принцип «не випробовувати долю» і, миттю вирішивши лишитися з пацієнтами, відразу відчув спокій.</p>
+    <p>В останній день табір мали спалити разом із в'язнями. Вони з колегою вдруге вирішили втікати під приводом поховання трьох померлих за табором. Раптом у ворота в'їхав сріблястий автомобіль із червоними хрестами: представник Червоного Хреста взяв табір під захист, роздав сигарети, але вночі приїхали вантажівки з есесівцями, які прикинулися приязними, і сказали, що всіх обміняють у Швейцарії на військовополонених. Франкла з колегою головний медик чомусь обійшов: передостанню машину відправили без них. Незабаром почалася стрілянина, а на воротах уранці повіяв білий прапор. Через тижні Франкл побачив фотографії сусіднього табору, куди повезли тих, хто від'їхав тієї ночі: їх замкнули в бараках і спалили разом із бараком. «Ось де знову згадалася притча про смерть у Тегерані».</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Дратівливість і «комплекс неповноцінності» -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Дратівливість і «комплекс неповноцінності»</h2>
+    <p>Апатія була не лише захисним механізмом: голод, недосип і нестача нікотину з кофеїном підсилювали дратівливість. До цього додавалося почуття неповноцінності: усі колись були «кимось», а тут із ними поводилися як із нікчемами. Тим часом привілейовані (капо, кухарі, комірники, табірна поліція) компенсували це «манією величі в мініатюрі», і між принижуваною більшістю та «обраною» меншістю виникали конфлікти, особливо при роздачі їжі. Роздратування доходило до загальних бійок. Франкл зізнається, що й сам іноді ледве стримувався: наприкінці як медик і замісник старости він відповідав за «чистоту» тифозного барака, і перевірка, яку він боявся, була дрібницею (соломинка, зола біля печі), хоч до самих людей начальникові не було діла. Він був змушений кричати на хворих, які від апатії реагували лише на різкий окрик.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Внутрішня свобода -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Внутрішня свобода</h2>
+    <p>Чи означає це, що людина просто «продукт умов» і не могла вчинити інакше? Франкл відповідає з досвіду: могла. Були люди, які, ідучи колонами чи бараками, дарували добре слово й ділилися останніми крихтами хліба. Їх було небагато, але їх приклад доводить: у таборі «можна відібрати у людини все, крім останньої людської свободи, свободи поставитися до обставин так чи інакше». Кожен день і кожна година давали тисячу можливостей зробити вибір: відректися від найсокровеннішого чи ні, перетворитися на типового табірника чи лишитися людиною. Кінець кінцем, те, що відбувається всередині людини, є наслідком її власного внутрішнього рішення.</p>
+    <p>Франкл цитує Достоєвського: «Боюся лише одного: бути недостойним своїх страждань». Мученики табору, на його думку, показали, що страждання є подвигом. Смисл мають не лише діяльне життя (цінності творчості) і життя, повне переживань (цінності переживання краси), а й остання можливість: зайняти позицію щодо крайнього примусового обмеження буття. Якщо життя взагалі має смисл, то й страждання має смисл, адже воно, як і доля, і смерть, входить у цілісність буття. Для більшості головним питанням було «чи виживу я», а Франкла переслідувало інше: чи має смисл саме це страждання? Бо якщо все залежить лише від милості випадку, то таке життя не варте того, щоб жити.</p>
+    <p>Він наводить приклад невиліковно хворого, що написав другові: нещодавно побачивши фільм про героя, який гідно йшов назустріч смерті, він подумав, що вміти так померти «просто дарунок небес», і тепер доля дала йому такий шанс. Або молоду жінку в таборі: вона знала, що проживе кілька днів, але була душевно бадьора й сказала: «Дякую долі, що вона обійшлася зі мною так суворо, бо в минулому житті я була надто розпещена». Показуючи на каштан за вікном, вона прошепотіла, що це дерево «єдиний друг у моїй самотності» і що воно їй відповідає: «Я тут, я тут, я життя, вічне життя».</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Тимчасове існування й безмайбутність -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Тимчасове існування й безмайбутність</h2>
+    <p>Найбільше гнітило те, що в'язень не знав терміну: існування в таборі Франкл називає «безстроковим тимчасовим існуванням». Латинське слово «finis» означає і «кінець», і «мету»: хто не бачить кінця, не може спрямувати життя до мети. Спотворюється й переживання часу: день, повний придирок, здається нескінченним, а тиждень минає швидко («день у таборі триває довше, ніж тиждень»). Аналогії: безробітні гірники, туберкульозний санаторій у «Чарівній горі» Томаса Манна. Один в'язень розповідав, що йдучи від вокзалу, мав відчуття, ніби йде за власною труною. Світ за дротом виглядав примарним. Ті, хто тікав у минуле й відвертався від теперішнього, занепадали, не бачачи можливостей діяти.</p>
+    <p>Франкл уживає образ Бісмарка: життя, як крісло в зубному кабінеті: весь час здається, що головне ще буде, а воно вже позаду. Більшість в'язнів гадали, що їхні можливості вичерпано, хоч насправді вони щойно відкривалися: життя в таборі можна було перетворити на «моральну перемогу» або на животіння.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Спіноза як вихователь, віра в майбутнє -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Спіноза як вихователь, віра в майбутнє</h2>
+    <p>Будь-яка психотерапія в таборі мала спрямовувати людину на мету в майбутньому. Свій прийом Франкл описує: у студену ходу, коли голова забита дрібними турботами (чи обміняти шматок ковбаси на хліб, де знайти дріт, як потрапити в добру бригаду), він уявляв себе на кафедрі в теплому залі, де розповідає про психологію концтабору, і бачив усе з «висоти наукового аналізу». За Спінозою («Етика»), афект, що є пасивним станом, перестає бути ним, щойно ми створюємо про нього ясну й відчутну ідею.</p>
+    <p>«Хто не вірить у своє майбутнє, той у таборі загинув». Криза виглядала так: людина лежить, не одягається, не йде на шеренгу, ні на що не реагує, лежить у власних нечистотах. Франкл наводить приклад старости блока, композитора. Той розповів, що йому наснився голос, що пообіцяв: війна для нього закінчиться 30 березня. 29-го в нього різко піднялася температура, 30-го він марив, 31-го помер від тифу. Франкл вважає: розчарування ослабило імунітет. Подібне спостерігав і головний медик: на тижні між Різдвом і Новим 1945 роком смертність різко зросла, і причиною він вважав розчарування в надії, що до Різдва всіх визволять.</p>
+    <p>Девіз психотерапії взято в Ніцше: «У кого є "навіщо", той витримає майже будь-яке "як"». Горе тому, хто втратив життєву мету; фраза «Мені нічого більше чекати від життя» типова.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Коперніканський переворот у питанні про смисл -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Коперніканський переворот у питанні про смисл</h2>
+    <p>Питання про смисл життя слід поставити інакше: не чого ми чекаємо від життя, а чого життя чекає від нас. «Коперніканський переворот»: питання звернене до нас, і відповідати треба не словами, а вчинком, правильною поведінкою. Жити означає відповідати за виконання завдань, що їх життя ставить щодня і щогодини. Смисл не загальний, а завжди конкретний: у кожної людини своя доля, унікальна й неповторна. Якщо доля поклала на людину страждання, вона має побачити в них своє завдання: ніхто не може страждати замість неї, і лише в тому, як вона це винесе, її унікальна можливість подвигу. Такі думки були єдиним, що допомагало триматися. Смисл охоплював і смисл страждання й вмирання.</p>
+    <p>Тому в таборі перестали приховувати страждання дешевим оптимізмом. Страждання стало «моральною працею», як у вигуку Рільке «Скільки ще треба перестраждати!». Не соромно було плакати: сльози свідчать про мужність страждати. Один товариш на запитання, як позбувся голодних набряків, відповів: «Я їх виплакав».</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Психотерапія в таборі: два випадки й вечір у бараці -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Психотерапія в таборі: два випадки й вечір у бараці</h2>
+    <p>Індивідуальна допомога була необхідна, щоб запобігти самогубству, адже рятувати самогубців було заборонено. Франкл згадує двох чоловіків, які сказали: «Мені більше нічого чекати від життя». Обидва, виявилося, мали, чого життя чекає від них: одного чекала обожнювана дитина за кордоном, другого нездійснена справа, серія книг, яку ніхто, крім нього, не міг закінчити. Усвідомлення своєї незамінності створює відповідальність за власне життя: людина «знає, "навіщо" існує, і тому витримає майже будь-яке "як"».</p>
+    <p>Колективна терапія була слабшою: більше за слова діяв приклад доброго старости блока. Одного разу ввечері, після оголошення, що за зрізання смужок із ковдр і дрібні крадіжки будуть вішати, і після дня голоду (понад двадцять п'ять в'язнів воліли голодувати, аби не видати злодія, який вкрав картоплю), у темному бараці староста попросив Франкла сказати слово про товаришів, які загинули чи наклали на себе руки. Франкл, голодний і виснажений, зібрався з силами. Він чесно визнав, що шанси вижити приблизно п'ять відсотків, але додав, що не втрачає надії, бо ніхто не знає свого майбутнього й будь-кому може раптово випасти спасенний шанс. Говорив і про минуле: те, що ти пережив, зробив, виболів, «ніякі сили у світі не відберуть», бо «бути в минулому теж своєрідне буття, до того ж найнадійніше». Наприкінці сказав, що навіть якщо ці години стануть для багатьох останніми, на кожного дивиться хтось (друг, жінка, живий чи мертвий, чи Бог) і чекає, що ми не розчаруємо його, а збережемо стійкість у житті й у смерті. Він додав, що жертва має сенс завжди, навіть якщо в світі успіху не веде до результату, і розповів про товариша, який «уклав договір із небесами»: хай його страждання й смерть стануть ціною за легку смерть коханої людини. Раптом знову спалахнула лампочка, і Франкл побачив сльози на обличчях.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Психологія табірної охорони -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Психологія табірної охорони</h2>
+    <p>Як звичайні люди могли робити таке? Франкл відповідає чотирма пунктами: серед охорони були клінічні садисти; їх спеціально добирали для найжорстокіших команд; більшість просто отупіла від щоденного садизму; були й «саботажники». Він розповідає про есесівського коменданта табору, де перебував наприкінці: той за власні гроші купував в аптеці ліки для в'язнів, а після звільнення євреї-в'язні сховали його від американців і поставили умову, що ні волосся не впаде з його голови. Командир дав слово, і есесівця знову призначили начальником табору, де він організував харчування й збір одягу. А староста табору з в'язнів був жорстокіший за всіх есесівців разом узятих.</p>
+    <p>Висновок: обидві «раси» людей, порядні й непорядні, є всюди, і жодна група не складається лише з одних чи інших. Бути наглядачем і лишатися людиною було моральним подвигом, а низькість в'язнів, які били своїх, була особливо нестерпною. Одного разу цивільний наглядач, не в'язень, таємно простягнув Франклу шматок хліба зі свого сніданку, і це зворушило його майже до сліз: «Не стільки хліб, скільки людяність цього дару». Лінія між добром і злом проходить через усе людське, аж до найглибших глибин душі, її видно навіть у безодні концтабору. Людина є «істота, яка вигадала газові камери, але й та, що йшла в ці камери з піднесеною головою і молитвою на вустах».</p>
+    <p>Далі: фаза третя, звільнення, і п'єса «Синхронізація в Біркенвальді» (частина 3).</p>
+    <div class="final-quote">
+      <div class="final-text">Кожен день і кожна година давали тисячу можливостей зробити вибір: відректися від найсокровеннішого чи ні, перетворитися на типового табірника чи <strong>лишитися людиною</strong>.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>

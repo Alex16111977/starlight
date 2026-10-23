@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<script src="theme.js" data-native="light"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Школа без Дамблдора</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Школа без<br>Дамблдора</h1>
+  <p class="page-subtitle">Таємна опора: розділ сьомий. Від семи до дванадцяти</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Справжній наставник завжди трохи супермен</div>
+      <div class="hero-author">Таємна опора. Прив'язаність у житті дитини</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Вік Тома Сойєра -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Вік Тома Сойєра</h2>
+    <p>Семирічка з досвідом міцної прив'язаності й внутрішнім батьком починає новий етап: навчання. Хоч у великих містах із державними школами, хоч у лісових селищах, де ніхто не вміє читати, діти від шести-семи років до підліткового віку здебільшого вчаться: хтось полювати й вичиняти шкури, хтось писати в прописах і множити стовпчиком, хтось плести сіті, засвоювати священні книги чи комп'ютерні програми. Ці кілька років треба використати на повну, щоб дізнатися все важливе про великий світ, до якого належить вийти. Все повторюється: як дворічка досліджувала маленький світ дому й тіла, так школяр жадібно вбирає повадки тварин, будову вулканів, історію відкриттів, двигун внутрішнього згоряння в розрізі. Світ стосунків дійде до нього пізніше, у юності, а зараз його цікавлять речі, причини, зв'язки, правила й межі, він експериментує з предметами: будує будинок на дереві, розбирає будильник, стрибає через гумку, плете складні косички й фенечки, стоїть на руках. У цих заняттях ніби відтворюється вся історія людства: вистежити звіра, збудувати курінь, розвести багаття, прикраситися візерунком, вигадати історію й розповісти в колі своїх.</p>
+    <p>Десятирічка хоче знати й уміти й готовий у це вкладатися: за день навчиться кататися на скейті, падаючи й вставаючи, за два дні навчиться в'язати на спицях, годинами спостерігатиме за павуком, тижнями майструватиме модель корабля, вигадає шифр і писатиме на ньому так швидко, як рідною мовою. Інтереси скачуть: сьогодні секція боксу, завтра астрономічний гурток, через тиждень робот. Багато починає й кидає, але від початку до моменту, коли охолоне, буває дуже захоплений. Для дорослого навчання інвестиція в майбутнє, а для дитини самодостатня цінність, така сама, як недавно мала гра. Вона вчиться не для того, щоб колись застосувати, а щоб вийшло, щоб зрозуміти, довідатися, змогти. Гра лишається, але відходить на другий план: зливається з навчанням чи стає частиною відпочинку. Батьки в цей час сприймаються як тил, арієргард: вони потрібні, щоб про них не думати. Якщо прив'язаність у порядку, дитина про неї особливо й не думає: радіє батькам, любить, сумує, якщо довго не бачить, але вони вже не центр її інтересу.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Найлегший і найздоровіший вік -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Найлегший і найздоровіший вік</h2>
+    <p>Батькам діти цього віку рідко завдають занепокоєння: ніжність і вразливість дошкільника позаду, до бур підліткового віку ще далеко, дитина достатньо самостійна й ще достатньо слухняна. У ці роки рідко починаються неврози й хронічні хвороби, дитячі страхи й думки про смерть відступили, підліткового екзистенційного жаху ще немає. Десятирічки оптимістичні, життєрадісні, повні ідей, легкі на підйом і добре справляються з невдачами. Демографи підрахували, що найменша ймовірність померти від будь-яких причин буває саме в десять років: дитяча крихкість пішла, а зношення організму ще не почалося. Це пік здоров'я й життєвої енергії, легкий, яскравий, радісний старт життя. Не дивно, що саме в цьому віці так багато улюблених літературних героїв: Пеппі Довгапанчоха, Том Сойєр, Аліса Селезньова, Гаррі Поттер, а книги на кшталт «Вина з кульбаб» Бредбері чи «Моєї родини та інших звірів» Даррелла стали справжнім гімном цій порі: уранці випити кухоль молока з хлібом і на весь день на волю, спостерігати, пробувати, осягати нове, у світі, який сповнений викликів і пригод, але загалом безпечний.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Але школа без Дамблдора -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Але школа без Дамблдора</h2>
+    <p>Багато хто, читаючи це, подумав: «Нічого собі легкий вік, з ним постійні скандали, самостійності ніякої, усе треба перевіряти, вчитися він не хоче, усе з-під палки, приходить зі школи виснажений». Так і є, і причина в школі «за відсутності Дамблдора». Начебто дитина жадає вчитися, а суспільний інститут покликаний учити, і вони створені одне для одного. Чому ж початок кожної чверті для таких дітей стає вигнанням із раю?</p>
+    <p>До семи років усе пройшло добре, і дитина наповнена прив'язаністю по маківку. Батьки відходять на другий план, і на зміну їм має прийти наставник: дитина ще мала для повної самостійності, й далеко не всьому може навчитися, просто граючи з дітьми, потрібен той, хто покаже, навчить і передасть справжні дорослі знання. Образ наставника в людській культурі такий самий потужний архетип, як мати й дитя: він є в міфах і легендах, у книгах і фільмах про дорослішання, від легенд про короля Артура до мультика «Кунг-фу Панда». Людина, на відміну від тварин, має багато вчитися, бо в неї не «вшито» алгоритми для життя, тому навчання окрема діяльність, а стосунки вчителя й учня особливі, що за значенням співставні зі стосунками прив'язаності, дружби чи любові. Наставник той, у чию руку батьки вкладають руку дитини, передаючи довіру дитини й частку своєї відповідальності, провідник зі світу дитинства у світ дорослості. Ці стосунки багато в чому схожі на стосунки з батьком, це теж різновид прив'язаності: є домінантний і ведений, захист і турбота з боку старшого й беззастережне слідування молодшого, вони дуже емоційно значущі, і наші найкращі вчителі назавжди займають місце в серці.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Чим наставник відрізняється від батька -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Чим наставник відрізняється від батька</h2>
+    <p>Є серйозна відмінність: батьківська любов безумовна (принаймні так задумано, хоча в житті буває по-різному, і багато батьків не можуть не оцінювати дитину, не порівнювати її з іншими, не ставити любов у залежність від успіхів і доброї поведінки; це завжди боляче ранить, спотворює прив'язаність, а в тяжких випадках призводить до нарцисичних рис особистості). Стосунки з батьками мають навіяти нам, що ми цінні й прекрасні просто як жива істота. Вони починаються з позитивного віддзеркалення, нескінченного милування й захоплення тим, що ти є. Вони націлені на турботу й захист: батьківські руки завжди позаду й страхують, голос застерігає. Батькові важливіше, щоб дитина була жива, здорова й задоволена, ніж її успіхи чи відповідність чиїмось очікуванням. Це мудро й правильно для початку життя: створити безоглядною, нічого не вимагаючою любов'ю той внутрішній стрижень «я існую, і це добре, я маю право жити таким, який я є».</p>
+    <p>Але людському дитинчаті цього мало: воно має стати людиною розумною, істотою, якій потрібен сенс життя. Вона живе не реактивно, як наші брати примати: зголодніла, пішла поїла, треба, побилася, прийшов час, спарилася, а якщо нічого цього не треба, лежить собі на сонечку. У людини ніби шило в мозку: вона сама ставить цілі й хоче їх досягати, створює культуру, науку, цивілізацію, змінює світ і своє життя. Для цього мало просто жити й радіти: треба вміти долати, ризикувати, приймати виклики, робити щось через «не можу», робити те, чого ще ніхто до мене не робив. З погляду природи це неприродно, але людям потрібні сенс життя, боротьба й самореалізація, відчуття, що ти не лише отримуєш від світу, а й даєш йому, що живеш недарма. Без цього вони лізуть на стіни, на дах чи підвіконня й звідти стрибають. А для самореалізації батьківської любові недостатньо: вона не мотивує робити краще за інших, як ще ніхто не робив. Для цього потрібен той, хто ставитиме бар'єри й вимагатиме їх подолання, зокрема через «не можу й не хочу», хто може іноді сказати «це погано, ти не старався, можеш краще», і це не зруйнує стосунків, бо наставнику можна, він не батько, і його визнання треба заслужити.</p>
+    <p>У козаків, для яких особливо важливо вміти їздити верхи, є свято дарування першого коня хлопчикові, зазвичай років у шість: хрещений дарує його в присутності всієї рідні, хлопчика садять на коня й водять по колу, і неодмінно роблять так, що він падає. Мати кидається до нього, але їй заступає дорогу хрещений чи дядько: «У нього тепер є кінь, він чоловік», і хлопчик має сам підвестися й знову залізти на коня. Тобто він має вже вміти сам себе заспокоїти, використовуючи весь досвід утіхи, отриманий від мами, витерпіти сльози й продовжувати. Майже у всіх войовничих народів інтуїтивно існувала заборона, щоб батько навчав мистецтва вершника й ведення бою: «збери себе, терпи» дитина має чути не від тієї людини, що завжди була готова взяти її на руки й витерти сльози. Та й підняти меч на батька, прагнучи перемогти його, навіть з метою навчання, справа немислима.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Архетип наставника -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Архетип наставника</h2>
+    <p>Справжній наставник завжди трохи супермен: щоб до нього, зрештою чужої людини, вмикалося слідування, він має бути особливим, вражати й захоплювати, уміти те, чого більше ніхто не вміє, бути причетним до чогось таємного й сакрального. Невипадково найвідоміші образи наставників це маги, чарівники, істоти з іншого світу: кентавр Хірон, Мерлін, Гендальф, Дамблдор, магістр Йода, Доктор Хто. Архетиповий наставник мудрець і могутній воїн, який багато де побував і багато бачив на віку, з ним пов'язані перекази, його минуле повне таємниць, ніхто точно не знає, про що він думає. В архаїчних культурах учили дітей жерці й шамани, дуже шановані люди, здатні мандрувати між світами й розмовляти з душами предків. Наставникові можна бути дивним, виглядати інакше, діяти несподівано: він провідник, не зовсім від світу цього, може бути смішним, маленьким, підкреслено дряхлим, хоч із зеленими вухами, приховуючи за недоладним виглядом неймовірну міць.</p>
+    <p>Звісно, наставник не лише оцінює: він має справу з молодшим і слабшим, тому допомагає, підбадьорює, пояснює, підтримує. Він завжди на стороні учня, може бути суворим і вимогливим, але своїх у кривду не дасть. Один із універсальних сюжетів переказів і книг це загибель наставника, що до останнього подиху захищає учнів: це найвища реалізація наставника, віддати їм усього себе, віддати життя. Так гинуть Оби-Ван і Дамблдор, так помер у реальному житті Януш Корчак. У передостанній книзі про Гаррі Поттера є «кільце»: на початку Дамблдор каже Гаррі, що тепер скрізь дуже небезпечно, але тобі боятися нема чого, бо ти зі мною, а наприкінці, коли Гаррі тягне на собі ослаблого професора й просить не хвилюватися, той так само просто відповідає: «Я не хвилююся, Гаррі, адже я з тобою». Навчання завершено, учень став героєм. Пізніше, у підлітковому віці й юності, буде час усвідомити, що вчителі теж бувають слабкі й недосконалі (як сказала одна дівчинка, виявляється, вчителька теж ходить у туалет), тоді можна спілкуватися в дружній манері майже на рівних. Але дітям молодшого віку потрібно палко обожнювати й прагнути стати таким самим, слідуючи за наставником крізь труднощі. Такі стосунки потрібні дитині, такий архетип вшитий у її культурну пам'ять, і з такою мрією вона йде до школи.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що вона там знаходить -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Що вона там знаходить</h2>
+    <p>Що вона знаходить найчастіше? Не супермена, мага й героя, а втомлену вчительку, для якої робота досить рутинна справа без подвигів, пригод і подорожей між світами. Комусь щастить зустріти вчителя, захопленого своєю справою, зверненого душею до учнів, яскраву сильну особистість. Я згадую старий радянський фільм «Першокласниця»: учителька, від одного погляду якої завмирають сорок осіб, не тому, що кричить і ставить двійки сотнями, а тому що входить у клас як королева, вчить письма як чаклунства, її осуду бояться, а похвала окриляє. Вона не могла бути втомленою, слабкою, роздратованою, неможливо уявити, щоб вона скаржилася на низьку зарплату чи на важкий клас, чи щоб із нею неповажно розмовляв директор. У кульмінації фільму вона виявляється справжньою супервумен: пройшла крізь буран, ризикуючи життям, і врятувала учениць, що заблукали. Як архетиповий образ це зроблено геніально.</p>
+    <p>В архаїчних культурах громада могла дозволити собі виділити для навчання підростаючих найкращих і найхаризматичніших. Нині ж у нас загальна обов'язкова освіта, державні школи, а вчитель просто найманий працівник для виконання конкретного функціоналу: пояснити, показати, перевірити, оцінити. Щоб його взяли на роботу, потрібен диплом педвишу, м'яко кажучи, не найпрестижнішого, харизму й яскравість особистості не перевіряють, а сама робота досить важка, рутинна й не дуже добре оплачується. Йдуть на неї часто ті, кому зручно працювати поруч із домом чи раніше звільнятися, або ті, хто не знайшов себе в нічому іншому. Такий учитель не може бути наставником: він гвинтик в адміністративній машині системи освіти. До того ж наших педагогів не готують будувати стосунки прив'язаності з учнями: вчать вести електронний щоденник і складати плани уроків, а от як виявляти домінантну турботу щодо дитячої групи й кожної дитини, про це не йдеться, тут або вроджений талант, або ні.</p>
+    <p>Без стосунків «учень-наставник» процес не піде, навіть якщо вчитель чудово знає предмет: у дітей не вмикається поведінка дослідження, і вони не зможуть учитися продуктивно, та й дисципліни в класі не буде. Бувають учителі, у яких із двох компонентів, домінування й турботи, просідає домінування: вони поводяться як не цілком дорослі люди, кажуть, що не можуть упоратися з класом, пишуть багато зауважень у щоденник, батьківські збори присвячують розповіді про те, які важкі їм діти трапилися, яка низька зарплата й як вони втомлюються. Деякі слабкі педагоги з невпевненості й страху перед дітьми починають із ними загравати, ставлять п'ятірки просто так, замінюють уроки розвагами. Старші діти таких учителів зневажають, а молодшим із ними дуже тривожно: вони не відчувають себе захищеними, їм важко слідувати за слабким, інфантильним педагогом, довіряти йому й учитися. Якщо дитина ще й мала досвід перевернутої прив'язаності, їй кінець: учитися не буде не лише вона, а й увесь клас, який знайде в її особі негативного лідера, що сміливо кидає виклик учителю.</p>
+    <p>У інших педагогів домінування є, а з турботою погано: їм важко змиритися, що діти ще малі й імпульсивні, вони трактують будь-яку помилку як зловмисний проступок, вимагають беззаперечного підпорядкування, не дають проявляти ініціативу, нетерпимі до непосидючості, а часом і просто жорстокі, а батькам кажуть: «Вживіть заходів». Є й ті, хто просто ставить хрест на стосунках: бубонить щось собі під ніс, не помічає учнів і чекає дзвінка. Суть їхніх дій: «Ви мені нецікаві, я вас не люблю». Діти такого вчителя і поводяться погано, і предмет ненавидять.</p>
+    <p>У школу приходять і люди з покликанням, але сучасна школа заважає їм бути наставниками: вчитель має обов'язковий план і 133 форми звітності, його можуть принизити й змусити драїти школу до приїзду комісії, і з таким лицем до дітей не прийдеш. Архетиповий наставник сміливий, приймає виклик долі й готовий ризикнути заради нового знання, а сучасному вчителю будь-який ризик заборонено, результат відомий наперед, а його предмет часто здається дітям самодурством дорослих. Справжнього наставника треба ще заслужити, і він нікого не примушує, а вчитель у школі опиняється в ролі наглядача, щоб діти не розбіглися. Невипадково з уроків так хочеться втекти в Нарнію чи на безлюдний острів, куди завгодно, де є простір, пригоди й справжні наставники.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Батькові не варто ставати вчителем -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Батькові не варто ставати вчителем</h2>
+    <p>Не впоравшись із роллю наставника, учитель часто намагається втиснути в неї батьків: вимагає перевіряти в дітей уроки, робити разом із дитиною завдання, пише «вживіть заходів», викликає в школу в очікуванні, що батько поговорить, тобто насварить дитину за недостатню старанність чи погану поведінку. Батьки нерідко готові ловити цю гарячу картоплину: вони хвилюються за дітей, хочуть кращої освіти й найкращих шансів, тож починають контролювати, перевіряти, пояснювати, сваряться, що написано неакуратно, вимагають переробляти, розкладають задачу, злються, повторюють неправильні дієслова й дратуються, що дитина не запам'ятала, знову читають нотації, як поводитися в школі. А як може поводитися дитина, якій по-перше дико нудно, по-друге тривожно, бо вчитель або інфантильний, або небезпечний, а рідний батько виступає з ним заодно? Це по-справжньому сумно: мало того, що дитині не дісталося наставника й ні з чим не порівнянного щастя шанувати й любити вчителя, а тепер ще й батьки в неї відбирають: мама, яка має завжди любити, лає мене за погано написані прописи, тато, який має завжди захищати, накидається після скарги вчительки. Світ рухнув. Якщо батьки виявляють особливе завзяття в справі здобуття освіти разом із дитиною й замість неї, життя родини перетворюється на справжнє пекло: усі вечори минають під дамокловим мечем уроків, процес супроводжується криками, погрозами, а то й у хід іде ремінь. Багато дорослих згадують початкову школу як жахливі роки, у які вони втратили батьків: ні, усі живі, але втрачено стосунки, прив'язаність згодовано молоху примусової освіти.</p>
+    <p>Чи можна взагалі брати участь у шкільних справах дитини? Можна, і ключове слово «допомагати», якщо вона просить: зробити тему цікавою, розв'язати задачу разом, як ви допомагаєте зав'язувати шнурки чи готувати яєчню. Але щойно ви привласнюєте функцію оцінки й контролю й виступаєте єдиним фронтом зі школою, ви б'єте сокирою по прив'язаності. Як медик не оперує рідних, так і досвідчені репетитори уникають займатися зі своїми дітьми: терпіння не вистачає, надто багато емоцій, а дитина нервується й боїться розчарувати. Деяким батькам удається вправно поєднувати ролі, але це особливий дар, і багато дітей кажуть, що майже втратили батьків, коли ті почали їх тренувати. Навчати дітей водити машину, готувати чи майструвати набагато безпечніше: там немає зовнішнього судді й термінів, це просто частина стосунків, і через роки дочка варитиме борщ, як учила мама, а син збиратиме меблі, як показував тато.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Голод по наставнику й що робити -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Голод по наставнику й що робити</h2>
+    <p>Є й інший ризик: голод по наставнику змушує дитину обирати сурогат, наприклад сліпе обожнювання старшого ровесника чи залежність від людини, що зловживає нею. Батьки нарікають на погані впливи, але на доглянутій клумбі бур'ян не виросте: дитина не винна, що її голод не втамовано, їй замість хліба справжнього навчання вклали камінь обов'язкової освіти. Захистом може бути лише довірливий контакт із батьками й упевненість у своєму праві сказати «ні».</p>
+    <p><strong>Нота бене:</strong> ми не можемо змінити систему освіти, але потребу дитини в наставнику пам'ятати варто. Не обов'язково, щоб усі вчителі були геніями, достатньо одного: хтось обожнюватиме брутального фізрука, хтось дотепну математичку, а хтось дивакуватого викладача, у лаборантській якого штовхається після уроку. Якщо в школі таких зовсім немає, це мертва школа; тоді наставника можна шукати в секції, гуртку, театральній студії чи турклубі. Важливо лишатися батьками, а батько той, хто турбується: іноді це пожаліти за двійку, іноді піти до вчительки, іноді написати за дитину непотрібний реферат, щоб вона виспалася. Тут важлива вся попередня історія: якщо вона привчила дитину чекати розуміння й допомоги, вона зможе визнати, що не справляється, а якщо чула «мені ніколи, сам справляйся», то ховатиме проблеми. Чим менша й чутливіша дитина, тим важливіше пересвідчитися, що вчитель її не лякатиме й не принижуватиме, і не вирішуйте проблему за її рахунок нотаціями: краще змінити вчителя чи школу. Педагог не зобов'язаний бути ідеальним, але мінімально має бути дорослим і вміти піклуватися.</p>
+    <p>Важливо лишатися для дитини батьками, а батько той, хто турбується. У якійсь ситуації турбота може означати написати за неї реферат, який їй задарма не потрібен, а вона через нього лише не виспиться чи пропустить улюблене тренування. У якійсь, якщо вона отримала двійку, доречно пожаліти, в іншій піти до вчительки й з'ясувати, що відбувається, іноді просто обговорити, чому все стало так погано, чим можна допомогти, а які помилки дитина може виправити сама. Тут важлива вся попередня історія: якщо це історія безпечних довірливих стосунків, яка привчила дитину чекати від вас розуміння й допомоги, вона зможе попросити й визнати, що не справляється. Але якщо до цього часу вона звикла чути «мені ніколи, давай сам справляйся» і «чим ти думав узагалі», то, природно, вона ховатиме проблеми, і ви про них не дізнаєтеся. Чим менша й чутливіша ваша дитина, тим важливіше пересвідчитися, що вчитель не лякатиме, не ображатиме й не принижуватиме її. Чим жвавіша й активніша, тим менше їй підходить інфантильний і слабкий. Не намагайтеся розв'язати цю проблему за рахунок дитини нотаціями й умовляннями: вона все одно нічого не навчиться в такого педагога, краще одразу змінити вчителя чи школу. Педагог не зобов'язаний бути ідеальним, але в певній мінімально необхідній мірі він має бути дорослим і вміти піклуватися.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Підсумок: сходи криз сепарації -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Підсумок: сходи криз сепарації</h2>
+    <p>Наша дитина от-от перестане бути дитиною: ще трохи, і статеві гормони почнуть свою потужну роботу зі зміни її тіла. До початку підліткового віку прив'язаність зробила майже всю свою роботу, дитина практично вирощена. Озираючись назад, ми бачимо, як періоди наповнення, плато, змінюються кризами сепарації: на кожному наступному плато дитина менше потребує опіки, а в кожен наступний період освоює нову частину світу. Але протягом усього дитинства щоразу, коли вона не справляється з життям, вона може повернутися на кілька стадій назад, щоб знову прийняти захист і турботу. Коли дворічка не справляється, за нею лише одна стадія, виношування, і вона повертається на ручки, у психологічну утробу. Потім вона стає дошкільням, потім школярем, її самостійність і незалежність ростуть, але якщо щось іде не так, вона може потягнути за канат прив'язаності й покликати на допомогу батька.</p>
+    <p>Уявімо, що в десятирічної дитини в школі сталося щось неприємне. Дрібницю (пролила суп) вирішує внутрішній батько: «мама промокнула б серветкою». Коли болить голова, вона зателефонує мамі, почує її голос і порадою піти до медсестри. Коли її в чомусь звинуватили, потрібно, щоб мама приїхала й розібралася на місці. А коли щось дуже серйозне, як травма, шоковий переляк чи цькування, потрібно, щоб мама обійняла й узяла на руки, фактично повернулася до виношування. Чим гірше дитина справляється з життям, тим більше захисту їй потрібно й тим на більше стадій вона повертається назад: психологи називають це регресією. Те саме буває й у дорослих: у книзі є сцена, де молодий чоловік помирає від СНІДу й просить матір, з якою були напружені стосунки, лягти поруч і заспівати колискову, бо смертельна хвороба крайня форма неможливості впоратися з життям.</p>
+    <p>Так, рівень за рівнем, як складний квест, дитина проходить своє дитинство, за потреби на час повертаючись назад. Під час плато вона наповнюється турботою, новими вміннями, стосунками, а коли наповнена, робить ривок на новий рівень самостійності. Вагітність, плато: дитина дозріває всередині, повністю залежна. Щойно дозріла, починаються пологи, сепарація. Потім виношування, теж плато: малюк упиває молоко й турботу, наповнюється, і рік завершується ривком сепарації: дитина злазить із рук і здобуває свободу пересування. Потім період освоєння матеріального світу, накопичення вмінь в умовах міцного тилу, психологічної утроби, і новий ривок, криза негативізму. Коли вона завершена й дитина переконалася в міцності прив'язаності, вона знову насолоджується роллю маленької й залежної, хоче слідувати й приймати любов і турботу батьків, і робить це в ніжному віці. Знову сепарація близько семи років і плато навчання, підготовки до переходу у світ дорослих, і ось вона вже на порозі останньої в дитинстві кризи сепарації, підліткової. Якщо про кризи одного року чи семи років багато хто й не знає, бо вони тихі й усі зміни відбуваються всередині, то підліткову кризу сепарації не помітити неможливо. Тоді, під час пологів, дитина виходила з тіла матері в світ, відокремлюючись від пуповини, а тепер вона виходить у світ із психологічної утроби прив'язаності, відокремлюючись від залежності. Нудно не здасться нікому.</p>
+    <div class="final-quote">
+      <div class="final-text">Так, рівень за рівнем, як складний квест, дитина проходить своє дитинство, <strong>за потреби на час повертаючись назад</strong>.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>

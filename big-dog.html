@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<script src="theme.js" data-native="light"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Велика собака</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Велика<br>собака</h1>
+  <p class="page-subtitle">Таємна опора: розділ четвертий. Криза трьох років</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Ви не боретеся з нею, ви її спаринг-партнер</div>
+      <div class="hero-author">Таємна опора. Прив'язаність у житті дитини</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Мама зламалася -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Мама зламалася</h2>
+    <p>Приблизно до трьох років, а то й раніше, дитина раптом змінюється. Ніжне, слухняне крихітко в один день влаштовує перший скандал, і привід не має значення: налили молоко в ту чашку, одягли шапку, не купили чупа-чупс, допомогли з тим, що він хотів зробити сам. Ще недавно його можна було відвернути, залоскотати, заговорити. Тепер скандали стають обов'язковою частиною життя, рідко який день минає без вереску, сліз і кидання на підлогу то предметів, то самого себе, і ви розумієте: прийшла та сама криза негативізму.</p>
+    <p>Головні слова цього періоду «ні, не хочу й не буду» за будь-якого приводу. Іноді дитина каже «ні» раніше, ніж ви договорили, хоча видно, що вона хоче їсти, пити чи спати. Ті, хто вже добре говорить, мають цілий репертуар: «Не хочу чистити зуби, хочу, щоб боліли», «Піду від вас, я тебе не люблю». Не всі діти використовують цю кризу на повну: в одних це кілька епізодів, в інших кілька місяців, а є такі, хто починає «запалювати» близько двох років, і родина живе як на вулкані майже до чотирьох. Дитина вперто чинить опір волі батьків, ніби програма слідування дає збій. Гострі прояви часто збігаються з ривками в розвитку, коли вона на очах дорослішає. Тому кризу називають ще кризою сепарації: дитина виходить із блаженного злиття з батьком і протиставляє свою волю його волі. Тут є і нові можливості, і великі ризики.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Чому не вмикається слідування -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Чому не вмикається слідування</h2>
+    <p>Непослух майже завжди виникає тоді, коли дитина не вважає нашу поведінку захистом і турботою. Вона грається, а ми кажемо: час чистити зуби й спати. Їй зовсім не холодно, а ми одягаємо шапку. Вона хоче цікаву штуку з кнопками, а ми не даємо. Для неї це фрустрація, і що більше в родині приписів і заборон, то частіше такі ситуації. В архаїчних племен, де немовлята майже завжди спокійні, майже нічого не забороняють і не приписують: замерзне, прийде грітися, зголодніє, прийде їсти. Світ там простий і зрозумілий, цінних речей, які можна зламати, мало, тому прив'язаність рідко піддається випробуванням. Наше життя інше: ми змушені примушувати й забороняти, а для підсвідомості дитини це переводить нас із «своїх» у «чужі», тих, хто ображає чи не хоче допомогти. Вона не слухається, ми тиснемо суворіше, стаємо ще чужішими, вона впирається ще міцніше, і скандал готовий.</p>
+    <p>Батькам у цей момент зле, але для дитини це кошмар. Усе її життя тримається на тому, що батьки приходять на поклик і задовольняють потреби. Збої були, але вона знала чому: її просто не одразу розуміли, коли мовлення було нерозбірливе. Тепер вона чітко й літературною мовою каже: «Хочу цукерку прямо зараз», зрозуміти це неможливо краще, а мама замість цукерки заявляє: «Не можна, тільки після обіду». Люди добрі, мама зламалася, ми так не домовлялися! Як це я й мама можемо хотіти різного? Мама поводиться як чужа! Як тут не заволати й не впасти на підлогу, адже сталася катастрофа. Ми отримуємо замість милої дитини маленького монстра, який плюється, б'ється, кусається, кидається предметами і кричить: «Іди геть, я тебе не люблю». Її мозок ще незрілий, негативні емоції захоплюють цілком, розумних доводів вона не чує, затоплена протестом, гнівом і горем, а замість батька перед нею чужий.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Спосіб, що працює, але коштує дорого -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Спосіб, що працює, але коштує дорого</h2>
+    <p>Є стародавній і ефективний, хоч і небезпечний спосіб: увімкнути програму прив'язаності, а з нею слідування, створивши загрозу, серйознішу за дискомфорт від чищення зубів. Якщо під час конфлікту з'явиться хтось чужий і страшний, юний протестант усе забуде й кинеться до вас. Звідси «зараз тебе забере бабай, міліціонер, вовк»: якщо дитина вірить і лякається, вмикається слідування, а з ним і слухняність. Можна пригрозити залишенням: «Я піду, сиди тут сам», а для дитини лишитися самій майже дорівнює смертному вироку. Можна не словами, а дією: замкнути в кімнаті чи вийти й зачинити двері. Можна вдарити чи голосно крикнути: біль і страх змушують дитину інстинктивно шукати захисту в батька, вмикається слідування, вона виконує вимогу. Ляпас, крик і замикання в туалеті справді працюють, але не тому, що дитина усвідомила неправильність поведінки й зробила висновки. Вона нічому не навчилася. Батько просто грубим впливом запустив програму слідування, як колись, щоб полагодити ламповий телевізор, по ньому били кулаком.</p>
+    <p>Бувають ситуації, коли іншого виходу немає, і краще крикнути чи шльопнути, ніж дати дитині безтурботно бігти до проїжджої частини чи висуватися з вікна. Тільки не варто мати ілюзій, що ви її в цей момент виховуєте: ви грубим, але дієвим способом припиняєте неприйнятну поведінку. Перестаратися теж легко: налякати надто сильно, і замість слідування ввімкнеться давніша програма «залишайся на місці й кричи». Дитина провалюється в стрес і ще менше здатна виконати вимогу, а звідси недалеко й до біди, коли батьки серйозно травмують дітей, бо вважають, що вона «на зло горлає». Але й без найстрашнішого наслідки є: з кожним ударом і криком відбувається девальвація прив'язаності, одна з ниток каната рветься, від образу батька як джерела захисту відпадає шматочок. Запас міцності великий: за один раз нічого не станеться, ні за п'ять, ні за десять. Але ніхто не знає, скільки саме разів вистачить саме вашій дитині, щоб утратити відчуття захищеності й довіру до вас. Слухняність можна змусити, як телевізор ударом кулака: зараз запрацює краще, але полагодити так не можна, і кожен удар наближає мить, коли від складного приладу лишиться купа непотрібних деталей. Багато дорослих на питання психолога, чи були для них батьки джерелом підтримки, захисту й турботи, здивовано знизують плечима: «Ні, звісно. Вони кричали, переважно били, хотілося тільки, щоб відчепилися». Не думаю, що хтось із нас мріяв про такі стосунки зі своїми дітьми.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Дитина не робить на зло -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Дитина не робить на зло</h2>
+    <p>Як пережити цей час без шкоди для прив'язаності? Важливо пам'ятати, що дворічна-трирічна дитина нічого не робить на зло. Щоб комусь свідомо дошкулити, треба точно знати, як цей хтось сприйме наші дії, які почуття вони викличуть і що він робитиме. Трирічна на це не здатна: дослідження показують, що в неї ще не дозріли зони мозку, відповідальні за погляд на ситуацію очима іншої людини й прогнозування її реакцій. Ця здатність з'явиться років до шести-семи. Яка б жахлива не була наша трирічка, дорослим варто про це пам'ятати.</p>
+    <p>Що відбувається насправді? Дитина стрімко росте й щодня вміє більше, ніж учора, і від цього починається запаморочення від успіхів: здається, що вже все вмієш сам. Упевненість у праві досягати бажаного зростає, а мозок поки некритичний. Психологи питали дітей різного віку: «Ти великий чи маленький?» Трирічки як один відповідають «я великий», п'ятирічки «я маленький». Те саме повториться під час наступної кризи сепарації: у 13 років усі запевняють «я вже зовсім дорослий», а в 16 уже ні. Трирічка, який крутить кришку від каструлі, впевнений, що майже як тато веде машину, а в п'ять уже розуміє, що ні. Звідси й конфлікти: дитина впевнена, що може сама зробити чи вирішити, а батьки бачать ситуацію ширше й погодитися не можуть.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Конфлікт як норма -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Конфлікт як норма</h2>
+    <p>Конфлікт як вид взаємодії нормальний: де є люди, там є інтереси, що можуть не збігатися. Він не завжди крик і бійка, це може бути суперечка в суді, торг на ринку чи обговорення недільного ранку.</p>
+    <p>Люди поводяться в конфліктах по-різному. Одні бояться їх і завжди поступаються: оточення швидко це бачить і їздить на такій людині, а вона ображається, терпить і частіше просто хворіє. Інші готові впиратися завжди й качають права: з ними не хочуть мати справи, а двоє таких можуть зійтися, як два барани на місточку, до того ж надто довго живуть у мобілізації й отруюють себе стресом. Одна стратегія на всі випадки нічого доброго не дає. Бувають ситуації, коли треба впертися (цінності, самоповага, безпека інших, честь), коли вперте марне, коли стосунки важливіші за рішення, коли потрібен компроміс чи винахідливість: «ти не любиш готувати, але любиш наводити лад, а я навпаки, поділімо справи». Добре, коли в дорослого є ціла колода стратегій і він обирає з неї за ситуацією: така людина гнучка й успішна в роботі та стосунках.</p>
+    <p>Якщо дитину карають за будь-яку спробу протесту, або батьки так бояться її засмутити, що ніколи не сперечаються, вона не освоїть цього різноманіття. А конфлікт із батьками передусім стрес, і буде знайома нам пара варіантів: уникнення мобілізації й відмова від своїх інтересів (позиція ганчірки) або застрягання в мобілізації без здатності поступитися й змиритися (позиція барана).</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Батько як тренер -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Батько як тренер</h2>
+    <p>Тому криза негативізму не просто випробування для батьківських нервів. Це час, коли дитина вчиться наполягати на своєму й конфліктувати, а ви, як досвідчений тренер, допомагаєте їй освоїти різні стратегії. Ви не боретеся з нею, ви її спаринг-партнер: неможливо навчитися грати в теніс на самоті, лише з партнером, який підкаже, прийме удар і подасть м'яч. Трирічка відкриває, що батько хоче не того, що вона. Спершу шок і протест, а потім, якщо батько не перериває ситуацію штучно, вона вчиться жити у світі, де її воля обмежена волею інших людей. У цьому головне завдання віку.</p>
+    <p><strong>Нота бене:</strong> важливо, щоб у зіткненнях із вами дитина отримувала різні типи відповідей: іноді їй поступаються, іноді ні, іноді переводять у гру, іноді домовляються, як у житті. Є речі, які ви не дозволите ніколи, нехай вона хоч весь день репетує, наприклад совати пальці в розетку. Є речі, в яких можна поступитися: не хоче таку кашу, можна не давати. Є ситуації, коли можна по-різному: разом збирати іграшки, посперечатися з татом, не встигнути одягнутися, поки ви рахуєте до десяти, з тріском програти, зрозуміти, що місяць із неба не дістати, і поплакати про це. І пам'ятайте, що ця криза не вічна.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Влада й турбота: без рівності й без насильства -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Влада й турбота: без рівності й без насильства</h2>
+    <p>Криза випробовує на міцність не лише терпіння батька, а й саму прив'язаність. Чи лишиться поведінка дорослого в конфлікті поведінкою сильного? Чи не почне він бодатися з малюком на рівних або пасувати перед загрозою істерики? Особливість прив'язаності в тому, що ця ієрархія: стосунок між сильним і слабким, домінантним і залежним. Дитина мала, вона отримує захист і турботу, а натомість слідує й слухається, окрім випадків, коли не слухається.</p>
+    <p>У другій половині минулого століття, на хвилі вільних шістдесятих, багато батьків на Заході пройшли через спокусу відмовитися від ієрархії: ставитися до дітей як до рівних, нічого не забороняти й не наказувати. Це була реакція на століття жорсткого патерналізму й холодних домів. Але відсутність ієрархії суперечила програмі прив'язаності й викликала в дітей незахищеність і тривогу: якщо мої дорослі такі самі, як я, то хто всіх нас захистить від небезпечного світу? Лібералізм не зробив дітей щасливими, і до нас його хвиля докотилася пізніше, з тими самими результатами. Дітям потрібні сильні й упевнені дорослі, а не партнери по іграх. Відповіддю на жорстокість старої моделі має бути не безвідповідальна рівність, а владна турбота: домінування, яке використовується не щоб пригнічувати, а щоб допомагати й захищати. Криза негативізму проводить першу серйозну перевірку цієї здатності: легко не сердитися на безпорадне немовля, а от на це свавільне, голосне, рикаюче чи вдасться не перейти до насильства, але й не здатися?</p>
+    <p>Потрібні обидві складові, бо дитині однаково страшно і з батьком безпорадним, і з суворим, глухим до її потреб: «якщо мама й тато мене не захищають, а ображають чи бояться моїх криків, що вони робитимуть, коли доведеться зустрітися з тигром?» Поступитися можна з позиції сильного: «Я думаю, цього не варто, але бачу, що тобі дуже хочеться гуляти в новій сукні, тому дозволяю, бо я тебе люблю» або «Я вважаю вівсянку корисною, але ти її ненавидиш, тож не буду змушувати». Це поступка як турбота, прояв надійної прив'язаності. А можна поступитися з позиції слабкого: «Та відчепися вже, весь мозок мені виніс, замовкни». Це капітуляція, виштовхування дитини в домінантну роль, до якої вона не готова: вона цукерку хоче, а не бути начальником. Відмовляти теж можна з позиції турботи: заборонити, але співчувати й зберігати доброзичливий контакт, запропонувати контейнування («я розумію, як тобі хочеться ще мультик, але нам пора спати; ти засмутився? Іди до мене, я тебе пожалію») чи допомогу з переключенням уваги («як думаєш, зможеш сам натиснути потрібну кнопку? А допоможеш накрити на стіл, скоро тато прийде?»). Якщо ж батько не почувається в праві забороняти й не в домінантній ролі, то мусить накручувати себе: «такий великий хлопчик і так себе поводиш», і тоді заборона перестає бути турботою, дитина сприймає її як напад і ображається.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Велика собака -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Велика собака</h2>
+    <p>Криза негативізму справді складний момент: багато стосунків батьків і дітей дають першу тріщину саме тоді. Деякі кажуть: «До двох із половиною все було добре, а потім він став неможливим і почав мене дратувати». Але роздратування ознака того, що батько вийшов із позиції захисту й турботи. Згадайте двір, де на сонечку лежить стара велика собака, а навколо носиться щеня: то за вухо вхопить, то залізе на неї, то гавкне над вухом. Він їй заважає, але чи можна уявити, що вона дратується? Вона надто велика й дивиться з іншого масштабу: ну такий він, щеня. Коли дорослий почувається великим, діти його не дратують: розплескав воду, неохайно їсть, скаче й волає, ну так він же маленький. Дорослого, який дратується, розлита вода, розмазана каша й шум у квартирі винесли з дорослої ролі.</p>
+    <p><strong>Нота бене:</strong> якщо вас захльостує роздратування чи відчай при вигляді дитячих сліз, корисно спитати себе: «Скільки мені зараз років?» Якщо відчуваєте, що явно не стільки, як у паспорті, найкраще відійти вбік і зайнятися собою: узяти паузу, подихати, умитися, випити чаю, з'їсти шоколадку, зробити енергійні рухи, спитати себе, чому мені так важко, і почути відповідь: «бо я втомилася, мені зараз уже витирати це розлите молоко, а я взагалі хотіла лягти спати». Після цього щиро пожалійте себе, подумки обійміть, візьміть на ручки: «Ах ти моя бідолашна, так втомилася, а тут ще й молоко розлили». Стає легше. Лишатися великою доброю собакою постійно складно, бо наше життя зовсім не собаче: у ньому, крім дітей, так багато всього, що може виявитися більшим за нас, хвороби, безгрошів'я, конфлікти з близькими, хронічна втома. Важливо вчасно зрозуміти, що ви вилетіли з дорослої ролі, і якомога швидше в неї повернутися.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Сепарація і прив'язаність після сварки -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Сепарація і прив'язаність після сварки</h2>
+    <p>Дитина переживає болісне відкриття: я й батьки можемо хотіти різного, ми окремі люди. Психологи кажуть, що в цей момент розривається симбіотичний зв'язок, уявлення про себе й батьків як про єдине ціле. Симбіоз не може бути вічним, бо дитині належить вирости й відокремитися. У її багажі вже є два акти сепарації: пологи й криза одного року, коли вона злізла з рук. Але тоді вона була мала й не усвідомлювала. А тепер їй страшно: конфлікти з батьками вона переживає як загрозу прив'язаності, як ризик лишитися без їхньої любові, і злиться, і не може ні сперечатися, ні сепаруватися, хоч цього вимагає програма розвитку.</p>
+    <p>Якщо батько лишається турботливим дорослим, навіть коли в конфлікті розсердився, він дасть зрозуміти: сварка сваркою, але з прив'язаністю все гаразд. Обійме, витре сльози, допоможе вмитися, зібрати розкидане. Такий досвід виходу зі сварки дає дитині найважливіше знання: прив'язаність перекриває конфлікт, вона сильніша за сварку, її не розірвати. Можна хотіти різного, посваритися, наговорити образливого, але стосунки нікуди не діваються. Любов мами не зруйнується від слів «ти дурна»: мамі це не сподобалося, але мене вона любить, а я, коли вже не сержуся, теж її люблю. Можна сердитися, але все одно любити. Буває, що треба й попросити пробачення.</p>
+    <p>А що, якщо батько після конфлікту перетворюється на суворого, холодного суддю, чиє прощення треба довго вимолювати? Або мама стає ображеною маленькою дівчинкою з надутими губками чи й плаче. У деяких родинах вважають педагогічним: «Поки не вибачишся, не підходь» і підкреслено ігнорують дитину, певні, що вчать визнавати помилки. Але для дитини це означає, що її вишвирнули зі стосунків, прив'язаність під питанням, її треба завойовувати назад і ніколи не можна бути в ній певною. Їй фактично сказали: тепер ти відповідаєш за те, щоб ми були разом, ти вирішуєш, коли й чи повернеться наша прив'язаність, а я цю відповідальність знімаю. Прямо кажучи, батько звільнився з ролі батька. Але так не влаштовано, щоб діти заводили собі батьків і будували з ними стосунки: це дорослі заводять дітей і відповідають за стосунки з ними.</p>
+    <p>Це перевертає конструкцію, і тут може почати формуватися перекручена, перевернута прив'язаність, про яку докладніше йтиметься в книзі: дитину виштовхують у домінантну роль, і вона змушена стати головною не від доброго життя, а тому що виходу немає. Діти цього не люблять і довго опираються, але якщо батьки раз у раз перекладають на них відповідальність за стосунки, рано чи пізно дитина змирюється. З такою дитиною дуже важко: слідування не працює, бо за ким слідувати, якщо дорослий більше не дорослий? Згадайте маленького деспота з фільму про Червону Шапочку: він погрожував побити всіх нянь, а було видно, наскільки він самотній і незахищений, і коли дівчинка-підліток не злякалася його гніву й виявила домінантну турботу, він потягнувся до неї всією душею. Перевернута прив'язаність болісна не лише для дорослих, а й для самої дитини: вона качатиме права, але почуватиметься нещасною, бо за домінантну роль заплатить відчуттям захищеності й власним дитинством.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Як же виховувати -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Як же виховувати</h2>
+    <p>Але ж треба пояснити, що битися, плюватися й обзиватися погано: адже він вирішить, що так і треба, якщо його тільки цілувати й обіймати. Щоб відповісти, треба розібратися, як влаштований мозок. Є давній стовбур, що відповідає за тіло, є молода кора, яка робить нас людьми розумними, а між ними лімбічна система з емоціями, несвідомими реакціями й програмами виживання: самозбереження, продовження роду й вирощування потомства, тобто прив'язаність. Вона реалізується несвідомо, тому навіть люди з дуже невисоким інтелектом можуть бути хорошими батьками, якщо самі були так виховані.</p>
+    <p>Коли лімбічна система спокійна, верхній мозок працює в штатному режимі. Але щойно надходить сигнал небезпеки, виділяються гормони стресу, і здатність міркувати різко падає: це схоже на воєнний стан у державі, коли дискусії й реформи недоречні, влада переходить до силових відомств, а рішення ухвалюються за принципом «або-або», бо на кону виживання.</p>
+    <p>Так і з дитиною: коли її лімбічна система в тривозі, вона припиняє пізнання світу й шукає близькості з батьком. А конфлікт із самим батьком для неї подвійний стрес, бо прив'язаність це життєва потреба, і її загроза переживається як загроза життю: мама чи тато кричить, дає зрозуміти, що я не такий, як треба, ніби я більше не їхній. А буває ще гірше, коли батько б'ється чи прямо погрожує відкиданням: «Іди від мене, ти мені такий не потрібен». Усі сили дитини йдуть на те, щоб пережити стрес, а на навчання нових правил сил немає. Кортикальний, навчальний мозок передав віжки й відійшов убік, тож усі ваші розумні слова й повчання в ці хвилини не те що влетять в одне вухо й вилетять з іншого, а просто не потраплять у голову. Слово це мова верхнього кортикального мозку, а він у вимушеній відпустці.</p>
+    <p><strong>Нота бене:</strong> щоб дитина нас почула й зрозуміла, треба передусім заспокоїти її лімбічну систему й вивести зі стресу: пожаліти, обійняти, утішити, проговорити її почуття, щоб вона зрозуміла, що ви з нею на зв'язку. Хоча б не підливати масла у вогонь криком, погрозами й невиконуваними вимогами типу «Припини волати негайно, замовкни зараз же». Ви самі захотіли б таке почути, коли ридаєте? Просто лишайтеся поруч, обіймайте, гладьте, щось говоріть: зміст слів неважливий, важливі інтонація, присутність і дотик. Дуже важливий ваш власний стан: якщо вас трясе, ви дитину не заспокоїте. Згадайте велику собаку, дихайте й заспокоюйтесь самі, іноді цього досить, щоб стрес дитини пішов на спад. Несвідоме емоційне підлаштовування дитини й батька мало вивчене, але воно явно існує: за диханням, голосом, виразом обличчя й, можливо, запахом діти точно визначають наш стан і змінюють свій, щоб звучати в унісон.</p>
+    <p>А всі повчання, моралі й навчання новим способам спілкування лише після того, як дитина поплакала, розслабилася, втішилася, сльози висохли, «воєнний стан» скасовано й вертикальний мозок повернувся до обов'язків. Ось тепер час розповідати, як не треба було й як можна інакше, обговорювати, формулювати правила й просити запам'ятати. Говоріть усе, що хочете, щоб дитина справді почула, а не щоб ви собі поставили галочку про виконану виховну роботу, і лише в спокійному довірливому стані, коли ви можете сісти поруч, обійняти, зазирнути в очі, назвати ласкавим ім'ям: тоді прив'язаність зробить своє, ввімкнеться слідування, і виховання піде успішно. Хочете, щоб дитина вміла просити пробачення, просіть самі: покажіть приклад виходу зі сварки й визнання помилок. Якщо з прив'язаністю все гаразд, вона навчиться наслідуванням, без повчань.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Підсумок -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Підсумок</h2>
+    <p>Криза негативізму час, коли дитина та ваші стосунки можуть багато чого здобути, але можуть і серйозно постраждати. Тому найкраще, що ви можете зробити, це скандалити з дитиною якісно, різноманітно, з позиції сили й турботи і обов'язково потім відновлювати стосунки: конфлікт наших стосунків зруйнувати не може. А якщо ви впоралися й переконали дитину, що ваша прив'язаність міцна й надійна, на вас чекає нагорода: наступний прекрасний вік, коли до вас знову повернеться поступливе миле дитя.</p>
+    <div class="final-quote">
+      <div class="final-text">Такий досвід виходу зі сварки дає дитині найважливіше знання: <strong>прив'язаність перекриває конфлікт, вона сильніша за сварку, її не розірвати</strong>.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
