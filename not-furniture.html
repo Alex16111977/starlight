@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<script src="theme.js" data-native="light"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Людина, а не меблі</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+.cmp{margin:8px 0 28px;border:1px solid rgba(52,58,94,.22);border-radius:16px;overflow:hidden;background:rgba(52,58,94,.06)}
+.cmp-row{display:grid;grid-template-columns:minmax(84px,.7fr) 1.4fr 1.4fr}
+.cmp-row>div{padding:13px 16px;font-size:14px;line-height:1.65;color:rgba(36,40,68,.9);border-top:1px solid rgba(52,58,94,.14)}
+.cmp-head>div{border-top:none;font-size:11px;font-weight:400;letter-spacing:.16em;text-transform:uppercase;color:rgba(52,58,94,.8)}
+.cmp-row>.cmp-k{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:17px;color:#242844}
+@media(max-width:600px){.cmp-row{grid-template-columns:1fr;padding:6px 0;border-top:1px solid rgba(52,58,94,.18)}.cmp-head{display:none}.cmp-row>div{border-top:none;padding:5px 16px}.cmp-row>div[data-label]::before{content:attr(data-label);display:block;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:rgba(52,58,94,.7);margin-bottom:2px}}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Людина,<br>а не меблі</h1>
+  <p class="page-subtitle">Цькування в школі: що робити (покроковий посібник)</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Цькування не конфлікт і не «дитячі справи», це насильство й порушення прав неповнолітніх</div>
+      <div class="hero-author">Альберт Сафін</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- BODY -->
+  <!-- Вступ і головна теза -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Вступ і головна теза</h2>
+    <p>Сафін радить опрацьовувати матеріал повільно й спокійно, без високого пульсу, конспектувати і вправлятися в тому, щоб лишатися врівноваженим. Він попереджає, що урок може викликати спалахи гніву й відчуття несправедливості щодо власних вчителів, а ще що поширені «добрі» заходи виявляться шкідливими: «благими намірами людина лише примножує страждання».</p>
+    <p>Він називає явище не «булінгом», а цілеспрямованим цькуванням: умисною агресивною поведінкою дітей щодо ровесників (а часом і молодших чи старших), що супроводжується фізичними або частіше психологічними знущаннями. Від звичайної дитячої сварки воно відрізняється тим, що є навмисним, цілеспрямованим і систематичним. Центральна теза: діти самі ніколи не розв'яжуть проблему цькування, і діти не йдуть по допомогу до дорослих, бо не вірять, що їм допоможуть. Вирішувати це мають дорослі, насамперед адміністрація.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Структура уроку -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Структура уроку</h2>
+    <p>Спершу показано, що не працює і що шкодить (частини 1–5), потім хто бере участь у цькуванні (6), потім що робити (7–14), наприкінці відмінність між цькуванням і конфліктом та практичні кроки. Автор навмисно починає з «як не треба», щоб читач бачив причинно-наслідкові зв'язки, а не завчав список.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що не працює із зачинщиком -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Що не працює із зачинщиком</h2>
+    <p>За Сафіним, зачинщик цілком усвідомлює, що завдає болю, і саме страждання жертви є його метою. Тому безрезультатні й шкідливі:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">бесіди «це погано, припини», «давайте жити дружно», про добро й зло, про те, що всі різні і треба любити ближнього: зачинщик зобразить, що зрозумів, а подумки тріумфуватиме;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">звернення до жалості, співчуття й емпатії: автор стверджує, що в таких дітей цього, як правило, немає, тож приклади «уяви себе на її місці» не діють;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">заклики до справедливості: дитина-агресор розуміє, що вчиняє несправедливо, і саме це дає їй відчуття переваги.</div></div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що не працює і шкодить із жертвою -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Що не працює і шкодить із жертвою</h2>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">розпитувати «чому саме тебе цькують» і «чим ти сам їх провокуєш»: дитина не знає причин, їй стає тільки гірше, і вона просить не втручатися («усе гаразд, жартували»);</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">радити не звертати уваги й «бути вище»: людина як істота стадна не може не реагувати на систематичні приниження групи, а двобічне послання «терпи» означає «твої почуття нічого не варті»;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">навчання самостійному виходу з ситуації, прохання не провокувати, організація «примирення», спільні заходи жертви й агресора. Наслідки, за автором, можуть бути найтяжчими, аж до думок про самогубство чи про насильство щодо кривдників.</div></div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Небезпечні для жертви «поради» -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Небезпечні для жертви «поради»</h2>
+    <p>Сафін вважає не лише марними, а й небезпечними поради: ігнорувати образи, не відповідати на фізичну агресію, погоджуватися з тим, що кажуть кривдники, самотужки з'ясовувати з агресором, чого він хоче, змінювати свою поведінку «щоб відстали», бути як усі, бути гнучким, не показувати слабкості, не боятися агресорів і не тікати від них, не вірити погрозам, не скаржитися дорослим. Те саме стосується звернення до шкільного антибулінгового комітету з ровесників, ради старшокласників чи шкільного медіатора. Причина одна: повід вторинний і будь-який знайдеться, агресор усе розуміє, а діти й ровесники не мають компетенцій і влади це зупинити.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що не працює на рівні класу -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Що не працює на рівні класу</h2>
+    <p><strong>Безрезультатні:</strong> класні години про толерантність і дружбу, концерти, плакати «ми проти агресії», театральні постановки на кшталт «Бульбашка, Соломинка і Лапоть», спортивні змагання «для згуртування» (де агресор і жертва в одній команді), походи, уникливі натяки на «негативні наслідки». Профілактика, за автором, діє лише коли цькування немає; коли воно вже є, потрібне спершу припинення, а профілактика потім («пити мінералку при гострій стадії хвороби безглуздо»). Три найпопулярніші, але хибні стратегії: обмін ролями, пояснення «усі люди різні» та примирення і медіація. Цькування не конфлікт: у конфлікті сторони рівні, а тут одна багаторазово сильніша, тож медіація це «лікувати карієс пластирем».</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Ролі: ніхто в класі не лишається осторонь -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Ролі: ніхто в класі не лишається осторонь</h2>
+    <p>Є зачинщик і його помічники (ті, хто глузує, репостить, ігнорує), жертва і спостерігачі; захисники жертви бувають рідко. Автор наголошує, що в колективі з цькуванням невтягнутих дітей немає, кожен має свою обрану або змушену роль (жертва, спостерігач, іноді союзник зі страху опинитися на місці жертви), і всі зазнають шкоди. Типи нападок: на соціальний статус, на мовлення чи комунікацію, на зовнішність, національність, на соціальні зв'язки, погрози й насильство. Поширені прояви: плітки, прізвиська, висміювання, бойкот, псування речей, обмови, шантаж, вимагання, сексуальні домагання, побиття. Видимі ознаки: зіпсовані речі, сліди побоїв. Приховані ознаки: небажання йти до школи, самотність, скарги на самопочуття і психосоматика, виключення з чатів, пригнічений стан, заперечення цькування («усе нормально, ми так дружимо»).</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що робити: стратегія результативних заходів -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Що робити: стратегія результативних заходів</h2>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Чіткі єдині правила антибулінгової безпеки, які діють для всіх без винятку: нікого, ніде, ніколи не принижувати ні словом, ні дією (ні вчителів, ні дітей), прописані в статуті.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Ознайомити всіх учнів і батьків, без торгу («правило таке, торгуватися з агресором означає показати, що можна далі»).</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Санкції за порушення:</strong> зауваження, догана, виключення і постановка на облік у комісію у справах неповнолітніх; запросити фахівців, які розкажуть дітям про адміністративну й кримінальну відповідальність.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Суворий контроль дорослих за виконанням правил, без винятків; якщо дитина через стан здоров'я не контролює поведінку, питання її безпечного перебування в колективі вирішує адміністрація на підставі медичного висновку; якщо вона здорова, але розбещена, відповідає як усі, а також її батьки.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Не замовчувати жодного випадку, навіть поодинокого: цькування боїться розголосу, а вчитель, що мовчить через страх, стає співучасником.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Не допускати дітей до розв'язання, не перекладати його на ради старшокласників чи піклувальну раду: це компетенція дорослих, що відповідають за життя й здоров'я дітей.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Не допускати потурання: діти-жертви швидко втрачають віру в справедливість, а травми отруюють життя на роки.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Чітко розрізняти конфлікт і цькування, демонструвати готовність допомогти й відкрито заявляти непримиренну позицію («твоя рішучість не змінюється»).</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Якщо адміністрація не підтримує, класний керівник усе одно може і має взяти відповідальність за правила й санкції у своєму класі; фраза «я лише класний керівник» це зняття з себе відповідальності.</div></div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Підлітковий аспект: натовп -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Підлітковий аспект: натовп</h2>
+    <p>Жорстокість у групі має природу, відому віковій психології: людина в натовпі регресує, її відповідальність розмивається, а інтелект знижується («у боротьбі людини з ситуацією перемагає ситуація»). Підлітку надзвичайно важливо належати групі, а страх опинитися за її межами штовхає на співучасть. Під час індивідуальної розмови учасники інциденту часто розгублені й самі не розуміють, як опинилися в такому.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Інформування старшокласників і батьків -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Інформування старшокласників і батьків</h2>
+    <p>Класний керівник у класі розповідає, що саме вважається цькуванням (навмисні образи, залякування, ізоляція, погрози, поширення порочної інформації; не важливо, чи намір реалізували), що статус неповнолітнього не рятує (за низкою статей відповідальність настає з 14 років), що відсутність заробітку не звільняє від компенсації моральної шкоди (її сплачують батьки). Часом варто взяти підпис дитини про ознайомлення («ритуально-дресирувальний» ефект); письмове інформування відтверезно діє на більшість шкільних хуліганів, бо випускникам важливо, що навчальні заклади не потребують абітурієнтів із такою характеристикою.</p>
+    <p><strong>Профілактика в класі:</strong> єдині правила й перелік прикладів недопустимої поведінки; діти мають знати, що можуть звернутися до вчителя, і треба відрізняти ябедництво від прохання про допомогу; вчасно виявляти дітей-ізгоїв (за поведінкою на перервах, біля дошки), допомагати їм налагодити контакт хоч з однією дитиною, аналізувати ризики, закладати профілактику у виховні заходи; відмовитися від формалізму й підміни дієвих заходів зручними «давайте жити дружно».</p>
+    <p><strong>Сім правил інформування батьків:</strong> (1) доброзичливо, без погроз і без згадки конкретних батьків; (2) не називати дитину-жертву, щоб не завдати додаткової травми; (3) не соромити батьків зачинщиків перед іншими, бо це викличе захисну реакцію; (4) пояснити, що інформують для співпраці й недопущення повторень, а не для конфлікту батьків; (5) повідомити позицію школи і готовність допомогти (профілактика скарг у наглядові органи); (6) не драматизувати, не показувати жахливих відео, показати, що вчителям не байдуже; (7) не приховувати: замовчування найгірша профілактика. Подібне інформування на зборах доповнюють письмовою довідкою про відповідальність, а батьків закликають бути союзниками, бо шкоди зазнають усі: жертва, спостерігачі й захисники, і лише агресор отримує задоволення.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Бездіяльність школи: до чого вона призводить -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Бездіяльність школи: до чого вона призводить</h2>
+    <p>За Сафіним, коли факт цькування виявлено, але школа нічого не робить:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">зачинщики роблять висновок, що вчителі бояться або їм вигідно не втручатися, що сила єдине право, і за новою силою беруться за жертву й обирають наступну (серед нейтральних чи співчутливих), а тоді й за слабких чи літніх учителів;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">жертва розуміє, що допомоги чекати нізвідки: відчай, психосоматика, суїцидальні думки; перехід до іншої школи постає як ще один стрес і визнання поразки;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">спостерігачі засвоюють, що з сильним краще не зв'язуватися, і частина переходить на бік кривдників;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">батьки бачать, що директор безсилий або залежний від інших батьків.</div></div>
+    </div>
+    <p>Автор називає бездіяльність і замовчування співучастю в злочині й закликає вчителя бути «сталевим кулаком в оксамитовій рукавичці», не піддаватися на жодні пропозиції замовчати цькування: «вас не можна купити, бо ви людина, а не меблі».</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Дії у разі виявлення цькування -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Дії у разі виявлення цькування</h2>
+    <p><strong>Припинення цькування (мета: припинити незалежно від бажання сторін, адже ізгой може запевняти, що все гаразд):</strong></p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Організаційний етап:</strong> негайно повідомити адміністрацію, соціального педагога чи психолога (бо цькування може спричинити наслідки й для школи за бездіяльність); поговорити з батьками жертви і разом намітити шляхи допомоги; за шкоди здоров'ю повідомити профільне відомство.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Допомога дитині:</strong> оцінити її стан, запевнити, що буде зроблено все для недопущення продовження, з'ясувати, яких дій вона очікує від дорослих («цей крок може буквально зберегти життя»), повідомити про особисту готовність допомогти, відновити репутацію дитини в класі, створити «буферну зону» з дітьми, які співчували або були нейтральними.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Відновлення рівноваги й справедливості:</strong> зачинщики й союзники повертають речі й вибачаються, припиняються ізоляція, насмішки й поширення порочної інформації, контролюється цифрове цькування. Далі діють правила й санкції.</div></div>
+    </div>
+    <p><strong>Конфлікт (мета: розв'язати в інтересах обох сторін; досягається домовленістю):</strong></p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Індивідуальна розмова з кожним без присутності другого:</strong> дати розповісти, назвати емоції (допоможе й арт-терапія, наприклад, пластилін), з'ясувати претензії й варіанти розв'язання.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Спільна розмова:</strong> модератор дає висловитися, ставить відкриті запитання, підказує, як вчиняли інші, і домовляє про добровільні виконувані угоди та строки.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Контроль виконання домовленостей.</div></div>
+    </div>
+    <p>Ці кроки підходять лише до конфлікту, а не до цькування.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Цькування чи конфлікт: порівняння -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Цькування чи конфлікт: порівняння</h2>
+    <div class="cmp">
+      <div class="cmp-row cmp-head"><div></div><div>Цькування</div><div>Конфлікт</div></div>
+      <div class="cmp-row"><div class="cmp-k">Сили</div><div data-label="Цькування">нерівні, жертва безпорадна</div><div data-label="Конфлікт">рівні, сторони впливають однаково</div></div>
+      <div class="cmp-row"><div class="cmp-k">Характер</div><div data-label="Цькування">навмисне, тривале, повторюване</div><div data-label="Конфлікт">часто спонтанне, коротке</div></div>
+      <div class="cmp-row"><div class="cmp-k">Провина</div><div data-label="Цькування">жертва не винна, нею може бути будь-хто</div><div data-label="Конфлікт">відповідальні обидві сторони</div></div>
+      <div class="cmp-row"><div class="cmp-k">Мета</div><div data-label="Цькування">принизити, емоційне або фізичне насильство</div><div data-label="Конфлікт">різні інтереси, потреби, цінності, непорозуміння</div></div>
+      <div class="cmp-row"><div class="cmp-k">Причини</div><div data-label="Цькування">помста, заздрість, «інакшість» жертви, прагнення переваги, нереалізоване лідерство, жорстокість</div><div data-label="Конфлікт">різні інтереси, нестача інформації, давні образи</div></div>
+      <div class="cmp-row"><div class="cmp-k">Розв'язання</div><div data-label="Цькування">лише рішучим втручанням третьої сторони й адміністративними заходами</div><div data-label="Конфлікт">домовленістю сторін</div></div>
+    </div>
+    <p><strong>Закріплення на прикладах:</strong> хтось заходить у чужі соцмережі й пише гидкі коментарі, на фізкультурі ставлять підніжку, не кличуть за стіл і кричать «товста», щодня пишуть «краще б тобі не приходити» все це, за автором, цькування.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Підсумок -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Підсумок</h2>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Цькування не конфлікт і не «дитячі справи», це насильство й порушення прав неповнолітніх. Діти, батьки й громадськість самі з ним не впораються, потрібні знання вікової психології, спостережливість і рішучі дії дорослих.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Тактика («давайте жити дружно», конкурси, бесіди, примирення) не компенсує стратегічного промаху. Стратегія це адміністративний ресурс, єдині правила, санкції, огласка і нетерпимість до замовчування.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Повністю викорінити цькування в дитячих колективах, на думку автора, неможливо, але його можна тримати під контролем, зупиняти на початку і зводити шкоду до мінімуму.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Поради автора для самостійної роботи:</strong> переказувати кожну частину в малих групах, наводити приклади з життя, адаптувати формулювання під власний стиль, а до матеріалу повертатися, бо він «зазвучить інакше».</div></div>
+    </div>
+    <div class="final-quote">
+      <div class="final-text">Повністю викорінити цькування в дитячих колективах, на думку автора, неможливо, але його можна тримати під контролем, <strong>зупиняти на початку і зводити шкоду до мінімуму</strong>.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<script src="theme.js" data-native="light"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Зал очікування</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+.cmp{margin:8px 0 28px;border:1px solid rgba(52,58,94,.22);border-radius:16px;overflow:hidden;background:rgba(52,58,94,.06)}
+.cmp-row{display:grid;grid-template-columns:minmax(84px,.7fr) 1.4fr 1.4fr}
+.cmp-row>div{padding:13px 16px;font-size:14px;line-height:1.65;color:rgba(36,40,68,.9);border-top:1px solid rgba(52,58,94,.14)}
+.cmp-head>div{border-top:none;font-size:11px;font-weight:400;letter-spacing:.16em;text-transform:uppercase;color:rgba(52,58,94,.8)}
+.cmp-row>.cmp-k{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:17px;color:#242844}
+@media(max-width:600px){.cmp-row{grid-template-columns:1fr;padding:6px 0;border-top:1px solid rgba(52,58,94,.18)}.cmp-head{display:none}.cmp-row>div{border-top:none;padding:5px 16px}.cmp-row>div[data-label]::before{content:attr(data-label);display:block;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:rgba(52,58,94,.7);margin-bottom:2px}}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Зал<br>очікування</h1>
+  <p class="page-subtitle">Жіночий інфантилізм: від очікування дива до самостійності</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Дорослість не має статі, це здатність психіки справлятися з реальністю</div>
+      <div class="hero-author">Альберт Сафін</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- BODY -->
+  <!-- Вступне слово: чому «стати дорослою» не страшно -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Вступне слово: чому «стати дорослою» не страшно</h2>
+    <p>Сафін подає урок як «карту виходу з психологічного лабіринту». Основна думка: «хто не несе відповідальності за своє життя, той не має на нього прав», і це однаково стосується чоловіків і жінок. Інфантилізм, за ним, не про рожеві сукні, а про відмову від власної сили в обмін на примарну обіцянку безпеки. Культура довго продавала безпорадність як «справжню жіночність» (казки про принца на білому коні). Окремий урок буде про чоловічий інфантилізм.</p>
+    <p>Автор заздалегідь відповідає на типові заперечення:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>«Я стану чоловіком у спідниці й утрачу жіночність».</strong> Дорослість не має статі, це здатність психіки справлятися з реальністю. Справжня жіночність це розкіш, яку може дозволити собі доросла особистість, що не боїться світу; «інфантильна жіночність» часто маска переляканої дитини.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>«Чоловікам не потрібні розумні й самостійні».</strong> Слабкість приваблює або тих, хто хоче домінувати, або таких самих інфантильних чоловіків, що шукають «доньку». Здорові чоловіки шукають партнерку, а не тягар.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>«Доросле життя це лише проблеми й нудьга».</strong> Навпаки: дитина живе в постійному страху («а раптом закінчаться гроші, розлюбить»), а доросле життя про «я можу» й «я обираю», а не про «треба».</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>«Мені вже пізно, після 35 характер сформований».</strong> Психіка пластична до останнього подиху; інфантилізм не риса характеру, а набір звичних нейронних зв'язків і захистів.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>«Я залишуся сама».</strong> Самотність дитини жах, самотність дорослого свобода й ресурс; дорослішання дає «опору на себе» й здатність будувати або переглядати стосунки без катастрофи.</div></div>
+    </div>
+    <p><strong>Ключові поняття:</strong> психологічна автономія (спиратися на себе, зберігаючи зв'язок із людьми); локус контролю (повернення собі права бути причиною подій, без фантазій про всемогутність); емоційний контейнер (проживання складних почуттів без маніпуляцій і зривів); вторинні вигоди (приховані бонуси безпорадності); суб'єктність (перехід від об'єкта опіки до автора власної долі).</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 1. Що таке жіночий інфантилізм -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">1.</span> Що таке жіночий інфантилізм</h2>
+    <p>Це стійка нездатність або свідома відмова брати відповідальність за своє життя, емоції, рішення та їхні наслідки. У соцмережах це часто романтизують як «жіночність, тендітність і неземну легкість», але за фасадом лежить дефіцит внутрішніх ресурсів і залежність від обставин та людей. Механізм захисний: зіткнувшись із вимогами реальності, людина відкочується до дитячих стратегій, де головне «викликати бажання про себе подбати». Така доросла за паспортом жінка витрачає колосальну енергію не на творення, а на підтримку образу, що гарантує зовнішню опору. Це «не легкість, а важкі лати несвободи»: вона «проживає чернетку життя», не обирає професію, не встановлює правил удома, не розпоряджається часом, не озвучує бажань, а лише пристосовується до тих, хто забезпечує безпеку (перебуваючи в ролі функції, а не людини).</p>
+    <p><strong>Вправа:</strong> помічати, де ви делегуєте право вирішувати («я не знаю, мені все одно, вирішуй ти»). Згадати п'ять ситуацій, де ви вдавали, що чогось не розумієте чи не вмієте, і записати, що ви втратили (самоповагу, час, гроші, право голосу).</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 2. Ознаки прихованого інфантилізму -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">2.</span> Ознаки прихованого інфантилізму</h2>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Зовнішній локус контролю:</strong> у невдачах, поганому настрої, відсутності грошей завжди винні погода, колишній, уряд, «ретроградний Меркурій». Дитина об'єкт впливу, а не суб'єкт дії.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Емоційна реактивність:</strong> будь-яка дрібниця викликає сльози, істерику, бажання сховатися під ковдру, і очікується, що хтось прийде, заспокоїть і розв'яже. Сюди ж нездатність витримувати нудьгу й рутину («треба» сприймається як насильство).</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Складнощі з майбутнім:</strong> немає бюджету, борги заради миттєвих «хотілок», нездатність оцінити наслідки слів.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Дрібниці:</strong> пестливі слівця в професійному середовищі, надуті губки при незгоді, звичка скаржитися всім на все.</div></div>
+    </div>
+    <p><strong>Вправи.</strong> Ловити себе й питати: «Скільки років тій частині мене, що хоче так відреагувати?» Протягом дня записувати скарги й перетворювати кожну на завдання: «жахливий начальник, не цінує» → «мені треба навчитися вибудовувати межі з керівництвом або шукати нове місце»; «ні на що не вистачає часу» → «як організувати час під мої стабільні пріоритети?». Поки що це лише тренування «м'яза»: перехід від пасивного страждання до активного планування.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 3. Чому дорослішати страшно -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">3.</span> Чому дорослішати страшно</h2>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Образ дорослості, запозичений із родини:</strong> втомлені, змучені «атланти», що тягнуть світ.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Страх самотності:</strong> «стану дорослою, і ніхто не допоможе».</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Помилка для незрілої психіки це катастрофа й доказ нікчемності, а залишатися маленькою «стратегія безпеки» (від дітей менше вимагають, помилки пробачають).</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Страх утратити належність:</strong> оточення, де «прийнято бути дівчинкою», може сприйняти зростання як зраду; міф, що сильних жінок не люблять.</div></div>
+    </div>
+    <p>Дорослість це не лише відповідальність, а й влада розпоряджатися ресурсами, тілом і часом. Свобода й відповідальність завжди разом. Вправа «Портрет дорослої мене»: аркуш А4, зліва «чого я позбудуся», справа «що здобуду» (чесно, без гасел із соцмереж), щоб мозок переключився з пошуку загроз на пошук вигод.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 4. Здорова жіночність і незрілість -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">4.</span> Здорова жіночність і незрілість</h2>
+    <p>Різниця не у зовнішніх проявах, а в виборі й усвідомленості. Доросла жінка може бути грайливою, кокетливою, м'якою, але це «приправа до основної страви», і вона миттєво переключається в режим компетентного дорослого, коли треба захищати межі чи ухвалювати рішення. Інфантилізм тотальний: «дівчинка» і на побаченні, і в банку, і з власними дітьми. Критерії: функціональність (якщо «жіночність» заважає захищати інтереси, заробляти, дбати про здоров'я, це інвалідизація особистості) і вектор енергії (гра створює близькість і задоволення, а безпорадність експлуатує іншого).</p>
+    <p><strong>Вправи.</strong> Відстежувати, з якої ролі ви говорите; ловлячи дитячі інтонації з кур'єром чи колегою, випрямити спину, знизити голос і повернутися в позицію «дорослий-дорослий». Записати 3–5 «жіночних» якостей і про кожну відповісти: чи допомагає досягати цілей, чи можу її вимкнути, коли недоречна, що буде, якщо перестану так поводитися.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 5. Роль батьків і минулого -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">5.</span> Роль батьків і минулого</h2>
+    <p>Інфантилізм рідко вроджений. Два сценарії виховання: гіперопіка (за дитину все робили, вирішували, забороняли ризикувати, і психологічні «м'язи» відповідальності не розвинулися, а дорослішання сприймається як зрада люблячих батьків) та «кумир родини» чи «крихка дитина» (любов і увага отримувались через виняткову роль, хворобу, слабкість, тож бути здоровою й сильною небезпечно, адже втратиш увагу). Минуле звучить як внутрішній голос: «ти не впораєшся, світ небезпечний, чекай, поки прийде розумніший». Сафін підкреслює: тривога батьків їхня проблема, а не характеристика вашого потенціалу, ви не «погана, дурна, хвора», а навчилися виживати саме так. Звідси знімається провина й з'являється право переглянути «контракт із минулим».</p>
+    <p><strong>Вправа «Лист із минулого»:</strong> написати листа від імені батьків чи опікуна з усіма заборонами й побоюваннями («не лізь сама, зіпсуєш»), а потім відповідь дорослої себе: «Дякую, чую вашу турботу, але тепер я сама вирішую, із чим і як мені впоратися. Я маю право на помилки». Надсилати не потрібно; мета навчитися так само відповідати внутрішньому критику.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 6. Очікування рятівника й параліч волі -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">6.</span> Очікування рятівника й параліч волі</h2>
+    <p><strong>Рятівник.</strong> Очікування «принца» це магічне мислення, доречне для дитини. У дорослому житті воно перетворюється на пошук ідеального партнера чи наставника: людина живе в «залі очікування», не помічаючи, що рейки давно знято. Це спосіб уникати зустрічі з реальністю, але ціна висока: хто рятує, отримує владу й згодом стає контролером чи переслідувачем, а ще блокується розвиток (навіщо вчити фінансову грамотність, «чоловік же має забезпечувати»). Гірка й звільняюча істина: ніхто не прийде, і ніхто не зацікавлений у вашому щасті більше, ніж ви самі. Це не означає бути самотньою, а означає стосунки «дорослий із дорослим», а не «донька й тато». Вправа: вибрати три проблеми, що турбують найбільше, і для кожної відповісти: кого ви потайки чекаєте, щоб розв'язав її? Що ви конкретно можете зробити вже зараз, якщо ніхто не допоможе? Зробити цей маленький крок упродовж 24 годин.</p>
+    <p>Параліч волі це захисна реакція на страх зробити помилку всього життя й лишитися наодинці з наслідками. Будь-який вибір здається остаточним і фатальним, бо немає внутрішньої дорослої фігури, що скаже «навіть якщо щось піде не так, я зможу виправити». Відмова вирішувати це спроба зберегти ілюзію безпеки («я нічого не обрала, значить, ні в чому не винна»), але платою стає хронічна тривога. Дорослий обирає не ідеальний варіант, а той, за наслідки якого готовий платити. Волю тренують діями: «неоковирно зробити сьогодні краще, ніж ідеально ніколи». Для початку обмежити вибір у магазині чи меню 30 секундами. Карта наслідків: записати відкладене рішення й у двох стовпчиках відповісти, що найстрашніше станеться, якщо помилюся, і що я зроблю, щоб із цим упоратися; так страх переходить із емоційної площини у функціональну.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 7. Стосунки з чоловіками: формат «тато й донька» -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">7.</span> Стосунки з чоловіками: формат «тато й донька»</h2>
+    <p>Жінка шукає не партнера для близькості, а опікуна для виживання й обмінює автономію, право голосу, суб'єктність на фінансову та емоційну безпеку. Наслідки: зникає еротизм і рівноправність («неможливо водночас бути маленькою беззахисною дівчинкою й зрілою сексуальною жінкою»), чоловік відчуває тягар відповідальності за «другу дитину» й дратується, стає деспотом чи шукає дорослу партнерку, а жінка накопичує приховану агресію через порушені межі. Справжня близькість можлива лише між двома автономними особистостями; інакше це симбіоз, і після періоду закоханості «нема про що говорити», бо в жінки немає власних інтересів і думки. Вправа: описати три типові ситуації (гроші, відпустка, побут) і для кожної визначити, з якої позиції ви дієте: «донечка» (чекаю рішення, ображаюся, прошу) чи партнерка (пропоную, обговорюю, беру частину завдань).</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 8. Образа й сльози як інструмент впливу -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">8.</span> Образа й сльози як інструмент впливу</h2>
+    <p>Образа й сльози у «арсеналі дорослої» це мова дитячої кімнати. Дитина, що не володіє мовою й владою, кричить «мені погано, негайно виправ»; доросла, що так само діє, не опанувала прямої комунікації й боїться відкрито озвучувати потреби. Образа це прихована маніпуляція, мета якої викликати в іншого провину. Метод має ефект звикання: оточення згодом відчуває лише глухе роздратування й дистанціюється, а жінку або ігнорують, або підпорядковують, але не сприймають як рівну.</p>
+    <p><strong>Зріла альтернатива (пряма комунікація):</strong> «Коли відбувається А, я відчуваю Б і думаю В. Прошу тебе Г. Це важливо для мене». Інша людина може змінитися чи ні, і далі ви ухвалюєте рішення залишатися у стосунках чи ні. Плакати не забороняється, це фізіологічний процес; але не варто сподіватися, що сльози самі донесуть ваші думки.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 9. Гроші та фінансова незалежність -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">9.</span> Гроші та фінансова незалежність</h2>
+    <p>Гроші «найжорсткіший маркер дорослості». Інфантильне ставлення це грошова сліпота: невідомо, скільки витрачається, доходи й витрати не співвіднесено, гроші сприймаються як кишенькові від старших «за гарну поведінку». Прихований страх: «якщо в мене будуть свої гроші, я стану дорослою, і мені ніхто не буде потрібен, і я нікому не буду потрібна»; звідси несвідомий саботаж заробітку, витрачання всього в день зарплати, передавання управління фінансами партнеру чи батькам. Фінансова незалежність вимагає дисципліни й витримування фрустрації (відмови від негайної насолоди ради довгострокової мети). Вправи: перестати називати гроші «грошенятами», встановити застосунок обліку й записувати витрати місяць; відповісти письмово: чиїм голосом говорить мій страх перед великою сумою, від яких дитячих радощів доведеться відмовитися, який один крок я зроблю сьогодні, щоб контролювати бюджет.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 10. Слово «ні» і межі -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">10.</span> Слово «ні» і межі</h2>
+    <p>Нездатність казати «ні» симптом «хорошої дівчинки», що вірить: її люблять, доки вона зручна. Бо для дитини відмова рівна смерті чи вигнанню. Якщо доросла так боїться меж, вона досі сприймає інших як батьків, від яких залежить її існування. Відсутність меж розмиває особистість і веде до виснаження та «тихої ненависті» до тих, кому не змогла відмовити; межі це не стіна, а шкіра вашої особистості. «Доброту» у вигляді «так» усупереч собі Сафін називає страхом і спробою купити безпеку. Те, що «емпатичні» люди не витримують чужого невдоволення, автор вважає самообманом: емпатія це «я бачу твої почуття, я поруч, але це твої почуття».</p>
+    <p><strong>Практики:</strong></p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Пауза:</strong> не відповідати миттєво («мені треба звіритися з графіком, відповім завтра»), щоб відокремити справжнє бажання від автоматичного прагнення догодити.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Чотири кроки відмови (необов'язково всі):</strong> підтримка («розумію, що це для тебе важливо»), «ні», аргумент (за потреби), альтернатива.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>20 відповідей:</strong> «Я як доросла жінка обираю казати "ні" чому…» і «обираю казати "так" чому…».</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">20 прав («маю право заробляти більше за чоловіка», «не радитися з мамою щодо покупок», «відстоювати свою позицію», «казати "ні"»); читати вголос щодня.</div></div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 11. Провина й сепараційна тривога -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">11.</span> Провина й сепараційна тривога</h2>
+    <p>Коли ви починаєте діяти автономно, внутрішня інфантильна частина сприймає це як бунт проти батьків і порушення негласного закону «ми одне ціле, не будь сильнішою, успішнішою й щасливішою за нас». Соромно ще й тому, що доросла поведінка вимагає «робочої злості» (конкурувати, заявляти про права, конфліктувати), яка для «приученої бути слабкою» здається неправильною чи брудною. Ця провина хибна: це «скрип старої системи», що чинить опір змінам. Рекомендація: витримувати дискомфорт («я відчуваю, бачу, витримую, дихаю з ним») і не кидатися одразу все виправляти й знову ставати маленькою. Спочатку провину варто сприймати як «податок на свободу»: вона ознака того, що ви ростете. З часом її заступає почуття власної гідності.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 12. Кар'єра -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">12.</span> Кар'єра</h2>
+    <p>В інфантильної поведінки на роботі три головні механізми: нездатність витримувати критику (сприймається як особиста образа чи катастрофа, а не зворотний зв'язок), стратегія «хорошої дівчинки» (блискучий виконавець, але не лідер: чекає, що її помітять і похвалять, тоді як просування це результат перемовин і проявленої цінності) та нездатність до довгострокового планування (нудна рутина ради цілі в майбутньому недоступна; працю кидають, щойно зникає «драйв»). Радять відокремлювати особистість від професійної функції («критика проєкту не означає, що ви погана») і утримувати паузу між зауваженням і емоційною реакцією. Вправа: згадати п'ять останніх досягнень і біля кожного записати, чия заслуга; фрази «мені пощастило, мені допомогли» закреслити й написати «я зробила…»: це фундамент упевненості й виходу з позиції «опікуваного стажера».</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 13. Вторинні вигоди безпорадності -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">13.</span> Вторинні вигоди безпорадності</h2>
+    <p>За кожним деструктивним паттерном стоїть прихована вигода, інакше психіка давно відмовилась би від нього. Безпорадність дає статус недоторканності («з маленької дівчинки взятки гладкі»), знімає відповідальність за складні рішення, пом'якшує помилки, стає потужним інструментом контролю («люди мусять крутитися навколо вас») і зберігає ілюзію невинності («якщо за мене вирішив чоловік чи мама, винні вони»). Крім того, дає ілюзію вічної молодості («справжнє життя ще попереду») і дозволяє роками не починати нічого серйозного, лишаючись «такою, що подає надії». Дорослішання неможливе, поки бонуси від безпорадності переважають бонуси від свободи. Не варто порівнювати чужий фасад із власною кухнею. Вправа на тверезість: два стовпчики: «що я отримую, залишаючись безпорадною» і «що втрачаю», і порівняти, який із них про реальне життя, а який про страхи.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 14. Як зберегти «внутрішню дитину» й стати стійкою -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">14.</span> Як зберегти «внутрішню дитину» й стати стійкою</h2>
+    <p>Дорослішання не знищує дитяче, живе й творче: це «зміна водія». У інфантильному стані за кермом внутрішня дитина зі своїми страхами й примхами, а доросла частина відсутня чи «зв'язана в багажнику». Здорова схема: за кермом дорослий (відповідальний, раціональний, захисний), а дитина на пасажирському сидінні дає енергію, цікавість, радість, творчість. Щоб це працювало, треба стати «хорошим батьком для самої себе» й навчитися самопідтримці. Вправа: внутрішня дитина пише страх або «хотілку» («боюся йти на зустріч, усі дивитимуться»), доросле «я» відповідає з позиції сили й турботи («розумію твій страх, я буду поруч, якщо стане зовсім некомфортно, виведу нас звідти, я про тебе піклуюся»).</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 15. З чого почати: мікроакти автономії -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">15.</span> З чого почати: мікроакти автономії</h2>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Інформаційна демістифікація:</strong> розібратися в тому, що раніше робили інші (як платити за квартиру, викликати сантехніка, як працює страхівка, куди йдуть гроші). Доросла людина розуміє механіку власного життя й причинно-наслідкові зв'язки між тим, що думає, відчуває, робить і до чого це призводить.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Відповідальність за емоції:</strong> замість «ти мене довів, образив» говорити «я розізлилася, коли ти зробив Х»; якщо це моя реакція, я можу на неї впливати.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Витримувати самотність:</strong> не стрибати в перші-ліпші стосунки; піти самій у кіно, кафе, у коротку поїздку, щоб відчути, що світ не руйнується без опори.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Одне завдання від початку до кінця:</strong> обрати побутову чи фінансову справу, яку зазвичай роблять за вас, зробити самій і записати почуття (страх, гордість, радість): так росте самоефективність.</div></div>
+    </div>
+    <p><strong>Зміни, що з'являються:</strong> самоповага, що не залежить від компліментів («я справляюся зі своїм життям»); стосунки без надриву, образ і маніпуляцій, де партнера обирають за принципом «з ким цікаво йти поруч», а не «хто врятує»; реалізація потенціалу, коли енергія більше не йде на підтримку образу безпорадної «малятки». Вправа: лист собі з точки «через 5 років», де ви зріла, автономна, щаслива: як минає ваш звичайний день, як ви розв'язуєте проблеми, які в вас стосунки.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Підсумок: дитина і дорослий -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Підсумок: дитина і дорослий</h2>
+    <div class="cmp">
+      <div class="cmp-row cmp-head"><div></div><div>Позиція дитини</div><div>Позиція дорослого</div></div>
+      <div class="cmp-row"><div class="cmp-k">Проблема</div><div data-label="Позиція дитини">образа, сльози, пошук винних, завмирання</div><div data-label="Позиція дорослого">аналіз фактів, пошук ресурсів, план, конкретні кроки</div></div>
+      <div class="cmp-row"><div class="cmp-k">Стосунки</div><div data-label="Позиція дитини">«ти маєш мене рятувати, радувати, здогадуватися»</div><div data-label="Позиція дорослого">«я можу прямо сказати про свої потреби й почути твої»</div></div>
+      <div class="cmp-row"><div class="cmp-k">Гроші</div><div data-label="Позиція дитини">приходять і зникають</div><div data-label="Позиція дорослого">«я знаю свої цифри, керую ресурсом»</div></div>
+      <div class="cmp-row"><div class="cmp-k">Мовлення</div><div data-label="Позиція дитини">виправдання, пестливі слівця, щоб задобрити</div><div data-label="Позиція дорослого">прямі твердження, ясність, активний стан («я», а не «ти мене»)</div></div>
+      <div class="cmp-row"><div class="cmp-k">Помилки</div><div data-label="Позиція дитини">глибокий сором, «я погана»</div><div data-label="Позиція дорослого">досвід, що потребує коригування</div></div>
+      <div class="cmp-row"><div class="cmp-k">Час</div><div data-label="Позиція дитини">життя «колись», очікування дива</div><div data-label="Позиція дорослого">життя зараз, планування, врахування наслідків</div></div>
+    </div>
+    <p><strong>Емоційний контейнер:</strong> навчитися витримувати тривогу, нудьгу й гнів, не виливаючи їх негайно на інших (не телефонувати комусь і не скаржитися в соцмережах). Формула: «Я бачу, що мені зараз погано; можу витримати це 15 хвилин, не ухвалюючи рішень і не вимагаючи порятунку». Алгоритм при паралічі волі: зібрати факти без емоцій → сформулювати три шляхи (навіть небажані) → оцінити «ціну» кожного (час, гроші, дискомфорт) → вибрати той, чиї наслідки прийнятні → зробити крок упродовж години.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Додатки автора -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Додатки автора</h2>
+    <p><strong>Материнство й інфантилізм.</strong> Для інфантильної жінки дитина часто «іграшка», спосіб заповнити порожнечу чи утримати партнера. Доросле материнство ресурсне, а не спосіб здобути ресурс: народжувати з партнером, а не «татом на місці партнера»; з тим, хто розділяє цінності (виховання, фінанси, побут обговорюються до зачаття); з емоційно зрілим чоловіком, що вміє «контейнувати» (декрет випробування для обох); і заздалегідь створити фінансову й соціальну «подушку безпеки».</p>
+    <p><strong>Навички дорослої жінки:</strong> емоційна саморегуляція, здатність заробляти, зберігати й розподіляти ресурс, навички переговорів («без сліз, крику й маніпуляцій»), знання, як улаштований побут (страховка авто, податкові відрахування, документи), уміння вчасно організувати відпочинок, лікування й навчання, витримувати невизначеність.</p>
+    <p><strong>Права:</strong> змінювати думку; бути незручною; помилятися; на усамітнення й особистий простір; не відповідати очікуванням; розпоряджатися тілом і часом. Потреби (увага, відпочинок, секс, визнання, безпека) слід називати прямо, а не чекати телепатії партнера; задоволення потреб це ваша відповідальність, і якщо вони хронічно не задовольняються, ваше завдання змінити ситуацію або вийти зі стосунків. Свій розвиток, здоров'я й задоволення ви оплачуєте самі.</p>
+    <p><strong>Програма впровадження:</strong> тиждень спостерігати звичні дитячі реакції без змін; скласти «реєстр реальності» (рахунки, паролі, податки, обов'язки, які виконував хтось інший); починати казати «ні» бодай у дрібницях; прожити одну невдачу чи один невдалий день без скарг оточенню; завести особистий рахунок і відкладати на нього; важку розмову вести лише фактами й «я-повідомленнями»; запланувати значиме діло «від ідеї до виконання самій»; написати особистий маніфест із десяти пунктів «Я доросла жінка, і від сьогодні я сама відповідаю за…».</p>
+    <p><strong>«Навіщо мені тоді чоловік?»</strong> Зрілість змінює позицію з «я без тебе не впораюся» на «я впораюся без тебе, але з тобою хочу бути». Інфантильна жінка в ролі заручниці не може піти й не може сперечатися; зріла обирає чоловіка для спільного примноження радості («1 + 1 = 11»), а не щоб «заповнити внутрішні діри». Автор додає, що справжній еротизм неможливий у парі «тато й донька»: бажання потребує дистанції й рівності; а коли жінка перестає шукати тата, у її полі зору з'являються зрілі й автономні чоловіки, яким потрібна «партнерка для рівного танцю по життю».</p>
+    <p><strong>Завершення:</strong> безпорадність це звичка, а не діагноз; якби вона була діагнозом, ви не дивилися б цей урок. Як навчилася, так можна й розучитися та навчитися іншого.</p>
+    <div class="final-quote">
+      <div class="final-text">Як навчилася, так можна й <strong>розучитися та навчитися іншого</strong>.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>

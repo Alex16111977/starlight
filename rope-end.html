@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<script src="theme.js" data-native="light"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Свій кінець мотузки</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Свій кінець<br>мотузки</h1>
+  <p class="page-subtitle">Сепарація: вина, борг і право жити своїм життям</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Відокремитися не означає віддалитися</div>
+      <div class="hero-author">Альберт Сафін</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- BODY -->
+  <!-- Що таке сепарація і чим вона не є -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Що таке сепарація і чим вона не є</h2>
+    <p>Урок розрахований на людей приблизно 30–50 років і на їхніх батьків, живих або присутніх лише в психічній реальності. Сафін наголошує, що слово «сепарація» затерлося: нею називають переїзд, сварку, роки мовчання, але ні переїзд, ні розрив не гарантують відокремлення. Можна жити на іншому континенті й лишатися «маминим хлопчиком» або десять років не говорити з батьком і щодня сперечатися з ним подумки. Відокремитися не означає віддалитися.</p>
+    <p><strong>Робоче визначення:</strong> сепарація завершена, коли двоє дорослих, батько чи мати та їхня доросла дитина, можуть бути поруч вільно, без страху, без звіту й без провини. Це стосується й померлих батьків, бо вони лишаються в психічній реальності.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Три збірні персонажі -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Три збірні персонажі</h2>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Андрій, 37 років, одружений, двоє дітей, успішний. Кожну покупку й відпустку обговорює з мамою, після розмов з нею свариться з дружиною, а всередині відчуває «одяг на п'ять розмірів менший».</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Ксенія, 34 роки, сім років тому поїхала, з батьками говорить двічі на рік крізь зуби. Вважає себе вільною, але ухвалює рішення за принципом «аби не так, як вони хочуть», а випадкова фраза родички вибиває її з колії на два тижні.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Людмила, 63 роки, син одружився й, як їй здається, «зник». Вона готує на трьох, перевіряє, коли він був онлайн, і соромиться своїх думок.</div></div>
+    </div>
+    <p>Три різні історії, але вузол один. Автор радить дивитися на це з позиції дослідника, спостерігача, а не оцінювати себе чи інших.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Ознаки незавершеної сепарації -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Ознаки незавершеної сепарації</h2>
+    <p><strong>З боку дорослої дитини:</strong></p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">рішення «на узгодженні»: формально вирішує сам, але всередині є невидимий пункт «що скажуть мама чи тато»; формат не «порадитися», а «отримати схвалення»;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">звітні дзвінки: не «хочу поговорити», а «якщо не зателефоную, буде образа»;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">неможливість відмовити, коли прохання звучить як наказ і ламає плани, відпустку, бюджет;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">регресія: у батьківському домі знову «десять років», огризаєшся, виправдовуєшся, їси котлету, яку не хотів;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">настрій залежить від одного дзвінка, день чи два тижні зіпсовані;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">рахунок оплачує власна родина: дружина чи чоловік почуваються «другим номером» після мами (звідси сварки Андрія після її дзвінків).</div></div>
+    </div>
+    <p>Втеча або розрив теж ознака незавершеності, якщо роками триває внутрішня суперечка, доведення «подивись, мамо, яким я став» або вибір «від супротивного» (хотіли юриста, піду в художники, навіть коли сам мріяв про інше). Це та сама мотузка, лише натягнута до дзвону.</p>
+    <p><strong>З боку батьків:</strong></p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">контроль під виглядом турботи («ти поїв, ти доїхав, чому не береш слухавку» по п'ять разів на день);</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">образи «з лічильником»: облік дзвінків і візитів, і будь-яка кількість недостатня;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">життя в режимі очікування, коли день будується навколо того, зателефонує дитина чи ні;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">навіювання провини («звісно, тобі ніколи, живи своїм життям» таким тоном, що жити вже неможливо).</div></div>
+    </div>
+    <p>Ці ознаки не вирок і не привід для сорому чи для звинувачень, а карта, що показує, де ви перебуваєте. Є й тілесна перевірка: прислухайтеся до свого голосу в розмові з мамою (у багатьох він стає вищим, тихішим, молодшим) і до того, які думки, почуття й спогади викликає сама фраза «розмова з мамою, розмова з татом». Андрій не слабак, Людмила не тиранка, Ксенія не бездушна: це лише зв'язок, який колись був життєво потрібний, але вчасно не перебудувався. Автор порівнює його із зашкарублою шкірою від тісного взуття: захищена, але менш чутлива.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Звідки береться такий зв'язок -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Звідки береться такий зв'язок</h2>
+    <p>Залежність дитини від батьків нормальна: немовля не виживе без дорослого ні фізично, ні психічно, тож влада батьків у дитинстві законна. Проблема в тому, що має відбуватися далі: зв'язок повинен поступово, роками перебудовуватися. Спершу дитина сама обирає одяг, потім друзів, професію, з ким жити, як жити, а батько еволюціонує із «тотального начальника» в «підтримувального радника». Тотальний начальник це тісно, радник це простір для дихання. Жодної дати чи іспиту немає: змінюється паспорт, а ролі в сім'ї лишаються тими самими, якщо родина не віддає владу добровільно, а дорослий не забирає її сам.</p>
+    <p><strong>Чому родина не віддає владу:</strong></p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">дитина стала смислом життя матері, і її самостійність загрожує цьому смислу (дитина засвоює: «моя самостійність робить мамі боляче»; звідси виростає провина);</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">дитина «клей шлюбу»: поки є спільна турбота, подружжю є про що говорити, а коли вона виросте, доведеться зустрітися одне з одним;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">дитина «проєкт»: у неї вкладено нездійснене «я» батька чи матері, а проєкт ніколи не «готовий»;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">дитина «внесок на старість», де любов і розрахунок сплавлені.</div></div>
+    </div>
+    <p>Ніхто тут не злодій: обидві сторони щиро не помічають, що час минув. Для матері сорокарічний син лишається дев'ятирічним хлопчиком, і син, переступивши поріг, сам вмикає цього хлопчика. Це захисний механізм і спотворена форма любові. Вправа: на сімейному обіді один раз спробувати побути не актором, а глядачем і помітити, у яку хвилину вмикається стара роль.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Чотири виміри сепарації -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Чотири виміри сепарації</h2>
+    <p>Сафін пропонує оцінити кожен вимір за шкалою від 1 до 10 (1 означає, що за мене все вирішує батько чи мати, 10 означає, що я доросла людина). Правильних цифр немає; цінна сама відвага про це подумати.</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text"><strong>Територія й побут.</strong> Батьки приходять за запрошенням, а не зі своїм ключем.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Гроші.</strong> «Хто платить, той замовляє музику». Працює в обидва боки: допомога може бути вільним даром або повідцем.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text"><strong>Рішення й останнє слово.</strong> «Порадитися» чи «отримати дозвіл»? Чи можу я зробити навпаки й спокійно спати?</div></div>
+      <div class="num-row"><div class="num-badge">4</div><div class="num-text"><strong>Право відчувати інакше.</strong> «Навпаки на зло» теж залежність. Жити окремо навчаються раніше, ніж почуватися окремо; витримувати чужу невдоволеність ознака дорослості.</div></div>
+    </div>
+    <p>Жоден вимір окремо не гарантує решти.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Провина й борг: замок на дверях до дорослості -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Провина й борг: замок на дверях до дорослості</h2>
+    <p>Це найболючіше місце: будь-хто, хто пробував перебудувати стосунки з батьками, скаже, що найтяжче було відчуття зради і фраза «я ж тобі все життя віддала». Вона діє магічно, бо в ній є правда: батьки справді вклали роки, сили, безсонні ночі. Питання в іншому: чи виникає з цього борг, який треба виплачувати власним життям?</p>
+    <p>Сафін відповідає: розплатитися з батьками неможливо не тому, що борг величезний, а тому, що це взагалі не борг. Життя дали без договору й без вашої згоди; повернути його не можна, його можна лише передати далі (дітям, справі, людям), бо потік тече вперед, як річка. Батькам належить вдячність і турбота, але вони живі лише тоді, коли добровільні; а коли їх вимагають за рахунком, це емоційний шантаж. Шанувати батьків це не сліпо підкорятися: по-справжньому шанувати здатна лише відокремлена доросла людина, а в злитої замість шани страх.</p>
+    <p>Вина й відповідальність різні речі. Відповідальність: «я зробив погане й виправляю». Вина при сепарації: нічого поганого не зробив, просто живу, а почуваюся злочинцем (не та професія, не приїхав на вихідні, приїхав «не з тим виразом обличчя», щасливий, коли мама нещасна). Так людина намагається винами оплатити сам факт власного існування, а «поки людина згодна платити, касир знайдеться».</p>
+    <p>Ще глибший шар лояльність: людина не дозволяє собі жити легше, ніж жили батьки (мати не знала щастя, тож донька несвідомо псує власні стосунки; батько надривався на нелюбій роботі, тож син забороняє собі заробляти улюбленою справою). Перевершити батьків відчувається як зрада, але, каже автор, насправді навпаки: ваше по-справжньому добре життя єдине гідне виправдання їхніх зусиль і втрат.</p>
+    <p><strong>Що робити з виною.</strong> Вона має багаторічний стаж і не зникає за помахом руки. Її не пережидають, її витримують у русі: «відчуваю провину і все одно роблю по-своєму». Провина при відокремленні це не сигнал помилки, а «плата за вихід», як м'язовий біль після тренування. Упевненість теж приходить після дії: Сафін спершу почав виступати публічно й лише потім відчув упевненість. Після вчинку провина поступово «худне» і вже не заповнює весь простір. Сепарація не егоїзм і не кидання старих: поруч із батьками нарешті стає живий дорослий замість втомленого боржника, який рахує дні.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Сепарація відбувається всередині -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Сепарація відбувається всередині</h2>
+    <p>Головний батько живе не в сусідньому місті, а в голові, як образ, зліплений зі спогадів. Його голосом ми себе картаємо («руки не звідти ростуть»), його очима оцінюємо власний дім, фігуру й успіхи. Переїзд допомагає, але не вирішує: внутрішні батьки переїжджають разом із вами й звучать у черзі до каси. Спогад це продукт психіки, який змінюється щоразу, як до нього звертаються, а реальні батьки з роками могли й пом'якшати.</p>
+    <p><strong>Запитання для перевірки:</strong> чи репетируєте ви розмови з матір'ю в душі, в машині, перед сном; чи щось доводите батькові, якого немає в кімнаті; скільки годин на тиждень забирає цей «заочний суд». Для несвідомого часу немає, тому суперечка може тривати 30 років. Звідси висновок: сепарація можлива й після смерті батьків: можна нарешті домовити, подякувати, попрощатися, і це дає спокій.</p>
+    <p>Бунт це та сама залежність, лише зі знаком мінус. Поки я вибираю «на зло», вибирає все ще мама. Критерій свободи: я можу погодитися з батьком чи матір'ю і можу відмовити, і те, й інше проживається спокійно (поїхати на дачу, бо сам хочу, а не через місячну образу; не поїхати й не картати себе цілий день, лише поспівчувати хвилин двадцять). Свобода не в тому, яка відповідь, а в тому, що доступні обидві.</p>
+    <p><strong>Як працювати з внутрішнім голосом:</strong></p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text"><strong>Почути, що це голос, а не факт про мене:</strong> не «я нездара», а «у мені прозвучала оцінка, і я знаю, чия вона».</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Відповісти йому не з дитини («замовкни»), а з дорослого:</strong> «Дякую, мамо, дякую, тату, я вас почув, вирішу по-своєму, моє життя і моя відповідальність». Повторювати, доки не спаде емоційний накал.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text"><strong>Вирощувати власний голос:</strong> «А я як вважаю? Що мені важливо? Чого я хочу?» Це праця, а не подія; внутрішній батько не звільниться за один день, а поступово перейде від начальника до радника.</div></div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Погляд батьків -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Погляд батьків</h2>
+    <p>Що насправді переживає мати, коли дорослий син віддаляється? Ззовні видно причіпки, образи й контроль, а всередині порожнеча: тридцять років день був збудований довкола сина, а іншої «професії» її душа не здобула. Той, хто дзвонить синові п'ять разів на день, це не мама, а її страх непотрібності; контроль це тривога, яка не вміє говорити інакше. Поки була дитина, вона слугувала спільною темою й буфером між подружжям; коли виросла, двоє лишаються віч-на-віч, і родина несвідомо втягує дорослого в свої конфлікти, бо без нього страшно вдвох.</p>
+    <p><strong>Приклад Людмили:</strong> син телефонує раз на тиждень, вона стежить, коли він був у мережі, накопичує «уколи» й раз на місяць виставляє рахунок; син телефонує ще рідше, вона стискає хватку, коло замикається. У цьому колі немає лиходія: двоє людей захищаються й кожен своїм захистом ранить іншого.</p>
+    <p><strong>Що робити батькам:</strong></p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">зайнятися не сином, а собою: спрямувати вивільнені сили й час на відкладені бажання, хобі, справу, навчання, допомогу іншим; тривога йде не від умовлянь, а коли життя наповнюється своїм;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">замінити «чому не дзвониш?» на «як я рада тебе чути»: перше звучить докором, друге відчиненими дверима;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">пам'ятати: відпустити не означає втратити. Замість слухняної дитини ви отримуєте дорослого, який приїздить, бо хоче; утримана силою дитина лишається поруч тілом, а відпущена зберігає змогу повернутися сама. Можливо, вперше з'являється дружба з дорослим сином чи донькою.</div></div>
+    </div>
+    <p>Сепарація триває все життя й для дитини, і для батьків.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Практичні кроки для дорослої дитини -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Практичні кроки для дорослої дитини</h2>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Не скандал.</strong> Скандал це той самий старий зв'язок на підвищених тонах, і ви знову доводите й чекаєте, що вас «відпустять». Відпускання внутрішній процес: вас не можуть ні відпустити, ні не відпустити.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Сепарацію роблять, а не оголошують.</strong> Лекція про «кордони» прозвучить для мами як «ти мені більше не потрібна». Краще тихо змінювати порядок: дзвоню тоді-то, приїжджаю тоді-то, це обговорюю, а це ні, рівно й доброзичливо, щоразу однаково.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>М'яке «ні» без виправдань.</strong> «Цими вихідними ми не приїдемо», без десяти причин, бо причини дають матеріал для суперечки. Можна порепетирувати з тілесним компонентом. Двоєдина формула: тепло і твердість: «Мамо, я тебе дуже ціную й люблю, і я вирішив ось так» («сталевий кулак в оксамитовій рукавичці»).</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>На непрошену пораду:</strong> «Дякую, подумаю». На спробу втягнути у конфлікт з батьком: «Це ваші з татом стосунки, я в них не втручаюся».</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Спокійний тон важливіший за слова:</strong> ви не обороняєтеся, а повідомляєте.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Витримати те, що почнеться після.</strong> Найважче не сказати, а витримати образу, мовчання, навіть «злягла в ліжко», коли всередині вмикається сирена «я чудовисько, треба все скасувати». Не скасовуйте: дорослість це здатність витримувати чужу невдоволеність, не руйнуючись і не руйнуючи.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">На слова «мені погано з серцем», якщо це тиск, відповідайте серйозною дією, а не капітуляцією: викликаю швидку, записую на обстеження на завтра. Справжній хворобі допомога потрібна, а шантажу потрібна ваша поступка; залучивши третього, ви розпорошуєте напругу, і гра розвалюється. «Я співчуваю твоїй образі й продовжую діяти по-своєму».</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Гроші.</strong> Якщо батьки вас утримують, складіть план виходу (з якого місяця покриваю витрати сам): поки береш гроші, претензії на контроль частково законні. Якщо ви утримуєте батьків, переведіть допомогу зі стихії тривожного дзвінка в домовленість: конкретна сума, конкретна дата. І відокремлюйте гроші від провини: допомагати з любові можна, відкуповуватися від почуття зради не варто.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Якщо батько чи мати не змінюються:</strong> сепарація це робота наодинці, згоди другої сторони не потрібно. Ви змінюєте власні правила, реакції й опори, а батько чи мати можуть не погоджуватися все життя. Особисті кордони не спосіб покарати іншого, а спосіб зрозуміти, що важливо вам. Дистанція (не бачитись і не чути) лишається крайньою мірою для руйнівних випадків, а внутрішня робота доступна завжди.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>«Батькам під 80, чи не пізно?»</strong> Не пізно, просто з літніми все слід робити м'якше; ви працюєте над власними реакціями й провиною, а не переробляєте їх.</div></div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Що з'являється замість старого зв'язку -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Що з'являється замість старого зв'язку</h2>
+    <p>Близькість за вибором, якої не буває у вертикалі влади: ви приїжджаєте, бо хочете, і вперше можете побачити батьків як людей, а не функцію «мама» чи «тато»: жінку з долею, нездійсненним і надіями; чоловіка зі своїми страхами, залежностями й інтересами. Дехто каже: «Я вперше познайомився з матір'ю у 40 років».</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Батьків як людей варто розглядати з інтересом: звідки вони взялися, чого боялися, чого хотіли. Часто з'ясовується, що ми вимагаємо зрілості від емоційно не зовсім зрілих людей, які «дали з того, що мали». Інтерес найкращий розчинник напруги.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Слова, яких не дочекалися (наприклад, сини десятиліттями чекають від батька «я тобою пишаюся», а він не вміє чи його вже немає): можна дати їх собі самому, стати собі і матір'ю, і батьком.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Турбота без регресії.</strong> Коли батьки старіють і потребують допомоги, не з'їжджати назад у дитячу роль. Послух: «роблю все, що велять, зі страху й провини й тихо киплю». Доросла турбота: «я сам вирішую, як допомагаю» (гроші, час, у межах власних можливостей). Відокремлені діти, за словами автора, піклуються про старих краще, бо в них не вигоріла любов.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Побут після:</strong> свята за домовленістю, а не з обов'язку; онуки з любові, а не «по вахті»; бабуся допомагає, коли хоче й може. Ви батьки своїх дітей, останнє слово за вами; поради за запитом не відкат назад. Дорослі стосунки не холодні, а добровільні, а тому теплі.</div></div>
+    </div>
+    <p><strong>Як змінилися персонажі:</strong> Андрій купив машину на накопичені гроші й повідомив матері після покупки; вона образилася, він витримав і не вилив це на дружину. Ксенія вперше запитала себе: «чого я хочу сама, без “навпаки”?» і просто подзвонила батькам, щоб поспілкуватися. Людмила спершу обурилася на лектора, а потім записалася в басейн, запросила стару подругу на чай, і син, відчувши полегшення, став телефонувати частіше.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Підсумок і запитання для рефлексії -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Підсумок і запитання для рефлексії</h2>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Сепарація не розрив і не переїзд, а перебудова зв'язку з вертикалі на горизонталь двох дорослих: чотири виміри (територія, гроші, рішення, почуття).</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Замок на цих дверях провина; її не пережидають, а витримують у русі.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Головна сцена внутрішня: суперечки в голові, бунт як залежність. У батьків своя правда за контролем і страхом порожнечі.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Хто не відокремився від батьків, той плете ту саму мотузку зі своїми дітьми; власна сепарація це «щеплення» наступному поколінню.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Починати може один, з власного кінця мотузки: з боку дитини одне самостійне рішення, одне спокійне «ні», одна розмова без виправдань; з боку батьків тиждень без перевірочних дзвінків, вечір за власними справами, розмова без жодного докору.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Спершу буде важче, ніж було: провина голосніша, образи свіжі, свята незручні, як дім під час ремонту. Не відкочуйтесь: це перехідний період. Ознака вірного руху: дихати стає легше, і мамин дзвінок більше не руйнує день.</div></div>
+    </div>
+    <p><strong>Запитання, які пропонує автор:</strong> Наскільки сьогодні я жив зі свого? У скількох рішеннях стоїть невидима графа «узгоджено з батьками»? Чим я плачу за свою «нерозділеність» (провиною, грошима, звітами, відмовою від бажань)? З ким і скільки років я сперечаюся в голові? Наскільки я можу водночас і погодитися, і не погодитися, і щоб обидва варіанти проживалися спокійно? Що з'явиться в житті, коли звільниться місце, яке займала боротьба?</p>
+    <p>Третій шлях між злиттям і розривом і є метою уроку: два дорослих, які поруч вільно, без страху, без звіту й без провини. Завершуючи, автор бажає «тепла і твердості» на шляху до права жити своїм життям і радить повернутися до уроку за місяць, бо він прозвучить інакше.</p>
+    <div class="final-quote">
+      <div class="final-text">Третій шлях між злиттям і розривом і є метою уроку: два дорослих, які <strong>поруч вільно, без страху, без звіту й без провини</strong>.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
