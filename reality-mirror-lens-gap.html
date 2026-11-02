@@ -4,9 +4,10 @@
 <meta charset="UTF-8">
 <script src="theme.js" data-native="light"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Starlight — Дзеркало із затримкою</title>
+<title>Starlight — Дзеркало, лінза й розрив</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
 <style>
+
 *{margin:0;padding:0;box-sizing:border-box}
 html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
 body{min-height:100vh;position:relative;overflow-x:hidden}
@@ -159,6 +160,20 @@ html{color:rgba(52,58,94,.9)!important}
 .sub-list{list-style:none;display:grid;gap:8px;margin:10px 0 4px}
 .sub-list li{position:relative;padding-left:18px}
 .sub-list li::before{content:'•';position:absolute;left:3px;top:0;color:#7a5410}
+/* --- merged lessons: parts + contents --- */
+.parts-toc{display:grid;gap:10px;margin:0 auto 32px;max-width:720px;opacity:0;animation:riseIn 1s 1s ease forwards}
+.parts-toc a{display:flex;align-items:baseline;gap:16px;text-decoration:none;padding:14px 20px;border-radius:16px;background:rgba(52,58,94,.07);border:1px solid rgba(52,58,94,.18);transition:all .3s}
+.parts-toc a:hover{background:rgba(52,58,94,.13);border-color:rgba(52,58,94,.32)}
+.toc-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:26px;color:#7a5410;min-width:26px}
+.toc-text{display:flex;flex-direction:column;gap:2px}
+.toc-title{font-family:'Cormorant Garamond',serif;font-size:21px;letter-spacing:.03em;color:#242844}
+.toc-sub{font-size:12px;font-weight:300;line-height:1.5;color:rgba(52,58,94,.78)}
+.part{scroll-margin-top:24px}
+.part-head{text-align:center;margin:0 0 36px}
+.part-kicker{font-size:11px;font-weight:400;letter-spacing:.16em;text-transform:uppercase;color:#7a5410;margin-bottom:10px}
+.part-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(30px,5.5vw,46px);letter-spacing:.06em;line-height:1.15;margin-bottom:10px;color:transparent;background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd);-webkit-background-clip:text;background-clip:text}
+.part-sub{font-size:12px;font-weight:400;letter-spacing:.16em;text-transform:uppercase;color:rgba(52,58,94,.78)}
+@media(max-width:560px){.parts-toc a{padding:12px 14px;gap:12px}.toc-num{font-size:22px}.toc-title{font-size:19px}}
 </style></head>
 <body>
 <canvas id="stars"></canvas>
@@ -170,8 +185,21 @@ html{color:rgba(52,58,94,.9)!important}
     <span class="page-logo">Starlight</span>
   </div>
 
-  <h1 class="page-title">Дзеркало<br>із затримкою</h1>
-  <p class="page-subtitle">Мінливість емоцій, принцип дзеркала й довіра до себе</p>
+  <h1 class="page-title">Дзеркало, лінза й розрив</h1>
+  <p class="page-subtitle">Чому рухатися треба першою, як бачене залежить від тебе і чому прірви між «зараз» і «найкращою версією» немає</p>
+
+  <nav class="parts-toc" aria-label="Частини уроку">
+    <a href="#p-delayed-mirror"><span class="toc-num">1</span><span class="toc-text"><span class="toc-title">Дзеркало із затримкою</span><span class="toc-sub">Мінливість емоцій, принцип дзеркала й довіра до себе</span></span></a>
+    <a href="#p-lens-is-you"><span class="toc-num">2</span><span class="toc-text"><span class="toc-title">Лінза — це ти</span><span class="toc-sub">Дзеркало ніколи не зрушить першим</span></span></a>
+    <a href="#p-no-gap"><span class="toc-num">3</span><span class="toc-text"><span class="toc-title">Закохайся в дії</span><span class="toc-sub">Розриву не існує</span></span></a>
+  </nav>
+
+  <div class="part" id="p-delayed-mirror">
+    <div class="part-head">
+      <div class="part-kicker">Частина 1 з 3</div>
+      <h2 class="part-title">Дзеркало із затримкою</h2>
+      <p class="part-sub">Мінливість емоцій, принцип дзеркала й довіра до себе</p>
+    </div>
 
   <!-- Hero -->
   <div class="section" style="animation-delay:.9s">
@@ -189,7 +217,7 @@ html{color:rgba(52,58,94,.9)!important}
   <!-- Розділи -->
   <div class="section" style="animation-delay:.9s">
     <div class="num-list">
-      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Мінливість емоцій.</strong> Основа теми — тимчасовість емоцій. Сприйняття легко спотворює наші цілі: нам здається, що вся наша реальність і майбутнє «живуть» в одній тимчасовій емоції. <strong>Приклад:</strong> найсмачніша вечеря чи найкращий секс не знімають бажання повторити наступного дня — немає «фіксованого стану буття»; те, чого ти хотів п'ять років тому, сьогодні, ймовірно, вже інше.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Мінливість емоцій.</strong> Основа теми — тимчасовість емоцій. Сприйняття легко спотворює наші цілі: нам здається, що вся наша реальність і майбутнє «живуть» в одній тимчасовій емоції. </div></div>
       <div class="num-row"><div class="num-badge">3</div><div class="num-text"><strong>Сприйняття і стан буття.</strong> <strong>Приклад автора-трейдера:</strong> після тижня успішної торгівлі одна збиткова угода змінила його бачення фінансової цілі. Коли сприйняття «оцінює» ціль лише в цю мить, воно прив'язує її до поточного стану. Ранок, 8 годин сну, енергія → ціль виглядає привабливо; вечір, втома, стрес, сварка → «це можна відкласти». Мета та сама, змінився стан буття; людина ж робить висновок «я ледачий / недисциплінований» — тимчасова емоція перетворюється на постійну ідентичність.</div></div>
       <div class="num-row"><div class="num-badge">4</div><div class="num-text"><strong>Ілюзія досконалості.</strong> Керувати тим, що ми відчуваємо, неможливо; але якщо не розуміти, що саме сприйняття «ціниться» на тимчасовому стані, ми судимо себе за ці коливання. Перфекціонізм — «найбільший захист старої ідентичності»: вона переконує, що ти маєш бути бездоганним, щоб досягти цілі, а бездоганність недосяжна — отже, ти застряг.</div></div>
       <div class="num-row"><div class="num-badge">5</div><div class="num-text"><strong>Подолання зовнішнього схвалення.</strong> Допустити помилку — нормально; важливі рішення, а не одна «зірвана» доба. Автор розповідає, що колись після одного зриву кидав усе («це не для мене»). Перфекціоніст зважує кожну помилку важче за середню людину, а потім бачить інших, які роблять усе «неправильно» (прокидаються о 12:00, гуляють уночі), і досягають того, чого він хоче, — і плутається, чому він вставав о 3:00 на пробіжку.</div></div>
@@ -240,8 +268,164 @@ html{color:rgba(52,58,94,.9)!important}
       <div class="final-text">Ніколи не буває пізно й <strong>не буває зарано</strong></div>
     </div>
   </div>
+  </div>
+
+
+  <div class="divider" style="margin:80px 0 64px"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="part" id="p-lens-is-you">
+    <div class="part-head">
+      <div class="part-kicker">Частина 2 з 3</div>
+      <h2 class="part-title">Лінза — це ти</h2>
+      <p class="part-sub">Дзеркало ніколи не зрушить першим</p>
+    </div>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Реальність — це дзеркало: воно відображає твої дії, але не рухається першим</div>
+      <div class="hero-author">The mirror will NEVER move first</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Головна ідея -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Головна ідея</h2>
+    <p>Реальність — це дзеркало: воно відображає твої дії, але не рухається першим. Тому не можна чекати, що зовнішнє життя «підтвердить» зміни, поки ти їх не почав; потрібно рухатися й довіряти, що відображення прийде (із затримкою). Усе, що ти бачиш, інтерпретуєш, оцінюєш і чекаєш, — це твій внутрішній досвід.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Основні тези -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Основні тези</h2>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text"><strong>Проблема порад «довіряй і вирівнюй свою частоту».</strong> Найважче в консумуванні мотиваційної інформації — триматися послідовності, коли зовнішня реальність руйнується (наприклад, «чому я маю медитувати, а машину все одно заберуть?»). Автор каже, що він така сама людина: має погані дні, «просто тримає дзеркало» перед глядачем, а не володіє секретом.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Особистий досвід без «секретних технік».</strong> Він набрав 400 тис. підписників у TikTok, понад 100 тис. в Instagram, ≈10 тис. на YouTube — і стверджує, що не застосовував маніфестацій чи технік, лише усвідомлював перехід, як і в інших змінах життя.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text"><strong>Усвідомлення без «рук».</strong> Приємно слухати те, що «клацає» (як зрозуміти тему в школі), але усвідомлення не має рук: поки не змінюєш систему, на якій тримається твоя реальність, нічого не зміниться.</div></div>
+      <div class="num-row"><div class="num-badge">4</div><div class="num-text"><strong>Бажання й уявлення про можливе формуються іншими.</strong> Те, що ми хочемо й вважаємо досяжним, залежить від того, як ми бачили це в інших. <strong>Приклад із залежностями:</strong> якби всі довкола легко кидали шкідливі звички, нам здавалося б, що так і слід робити. Автор стверджує, що мозок, який «залежний», водночас дає й чіткість, потрібну для зміни. Також він запитує: як довіряти реальності, яку ти ледве розумієш, якщо жоден «посібник людини» ніхто не видав?</div></div>
+      <div class="num-row"><div class="num-badge">5</div><div class="num-text"><strong>Автентичність проти «ролі».</strong> Коли маніфестації, журнали та «техніки» змушують діяти як ідентичність, яку ти хочеш мати, — це протилежне автентичності. Якщо сказати «просто будь собою», більшість одразу пов'язує це з негативним образом («палитиму, пиячитиму, розтрачу гроші»). Це тому, що частина тебе живе в уявній (прогнозованій) реальності: друзі називають тебе розумним і дисциплінованим, а сам себе ти бачиш «розхлябаним невдахою». Автор стверджує, що 90–95% людей живуть в уяві (як у дитинстві з вигаданим другом, лише тепер уява «працює» на податки, рахунки й тривогу).</div></div>
+      <div class="num-row"><div class="num-badge">6</div><div class="num-text"><strong>Вправа на усвідомлення.</strong> Помітити свої ноги, спину, опору під тобою, свої руки, моргання, подих — тіло функціонує автономно («ти не знаєш, як ти це робиш»); ми створюємо ідентичність («я залежний, я переїдаю») і живемо в ній. Ми відчуваємо, ніби були тут вічно, бо не знаємо, що таке не існувати. «Лінза» на всьому, що ти бачиш, — це ти; коли її знімаєш, бачиш реальність «сирою» і розумієш, чому ти тут.</div></div>
+      <div class="num-row"><div class="num-badge">7</div><div class="num-text"><strong>Мета й намір.</strong> Люди думають, що потрібна «пристрасть», аби знайти призначення; автор: ти вже маєш призначення — ти існуєш. Зобов'язання — не те, що знаходять, а те, ким ти є. <strong>Приклад Майкла Джексона:</strong> той не «запускав курс», а робив те, для чого народився. <strong>Приклад із трейдингу:</strong> коли сідав «просто натиснути кнопку», програвав; коли з наміром бути професіоналом — результат змінювався. «Намір майже змінив біологію».</div></div>
+      <div class="num-row"><div class="num-badge">8</div><div class="num-text"><strong>Модель «ідентичність → сприйняття → поведінка → докази».</strong> Ідентичність (хто ти) визначає сприйняття (що ти вважаєш правдою), яке формує поведінку й зовнішню реальність; дії стають «доказом» ідентичності й повертаються назад.</div></div>
+      <div class="num-row"><div class="num-badge">9</div><div class="num-text"><strong>Чи можна довіряти дзеркалу?</strong> Ми відчуваємо зростання лише коли отримуємо зворотний зв'язок; без нього «губимось», а втрата орієнтира болючіша за пошук — тому зупиняємося. Мозок звик до дії → реакції (відкрив TikTok → дофамін; сказав «люблю» → чекаєш відповіді), тож відсутність реакції сприймається як «щось не так». Життя не має гарантованих правил: бувають люди, які «не роблять нічого правильного» й мають усе, що ти хочеш. Єдина константа — намір.</div></div>
+      <div class="num-row"><div class="num-badge">10</div><div class="num-text"><strong>Принцип дзеркала.</strong> Дзеркало стоїть нерухомо: піднімаєш руку — і відображення піднімає її; але не раніше. Тож чому ти рухаєшся до цілей і чекаєш, що дзеркало зрушить першим? Усе, що ти споживаєш, — це ти; «ти прокидаєшся в ліжку лише як ти». Ніхто не може діяти без відображення.</div></div>
+      <div class="num-row"><div class="num-badge">11</div><div class="num-text"><strong>Довіра дзеркалу.</strong> Як ти довіряєш, що дзеркало відповість на помах руки, так можна довіряти й тому, що зміна окупиться. Автор: коли порушував власні правила в трейдингу (брав третю угоду після ліміту «двох») — програвав завжди, навіть якщо угода здавалася ідеальною: вирішував намір, а не те, що «приємно». Так само зі шкідливою звичкою: «вчора зірвався, то й сьогодні можна» — пастка. Довіряти дзеркалу — «одна з найпотужніших речей».</div></div>
+      <div class="num-row"><div class="num-badge">12</div><div class="num-text"><strong>Довіра як природа.</strong> «Я не довіряю собі» — це теж довіра (ти довіряєш тому, що не довіряєш). Довіра, зміна, любов — не те, що ти обираєш, а те, ким ти є: ти за 5–10 років змінився без дозволу; довіряєш, що за п'ять хвилин ще дихатимеш, і навіть не замислюєшся. <strong>Мисленнєвий експеримент:</strong> якби сказали, що довіри не існує, змінилося б у твоєму досвіді щось? Ні. Тож якщо робити стрибок змін, навіть без підтвердження ззовні, — що поганого, якщо ти спробуєш довіритись? Автор додає, що завжди знав, що він «інакший», але зовнішня реальність цього не відображала; допомогло продовжувати, довіряючи внутрішній впевненості.</div></div>
+      <div class="num-row"><div class="num-badge">13</div><div class="num-text"><strong>Кінцева «епіфанія».</strong> «Зовнішнього немає: ти і є реальність, а не ти в реальності». Голос, який ти чуєш, — у твоїй голові; усе в твоєму досвіді. «Ти — дзеркало». </div></div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Практичні висновки -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Практичні висновки</h2>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text">Не чекай, що обставини зміняться першими: дія → затримане відображення.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text">Помічай, коли живеш в «уявній реальності» (прогнозах, самооцінці всупереч фактам), і поверни увагу до тіла й теперішнього моменту (ноги, спина, подих, руки).</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text">Дій з наміром, а не механічно («просто натиснути кнопку»); дотримуйся власних правил, навіть коли дуже хочеться їх порушити.</div></div>
+      <div class="num-row"><div class="num-badge">4</div><div class="num-text">Не вважай відсутність швидкого результату доказом «не працює» — не завжди зворотний зв'язок приходить миттєво.</div></div>
+      <div class="num-row"><div class="num-badge">5</div><div class="num-text">Не будуй ідентичність на «слабкому дні» чи одній помилці.</div></div>
+    </div>
+    <div class="final-quote">
+      <div class="final-text">Зовнішнього немає: <strong>ти і є реальність</strong>, а не ти в реальності</div>
+    </div>
+  </div>
+  </div>
+
+
+  <div class="divider" style="margin:80px 0 64px"><div class="div-dot"></div><div class="div-line"></div><div class="div-dot big"></div><div class="div-line"></div><div class="div-dot"></div></div>
+
+  <div class="part" id="p-no-gap">
+    <div class="part-head">
+      <div class="part-kicker">Частина 3 з 3</div>
+      <h2 class="part-title">Закохайся в дії</h2>
+      <p class="part-sub">Розриву не існує</p>
+    </div>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Ідентичність захищає саму себе й створює уявний розрив між «я зараз» і «моя найкраща версія»</div>
+      <div class="hero-author">the gap DOESN'T EXIST</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Головна ідея -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Головна ідея</h2>
+    <p>Ідентичність захищає саму себе й створює уявний розрив між «я зараз» і «моя найкраща версія». Цей розрив здається величезним, тому змінюватись «надто довго й важко». Автор стверджує, що розрив — ілюзія: різниця між тобою нинішнім і бажаним лише в діях, які можна робити вже зараз, а не в довгому шляху до недосяжної «ідеальної» людини.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Структура думки -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Структура думки</h2>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text"><strong>Історія про гроші.</strong> У юності автор отримував великі суми (у т. ч. нелегально — «шахрайство») і одразу шукав найдорожчу покупку, бо відчував дискомфорт від великих грошей. Пізніше те саме траплялося з легальним заробітком. <strong>Висновок:</strong> гроші не відповідали тому, ким він себе вважав, тож ідентичність «повертала» його до звичного стану (як люди, які з'явившись із несподіваними коштами — податки, страхові виплати — відразу витрачають їх на дорогі речі, а потім із полегшенням «повертаються додому» в нестачу).</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Ідентичність — першопричина «проблем».</strong> Проблеми суб'єктивні й пов'язані з тим, ким ти себе бачиш. На нейрологічному рівні зміна активує сигнал небезпеки (мигдалик): збереження себе стабілізує нервову систему. Ця захисна система — як надмірно опікуючий батько: хоче вберегти, а в підсумку заважає жити й отримувати бажане.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text"><strong>«Не ти, а система».</strong> Мислення й почуття течуть без твого дозволу, а ти їх «присвоюєш» («я невдаха, я не можу»). <strong>Приклад:</strong> коли здригаєшся — це зробило тіло, а не «ти». Клік по відео теж спрацював від відчуття, що виникло саме. Тіло діє автоматично (серце, подих, травлення, моргання), а людина створює ідентичність, щоб мати відчуття, що «вона всередині цього тіла».</div></div>
+      <div class="num-row"><div class="num-badge">4</div><div class="num-text"><strong>Ланцюг «ідентичність → сприйняття → поведінка → докази».</strong> Ідентичність викривляє сприйняття (що правда, а що ні) → воно формує поведінку (звички, особистість) → результат стає «доказом», що повертається до ідентичності. Ідентичність «не має рук», тому не заборонить тобі змінюватись прямо, а використовує психологічні тактики, щоб тобі було комфортно й не відчувався «прогнозований біль змін».</div></div>
+      <div class="num-row"><div class="num-badge">5</div><div class="num-text"><strong>Сприйнятий розрив.</strong> Зміна здається стрибком через прірву. <strong>Приклад:</strong> відомий спортсмен розповів, що ходив у спортзал три дні й кинув, бо збагнув, що «це надовго». <strong>Вправа з уявою:</strong> 5 секунд уявити «найкращу себе» — зазвичай це ідеальна людина в усьому (спортзал щодня, жодних емоцій, купа грошей). Це головна тактика ідентичності: «найкраща версія» — бездоганна, а досконалість недосяжна, тож ціль заздалегідь нездійсненна.</div></div>
+      <div class="num-row"><div class="num-badge">6</div><div class="num-text"><strong>Приклад із залежністю.</strong> Автор розповідає, що довго не кидав наркотики, бо уявляв, що треба буде місяцями й роками бути тверезим, щоб «заслужити» нову версію себе; цей сприйнятий розрив підтримував звичку. Зміна — не результат: «ти ніколи не прибуваєш», бо прибуття забирає сенс пошуку. Є лише «ти зараз». Єдине, що насправді змінюється, — твої стосунки зі своїм внутрішнім конфліктом.</div></div>
+      <div class="num-row"><div class="num-badge">7</div><div class="num-text"><strong>Закриття розриву через дії.</strong> Після зміни, каже автор, «нічого не змінюється», крім стосунків із власним розумом. Розрив скорочується, коли закохуєшся в дії, які робить бажана версія, а не в результат (бігти заради «стати бігуном» — працює кілька тижнів і ламається). Результат приходить природно.</div></div>
+      <div class="num-row"><div class="num-badge">8</div><div class="num-text"><strong>Мікрозвички.</strong> Не потрібно робити «великий стрибок за одну емоційну ніч» («викидаю все, зав'язую») — це зривається. Він скоротив розрив, замінивши «3 місяці, щоб схуднути» на «30 хвилин на день у спортзалі». Автор зізнається, що довго не вірив у зміну й багато разів безуспішно кидав.</div></div>
+      <div class="num-row"><div class="num-badge">9</div><div class="num-text"><strong>«Усе — це ти».</strong> Метафізична частина: ти бачиш лише «зовнішню проекцію свідомості», як у сні; ти ніколи не відчував чужих почуттів, лише свої; «ніхто, крім тебе, не існує»; «твоє життя — сценарій»; знання без дій нічого не змінює («свідомість не має рук» — вона спостерігає, як ти страждаєш чи розквітаєш). Автор каже, що навіть його мовлення — автоматична система, а він лише спостерігач. Усвідомивши це, не можна втекти від проблем (бувають дні, коли не хочеться «бути людиною»), але можна призвичаїтись до «вогню», сприймаючи його інакше.</div></div>
+      <div class="num-row"><div class="num-badge">10</div><div class="num-text"><strong>Сприйняття формує реальність.</strong> Склянка «наполовину повна/порожня». Контент автор робить не щоб «навчити», а щоб розширити усвідомлення, змінити сприйняття дій і проблем. «Найкращої версії тебе не існує — є ти зараз; не буде "супергероя"». Щоб заробити мільйон чи досягти бажаного, не треба стати кимось іншим — потрібні дії зараз. <strong>Приклад:</strong> однакові слова-жарт (з ненормативною лексикою) одні сприймають як образу й вимикають відео, інші сміються — залежить від ідентичності й виховання. Усі емоції, які ти «присвоюєш», живляться ідентичністю.</div></div>
+      <div class="num-row"><div class="num-badge">11</div><div class="num-text"><strong>Кінцівка.</strong> «Розрив — ілюзія, яку ти створюєш, щоб лишатися собою. Він не займає місяців — він відбувається зараз». Не живи в «жахах», які сам щодня «перечитуєш» у сценарії («сьогодні я — Тімоті, невпевнений і ненавиджу себе»); змінюй сценарій.</div></div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Практичні висновки -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Практичні висновки</h2>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text">Помічай, чи «ідеал», до якого ти прагнеш, не є недосяжним (перфекціонізм створює «розрив» і виправдовує бездіяльність).</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text">Замість великих стрибків і одноразових емоційних рішень — мікрозвички: конкретні дії на 30 хвилин, які можна виконати вже сьогодні.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text">Фокусуйся на процесі й діях, а не на результаті («закохайся в дії») — результат прийде як побічний ефект.</div></div>
+      <div class="num-row"><div class="num-badge">4</div><div class="num-text">Усвідомлення без дії нічого не змінює: «знання не змінює нічого, змінюють дії».</div></div>
+      <div class="num-row"><div class="num-badge">5</div><div class="num-text">Звертай увагу на реакцію «захисту від змін» (тривога, відмовки, «це надто довго»): це може бути звичний механізм, а не вирок.</div></div>
+    </div>
+    <div class="final-quote">
+      <div class="final-text">Розрив — ілюзія, яку ти створюєш, щоб лишатися собою. Він не займає місяців — <strong>він відбувається зараз</strong></div>
+    </div>
+  </div>
+  </div>
 
 </div>
+
 <script>
 const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
 let W,H,stars=[],mx=0,my=0;
