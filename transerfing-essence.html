@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<script src="theme.js" data-native="light"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Трансерфінг без води</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+.page-subtitle{text-wrap:balance}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Трансерфінг без води</h1>
+  <p class="page-subtitle">Усе найважливіше з трансерфінгу реальності</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">З будь-якого становища можна дійти до того, чого хочеш.</div>
+      <div class="hero-author">Авторський погляд</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Вступ -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Вступ</h2>
+    <p>Автор хоче зробити корисну справу: вмістити все найважливіше з трансерфінгу реальності в одне відео. Трансерфінг, за його словами, це техніка керування реальністю. Вона дає змогу рухатися до того варіанта життя й досвіду, якого ти хочеш. Він наводить приклад: захотіла машину, і її можна отримати за допомогою трансерфінгу.</p>
+    <p>Спрощувати треба тому, що Вадим Зеланд написав дуже багато книжок, і читати їх важко з двох причин:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text"><strong>У книжках, особливо в останніх, дуже багато повторів.</strong> Нового матеріалу там «дай бог половина», решта це повтор. Автор каже, що це можна списати на «поетичну структуру» книжки.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Головна проблема в тому, що в книжках розмножені сутності.</strong> Там багато речей, які не потрібні, щоб техніка працювала. Через це людина може фокусуватися не на тому. Інформація не засвоюється, окремі частини вилітають з голови, бо незрозуміло, чому віддати перевагу.</div></div>
+    </div>
+    <p>Автор одразу ставить межі: це не повний ідеальний огляд, і робити такий він не хоче. У нього є власна техніка керування реальністю, і це не трансерфінг. У відео він дає те, що вважає найціннішим і що допомогло йому просунутися найдалі.</p>
+  </div>
+
+  <!-- Простір варіантів -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Простір варіантів</h2>
+    <p>Для тих, хто не знає, автор описує суть так: існує віртуальний простір варіантів, де є абсолютно будь-який варіант будь-якої події. Зеланд пояснює це квантовою фізикою та іншими речами, але автор називає ці пояснення «декораціями».</p>
+    <p>Факт, на його думку, такий: існує простір, у якому є все, що може статися. Там є й варіанти твого досвіду. Там є досвід, коли ти безхатько, і досвід, коли ти мільярдер. Там є досвід, коли тебе кидає дівчина, і досвід, коли в тебе народжуються чудові діти. Ти рухаєшся цим простором «як по хвилях». Звідси слово «серфінг». Ти переходиш від одного варіанта до іншого залежно від кількох речей, про які він розповість далі.</p>
+    <p>Він дає приклад. Якщо ти зараз безхатько, існує місце в просторі варіантів, де ти мільйонер, хоч зараз це здається неймовірним. Правильно рухаючись, ти опиняєшся там.</p>
+    <p>Автор наголошує, що це не вигадка Зеланда. Той просто «загорнув» це в простір варіантів і квантову фізику, але в житті воно працює саме так. Якщо існує бажаний стан, до нього можна дібратися в усіх випадках, окрім тих, у яких ти мертва. Тобто з будь-якого становища можна дійти до того, чого хочеш.</p>
+    <p>Трансерфінг він називає не спрощеною інструкцією, а цілою життєвою філософією. Вона полягає в тому, що ти розумієш кілька речей, які дають змогу рухатися саме до бажаного. Рух у просторі варіантів відбувається завжди: ти постійно рухаєшся до якогось майбутнього варіанта. Але коли ти розумієш і робиш певні речі, ти починаєш рухатися до тих варіантів, яких хочеш.</p>
+    <p>Далі автор розповідає про корисні речі з трансерфінгу. Він каже, що навіть якщо ти, як і він, колись кинеш трансерфінг і вирішиш, що це дурниці, ці речі лишаться корисними, хоч у твоїй голові вони можуть називатися вже по-іншому.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Річ 1. Маятники -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Річ 1. Маятники</h2>
+    <p>Маятники, за його визначенням, це енергоінформаційні сутності, які витягують енергію з конфліктів. Про них у книжках написано багато, але суть така: є сутності, що витягують енергію з будь-яких конфліктів. Конфлікт може бути в тому, що хтось наступив тобі на ногу, чи в тому, що хтось когось підрізав на дорозі, чи в тому, що ти нервуєш через щось. Ці маятники начебто чіпляються за тебе й витягують із тебе енергію. Тому за постулатами трансерфінгу ти в таких конфліктах втрачаєш енергію. Значна частина трансерфінгу присвячена тому, як на маятники не потрапляти.</p>
+    <p>Автор виділяє два головні моменти:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text"><strong>Маятники існують у будь-якому разі.</strong> Ти завжди зіштовхуватимешся із сутностями, які намагаються витягти енергію з конфлікту. Усе, що ти можеш зробити, щоб не віддавати енергію, це її не віддавати. Не боротися з маятниками, не потрапляти в конфлікти, а якщо вже потрапила, то не «вібрувати на частоті» цього конфлікту, тобто не віддавати йому енергії.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Друга частина, як він зазначає, можливо, його власне трактування.</strong> Маятники це свого роду «тримачі реальності». Саме завдяки тому, що між різними істотами, людьми й подіями стоять маятники, вони такі, які є. Грубо кажучи, маятники тримають реальність такою, як вона є. Ти така, яка є, а не, наприклад, відома співачка, якою ти хотіла б стати, бо існують маятники, що не дають рухатися в потрібний бік. Є маятники, завдяки яким хтось залишається політиком, і так далі. Вони не самі так «роблять», а стоять по краях людей і подій, щоб оберігати їх від зміни реальності. Водночас вони не повністю перешкоджають змінам. У Зеланда, зокрема в «Трансерфінгу за 78 днів», розповідається, що маятники навіть можна використати, щоб досягати бажаного, бо вони можуть підхопити твій намір.</div></div>
+    </div>
+    <p>Критичне зауваження автора: у трансерфінгу маятники фетишизують. Це, на його думку, напіввигадана сутність, яка відображає реальну властивість життя. Зеланд надає їй такого великого значення, що її можна хибно тлумачити. Але головне: якщо ти ставишся до конфліктів як до шкідливої речі, що витягує енергію, то неважливо, як ти це робиш, через розуміння маятників чи ні. Це очевидно корисно для тебе.</p>
+  </div>
+
+  <!-- Річ 2. Внутрішній і зовнішній намір -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Річ 2. Внутрішній і зовнішній намір</h2>
+    <p>Внутрішній намір це коли ти вирішила щось собі й просто робиш. Приклад автора: хочеш заробити грошей, ідеш і «фігачиш», намагаєшся їх заробити.</p>
+    <p>Зовнішній намір це коли ти правильно займаєшся трансерфінгом: вирівнюєш голову та стан, і світ навколо сам підлаштовує реальність під те, чого ти хочеш. Тобто зовнішній намір це правильна робота над собою, щоб правильно рухатися простором варіантів.</p>
+    <p>У трансерфінгу, каже він, написано, що внутрішній намір може мати сенс, але ним ти фактично «пливеш проти течії». Зовнішній намір це використати течію, щоб потрапити туди, куди треба. Автор одразу просить вибачення, якщо трохи плутає терміни «внутрішній» і «зовнішній».</p>
+  </div>
+
+  <!-- Річ 3. Надмірна важливість -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Річ 3. Надмірна важливість</h2>
+    <p>Ти можеш надавати речам, подіям, якостям важливість. У певному сенсі вона цінна, бо через неї ти ставиш намір. Але якщо ти надаєш чомусь надто велику, «надмірну» важливість, то вмикаєш врівноважувальні сили, тобто сили реальності, які вирівнюють важливість і потенціали. Якщо ти чогось дуже сильно хочеш або надаєш цьому надто багато значення, життя (трансерфінг, реальність, називай як хочеш) вирівнює ситуацію, і цієї речі в тебе не стає.</p>
+    <p>Його приклад із грошима: ти думаєш «без грошей я жити не можу, це для мене надважливо, мені обов'язково треба заробляти». Ти надаєш усьому цьому надто велику важливість, і гроші зникають із твого життя. Врівноважувальні сили роблять так, що грошей у тебе немає: багато важливості, а грошей мало.</p>
+    <p>У «Трансерфінгу за 78 днів» Зеланд, за словами автора, ще пояснює, що надмірна важливість завжди пов'язана з порівнянням. Ти можеш любити гроші, але щойно починаєш щось із чимось порівнювати, це ознака надмірної важливості. Якщо в мене грошей мало, а в когось багато, і ти це пропускаєш через себе, виникає надмірна важливість. Вона запускає врівноважувальні сили, і ти не отримуєш того, чого хочеш. Автор називає це надкорисною річчю, яку можна застосувати в будь-який момент життя.</p>
+    <p>Він знову додає своє критичне зауваження: насправді все працює трохи інакше, і тут розмножено багато зайвих сутностей. По факту це працює через твій стан і ставлення до себе. Якщо ти чогось надто сильно хочеш, у цього зазвичай є якась болюча причина: ти відчуваєш потребу. Саме через це ти й не отримуєш бажаного. Але в рамках міфології трансерфінгу врівноважувальні сили й надмірна важливість, за його оцінкою, дуже корисні для розуміння.</p>
+  </div>
+
+  <!-- Річ 4. Намір -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Річ 4. Намір</h2>
+    <p>Це, за його словами, найважливіша річ у трансерфінгу. Намір це просто твоє бажання чогось. Якщо ти хочеш чогось досягти й поставила це собі як ціль, ти встановила намір. Це головне, з чим працює трансерфінг. Намір це як твій компас: ти спрямувала себе в певний бік, а далі коригуєш рух через надмірну важливість та інші речі.</p>
+    <p>Намір, каже автор, універсальний для всієї подібної літератури, для «нового мислення». Якщо не знаєш, що це таке, він радить почитати Наполеона Гілла, Воллеса Вотлза та ще кількох авторів. Там багато ідей, які є в трансерфінгу, але з'явилися років на сто раніше.</p>
+    <p>Намір він називає абсолютно слушною річчю, і при цьому суто психологічною, навіть не езотеричною. Якщо ти чогось хочеш і чітко окреслила, чого саме, ймовірність появи цього в житті дуже зростає. Віриш в езотерику: значить, ти це створила, і воно до тебе пливе. Віриш у психологію: значить, ти змалювала в голові, чого саме хочеш досягти, і рухаєшся до цього.</p>
+    <p>Намір потрібно собі встановити. Якщо ти кудись рухаєшся, треба розуміти куди. Якщо ти фрустрована, тобі чогось хочеться, а чого саме, не знаєш, то твоя потреба не може бути вгамована, бо неможливо припливти кудись, якщо не знаєш, куди пливеш. Куди б ти не пливла, припливеш не туди. Трансерфінг розв'язує це через намір.</p>
+  </div>
+
+  <!-- Річ 5. Слайд, тобто візуалізація -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Річ 5. Слайд, тобто візуалізація</h2>
+    <p>Поряд із наміром у трансерфінгу стоїть слайд. Слайдом називають візуалізацію. Ти створила намір, наприклад хочеш машину чи гарний дім, і займаєшся візуалізацією: заплющуєш очі, уявляєш це, уявляєш, що відчуєш, коли отримаєш, і так далі. Логіка техніки в тому, щоб витрачати час на уявлення того, чого ти справді хочеш.</p>
+    <p>Автор зазначає, що це спірний момент. Багато людей сприймають трансерфінг крізь ці слайди, і навіть сам Зеланд у кількох книжках намагається знизити важливість слайдів. Сама по собі візуалізація, каже автор, не приводить до бажаного. Якщо ти заплющуєш очі й нескінченно уявляєш зелене яблуко, зелене яблуко просто так у твоєму житті не з'явиться.</p>
+    <p>Але сенс слайдів у тому, що, коли ти заплющуєш очі й візуалізуєш, ти мусиш витратити енергію, щоб уявити, яким воно є. Хочеш машину: уявляєш, яка вона. Якщо раптом речі, які ти собі уявляла (наприклад, якісна машина), виявляться дурницями, ти це зрозумієш під час візуалізації й перебудуєш намір. Якщо не дурниці й можна дописати додаткові деталі, ти їх дописуватимеш. Якщо витрачати кілька хвилин на день, «медитуючи» над тим, чого хочеш, це в будь-якому разі позитивно. Саме по собі воно не призводить до появи цієї речі, але напрям до неї стає чіткішим. Бо залежно від того, чи ти хочеш Audi Q5, чи MG ZS (це така китайська машина), дорога може бути різною. Займаючись слайдами, ти її визначаєш.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Інші корисні ідеї -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Інші корисні ідеї</h2>
+    <p>Автор підсумовує, що це плюс-мінус усі корисні речі, які можна вилучити з трансерфінгу як категорії. Інша цінність там є, але її складно передати у відео. Він згадує, зокрема, що навіть найкоротша книга, «Трансерфінг за 78 днів», розповідає про те, що треба прийняти свою силу творця. Це, за його словами, найбанальніша річ, але вона надбазова: треба прийняти, що в тебе є влада змінювати реальність, і вона в тебе справді є. Якщо в це не вірити, жоден трансерфінг тобі не спрацює.</p>
+    <p>Також там розповідається, що треба дозволяти людям почувати себе важливими, а собі не дозволяти почувати себе важливою, і так далі. Більшість цих речей він називає загальножиттєвими, на кшталт «віддавай, і тобі повернеться» або «не перебивай співрозмовника, йому буде приємно з тобою спілкуватися». Приблизно так побудований увесь трансерфінг.</p>
+  </div>
+
+  <!-- Оцінка трансерфінгу автором -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Оцінка трансерфінгу автором</h2>
+    <p>Сам трансерфінг як вчення, за словами автора, це прикольна ідея. Це перепакування ідей нового мислення, переважно Наполеона Гілла та Воллеса Вотлза, у квантову фізику й сучасну мову. Книжки написані не дуже добре. Автор сам значну частину не читав, а слухав в аудіоформаті, і це було дуже важко: наче читаєш не художню книжку, а губишся в кількості героїв і контексту. Він знає, що багато хто має такий самий досвід.</p>
+    <p>Тим не менш, трансерфінг він називає дуже важливою книжкою й технікою, бо вона дає вхід у світ, де ти справді керуєш реальністю. Більшість із нас народжується й живе у світі, де реальністю керувати не можна. Там, якщо пішов дощ, то в тебе поганий день, а не навпаки: у тебе поганий день, і через це пішов дощ. Тому себе потрібно якийсь час перенавчати й пояснювати собі, що ти справді можеш керувати реальністю й життєвим досвідом.</p>
+    <p>Робити це, за його словами, зазвичай треба обережно, у два етапи:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text"><strong>Спершу ти відкриваєш для себе психологічний вплив.</strong> Працюючи зі своїм фокусом і увагою, ти можеш змінювати життєвий досвід.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Потім відкриваєш езотеричну частину.</strong> Якщо правильно працюєш зі своїм фокусом, життя раптом починає підлаштовуватися. Якщо ти на позитиві, з тобою стають траплятися позитивні речі, і фокус рухати вже не потрібно.</div></div>
+    </div>
+    <p>Більшості людей цією дорогою доводиться йти дуже довго, щоб у дорослому віці відкрити: насправді ти майстер цієї реальності. Трансерфінг, попри його критику, це чудова книжка, якщо вона для людини двері, через які вона входить у новий світ. Якщо це єдина книжка з теми, яку ти прочитала в житті, то погана. Але у всіх інших випадках вона чудова, і Зеланду за це він каже велике спасибі.</p>
+  </div>
+
+  <!-- Остання річ: світ як дуальне дзеркало -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Остання річ: світ як дуальне дзеркало</h2>
+    <p>Автор каже, що забув перелічити в першому списку ще одну важливу річ, бо вона в нього вже «на підкірці». Фізична реальність не первинна, первинна ментальна реальність. Тобто те, як ти почуваєшся й що думаєш, визначає реальність. Якщо ти думаєш «на мільйон», то мільйон у твоєму житті з'явиться із запізненням.</p>
+    <p>Для цього Зеланд використовує концепцію дуального дзеркала: це дзеркало, у якому те, що відбувається з тобою, відображається із запізненням. Логіка така: ти сидиш, думаєш «на мільйон», одразу дивишся в дзеркало й очікуєш підтвердження, що ти змінилася. А дзеркало насправді змінюється із запізненням. Це один з основних постулатів трансерфінгу, дуже цінний.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Література, яку він радить -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Література, яку він радить</h2>
+    <p>Для тих, хто відкрив для себе лише трансерфінг, він дає коротку рекомендацію книжок, близьких до нього або таких, що ведуть у тому ж напрямку:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text"><strong>Наполеон Гілл, «Думай і багатій» (1937).</strong> Значна частина трансерфінгу це перепакований Гілл. Ця велика книжка дала шлях сучасним авторам.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Воллес Вотлз, «Наука ставати багатим» (The Science of Getting Rich, 1910).</strong> Попередник Гілла. Автор називає її найбазовішою базою, дуже крутою для розуміння «трансерфінгу без трансерфінгу».</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text"><strong>Джо Диспенза, сучасні книжки про медитацію.</strong> У трансерфінгу медитації відносно мало, а Диспенза на ній побудував цілий метод. По суті, це той самий трансерфінг реальності, але через медитацію, що, на думку автора, дуже крутий спосіб.</div></div>
+      <div class="num-row"><div class="num-badge">4</div><div class="num-text"><strong>Девід Кемерон Гікенді, «Щаслива кишеня повна грошей».</strong> Це, за його словами, нереально крута книжка про мислення достатку: прийми мислення достатку, і життя стане більш достатнім. Вона дає той самий інструментарій, що й трансерфінг, але в простішому форматі й набагато ефективніше.</div></div>
+    </div>
+    <div class="final-quote">
+      <div class="final-text">Фізична реальність не первинна, <strong>первинна ментальна реальність</strong>.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
