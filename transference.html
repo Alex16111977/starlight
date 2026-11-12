@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<script src="theme.js" data-native="light"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Перенос і контрперенос</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+.page-subtitle{text-wrap:balance}
+.section h3.sub-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:22px;letter-spacing:.04em;color:#242844;margin:34px 0 12px}
+.section h3.sub-title:first-child{margin-top:0}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Перенос і контрперенос</h1>
+  <p class="page-subtitle">Повторювані помилки в дружбі, коханні й на роботі</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Манекен не стоїть на місці: людина рухається, дихає й пахне.</div>
+      <div class="hero-author">Альберт Сафін</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 1. Що таке перенос (вступ) -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">1.</span> Що таке перенос (вступ)</h2>
+    <p>Перенос, за автором, це несвідома підміна. Людина не усвідомлює, що вона відбувається, але це впливає на неї й на структуру її стосунків. Його метафора: я натягую на тіло іншої людини, як на манекен, привидів свого минулого. Я дивлюся на людину в теперішньому, але бачу в ній значиму постать зі свого минулого й автоматично видаю завчені емоційні реакції. Тілом я тут і зараз, а проявами «там і тоді».</p>
+    <p>Поки я не усвідомлюю свої переноси, я приречена відігравати старі сценарії з новими людьми. Приклади автора:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">боротися з начальником, ніби переді мною деспотичний батько;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">рятувати партнера, як колись намагалася врятувати емоційно холодну матір.</div></div>
+    </div>
+    <p>Розуміння цих процесів він називає ключем, щоб вибратися з лабіринту: перестати спілкуватися з привидами минулого й почати бачити перед собою реальних людей, щоб будувати зрілі, достатньо здорові й щирі стосунки.</p>
+    <p><strong>Чому це відбувається.</strong> Психіка як орган лінива й прагне економити енергію. Зустрічаючи нову людину чи ситуацію, мозок не хоче щоразу все аналізувати заново, а лізе у внутрішню «карткову картотеку» минулого досвіду й дістає готовий шаблон. Його приклад: якщо в дитинстві суворий погляд батька означав неминуче покарання, то через десятиліття, побачивши задумливо насуплене обличчя начальника, ти можеш миттєво провалитися в крижаний страх чи почати захищатися, хоча підстав нема. Ти реагуєш не на реального керівника, який, можливо, просто думає про квартальний звіт, а на фігуру батька у своїй голові.</p>
+    <p><strong>Як це керує життям:</strong> я вимагаю від партнера тієї безумовної любові, якої не отримала від матері, або несвідомо провокую друзів на відторгнення, бо так поводилися зі мною старший брат і сестра. Перенос спотворює реальність: я борюся з вітряками, захищаюся там, де нападу нема, і вимагаю неможливого від тих, хто не має до мого минулого жодного стосунку.</p>
+    <p><strong>Що з цим робити:</strong> розвивати навичку внутрішнього спостереження. Дорослішання, каже він, іде рука об руку з цією навичкою. Потрібно створювати простір між стимулом і реакцією. Якщо твоя реакція на слова чи дії іншої людини здається надто різкою чи болючою, візьми паузу й спитай себе: до кого насправді зараз звернені мої слова, чий голос я зараз чую?</p>
+    <p><strong>Вправа 1 (письмова, від руки).</strong> Згадай недавній емоційний конфлікт і продовж речення: «Я так сильно розізлилася на Тамару, бо вона не відповіла на моє повідомлення (5 хвилин, потім цілу годину). Це дуже схоже на те, як у моєму минулому поводилася зі мною мама (ігнорувала мої прохання). І в цей момент я відчула те саме, що й тоді». Письмово, бо це фокусує увагу, а ще «я, яка прочитала» і «я, яка записала й зробила» це різні люди. Автор чесно попереджає, що ця лекція не панацея: стосунки, які вчора були «солоними», сьогодні можуть стати «прісними», бо тобі перестануть бути цікаві ігри, в які тебе запрошують. Але виносячи зв'язок на папір, ти фізично розділяєш «зараз» і «тоді», повертаєш собі критичне мислення й здатність сприймати ситуацію не крізь «запітнілі лінзи минулого». Усвідомлення, що ти часто спілкуєшся з привидами, болісне, але звільняє.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 2. Нав'язливе повторення: чому я наступаю на ті самі граблі -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">2.</span> Нав'язливе повторення: чому я наступаю на ті самі граблі</h2>
+    <p>Якщо ти притягуєш однакових людей, пояснює він, то психіка несвідомо шукає знайомі, нехай і болючі, емоційні сценарії, щоб нарешті прожити їх зі щасливим фіналом. Це нав'язливе (компульсивне) повторення: мене непереборно тягне до знайомого. Психіка прагне не щастя, а звичного. Звичний дискомфорт солодший за незвичний комфорт.</p>
+    <p>Його приклад: якщо дитина росла там, де любов була нерозривно пов'язана з відторгненням, холодом і непередбачуваністю, то в дорослому віці спокійні, надійні й турботливі люди здаватимуться їй нудними й викликатимуть тривогу. Мозок просто не розпізнає такі стосунки як любов. У натовпі вона безпомилково вибирає того, хто здатний зіграти потрібну роль у її внутрішньому театрі, наприклад емоційно недоступного партнера, щоб спробувати його «відігріти» й довести собі: «цього разу мене оберуть, цього разу я достатньо хороша». Але інша людина не пластилін, вона грає за своїми правилами, і сценарій знову закінчується болем. Манекен не стоїть на місці: людина рухається, дихає й пахне.</p>
+    <p>Розуміння цього змінює запитання з «чому мені так не щастить на людей?» на «яку свою потребу я намагаюся закрити через цих людей, яку роль у якій своїй історії їм відводжу?» Важливо перестати сподіватися, що нова людина з тим самим набором якостей раптом поведеться інакше.</p>
+    <p><strong>Вправа 2 («резюме стосунків»).</strong> Випиши в стовпчик імена трьох-чотирьох людей (партнери, друзі), з якими повторювався негативний сценарій, і зроби дві колонки:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text">Яка їхня риса мене так сильно привабила вже на початку?</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text">Через що зрештою виник розрив чи головний біль?</div></div>
+    </div>
+    <p>Шукай спільний знаменник в обох колонках. Правильних відповідей нема, цінний сам акт їх знаходження. Вправа може подіяти як «холодний душ», бо показує власну сліпу пляму при виборі оточення. Далі він описує сходи прогресу: спочатку наступаєш на граблі й навіть не помічаєш, як це зробила; потім наступила й помітила як; потім бачиш граблі, не хочеш наступати, але наступаєш; потім у останній момент прибираєш ногу; потім ідеш іншою дорогою. Це послідовність, а не «раз і готово».</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 3. Як зрозуміти, що я реагую на реальну людину, а не проектую -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">3.</span> Як зрозуміти, що я реагую на реальну людину, а не проектую</h2>
+    <p>Головний маркер, за автором, це неадекватна інтенсивність емоцій: крихітний об'єктивний привід викликає всередині емоційне цунамі. Його приклад: непрочитане повідомлення від партнера. Реальність: людина зайнята, не побачила, технічна несправність. Перенос і проекція: миттєва катастрофа («мене кидають, я неважливий, мною нехтують»), смикання волосся, гризіння нігтів, шукання собі місця. Це надузагальнення (він називає слова-маркери «завжди», «ніколи», «знову», «вічно ти») і тунельний зір, коли існує лише одне найнегативніше тлумачення подій.</p>
+    <p>Якщо за шкалою від 1 до 10 твоя реакція тягне на 10 балів, а подія об'єктивно заслуговує максимум на 2, ти майже напевно в епіцентрі проекції. Ти реагуєш не на слова співрозмовника, а на свою стару незагоєну рану, яку він випадково зачепив.</p>
+    <p><strong>Вправа 3 («факти та інтерпретації»).</strong> Поділи сторінку навпіл (альбомно). Ліворуч «Факти» (те, що зафіксувала б відеокамера), праворуч «Мої інтерпретації» (те, що каже мій страх). Приклад: Факт: «він відповів односкладово». Інтерпретація: «я йому більше не цікава, він злиться, мабуть, знайшов іншу». Так ти переключаєш роботу мозку з емоційних центрів на префронтальну кору, що відповідає за логіку, і помічаєш, що реальних доказів катастрофи мало, а надуманого страху багато. Автор називає навичку «дати собі паузу між стимулом і реакцією» тим, що відрізняє людину від інших тварин, і радить, наприклад, ухвалювати рішення «на ранок на холодну голову».</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 4. Чому деякі люди викликають миттєву симпатію чи антипатію -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">4.</span> Чому деякі люди викликають миттєву симпатію чи антипатію</h2>
+    <p>Раптова, нібито безпричинна симпатія чи антипатія виникає тому, що міміка, тембр голосу, запах, особливості мови, висота чола, форма носа, волосся, інтонація, кольори й фасон одягу миттєво активують в асоціативній пам'яті образ когось важливого з минулого. Пам'ять працює швидше за свідомість. Його образ: ранок, хрускіт снігу, голос мами, дорога в дитсадок, тепле молоко. Ти чуєш звукові хвилі, і ланцюжок асоціацій запускається.</p>
+    <p><strong>Приклад:</strong> новий колега мружиться так само, як твій дідусь, з яким ти почувалася в цілковитій безпеці, і ти вже наділяєш незнайомця мудрістю, добротою й величезним кредитом довіри, якого він об'єктивно ще не заслужив. І навпаки: якщо форма губ чи інтонація нагадують токсичного вчителя з молодших класів, ти відчуєш незрозуміле роздратування й бажання закритися. Ти бачиш не людину, а голограму зі своїх спогадів. Автор попереджає: не поспішай довіряти «інтуїції» («мій внутрішній голос каже, що цій людині можна довіряти»), бо «людина» може виявитися шахраєм, який експлуатує саме цю твою схильність. Дай людині час проявитися, свідомо притримуй судження.</p>
+    <p><strong>Вправа 4.</strong> Згадай людину, яка викликала миттєву симпатію чи безпричинне відторгнення, і письмово заповни: «Ця людина з першої хвилини здається мені… (епітети: надійною, небезпечною, високомірною, рідною), бо вона робить/виглядає… (конкретна деталь: так само потирає ніс, говорить з такою самою інтонацією). Цю деталь я пам'ятаю у… (ім'я людини з минулого)». Так ти «розчаровуєш магію» першого враження, виписуєш деталь-тригер і позбавляєш її влади над своїм сприйняттям.</p>
+    <p>Автор додає, що об'єктивним на 100% людина як ссавець бути не може: «бачить не око, бачить усе тіло», об'єктивність можлива лише в лабораторії в білому халаті. Але ти починаєш забирати свої проекції назад, даєш шанс собі будувати стосунки з людьми, а їм побачити тебе справжніми очима. Його смішний приклад: ти в дитинстві любив серіал «Дикий ангел», у тебе були «парасоціальні стосунки» з героїнею, а потім через роки зустрічаєш людину з таким самим носом, голосом, лобом і кучерявим волоссям і з першої секунди охоплений «любов'ю».</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 5. Що таке контрперенос -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">5.</span> Що таке контрперенос</h2>
+    <p>Контрперенос це моя несвідома згода зіграти ту емоційну роль, яку інша людина непомітно нав'язує мені, проектуючи на мене свої очікування. Його метафора: перенос це коли я бачу іншого уві сні й запрошую його в мій сон, а контрперенос це коли я провалююся в нав'язаний мені сон і стаю роллю в чужій виставі. Питання контрпереносу: на яку роль у якій своїй історії мене запрошує ця людина і через що саме?</p>
+    <p><strong>Емоції заразливі.</strong> Приклад 1: людина 40 років спілкується з тобою з позиції наляканої дитини, що виправдовується, і несвідомо виштовхує тебе в позицію суворого контролюючого батька (або турботливого опікуна). Якщо в тебе нема стійкої опори на себе, ти раптом помічаєш, що тон твого голосу став повчальним, ти читаєш нотації, даєш непрохані поради, хоча зазвичай спілкуєшся з людьми на рівних. Приклад 2: поряд із людиною, що постійно скаржиться, ти відчуваєш нестерпну провину, що в тебе немає її проблем, і бажання її рятувати, хоча ти ні в чому не винна. Ти відігруєш чужий внутрішній конфлікт своїми руками.</p>
+    <p><strong>Маркери контрпереносу:</strong> відчуття «це на мене не схоже, я не розумію, чому я так себе поводжу поряд із нею/ним», а ще раптова фізична втома після спілкування.</p>
+    <p><strong>Вправа 5.</strong> Згадай недавній діалог, де ти почувалася дивно, ніби тебе змусили грати чужу роль, і запиши: «Поруч із (ім'я) я раптом відчула себе… (рятівницею, суворим суддею, винною школяркою, яка виправдовується). Це було на мене не схоже. Насправді мені було б важливо взаємодіяти з цією людиною з позиції… (дорослої, рівного партнера, відстороненого колеги)». Автор радить зробити це письмово приблизно п'ять разів. Це «кнопка стоп» для психіки: ти все одно будеш провалюватися, «навіть профі провалюються», але почнеш помічати, як це робиш. Ловити кожен емоційний м'яч, який у тебе кидають, не обов'язково, іноді найздоровіша позиція це дозволити чужим очікуванням пролетіти повз: ти бачиш, у який сон тебе запрошують, і маєш вибір, провалюватися чи ні.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 6. Перенос і контрперенос у різних сферах -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">6.</span> Перенос і контрперенос у різних сферах</h2>
+    <h3 class="sub-title">Робота</h3>
+    <p><strong>Як розпізнати, що начальник чи колега переносить на тебе свої проблеми:</strong> за різкою невідповідністю між твоєю робочою помилкою і непропорційно сильним емоційним вибухом, чіпляннями, стійким упередженим ставленням. Офіс це ідеальне середовище для відтворення сімейної динаміки: психіка сприймає начальника як фігуру батька (він має владу й ресурси), а колег як братів і сестер, з якими треба змагатися за увагу й похвалу. Коли керівник раз по раз зривається саме на тобі, а промахи інших ігнорує, або колега систематично знецінює твої ідеї, вони, найімовірніше, проектують на тебе ту частину себе, яку ненавидять і не можуть прийняти (власну невпевненість, слабкість, страх помилки), або бачать у тобі фігуру зі свого минулого. Роль «цапа-відбувайла» нав'язується тому, хто несвідомо готовий її прийняти: хто завмирає, починає виправдовуватися, відчуває сором і бере на себе провину за чужий неконтрольований гнів.</p>
+    <p><strong>Що робити:</strong> вибудовувати жорстку емоційну дистанцію. Щойно помічаєш перехід на особистості, абстрактні звинувачення чи неадекватний тон, не вмикайся емоційно, не виправдовуйся, як нашкодивша дитина, повертай розмову до сухих вимірюваних фактів і робочих завдань.</p>
+    <p><strong>Вправа 6 («інвентаризація робочих кордонів»).</strong> Згадай свіжий епізод необґрунтованої критики. Розділи лист навпіл: ліворуч «Мої реальні робочі обов'язки і фактичні недоліки (без емоцій)», праворуч «Емоції, ярлики й звинувачення, які на мене вилили». Внизу великими літерами: «Я залишаю тобі твої емоції. Я забираю собі лише свої завдання». Це допомагає фізично відокремити професійну ідентичність від чужого внутрішнього хаосу й перестати «контейнувати» чужий біль.</p>
+    <p><strong>Як скритий перенос саботує кар'єру.</strong> Якщо в сім'ї любили лише за п'ятірки й досягнення, на роботі стаєш трудоголіком, що вигорає 24/7, і працюєш не заради грошей і самореалізації, а заради примарної похвали начальника, який несвідомо замінює вимогливого батька чи матір. Інший сценарій: синдром самозванця й саботаж успіху, несвідомий страх перевершити батьків чи братів і сестер (бо в дитинстві це загрожувало заздрістю чи відторгненням). Тоді людина відмовляється від підвищень, провалює співбесіди, постійно запізнюється. Або змагається з колегами не за проєкт, а за увагу керівника. Робота, каже він, це місце обміну навичок на гроші, а не сім'я, де тебе мають безумовно любити чи де ти мусиш щось доводити.</p>
+    <p><strong>Вправа 7 («сканування кар'єрних мотивів»).</strong> Запиши свою важливу професійну ціль на рік (наприклад «стати керівницею відділу», «збільшити дохід у півтора раза») і чесно відповідай: чиє захоплення, визнання, а може й заздрість я насправді хочу отримати, коли цього досягну? Якщо ти бачиш ім'я «батьки», «колишній», «шкільний кривдник», ти розумієш абсурдність ситуації й можеш перенаправити енергію на те, що потрібно тобі особисто. Тут автор додає особистий приклад про критику його відео («занадто багато води, можна було вкласти в 5 хвилин»): він відповідає, що в чужій бульбашці реальності так і виглядає, і це нормально, бо критика ранить, лише коли сприймаєш її джерело як батьківську фігуру. Стабільний кар'єрний ріст починається в день, коли робота стає просто роботою, а не полем битви за недоотриману в дитинстві любов.</p>
+    <h3 class="sub-title">Партнери</h3>
+    <p><strong>Чому ми обираємо партнерів, схожих на батьків:</strong> психіка з раннього дитинства засвоїла формулу любові, де знайоме дорівнює безпечному, навіть якщо знайоме приносить страждання. Якщо батьки були холодними, відстороненими, надмірно контролюючими, дитяча психіка адаптується й робить висновки: «любов треба заслужити», «любов це коли тебе контролюють», «любов це коли партнер то наближає, то відштовхує». Дорослою людина може давати собі клятву ніколи не зв'язуватися з людиною, схожою на матір чи батька, але на несвідомому рівні надійний, відкритий, турботливий партнер здаватиметься нудним і прісним. А «іскра», каже автор, це найчастіше впізнавання травми, «любов із першого погляду це впізнавання травми». Нас тягне до емоційно недоступних людей, бо всередині живе відчайдушна фантазія: «якщо я зможу змінити цю холодну людину, якщо вона заради мене стане теплою, значить, я нарешті залікую свою дитячу рану й доведу, що гідна любові». Але інша людина не твій батько й не зобов'язана змінюватися, щоб переписати твою історію.</p>
+    <p><strong>Вправа 8.</strong> Напиши ім'я батька/матері, з якими були найскладніші стосунки, і випиши п'ять їхніх головних негативних рис. Поруч напиши ім'я теперішнього чи колишнього партнера й п'ять його якостей, які завдають тобі болю. Підкресли збіги. Внизу від руки: «Я більше не дитина, яка має заслуговувати любов. Я відмовляюся переграти цей сценарій. Його неможливо переграти». Так знімається романтика й фатальність, а невидимий сценарій стає усвідомлюваною реальністю. Це як спроба отримати яблука від апельсинового дерева: розуміти це сумно, але саме це розчарування відкриває шлях до стосунків на взаємній повазі, а не на дитячих дефіцитах.</p>
+    <p><strong>Як зупинити гойдалки «ідеалізація → розчарування».</strong> У моменти закоханості чи чарівності ти дивишся не на реальну людину, а на сяючу проєкцію власних нереалізованих бажань і ідеалів. Сценарій ідеалізації запускає психологічне розщеплення: психіці важко витримувати амбівалентність, що в кожній людині одночасно уживаються світле й темне, сила й слабкість. Ми беремо усе найкраще, що в нас є, наші мрії про бездоганного рятівника, і надягаємо цей образ на манекен чужого тіла. Це трохи знижує фонову тривогу й дає ілюзію контролю. Але реальні люди рано чи пізно помиляються, втомлюються, бувають егоїстичними, забувають, і психіка не може інтегрувати цей «недолік» у сяючий образ. Стається різкий обвал: учорашній кумир стає розчаруванням, зрадником, нікчемою. Щоб зупинити маятник, треба вчитися сповільнюватися на старті стосунків і свідомо шукати й «легалізувати» шорсткості іншої людини.</p>
+    <p><strong>Вправа 9 («тінь мого ідеалу»).</strong> Вибери людину, якою ти зараз сильно зачарована (нова людина), і напиши три цілком звичайні, навіть трохи дратівливі факти про неї (наприклад хрустить пальцями, не розбирається в мистецтві, буває забудькуватою). Додай: «Це звичайна жива людина, і це нормально». Так ти тренуєш психіку «перетравлювати» цілісність іншого. Здатність бачити чужі недосконалості й залишатися поруч це фундамент справжньої близькості, яка починається саме тоді, коли закінчуються ілюзії.</p>
+    <p><strong>Якщо я розумію, що переношу біль минулих стосунків на нового, ні в чому не винного партнера.</strong> Найважливіше: відкрито проговорити це вголос, знявши з теперішнього партнера відповідальність за твої емоційні флешбеки. Після болісних стосунків нервова система залишається в «бойовій готовності», і достатньо випадкової фрази, схожої інтонації, погляду чи затримки відповіді, щоб увімкнулася внутрішня сирена й залила все «пожежною піною». Мозок не розрізняє час, для несвідомого часу нема. Його приклад: якщо наближення Нового року чи дня народження в дитинстві супроводжувалося панікою, бо батьки напивалися й сварилися, то через роки, навіть коли їх немає поруч, наближення свята викликає ту саму тривогу. Якщо мовчки «вариться» в цьому стані, партнер відчує відчуження й агресію, не зрозуміє причини й почне захищатися, і нові стосунки зруйнуються. Потрібна прозора комунікація й відповідальність за свої реакції. Приклад фрази: «Моя реакція зараз не пов'язана з тобою. Мене тригернуло, це відлуння мого минулого. Мені потрібен час, щоб прийти до тями». Вразливість і чесне визнання своїх вразливих місць не роблять слабкою, а формують глибоку довіру.</p>
+    <p><strong>Вправа 10 («лист привиду»).</strong> Виплесни на папір усю злість, образу й біль, але адресуй їх конкретній людині з минулого, яка завдала рани. Напиши все, що не сказала й не могла сказати тоді. Постав таймер на 10 хвилин, не фільтруй. Лист відправляти не треба. Потім поставити крапку, перегорнути аркуш і написати: «А що мій теперішній партнер (ім'я) насправді зробив?» і описати реальний факт. Так афект спрямовується за правильною адресою: теперішній партнер просто «груша», яку ти хочеш побити напругою в кулаках, адресованою зовсім іншій людині. Листа можна й порвати, щоб пропустити емоцію фізичною активністю. Мета: фізично розімкнути нейронний зв'язок між старою травмою й новою людиною. Вправу можна повторювати.</p>
+    <h3 class="sub-title">Близькі й родина</h3>
+    <p><strong>Як захиститися, якщо близька людина несправедливо переносить на мене гнів на інших.</strong> Треба твердо відмовитися приймати нав'язуване почуття провини, залишаючись у позиції дорослого спостерігача, який бачить справжню причину чужого болю. Ти не зобов'язана бути «шлунком» для чужого неперетравленого. Коли в близької людини стрес чи криза, її психіка шукає громовідвід, контейнер для скидання напруги, і найбезпечніші контейнери це близькі люди: ті, хто стерпить і не піде. Автор називає це проективною ідентифікацією: людина несвідомо провокує тебе так, щоб ти відчула ті емоції, від яких вона хоче позбутися (злість, образу, провину). Якщо ти кричиш у відповідь, виправдовуєшся чи доводиш правоту, ти «проковтнула наживку» й узяла чуже емоційне сміття собі.</p>
+    <p><strong>Завдання:</strong> бути «прозорою стіною». Ти бачиш емоції людини, можеш їх назвати, але не впускаєш їх усередину. Не намагаєшся переконати людину в афекті, але чітко позначаєш межі.</p>
+    <p><strong>Вправа 11 («коло відповідальності»).</strong> Намалюй у зошиті коло. Усередині напиши «Моя зона відповідальності, мої вчинки, мої помилки», зовні «Чужий гнів, чужа втома, чужі невирішені проблеми». Проговори вголос, дивлячись на коло: «Я не є причиною цього невдоволення. Я відмовляюся бути сміттєвим відром для чужих емоцій». Це відокремлює територію твоєї психіки, куди доступ чужим токсичним емоціям закритий. Це не означає, що ти погана людина й тобі на всіх начхати: ти залишаєш їм їхнє, а тобі б із своїм упоратися. Справжня підтримка близького це залишатися стабільним і спокійним маяком, об який розбиваються хвилі його власного несвідомого шторму, а не «боксерською грушею».</p>
+    <p><strong>Чому я відчуваю себе маленькою дитиною перед авторитетними фігурами.</strong> Психіка автоматично накладає образ всемогутнього батька на будь-кого з владою, статусом чи експертизою (начальник, суворий викладач, чиновник) і запускає старі дитячі реакції виживання. Якщо в дитинстві авторитетні дорослі були критикуючими, непередбачуваними, холодними чи вимагали абсолютної покори, тіло запам'ятало відчуття безпорадності. Сьогодні, зустрівшись із таким авторитетом, ти фізично провалюєшся в минуле: голос стає тихим, долоні пітніють, думки плутаються, ти готова вибачатися ще до того, як тебе щось спитали. Ти спілкуєшся не з позиції рівної дорослої, а з позиції наляканої дитини.</p>
+    <p><strong>Вправа 12 («паспорт дорослого»).</strong> Напиши від руки свій реальний вік (він наводить свій приклад: «мені 36 років, сьогодні 5 квітня 2026 року, якщо плутаюся, можу відкрити паспорт»). «Я доросла, повнолітня людина». Далі три конкретні ресурси, які є в тебе зараз, але яких не було в дитинстві (наприклад «я заробляю гроші», «я можу встати й піти з цієї кімнати», «ніхто не може мене покарати, поставити в куток»). Письмово, бо це задіює префронтальну кору й «якорить» тебе в теперішньому віці, руйнуючи ілюзію безпорадності. Дорослість це не відсутність страху перед сильнішими, а здатність діяти й захищати свої інтереси, навіть якщо всередині ще тремтить налякана дитина. Він радить звертатися до цієї дитини: «Я про тебе подбаю, дивися, який я в тебе є, тобі п'ять і ти боїшся, але в тебе є я, дорослий».</p>
+    <p><strong>Якщо в сім'ї застрягли в нав'язаних ролях.</strong> Будь-яка сім'я прагне рівноваги, навіть якщо вона збудована на болі. З часом близькі розподіляють ролі: хтось «вічний рятівник», хтось «безпорадна жертва», хтось «постійний обвинувач», і вони міняються. Ми так звикаємо до масок, що перестаємо бачити живих людей і спілкуємося з власними проєкціями: злимося на уявну впертість чоловіка, чекаємо зради, провокуємо сварки просто з привички (щоб проживати звичні емоції й підтверджувати звичні переконання про себе, інших і світ). Коли один грає свою роль, інший слухняно відповідає з контрпереносу: наприклад, партнер ниє й скаржиться (роль жертви), ти автоматично дратуєшся й починаєш його повчати (роль тирана чи батька). Сценарій відіграно, напруга знята, нічого не змінилося.</p>
+    <p>Умовляння тут не працюють, працює лише раптова зміна власної поведінки, «збій системи»: якщо чекають крику, відповісти спокійно; якщо чекають виправдань, погодитися з фактом без почуття провини; якщо чекають суперечки, не вступати в неї, а допустити, що в співрозмовника може бути така точка зору.</p>
+    <p><strong>Вправа 13.</strong> Згадай типовий повторюваний сценарій у твоїй родині й запиши: «Коли вона/він робить (дія), я зазвичай реагую (звична реакція). Наступного разу замість цього я зроблю (кардинально інша, але спокійна дія)». Приклад: замість чергового виправдовування на критику сказати «Справді, цікаве спостереження» і вийти в іншу кімнату. Письмово фіксуючи це, ти проєктуєш новий нейронний маршрут (в стресі мозок схильний провалюватися в стару колію), можна потренуватися перед дзеркалом. Автор чесно попереджає: це не гарантія гармонії, інша людина може наполягати, щоб ти грала звичну роль, і спочатку відмова від ролі викличе в близьких опір і розгубленість, а в тебе тривогу. Але саме зрив старих масок це єдиний шанс зустрітися по-справжньому, коли в обох є на це запит. У багатьох такої задачі взагалі нема, і це нормально.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 7. Як звільнитися від минулого і бачити людей такими, якими вони є -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">7.</span> Як звільнитися від минулого і бачити людей такими, якими вони є</h2>
+    <p>Це не іспит, який можна «здати» (він наголошує, що це не «зробив і готово», а шлях на все життя), бо ми сукупність умовних рефлексів і неминуче провалюємося в переноси й контрпереноси, питання лише в ступені. Щоб бачити реальних людей, треба прожити глибоку внутрішню скорботу й визнати сувору правду: ніхто й ніколи в теперішньому не зможе компенсувати тобі те, чого ти не отримала в дитинстві чи в минулих стосунках. Ми проектуємо минуле на інших, бо сподіваємося, що цього разу фінал буде іншим, намагаємося вибити з нових партнерів, друзів і колег безумовну любов, безпеку чи визнання, які нам колись заборгували. Але інші люди прийшли в цей світ не щоб бути твоїми психотерапевтами, ідеальними батьками чи пластирями для ран. Вони такі самі живі, травмовані, складні й недосконалі. Звільнення настає, коли ти перестаєш вимагати від яблуні, щоб вона приносила апельсини. Коли береш відповідальність за свою внутрішню порожнечу на себе, тобі більше не треба надягати на інших маски богів чи демонів.</p>
+    <p>Навичка бачення реальності тренується через безоцінну цікавість: замість того щоб домислювати мотиви вчинків, починаєш ставити запитання.</p>
+    <p><strong>Вправа 14 («декларація реальності»).</strong> Випиши імена найближчих людей і навпроти кожного напиши: «Я звільняю цю людину від обов'язку бути моїм ідеальним батьком/матір'ю, втішником, рятівником. Я даю цій людині право бути недосконалою, а собі право це витримувати. І для мене це важливо, тому що…» (продовж речення). Це письмова обіцянка собі, що повертає суб'єктність і авторство власного життя та знімає непомірний тягар із близьких. Зустріч із реальністю іншого без ілюзій може бути страшною й розчаровуючою, але лише на цьому очищеному від привидів фундаменті можна збудувати міцний, щирий зв'язок.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 8. Підсумок: що застосовувати в житті -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">8.</span> Підсумок: що застосовувати в житті</h2>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text"><strong>Правило паузи.</strong> Перш ніж відповісти на різке слово чи написати гнівне повідомлення, дай собі 10 хвилин і спитай: «На кого я зараз насправді злюся? На яку роль мене запрошують у чужу історію? Чи справді я хочу туди провалюватися?» Формула: «Я бачу стимул А, який породжує в мені бажання Б, але натомість я як доросла обираю відреагувати С».</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Розділяти факти та інтерпретації у будь-якій конфліктній ситуації (письмово чи подумки).</strong></div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text"><strong>Відмовлятися від нав'язаних ролей.</strong> Якщо відчуваєш раптовий сором, провину чи бажання рятувати, зроби крок назад, повернися в дорослу позицію: що відбувається, який тригер, що я обираю натомість.</div></div>
+      <div class="num-row"><div class="num-badge">4</div><div class="num-text"><strong>Нагадувати собі свій вік і те, де ти знаходишся: ти вже не та безпорадна дитина.</strong></div></div>
+      <div class="num-row"><div class="num-badge">5</div><div class="num-text"><strong>Інтенсивність як маркер.</strong> Якщо реакція невідповідна події (10 балів емоцій на 2 бали проблеми), ти реагуєш на своє минуле, а не на теперішнє.</div></div>
+      <div class="num-row"><div class="num-badge">6</div><div class="num-text"><strong>Інші люди не твої батьки.</strong> Жоден партнер, начальник чи друг не додасть тобі безумовної любові й безпеки, яких бракувало в дитинстві. Вимагати цього означає руйнувати себе, іншого й стосунки.</div></div>
+      <div class="num-row"><div class="num-badge">7</div><div class="num-text"><strong>Ти не сміттєве відро для чужих емоцій.</strong> Ти маєш повне право не вплутуватися в чужий гнів і не приймати чужі проєкції. Кожна людина «завод із виробництва власних думок, емоцій і поведінки», ми не контролюємо внутрішній світ іншого, лише впливаємо.</div></div>
+    </div>
+    <p><strong>Здорова інтуїція проти травматичного спотворення.</strong> Справжня інтуїція говорить тихим спокійним голосом фактів у теперішньому моменті, коли ти помічаєш реальні невідповідності (слова розходяться з ділами, порушуються твої межі, є об'єктивна неповага). Це «червоні прапорці», що викликають насторожу, але не руйнують тебе емоційно, і ти можеш мислити логічно. Травматичне спотворення кричить панікою, терміновістю й спирається на надузагальнення з минулого: нейтральна подія (людина забула передзвонити, не так яскраво посміхнулася) миттєво роздувається до катастрофи («я нікому не потрібна, мене зрадили, завжди так»). Тіло стискається, пульс частішає, дихання поверхневе, хочеться тікати чи атакувати. Інструмент: пауза й збір доказової бази, адже інтуїція витримує перевірку фактами, а травма розсипається при зіткненні з реальністю.</p>
+    <p><strong>Вправа 15 («суд присяжних»).</strong> У момент сильної тривоги чи сумнівів у людині поділи сторінку навпіл: ліворуч «Об'єктивні факти, що доводять загрозу чи підступ», праворуч «Мої здогади, мої страхи й мій минулий досвід». Це не забере тривогу одним помахом, але знизить її інтенсивність і дасть змогу «протверезіти». Довіряти собі, каже він, означає мати сміливість зупинитися й перевірити, чи перед тобою справді вовк, чи просто тінь із минулого, яку ти проєктуєш силуетом вовка на чиюсь посмішку.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 9. Словник від автора (фінальне закріплення) -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">9.</span> Словник від автора (фінальне закріплення)</h2>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Перенос:</strong> несвідоме перенесення почуттів, очікувань і моделей поведінки, сформованих у ранніх стосунках (зазвичай із батьками), на людину в теперішньому.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Контрперенос:</strong> несвідома емоційна й поведінкова реакція на перенос співрозмовника, згода чи відмова зіграти роль, яку інший на тебе проєктує. Питання: у яку роль якої історії ця людина мене запрошує?</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Проекція:</strong> механізм психологічного захисту, коли людина приписує іншому власні, часто неусвідомлювані чи неприйнятні думки, почуття, мотиви. Його метафора кінотеатру: проекція це вставити «слайд» зі своїми емоціями в проектор і світити ним на співрозмовника (приклад: я дуже злюся, але боюся собі зізнатися, і кажу спокійному чоловікові «що ти на мене злишся? ти весь киплячий»).</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Проектувати:</strong> сам процес, дієслово («досить проектувати на мене свою невпевненість»), але автор попереджає, що в такій формі сказати це вголос ймовірно викличе стіну опору.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Перенос як «старе кіно на новому екрані»:</strong> частковий і складніший випадок проєкції, коли проектується цілий образ людини з минулого (приклад: начальник Михайло Павлович Терентьєв робить звичайне зауваження по звіту, а ти чуєш голос суворого батька, стискаєшся й виправдовуєшся, як хлопчик).</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Контрперенос як «екран, що оживає»:</strong> ти заходиш до колеги з позиції безпорадної жертви («я нічого не розумію, допоможи, я така дурна»), а він, зазвичай рівний, раптом чує в собі поблажливий тон старшого брата. Ти заходиш знизу, отримуєш відповідь згори.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Загальна формула:</strong> проекція «те, що я зараз відчуваю сам, я приписую тобі»; перенос «я дивлюся на тебе, але бачу маму, колишнього тата, і реагую на них, використовуючи тебе»; контрперенос «ти поводишся зі мною як дитина, і я раптом сам, не бажаючи, починаю поводитися з тобою як суворий батько». Усі чотири слова описують несвідомі оптичні ілюзії психіки: ти дивишся на реальну людину, а бачиш спотворену картинку, і взаємодієш не з тим, хто стоїть перед тобою, а з тим, що в голові.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Нав'язливе повторення:</strong> несвідоме прагнення раз за разом відтворювати травматичні чи болючі ситуації з минулого в надії цього разу впоратися й отримати інший результат.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Проективна ідентифікація:</strong> складний механізм, коли людина не просто проєктує свої почуття на іншого, а й несвідомо провокує його поводитися відповідно до проєкції (приклад: старанно намагається довести спокійну людину до крику, щоб довести собі, що світ вороже налаштований).</div></div>
+    </div>
+    <p>Наприкінці автор запрошує відповісти на запитання: що ти тепер обираєш у житті робити, припинити, почати, продовжувати, робити менше й робити більше? «Це твоє життя і твоя відповідальність».</p>
+    <div class="final-quote">
+      <div class="final-text">Звільнення настає, коли ти <strong>перестаєш вимагати від яблуні, щоб вона приносила апельсини</strong>.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>

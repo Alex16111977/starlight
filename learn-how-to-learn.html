@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<script src="theme.js" data-native="light"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Як навчитися вчитися</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+.page-subtitle{text-wrap:balance}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Як навчитися вчитися</h1>
+  <p class="page-subtitle">Бажання, опір, плато і помилки</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Змінюється не полиця, а ти.</div>
+      <div class="hero-author">Альберт Сафін</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 1. Вступ: чому вміння вчитися головне -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">1.</span> Вступ: чому вміння вчитися головне</h2>
+    <p>Автор каже, що навичка вчитися стоїть над усіма іншими, він називає її «царем навичок». Опанувавши її, ти прискорюєш і ущільнюєш усе інше: мови, професію, водіння, публічні виступи, програмування. Він одразу робить застереження: навичку вчитися не «опановують раз і назавжди», це шлях на все життя.</p>
+    <p>Сьогодні, каже він, у людини є доступ до будь-яких знань у кілька кліків. Але доступ не гарантує, що ти навчишся. Багато людей усе життя вчаться і не вчаться нічому. Річ не в доступі до інформації, а в тому, що відбувається всередині людини, у її психіці під час навчання. Про це й відео.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 2. Інформація, знання, навичка (три поверхи) -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">2.</span> Інформація, знання, навичка (три поверхи)</h2>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Інформація.</strong> Ти прочитала статтю.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Знання.</strong> Ти розібралася в статті, можеш переказати своїми словами, пояснити, чому вона написана, навіщо, як її застосувати.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Навичка.</strong> Ти зробила сама, руками, багато разів, у різних умовах. Вищий рівень навички: ти можеш провести іншу людину від «я не знаю, що я не знаю» до майстерності й навчити цього.</div></div>
+    </div>
+    <p>Підступність у тому, що багато хто піднімається лише на перший поверх. Вони збирають інформацію з багатьох джерел і дивуються, чому життя не змінюється. Вміння вчитися це вміння піднятися з першого поверху на третій, не пропустивши другий.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 3. Ілюзія знання («мені все зрозуміло») -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">3.</span> Ілюзія знання («мені все зрозуміло»)</h2>
+    <p>Коли ти дивишся відео (хтось ліпить горщики з глини, готує їжу), усе здається зрозумілим. Виникає відчуття, що ти майже вмієш. Перевірка практикою це відрізвляє: між «мені все зрозуміло» і «я можу» лежить прірва, яку не усвідомлюєш.</p>
+    <p><strong>Його історія з дитинства.</strong> У дитсадку хлопчик з його групи впевнено катався на велосипеді навколо будівлі. Альберт дивився і був на 100% упевнений: йому зрозуміло, як це робиться, зараз він сяде й поїде. Потім на дачі в нього з'явився велосипед. Він сів і одразу впав у канаву. Йому довелося вчитися. Він згадує ще запах крапель із шланга, яким вихователі поливали дітей у спеку, на гарячий асфальт.</p>
+    <p>Підступність у тому, що ілюзія відчувається цілком по-справжньому, а не як «напевно, це ілюзія». Людина перед телевізором може бути на 100% упевнена, що вона вийшла б на сцену й заспівала б краще за Діму Білана. Цю прірву не усвідомлюють, і саме це обмежує розвиток. Чим більше людина вважає, що їй усе зрозуміло, тим менше інші хочуть мати з нею справу. Їй нічого не можна пояснити, тому її тримають осторонь і дають некваліфіковану працю.</p>
+    <p>Він додає, що це не дефект: так влаштоване сприйняття, чужа майстерність завжди здається простою. Притча: син каже батькові, що вміє кувати клинки, бо цілий день дивився, як працює коваль на подвір'ї. Батько посміхнувся, кинув у рот шматочок цукру й питає: «Солодко тобі?».</p>
+    <p><strong>Правило:</strong> не вір відчуттю зрозумілості, вір тільки власній спробі. Відчуття зрозумілості завжди бреше (він підкреслює: не іноді, а завжди). Ми пізнаємо новим не порожнечею, а вже наявною структурою, тому десять людей, які читають одну книжку, бачать у ній зовсім різне.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 4. Що таке навчання (генеральна метафора) -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">4.</span> Що таке навчання (генеральна метафора)</h2>
+    <p>Звична відповідь: навчання це накопичення знань, голова як шафа з полицями, і чим більше склала, тим освіченіша. Автор каже, що так воно не працює, бо інакше можна було б купити його за гроші. Приклад: людина пройшла 10 курсів і не говорить новою мовою вільно. Інший приклад: «Я знаю букви, навіщо мені книжки? Книжка це просто комбінація букв».</p>
+    <p>Він пише: навчання це зміна. Змінюється не полиця, а ти. Навчання це зміна способу бачити, думати й діяти. Тому питання до будь-якого навчання має бути не «що нового я дізналася», а «що в мені змінилося». Приклад: опанувавши водіння й накатавши першу тисячу кілометрів, ти отримала не тільки «папірець у шафу», ти показала собі, що недосяжне стало досяжним, і тепер сама обираєш, якими дорогами їздити.</p>
+    <p><strong>Фізичний сенс цього.</strong> Він малює мозок як безкрає поле з високою травою по груди. Якщо пройти по ньому один раз, трава піднімається до вечора. Якщо ходити щодня, утворюється втоптана стежка, по якій ноги йдуть самі. Це й нейронні зв'язки, і шляхи, якими ти сприймаєш (сприйняття це не те, що ти розглядаєш, а те, чим ти розглядаєш). Що використовується, те розвивається, що ні, те атрофується.</p>
+    <p>Звідси два наслідки:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text"><strong>Навчання потребує повторення.</strong> Він порівнює це з гравітацією: мікрофон на столі утримує сила тяжіння, і її не скасувати.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Навчання потребує часу.</strong> За одну ніч не змінишся, яка б сильна не була мотивація. Хто думає, що вийде з першого разу, не знає, що він помиляється, і щасливий через це. Зміна одного елемента системи запрошує змінюватися й інші, тому система опирається.</div></div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 5. Чому вчитися важко -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">5.</span> Чому вчитися важко</h2>
+    <p>Він прямо каже, що вчитися важко, і не буде говорити, що воно «легко, коли це для тебе важливо». Для когось страждання це комфорт, тому «легко» неправда. Психіка опирається навчанню, і це нормально. Причина: старі способи жити вже відлагоджені, економні, передбачувані й працюють. Будь-яка перебудова це витрата енергії та ризик (раптом нове гірше за старе). Психіка прагне звичного, а не щастя.</p>
+    <p>Усередині кожного сидить такий «консерватор», який голосує проти будь-яких змін. Ліньки не значить, що ти лінива. Це значить, що тебе тягне до звичного, а це виправна робота захисту, яка бережеться від змін. Розумні аргументи тут не працюють. Він наводить приклад: підійти до залежної людини й сказати, що її життя руйнується, «невже ти не бачиш?», і вона не скаже: «Так, треба зав'язати» і не стане Рокі Бальбоа.</p>
+    <p>Справжнє навчання завжди проходить через дискомфорт: напруга, незручність, «набридло», «ненавиджу», втома від нового. Він застерігає, що продають «комфортне, щасливе навчання для дітей». Це використання дітей, щоб продати батькам ілюзію. Якщо тобі завжди легко й приємно, остерігайся: можливо, ти споживаєш те, що вже давно проробила.</p>
+    <p>Дискомфорт це сигнал, що зміни почалися. Приклад: ти народилася через біль, сліпить світло, усе перевернуто. Дискомфорт зростання посильний: «кректиш, ворушишся, але йдеш». Якщо ти тонеш, річ не в здібностях, а в розмірі кроку. Треба зменшити крок, але продовжувати йти.</p>
+    <p>Він повторює формулу, яку називає своєю: нові ідеї слабші за старі звички. Звичка тренувалася роками й вмикається сама, нова ідея живе в голові «на пташиних правах». Однієї згоди з думкою мало, без регулярного повторення й застосування психіка тихо повертає на старі рейки. Що б ти не робила, ти вдосконалюєшся в тому, що робиш: якщо ти готуєшся й готуєшся, ти вдосконалюєшся в підготовці й так і не починаєш.</p>
+    <p><strong>Хвилеподібність навчання.</strong> Нове ніколи не йде прямо вгору: кілька днів виходить, потім зрив, відкат, потім знову підйом. Багато хто бере перший відкат за доказ, що «не виходить», і кидає. Але зміни рухаються хвилями, і спад це така ж частина хвилі, як і підйом. Після зриву ти починаєш не з нуля. Різниця між тим, хто навчився, і тим, хто кинув, не в тому, що в одного не було зривів, а в тому, що один повернувся на рейки, а інший виніс собі вирок: «усе було марно».</p>
+    <p>Він також зазначає, що все сказане стосується дорослих (його аудиторія 28–48 років), і називає це «законами фізики для інженера», на які спиратиметься далі. Далі він розбирає сам шлях по порядку: від старту до майстерності.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 6. Бажання як двигун навчання -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">6.</span> Бажання як двигун навчання</h2>
+    <p>Без бажання всі техніки, вправи й плани марні. Людину можна привести до знань, але не можна за неї захотіти (він жартує: було б чудово захотіти за когось, хто тобі подобається). Слова на кшталт «треба вчитися, це корисно, це знадобиться в житті» звучать розумно, але психіку не запускають і бажання не народжують. Психіка вкладає сили лише туди, де є живий інтерес і особистий сенс. Він пропонує згадати, як легко ти вчилася тому, що було по-справжньому цікаво, і як мучливо йшло те, що тобі було не потрібне. Різниця не в складності предмета, а в наявності та щільності твого бажання.</p>
+    <p>Бажання буває своє й чуже. Чуже звучить так: «мама завжди хотіла, щоб я стала економістом», «у галузі модно опанувати цю компетенцію», «усі пішли, і я записалася на курс». Тому перше запитання: «Навіщо мені те, чого я зараз навчаюся?»</p>
+    <p><strong>Вправа:</strong> відповісти на це запитання письмово 10 разів (а ще краще 20). Перші дві-п'ять відповідей ти скажеш автоматично, бо тебе навчили їх говорити. Далі ти вже досліджуєш. Він наводить приклад: коли він працює з групою, люди відповідають собі, а не йому. Хтось може зрозуміти, що йому це й даром не потрібно, і піти з групи, чим вносить внесок у групову динаміку. Він також жартує: «навіщо вам навчатися вчитися? Відповідайте 10 разів».</p>
+    <p>Він наголошує, що сором і страх це погане паливо. Мотивацію через сором і страх не вистачає на довгу практику. Дистанцію проходять тільки на паливі «це моє бажання». Сам процес пошуку відповідей може пояснити, чому справа не рухається (наприклад, ти роками «пробуєш вивчити мову» і виявляєш, що вона тобі не потрібна, а тебе просто навчили вважати це потрібним).</p>
+    <p><strong>Як нащупати своє бажання:</strong> зв'язати навчання з картиною життя, яким ти хочеш жити. Не «я отримала права», а «я прокидаюся вранці, на дорогах порожньо, я лечу трасою». Не «я опанувала публічні виступи», а «я на сцені, переді мною зал, люди підходять і просять сфотографуватися, кажуть, що це було для них цінне». Він пропонує уявити, що ви зустрілися через 5 років і ти по-справжньому задоволена прогресом. Де ти живеш, як живеш, що робиш, хто навколо, як проходить ранок, день, вечір, про що думаєш, що планує. Це не гарантія («хочу не дорівнює світ зобов'язаний»), але допомагає помічати, на що звертати увагу вже сьогодні. Сам процес навчання теж варто зробити виносимою частиною бажаного життя, обживши його турботою навколо.</p>
+    <p>Він наголошує: абстрактна користь нікого не гріє. Гріє конкретна жива картинка. Тому перевіряй своє навчання запитанням: яку сцену з майбутнього воно мені обіцяє? Якщо ти буксуєш, імовірно, воно не є компонентом бажаного життя.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 7. Що вбиває бажання і як його берегти -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">7.</span> Що вбиває бажання і як його берегти</h2>
+    <p>Три причини:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text"><strong>Надто великий замах без проміжних результатів.</strong> Місяці й роки праці, а показати нічого. На непідготовлені м'язи така вага не кладуть, розсиплються.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Нечесне порівняння.</strong> Ти порівнюєш свою кухню з чужим парадним фасадом. Приклад: початківець-музикант порівнює себе з барабанщиком Діми Білана, профі.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text"><strong>Перетворення навчання на повинність.</strong> «Я маю, я зобов'язана, знову не позайнялася, який я слабак». З такою мотивацією людина вчиться тільки колекціонувати приводи для самобичування.</div></div>
+    </div>
+    <p>Він зазначає, що всі три людина робить із собою сама. А якщо ти досконало володієш механізмами самобичування, значить, їх можна й трохи змінити. Інтерес вмирає не від складності предмета, а від надмірних вимог, сорому й позбавлення радості.</p>
+    <p><strong>Як берегти:</strong> бажання це обмежений ресурс, за ним треба доглядати, як за вогнем у каміні. Підкидати потроху (маленькі видимі результати, наприклад «сьогодні вийшло те, на чому вчора спотикалася»), не заливати водою, тобто не душити інтерес завищеними нормами. Знайти формат під себе: комусь краще в групі, комусь наодинці, комусь з книжкою. Також варто подбати про конфігурацію ситуації навколо себе: у зіткненні людини з ситуацією зазвичай перемагає ситуація.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 8. Позиція учня -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">8.</span> Позиція учня</h2>
+    <p>Навіть якщо бажання є, на вході стоїть бар'єр: треба внутрішньо вимовити «я не знаю, я не вмію, я прийшов учитися». Для дитини це природно, для дорослого це удар по самолюбству. Він працює з групами дорослих (приклад: ти і 30 людей, з яких тільки півтора тебе знають, а решта дивляться «давай доведи, що тебе можна слухати»; або співрозмовник удвічі старший, розумніший у 10 разів, який заробляє в шість разів більше). Завдання викладача створити умови опосередковано, щоб людина сама увійшла в цей стан, а ти їй не заважав.</p>
+    <p><strong>Прийоми автора, які він відкрито показує.</strong></p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Він каже в уроках, що це нормально з чимось погоджуватися, а з чимось ні. Це створює відчуття безпеки.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Він сам постійно навчається, і коли заходить учнем, не вдає з себе знавця, навіть якщо його впізнають. Він не їде зі своїм статутом у чужий монастир.</div></div>
+    </div>
+    <p><strong>Чому дорослому так складно.</strong> У кожного своя навчальна біографія: когось соромили за незнання, когось порівнювали, хтось був відмінником і досі не має права не знати. Цю історію люди виносять у будь-яке навчання. Багато дорослих не вчаться не через брак часу (час у всіх однаковий), а через неусвідомлене уникання самого досвіду знову стати маленьким і невмілим.</p>
+    <p><strong>Досвідченому важче, ніж новачку.</strong> Йому потрібна подвійна робота: опір і зовнішній, і внутрішній. Щоб узяти нове, треба хоча б тимчасово відпустити старе, яким він пишався й яке приносило результат. Це маленьке розставання, що проживається як втрата. Тому досвідчені фахівці часто дратуються й опираються новим методам: з боку це схоже на впертість, а насправді це захист гідності від болю втрати. Він радить тренерам це враховувати. Він радить собі: ти не тупиш, коли буксуєш, ти прощаєшся з тим, що було для тебе важливим, а прощання потребує часу.</p>
+    <p><strong>Захист «я й так це знаю».</strong> Людина слухає не щоб зрозуміти, а щоб усі нарешті замовкли й вона сказала «я й так усе це знаю». Він нагадує: у повну чашку не наллєш, перш ніж говорити у вухо, його треба відкрити.</p>
+    <p><strong>Шкала згоди (його прийом).</strong> Вона допомагає не впадати в крайнощі «ідеально або жахливо»:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Із матеріалом:</strong> не вимагати від уроку 10 із 10. У цьому уроці є і недоладності, і точні прийоми. Щоб рухатися далі, достатньо 5–6 з 10.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>З навчальним класом:</strong> не ідеальний, але й не жахливий, 5–6 з 10 цілком достатньо.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>З колегами:</strong> хтось дратуватиме, хтось захоплюватиме, не вимагати ідеальності ні від себе, ні від них.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>З собою:</strong> не вимагати все вивчити напам'ять і застосувати. Щось узяла, щось ні, і це достатньо.</div></div>
+    </div>
+    <p>Це підстилає «солому там, де можна впасти».</p>
+    <p><strong>Сором новачка.</strong> Страшно поставити запитання, бо раптом виявиш незнання. Людина каже «треба підготуватися краще», а сором шепоче «ти завжди недостатньо хороша». Страшно показати перші незграбні роботи («у такому віці і така робота»), і людина відкладає практику «назавжди». Автор називає це пасткою: єдиний спосіб перестати бути невмілою це робити невміло. Сором забороняє це робити, і тоді ти ніколи не навчишся. Тому треба зробити модним і звичним «робити невміло» і «заляпатися морозивом».</p>
+    <p>Він вводить підступне запитання, що стоїть у голові учня: виглядати знаючим чи ставати знаючим? Ці образи конфліктують. Той, хто береже образ, не ставить запитань, не пробує і не робить невміло, і так нічого не вчиться.</p>
+    <p><strong>Що допомагає:</strong></p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Видати собі внутрішній дозвіл бути учнем: «Мені можна бути невмілою. Я вчуся. Я тут не щоб доводити, що я найрозумніша».</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Правила в групі, оголошені вголос: тут можна питати, пробувати, помилятися, і тоді сорому нема за що зачепитися.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Гідність дорослого не в тому, щоб усе знати, а в здатності вчитися в будь-якому віці.</div></div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 9. Опір навчанню -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">9.</span> Опір навчанню</h2>
+    <p>Допустимо, бажання є і роль учня прийнята, але процес не йде. Це саботаж зсередини. Знайомі форми:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">прокрастинація (раптом треба помити посуд, розібрати шафу);</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">«раптові термінові справи» і щире «немає часу», хоча ти годинами граєш у телефон;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">нудьга й сонливість, що накочуються саме тоді, коли берешся до навчання;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">просте забування (минув тиждень, а про заняття не згадала);</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">колекціонування книжок і курсів, коли людині вже від самих покупок легше, ніби «купила, отже вивчила».</div></div>
+    </div>
+    <p>Він розвиває тему покупок: людина залежна від обіцянок («як чоловік-алкоголік, який обіцяє, що кине пити»), красиві обіцянки викликають залежність, навіть коли за ними нічого немає, і ніхто не засмучується, бо всі отримують своє. Його правило: ніколи не віддавати реальне в обмін на обіцянку.</p>
+    <p><strong>Нескінченна підготовка:</strong> людина вибирає найкращий підручник, десятиліттями порівнює методики, складає ідеальний план, заводить гарний зошит. Усе це схоже на навчання й відчувається як навчання, займає час навчання, але навчанням не є, бо немає практики.</p>
+    <p><strong>Що ховається за опором:</strong> найчастіше страх провалу («якщо спробую по-справжньому, і не вийде, стане остаточно ясно, що я нездатна»). Він заперечує: спробувала й не вийшло, це не робить тебе нікчемою, навпаки, треба збирати досвід «не вийшло». Також він називає:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">страх успіху («якщо вийде, доведеться міняти все життя, брати відповідальність там, де звикла не брати, витримувати чужу заздрість»);</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">протест («мене змусили вчитися, тому буду бунтувати»);</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">вигода статусу учня («поки вчуся, з мене нема чого питати, мене не можна оцінювати», і так людина проходить 50 курсів і ніколи не доходить до результату);</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">нереалізована мрія завжди солодша за будь-яку реальність.</div></div>
+    </div>
+    <p><strong>Головний принцип:</strong> опір не ворог. З ним не треба люто боротися, це сигнал, який треба прочитати. Ламати його силою волі програшна затія, бо воля скінченна, а опір невтомний. Корисно запитати себе: від чого мій опір мене береже? Чого я насправді боюся? Проти чого я насправді протестую? Яку вигоду я ховаю за цим опором? Названий страх втрачає половину сили, а прихована вигода, зроблена відкритою й чесною, розряджає саботаж сильніше за будь-яку дисципліну.</p>
+    <p><strong>Практично:</strong></p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text"><strong>Помітити свою улюблену форму опору (у кожного вона своя: хтось прибирає, хтось готується без кінця).</strong></div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Назвати її вголос, з гумором («Опа, знову пішов гострити олівець, аби не братися за справу»).</strong></div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text"><strong>Знизити поріг входу: не «сьогодні займуся годину», а «відкрию зошит на 10 хвилин, подивлюся на порожню сторінку й закрию».</strong> Розпочата дія сама тягне за собою продовження, важко лише ввійти. Його приклад: найважче в записі відео це натиснути «почати запис», а думка «мені нема що сказати» була завжди, і він не забороняв собі її думати, а казав: «почну, а там побачимо».</div></div>
+      <div class="num-row"><div class="num-badge">4</div><div class="num-text"><strong>Займатися в один і той самий час, щоб не вирішувати щоразу заново (він записує після сніданку або обіду, коли організм ситий і сповнений енергії).</strong></div></div>
+    </div>
+    <p><strong>Його образи:</strong> перший ряд викопаної картоплі (дача, дев'ять соток під картоплю, яких «ніколи не закінчиш», але коли перший ряд викопано, рух іде); робота офіціантом у готелі (найважче принести тіло на роботу на 7:30, решту тіло робить саме); спортзал (головне зібрати рюкзак і принести тіло).</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 10. Сходи майстерності -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">10.</span> Сходи майстерності</h2>
+    <p>Це шлях від блаженного незнання через чесну зустріч із незнанням до вміння, яке спочатку потребує свідомого контролю, потім переходить в автоматизм, а потім дозріває до здатності передавати його іншим. Розуміння того, на якому ти щаблі, знімає тривогу.</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text"><strong>Не знаю, що не знаю.</strong> Людина навіть не підозрює, що вона не знає. Приклади: до винаходу мікроскопа люди не знали, що існують бактерії; людина, яка ніколи не бачила велосипеда, не знає, що не вміє на ньому їздити; мешканець віддаленого племені не знає, що не знає хімічної реакції сірчаної кислоти чи тригонометрії, яка дозволяє порахувати площу даху.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Знаю, що не знаю.</strong> Ти побачила велосипед і зрозуміла, що не знала. Це болісний щабель, бо ти бачиш, як треба, але не можеш повторити. Це не ознака бездарності, а ознака того, що ти піднялася на цей щабель.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text"><strong>Знаю, що знаю: роблю з усвідомленим зусиллям.</strong> Приклад з водінням: перші кілометри з інструктором ти свідомо дивишся в дзеркало, вставляєш ключ, тиснеш зчеплення, вмикаєш передачу, перевіряєш поворотники. Це дуже енергозатратно.</div></div>
+      <div class="num-row"><div class="num-badge">4</div><div class="num-text"><strong>Не знаю як, але роблю: тіло знає.</strong> Навичка в тілі, людина може доїхати до місця призначення й не помітити цього. Він жартує: спитай у сороконіжки, як вона ходить, і вона ризикує спіткнутися.</div></div>
+      <div class="num-row"><div class="num-badge">5</div><div class="num-text"><strong>Можу розібрати майстерність на деталі, переконструювати й навчити іншого.</strong> Його приклад із барабанами (грав з 18 до 24 років): він проводив кілька занять для підлітків із неблагополучних сімей, показував базові вправи під метроном. Пояснюючи іншим, він сам почав помічати, що в його власних рухах можна посилити, «навчаючи, вчуся». Майстерність в справі він осягає тоді, коли пояснює його іншому.</div></div>
+    </div>
+    <p><strong>Плато («долина розчарування»).</strong> Спершу прогрес швидкий і надихаючий: «вчора ще нічого не знав, сьогодні вже щось можу». Потім крива вирівнюється: ти чесно займаєшся, а результат ніби завмер, тиждень, місяць, здається, що ти топчешся на місці. Але робота триває, просто ефект пішов углиб: зв'язки закріплюються, деталі шліфуються, дозріває наступний стрибок. Плато це не зупинка, а невидима фаза зростання.</p>
+    <p>У цей момент приходять знайомі думки: «напевно, запізно», «не моє», «вік уже не той». Він каже, що вік не вирок: мозок нейропластичний до останнього подиху, дорослий вчиться не гірше, а інакше (повільніше бере нове, але міцніше пов'язує з досвідом і точніше застосовує). Якщо на третій-четвертий місяць ти відчуваєш, що топчешся на місці, ти саме там, де маєш бути. Це плата, яку ти вносиш своїм терпінням. «Долину розчарування» проходять усі, хто доходить до майстерності. Кидають не бездарні, а непопереджені, яким ніхто не сказав, що вона буде.</p>
+    <p><strong>Що допомагає пройти плато:</strong></p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Бути попередженою, що вона буде.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Вимірювати прогрес не за іншими, а за собою минулою. Він радить записати на відео, як ти виконуєш щось зараз, і порівняти з тим, як ти робила це три місяці тому.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Іти від простого до складного, а не хаотичними наскоками.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Шукати баланс: занадто легке навіює нудьгу, занадто важке викликає паніку. Ріст живе там, де важко, але виходить.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Записувати зроблене (щоденник хоча б на 5 хвилин на день: що робила, з якими труднощами зіткнулася, як упоралася, про що для мене цей досвід).</div></div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 11. Ставлення до помилок -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">11.</span> Ставлення до помилок</h2>
+    <p>Є два ставлення, і саме вони визначають долю учня:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text"><strong>Помилка це провал, свідчення моєї неспроможності.</strong> Її треба приховати, а краще взагалі не ризикувати. Таке ставлення зупиняє навчання, людина уникає будь-яких спроб.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Помилка це інформація, точна вказівка на те, що треба доучити.</strong> Вона не вирок, а сигнал. Таке ставлення навчання розганяє, бо кожна помилка стає кроком.</div></div>
+    </div>
+    <p><strong>Звідки страх помилок:</strong> із дитячого досвіду (червоним закреслена двійка, глузування класу, розчароване обличчя мами чи тата над щоденником). Помилка з раннього віку пов'язана не з цікавістю, а з покаранням і соромом. Звідси ярлики: «ведмідь на вухо наступив», «гуманітарій, а не математик». Фраза, кинута дитині у вісім років, може керувати її вибором і в сорок. Оцінок тобі давно ніхто не ставить, але внутрішня червона ручка лишилася й підкреслює кожен промах. Доросла людина боїться не викладача, а внутрішнього перевіряльника.</p>
+    <p><strong>Внутрішній критик:</strong> у його словах немає жодної корисної деталі, лише вироки. Його не можна заткнути силою. Задача в тому, щоб тренувати внутрішнього наставника, внутрішню підтримувальну фігуру, яка після помилки каже: «Так, тут не вийшло. Цікаво. Давай розберемо, чому й про що ця помилка сигналізує, і зробимо інакше». Один і той самий промах, але погляд різний, і з нього розгортаються різні життєві шляхи. Критику можна відповісти: «Дякую за турботу. Колись у дитинстві ти мені допомагав, зараз я можу подивитися інакше».</p>
+    <p><strong>Право робити погано.</strong> Якщо ти не маєш права робити погано, ти ніколи не навчишся. Ніхто не починає з ідеального. Перші тексти будь-якого письменника безпорадні й смішні, перші страви будь-якого кухаря неїстівні, перші фрази іншою мовою недолугі. Погане виконання це обов'язковий щабель, який проходять усі, і перестрибнути його неможливо. Перфекціонізм «або ідеально, або ніяк» не про високі стандарти, це страх помилки в красивому костюмі. Людина обирає «ніяк», щоб не торкнутися помилки. Якщо ти забороняєш собі робити погано, ти забороняєш собі навчитися робити добре. Період корявості це плата за вхід, іншого входу немає.</p>
+    <p><strong>Одиниця навчання:</strong> спробувала, помилилася, розібрала, що саме не так, спробувала інакше. Сама помилка нічого не вчить. Просто повторювати те саме без розбору закріплює помилку. Потрібен зворотний зв'язок: погляд збоку, звірка зі зразком, запис себе. Це нудні кроки, але саме вони відрізняють практику, що вчить, від практики, що лише забирає час.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 12. Точні практики для впровадження -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">12.</span> Точні практики для впровадження</h2>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text"><strong>Практика замість споживання.</strong> Дивитися, читати, слухати це підготовка. Навчання починається, коли ти робиш. Розмови про вправу не замінюють вправу (не можна навчитися водити за підручником). Виконуй вправи так, ніби ти «заправляєш парашут дитині»: уважно, старанно, до деталей. Ти, що виконує вправу вперше, і ти, що виконує її в п'ятий раз, це різні ти.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Розумію лише те, що є частиною мого життя.</strong> Приклад: батько курить і каже синові «не кури», чому він цим навчає? Ти розумієш не те, про що красномовно говориш, а те, у відповідності з чим живеш. Тому питай про вивчене: як це вирішує мою конкретну сьогоднішню задачу, наскільки це вигідно мені, як я можу це застосувати. Кожного разу, коли вивчений матеріал допоміг у реальній ситуації, він перестає бути чужим текстом і стає твоїм інструментом, і з'являється краща мотивація вчитися далі.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text"><strong>Перевірка розуміння.</strong> Я розумію те, що можу розповісти метафорою, зобразити схемою, навести приклади з життя, розповісти шкоду від ігнорування й користь від застосування.</div></div>
+      <div class="num-row"><div class="num-badge">4</div><div class="num-text"><strong>Відпочинок частина роботи.</strong> Різкі зусилля дають відчуття подвигу, а потім відкат. Дев'ять жінок за місяць дитину не народять: потрібні час і відпочинок на формування нових нейронних зв'язків. Малі щоденні кроки краще за великі раз на два тижні (5 хвилин щодня краще за годину раз на 12 днів).</div></div>
+      <div class="num-row"><div class="num-badge">5</div><div class="num-text"><strong>Навчання відбувається соціально.</strong> Людина соціальна істота, живе спілкування необхідний компонент навчання. Коли поруч хтось вивчає те саме, ви разом виконуєте вправи, обговорюєте, ділитеся досвідом, ти чуєш зміст чужими словами й бачиш матеріал іншим поглядом. Знову ж таки, у зіткненні людини з ситуацією перемагає ситуація, тому варто підібрати оточення, яке тягне вперед.</div></div>
+      <div class="num-row"><div class="num-badge">6</div><div class="num-text"><strong>Навчаю, отже вчуся.</strong> Коли ти переказуєш вивчене іншому, ти сама структурюєш його й поглиблюєш розуміння. Тому чому б ти не навчалася, виділяй час розповісти про вивчене. Він каже, що й цим відео він «перезібрав» своє ставлення до навчання.</div></div>
+      <div class="num-row"><div class="num-badge">7</div><div class="num-text"><strong>Щоденник застосування.</strong> Таблиця: дата, інструмент, що було добре, що вибираю додати, коментарі. Наприклад: «Дата, інструмент: навчаю, отже вчуся. Наприкінці дня я 10 хвилин розповів іншому про вивчене. Що було добре: помітив, що в моїх словах лишилося в сліпій зоні. Що додам: ...». Це робить видимим, що ти справді застосовуєш, а що лежить мертвим вантажем.</div></div>
+      <div class="num-row"><div class="num-badge">8</div><div class="num-text"><strong>Навчання не закінчується заняттям.</strong> Справжнє навчання починається за межами навчального класу, у твоєму реальному житті. Вивченому матеріалу потрібні простір для дихання й час: питання, що визрівають за тиждень, експерименти, зустрічі з тими, хто вчить те саме.</div></div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 13. Підсумок автора -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">13.</span> Підсумок автора</h2>
+    <p>Він збирає все в одну модель: берегти й слухати своє бажання, увійти в роль учня, працювати з опором, досліджуючи його, пройти сходи майстерності (не знаю, що не знаю → знаю, що не знаю → роблю свідомо → тіло знає → можу розібрати й навчити), бути готовою до плато («долини розчарування», яку проходять усі), працювати з помилками (помилилася, розібрала, зробила висновки, повторила). Підтримують усе це середовище, увага до вправ, зворотний зв'язок, малі дози, люди поруч і щоденник. Питання «навіщо мені це, і як це стане компонентом бажаного життя» замикає модель.</p>
+    <p><strong>Фінальна думка:</strong> навчання не відрізок перед справжнім життям і не покарання, це спосіб бути живим. Людина жива, поки змінюється. Старіє не той, кому 70, а той, хто закрив чашу кришкою й вирішив, що вже все знає (і буває глибокий старий у 25 років). Він завершує запитаннями до глядача: про що для тебе цей випуск? Які твої задачі він може допомогти вирішити? Що ти будеш робити більше, менше, продовжувати, починати, перестати? Які конкретні кроки зробиш і як себе підтримаєш?</p>
+    <div class="final-quote">
+      <div class="final-text">Навчання не відрізок перед справжнім життям і не покарання, це <strong>спосіб бути живим</strong>.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
