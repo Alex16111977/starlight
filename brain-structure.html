@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<script src="theme.js" data-native="light"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Будова і робота мозку</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+.page-subtitle{text-wrap:balance}
+.sub-list{list-style:none;display:grid;gap:8px;margin:10px 0 4px}
+.sub-list li{position:relative;padding-left:18px}
+.sub-list li::before{content:'•';position:absolute;left:3px;top:0;color:#7a5410}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Будова і робота мозку</h1>
+  <p class="page-subtitle">Від хребта до кори великих півкуль, а далі чуття, пам'ять, потреби, сон, мислення й рухи</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Думати й мріяти можна скільки завгодно, важливо, що ми зробимо.</div>
+      <div class="hero-author">Вячеслав Дубінін</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 1. Спинний мозок -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">1.</span> Спинний мозок</h2>
+    <p>Центральна нервова система (ЦНС) складається з головного і спинного мозку. Вони виникають дуже рано. На другій декаді розвитку зародка на його поверхні з'являються складки, з яких виходить нервова трубка. Її передній кінець стає головним мозком, а задній спинним. Спинний мозок, по суті, нервова трубка, що виросла до 40–45 см. Вже Гіппократ і Гален накопичували знання про нього. Гален вивчав травми гладіаторів, передні й задні корінці та пошкодження на різних рівнях.</p>
+    <p>Спинний мозок ділиться на 31 сегмент: 8 шийних, 12 грудних, 5 поперекових і 6 крижово-куприкових. Тіло теж ділиться на 31 «поверх», і кожним керує свій сегмент. Він командир, який віддає накази м'язам, шкірі й органам. Поверх відзвітує про свій стан сенсорними сигналами. Шийні сегменти керують шиєю і руками, грудні тулубом, поперекові ногами. Крижово-куприкові керують тазом: нижнім відділом кишечника, видільною і статевою системами.</p>
+    <p>З кожного сегмента вправо і вліво виходить пара спинномозкових нервів, між хребцями. Тому зсув хребців небезпечний: хребець може затиснути нерв. Приклад лектора: грудні сегменти керують і шлунком. Якщо хребці зсунулися, на шлунок іде не той сигнал, виділяється забагато шлункового соку, і виходить гастрит чи виразка. Лікують шлунок, а причина в спині. Тож «половина хвороб від спини» не така вже й перебільшення. Хребет слабке місце, бо людина стала на задні лапи нещодавно, і еволюція ще не підігнала його під вертикальне навантаження.</p>
+    <p>На поперечному зрізі видно овал: по периферії біла речовина, в центрі сіра у вигляді метелика з трьома «крилами», тобто рогами. Задній (дорсальний) ріг обробляє сенсорику, бічний (латеральний) вегетатику, передній (вентральний) рухи. Сіра речовина це нейрони та їхні дендрити, там відбувається «думання». У центрі стоїть проміжне ядро, яке збирає потоки й вирішує, запускати реакцію чи ні.</p>
+    <p>Сенсорика з поверху тіла має три типи: біль (пошкодження клітин), шкірна чутливість (дотик, тепло, холод, вібрація) і м'язова (стан сухожиль, розтягнення м'язів, кути суглобів). Її зчитують особливі нейрони у спинномозкових гангліях (31 пара, поруч зі спинним мозком усередині хребта). Це псевдоуніполярні нейрони. Дендрит іде до поверху тіла, а аксон входить у задній ріг.</p>
+    <p><strong>Приклад:</strong> укол голкою в палець. Імпульс біжить у гангліон, потім у задній ріг. Задні роги роблять просту первинну обробку: не пропускають слабкі й постійні сигнали, бо цікаве те, що змінюється. Це звикання. Дотик відчувається добре, а при постійному тиску відчуття слабшає. До болю звикаєш слабко. Якщо сигнал сильний і новий, він іде в проміжне ядро. Туди ж приходить думка головного мозку.</p>
+    <p><strong>Приклад колізії:</strong> ви несете гарячу чашку чаю. Сенсорика кричить «боляче, кидай!», а мозок каже «терпи, розіб'єш чашку, лишишся без сніданку». Обидва сигнали сходяться на нейронах проміжного ядра, і вони запускають або блокують реакцію. Передні роги це мотонейрони з медіатором ацетилхоліном, їхні аксони йдуть до м'язів. Бічні роги це вегетативні нейрони. Грудні сегменти (трохи шийних і поперекових) це симпатика, крижові парасимпатика. На органах часто сходяться обидві й конкурують.</p>
+    <p>Пошкодження спинного мозку одна з найтяжчих травм. Найчастіше це автокатастрофи і пірнання головою вперед у незнайомому місці. Сегменти нижче розриву перестають отримувати команди й передавати інформацію, виникає параліч і втрата чутливості. Сучасна реабілітація повертає людей до повноцінного життя.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 2. Мозкові пухирі, довгастий мозок і міст -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">2.</span> Мозкові пухирі, довгастий мозок і міст</h2>
+    <p>На другому місяці розвитку передня частина нервової трубки дає три мозкові пухирі: первинний задній, середній і передній мозок. Задній ділиться на довгастий мозок, міст і мозочок. Довгастий мозок, міст, середній мозок (а іноді й проміжний) це стовбур, безпосереднє продовження спинного мозку. Поверх нього є дві «крони»: великі півкулі та півкулі мозочка.</p>
+    <p>Довгастий мозок і міст найближчі до спинного, тому відповідають за найдавніші й життєво важливі функції. Там дихальний центр, центри серця і тонусу судин, центри сну і неспання. Роги спинного мозку тут перетворюються на ядра черепних нервів, а проміжне ядро на ретикулярну формацію.</p>
+    <p><strong>12 пар черепних нервів.</strong> Спинномозкові нерви стереотипні й мають номери. У черепних кожен має характер і назву. Перша пара (нюхова) пов'язана з великими півкулями, друга (зорова) з проміжним мозком, третя і четверта зі середнім. З 5-ї по 8-му пов'язані з мостом, з 9-ї по 12-ту з довгастим мозком.</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>5 (трійчастий).</strong> Три гілки: від лоба, верхньої та нижньої щелепи. Це шкірна, больова й м'язова чутливість голови, наприклад зубний біль.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>6 (відвідний).</strong> Рух ока.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>7 (лицьовий).</strong> Мімічні м'язи, частина слинних залоз, слізні залози (плачемо через нього) і смак передньої частини язика.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>8 (переддвірно-завитковий).</strong> Слух від завитки та рівновага.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>9 (язикоглотковий).</strong> Смак задньої частини язика, ковтання, м'язи глотки, частина слинних залоз. Разом з лицьовим утворює тандем.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>10 (блукаючий, nervus vagus).</strong> Головний парасимпатичний нерв. Його назвали так анатоми, вражені, наскільки широко він гілкується: по стравоходу, грудній порожнині, бронхах, серцю, шлунку, черевній порожнині. Має сенсорні волокна, наприклад розтяг шлунка (гикавка пов'язана з переповненням шлунка), і рухові до гортані, тобто голосові зв'язки. Говоримо ми багато в чому завдяки йому.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>11 (додатковий).</strong> Рухи голови, груднинно-ключично-соскоподібний м'яз, трапеція (знизуємо плечима).</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>12 (під'язиковий).</strong> М'язи язика. Язик керується складно: сходяться волокна 12, 7, 9 і 5 нервів, а дотик і температура їжі це функція трійчастого.</div></div>
+    </div>
+    <p><strong>Ретикулярна формація.</strong> Збирає сенсорику, запускає реакції, враховує вплив кори й гіпоталамуса. Тут дихальний центр. Водії дихального ритму (дихальні пейсмейкери) у сплячої людини приблизно раз на п'ять секунд дають імпульс, який запускає вдих через спинний мозок на міжреброві м'язи й діафрагму. Коли легені розтягуються, це зупиняє вдих і запускає видих. Це автоматія, але дихання можна змінювати довільно, і це потрібно для мови, бо ми говоримо на видиху. Центр враховує кисень, вуглекислоту, температуру: більше CO₂ і менше O₂ означають частіше дихання. Поруч судинорухові центри, і серце б'ється частіше при надлишку CO₂. Тут же центри вроджених харчових рефлексів: смоктання, ковтання, слиновиділення, шлунковий сік. Немовля має їх одразу. У мосту центри неспання, аксони яких широко гілкуються й задають тонус ЦНС. У довгастому мозку центри сну.</p>
+    <p><strong>Окремі ядра.</strong> Блакитна пляма в передньо-верхній частині мосту. Її нейрони виділяють норадреналін, що дає психічний супровід стресу, підвищення неспання, зміни навчання та больової чутливості. Навчання на тлі стресу теж її реакції. Нижня олива працює з мозочком у руховому навчанні. Ніжний і клиновидний пучки передають шкірну та м'язову чутливість у таламус і великі півкулі. Майже всі нейрони тут з вродженими функціями, тому пошкодження небезпечні й практично не компенсуються. На щастя, ці відділи надійні й глибоко сховані, тому постраждати рідко.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 3. Середній мозок -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">3.</span> Середній мозок</h2>
+    <p>Найменший відділ, лише 2 см (довгастий мозок і міст по 3 см). Верх (дах) це чотири горбики, чотиригорбикове тіло. Низ це ніжки мозку (покришка та основа). Між ними вузький канал, сильвіїв водопровід (мозковий водопровід). Він з'єднує третій і четвертий шлуночки. В ембріона всередині нервної трубки лишається канал. У спинному мозку це спинномозковий канал, а в головному мозку він місцями розширюється і дає шлуночки. Четвертий шлуночок лежить під мозочком, нижня межа це ромбоподібна ямка.</p>
+    <p><strong>Чотиригорбикове тіло.</strong> Верхні горбики це давні зорові центри. У риб вони головні, у нас допоміжні. Там нейрони-детектори новизни. Їм майже байдуже, що ми бачимо, головне, що щось змінилося, насамперед рух. Запускається поворот очей, а потім голови й тіла. Це цікавість на найдавнішому рівні. Павлов назвав це орієнтувальним рефлексом, найскладнішим з вроджених. Нижні горбики це слухові центри, що реагують на новий звук, зсув джерела чи зміну тональності. Ми дивимося, де що зашурхотіло.</p>
+    <p><strong>Очні рухи.</strong> Рухи очей найтонші з усіх рухів організму, тонші за пальці й мову. З кожним оком пов'язано 6 м'язів, їх керують нерви 6, 4 і 3. Шостий (відвідний) у мосту. Четвертий (блоковий) і третій (окоруховий) у середньому мозку. Третій головний, він керує чотирма м'язами з шести. Усередині нього ще парасимпатичні волокна, що керують діаметром зіниці та формою кришталика.</p>
+    <p><strong>Акомодація і кришталик.</strong> Кришталик це прозора еластична лінза з живих клітин, яка працює десятиліттями й змінює форму. Круговий війковий м'яз розслаблений: кришталик плоский, дивимося вдалечінь. М'яз напружений: кришталик опуклий, бачимо ближче. Тому око швидше втомлюється при роботі з близькими предметами. Порада: після довгого сидіння за комп'ютером чи книжкою подивитися вдалечінь, на горизонт чи захід сонця.</p>
+    <p><strong>Зіниця.</strong> Діаметр зіниці змінює потік світла приблизно у 20 разів. Звуження це парасимпатика (3-й нерв), розширення це симпатика зі спинного мозку. Зіниця ще й показник емоцій: у стресі розширюється («у страху очі великі»). Класичні детектори брехні міряють пульс і потовиділення (симпатичні реакції), а зіницю можна міряти так, що людина не знає про перевірку. Сучасні програми оцінюють емоції співрозмовника за відео. Також є eye tracking: послідовність і тривалість розглядання. Приклад: на сайті користувач читає лише верхні рядки, а на яскраву картинку в кутку дивиться більше, ніж на текст. Це використовують у рекламі й аналізі зорової інформації.</p>
+    <p><strong>Інше в середньому мозку.</strong> Центральна сіра речовина навколо водопроводу це продовження ретикулярної формації, що інтегрує бадьорість і біль. Вона діє знеболювально, гальмуючи больові потоки, і є одним із важливих центрів сну (допомагає міжніжкове ядро). Нижче червоне ядро (рожеве від капілярів, форма еліпсоїда). Його передня дрібноклітинна частина новіша й пов'язана з мозочком у руховому навчанні. Задня крупноклітинна давня, від неї йде руброспінальний тракт, що підсилює згинальні рухи при ході й бігу.</p>
+    <p>Чорна субстанція (substantia nigra) найвідоміша. Дофамінові нейрони шлють аксони у великі півкулі, від чого залежать рівень рухової активності та позитивні емоції від рухів. Пошкодження викликає паркінсонізм, другу за частотою нейродегенерацію після Альцгеймера. У бічній частині чорної субстанції нейрони з медіатором ГАМК. Вони стримують зайві очні реакції. Вентральна тегментальна область також дофамінова, її аксони йдуть до кори й прилеглого ядра. Це система контролю емоцій і потреб, а також швидкості обробки інформації в корі.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 4. Проміжний мозок: таламус і гіпоталамус -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">4.</span> Проміжний мозок: таламус і гіпоталамус</h2>
+    <p>Передній мозок дає два випини, які стають великими півкулями, а центр лишається проміжним мозком з вузьким третім шлуночком. Він складається з таламуса (верх) і гіпоталамуса (низ), розмір по 3–4 см. Ще є епіталамус з епіфізом (ендокринна залоза зверху ззаду) і гіпофіз (ендокринна залоза знизу). Зоровий нерв (II) входить на межі таламуса і гіпоталамуса.</p>
+    <p>Таламус це ключова структура на вході в кору. Його називають «секретарем» кори. У ньому той самий набір центрів, що в корі (зорові, слухові, рухові, емоційні), але в мініатюрі. Це інформаційна лійка, яка частину сигналів пропускає, а решту блокує або послаблює. Кора не може обробити весь потік: зорові центри дають зір, слухові слух, центри пам'яті згадують учорашній вечір, емоційні центри переживають, мозочок пропонує «давай це зробимо, чому ми сидимо?». Щоб школяр спокійно сидів на уроці, таламус мусить постійно блокувати ці потоки гальмівними ГАМК-нейронами.</p>
+    <p>Якщо таламус працює погано, у молодших школярів виникає СДУГ (синдром дефіциту уваги та гіперактивності). Дефіцит уваги означає, що таламус не може довго блокувати сигнали від тіла чи з вікна. Гіперактивність означає, що він не може стримувати рухові пропозиції мозочка й базальних гангліїв. Учень щойно слухав, а ось уже крутиться, лізе в портфель і кидає підручник у сусіда. Зрілий таламус формується до 8–10 років, а в пубертаті статеві гормони знову порушують його роботу.</p>
+    <p><strong>Ядра таламуса:</strong> передні (пам'ять і емоції), вентральні бічні (рух: передня частина працює з базальними гангліями, задня з мозочком), вентробазальний комплекс (чутливість тіла). Сенсорика сюди приходить по дорсальних стовпах (ніжний і клиновидний пучки) з довгастого мозку. М'язова чутливість іде двома шляхами, у таламус і в мозочок, бо рухами керують і автоматизовані мозочкові програми, і довільні програми кори. Далі зорові (подушка, бічне колінчасте тіло) і слухові ядра (медіальні колінчасті тіла, від ядер 8-го нерва). Медіальні ядра обробляють смак, біль, вестибулярну чутливість і пов'язані зі сном. Спіноталамічний тракт веде больові сигнали прямо туди. Якщо там стався збій (мікроінсульт), виникає хронічний біль, коли болить, наприклад, великий палець правої руки, хоча з ним усе гаразд. Анальгетики не допомагають, у тяжких випадках роблять таламотомію, обережне руйнування точки медіального таламуса.</p>
+    <p>Гіпоталамус обернений у внутрішнє середовище. Три групи функцій: нейроендокринна регуляція (головний ендокринний центр), вегетативна регуляція і центри біологічних потреб.</p>
+    <p>Нейроендокринна регуляція має три поверхи. Приклад: щитовидна залоза виділяє тироксини, від яких залежить активність кожної клітини. Гіпофіз дає тиреотропний гормон, який вказує залозі, як працювати. Над ним гіпоталамус рилізинг-гормонами (тироліберином) вказує гіпофізу, скільки його виділяти. Якщо тироксинів мало, гіпоталамус це відчуває і піднімає ланцюжок. Так само працюють кора надниркових, статеві залози й гормони росту. Окрім цього, нейрони гіпоталамуса (сірий горб) самі виділяють у кров гормони через задню частку гіпофіза. Окситоцин діє на скорочення матки в пологах і молочних залоз, а ще це медіатор прихильності. Вазопресин діє на нирки й центри спраги, від нього залежить потреба в рідині.</p>
+    <p><strong>Вегетатика:</strong> передня частина має терморецептори. Тепла кров запускає розширення судин шкіри й потовиділення, холодна звуження судин, тремтіння, «мурашки». Задня частина дає вегетативний супровід стресу. Центри шести потреб: голод і спрага, статева і батьківська поведінка, страх і агресія.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 5. Мозочок -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">5.</span> Мозочок</h2>
+    <p><strong>Історична лінія:</strong> у XVIII столітті клітини мозку не вдавалося побачити, бо мозок м'який і при різанні мнеться в кашу. Лише 1837 року чех Ян Пуркіньє розгледів клітини мозочка, які тепер носять його ім'я. Мозочок займає близько 10% об'єму мозку, але містить майже половину нервових клітин. Він розташований у задній частині черепа, під потиличними частками, над довгастим мозком і мостом, над четвертим шлуночком. Складається з двох півкуль і центральної частини, черв'яка. З мозком з'єднаний трьома парами ніжок. Лектор жартує: «у таргана шість ніжок, і в мозочка теж». Передні йдуть у середній мозок, середні (найбільші) у міст, задні в довгастий мозок.</p>
+    <p><strong>Склад:</strong> кора, біла речовина, ядра. Термін «кора» вживається лише двічі: для кори мозочка і кори великих півкуль. Щоб мати право так називатися, клітини мають утворювати шари. У мозочку їх три: молекулярний, гангліонарний (середній, з клітинами Пуркіньє) і зернистий. Дендритне дерево клітин Пуркіньє це місце, де формується й зберігається рухова пам'ять.</p>
+    <p><strong>Давня, стара і нова частини (у еволюції).</strong> «Давнє» це структури, які є вже у риб. «Старе» виникає, коли риби виходять на сушу. «Нове» це теплокровні. Давній мозочок (черв'як і ядра шатра) це вестибулярні рефлекси та рухи очей. Старий мозочок (внутрішня частина півкуль і проміжні ядра) відповідає за локомоцію. Новий (зовнішня частина і зубчасті ядра) відповідає за автоматизацію та запам'ятовування довільних рухів, наприклад дрібну моторику пальців: письмо, гру на музичних інструментах. Входи: до давнього йде вестибулярна інформація, до старого спинномозочкові тракти з м'язовою чутливістю (пропріоцепція), до нового сигнали з кори, копія рухових програм.</p>
+    <p><strong>Парадокс:</strong> клітини Пуркіньє використовують не збуджувальний глутамат, а гальмівний ГАМК. Головні клітини мозочка не передають сигнал, а гальмують. Збуджувальний сигнал йде через ядра мозочка, а клітини Пуркіньє постійно заливають їх ГАМК, тому ми не робимо зайвих рухів. Щоб запустити рух, зірчасті й кошикові клітини молекулярного шару точково гальмують клітини Пуркіньє. Завіса знімається, рух виконується, і завіса повертається. Тому при пошкодженні рухи не зникають, а стають надто сильними й неточними. Давній мозочок: проблеми з рівновагою. Старий: згинально-розгинальні рухи зайво сильні (пальце-носова проба тестує саме його). Новий: різко псується почерк і дрібна моторика.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 6. Базальні ганглії -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">6.</span> Базальні ганглії</h2>
+    <p>Другий центр рухового навчання, у глибині великих півкуль, об'ємом не менший за мозочок. До них належать хвостате ядро, шкаралупа, бліда куля, огорожа, мигдалина, nucleus accumbens. Розподіл: мозочок запам'ятовує параметри окремих рухів (красивий жест у танці), а базальні ганглії ланцюжки і комплекси рухів (весь танець, як один рух переходить у інший). Вони виникли в еволюції пізніше.</p>
+    <p>Ідея гальмівної завіси та сама. Бліда куля (ключова структура) має великі клітини, схожі на клітини Пуркіньє, які постійно виділяють гальмівний медіатор у таламус, тож він не генерує зайвих рухових програм. Щоб запустити рух, клітини блідої кулі гальмуються нейронами хвостатого ядра. Пошкодження дає зовсім інші ефекти, ніж у мозочку: або рухи не запускаються, або ганглії самі запускають патологічні програми (тремтіння, ригідність). Це паркінсонізм: чорна субстанція постійно діє на хвостате ядро й шкаралупу та регулює їхній тонус і загальний рівень рухової активності та пов'язаних емоцій. Тяжкі випадки це хореї та атетози: мимовільні рухи руки. Атетоз це повільні закручувальні рухи, хорея швидкі великоамплітудні. Найвідоміша хорея Гентінгтона: в хвостатому ядрі й шкаралупі накопичуються патологічні білки. Руйнується спочатку рухова сфера, потім уся психіка.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 7. Великі півкулі -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">7.</span> Великі півкулі</h2>
+    <p>Це 75–80% маси ЦНС. Ззовні кора (поверхнева сіра речовина з шарами клітин), під нею біла речовина, ще глибше базальні ганглії. Біла речовина це аксони, що входять у кору й виходять. Мозолисте тіло з'єднує півкулі в єдине ціле. Якщо його розрізати (колись таке пробували), виходить «розщеплений мозок», де півкулі працюють незалежно. Найпотужніший пучок, що виходить із кори, це кортико-спінальний (пірамідний) тракт. На межі довгастого мозку й мосту більшість аксонів перехрещуються. Тому ліва півкуля керує правою половиною тіла, а права лівою. Перехрещуються й більшість сенсорних систем.</p>
+    <p>Борозни збільшують площу кори (чим більше кори, тим більше обчислювальна потужність). Лише третина сірої речовини на поверхні, дві третини всередині борозен. Великі борозни є в усіх людей, дрібні індивідуальні, як відбитки пальців. Центральна (роландова) борозна проходить від маківки вниз і ділить лобову та тім'яну частки. Бічна (сильвієва) відділяє скроневу частку. Усього шість часток: лобова, тім'яна, скронева, потилична, острівцева (на дні бічної борозни) і лімбічна (на внутрішній поверхні, кора навколо місця відходу півкуль від проміжного мозку).</p>
+    <p><strong>За походженням.</strong> Давня кора, 1–1,5%, є вже у риб. Найдавніша функція нюх: нюховий нерв (I) входить у великі півкулі, на нижній поверхні лобових часток нюхові цибулини, потім нюховий тракт у вищі центри нюху (прозора перегородка, септум). Стара кора, 2–3%, помітна у рептилій, ключова структура гіпокамп («морський коник»), циліндричний тяж сірої речовини в глибині скроневих часток. Його функція це короткочасна пам'ять і перезапис у довготривалу, плюс орієнтація в просторі (за це 2014 року дали Нобелівську премію). Приклад: ящірка вийшла з нірки, пішла прямо, звернула вправо, потім вліво, і в разі небезпеки її гіпокамп пам'ятає, як бігти назад. Від гіпокампа йде склепіння навколо мозолистого тіла в таламус і далі в лімбічну частку, це коло Пейпеца, важливе для переходу короткочасної пам'яті в довготривалу. 95% кори це нова кора, з вищими сенсорними, руховими та асоціативними зонами. Вона має шість шарів: молекулярний, зовнішні зернистий і пірамідний, внутрішні зернистий і пірамідний, поліморфний. Сигнал з таламуса сприймає переважно четвертий шар, а кортико-спінальний тракт утворюють аксони п'ятого шару.</p>
+    <p><strong>Функції часток.</strong> Потилична це зір (лінії, фігури, обличчя, літери, ієрогліфи). Скронева слух (тони, звуки природи, сміх і плач, мова, музика). У передній частині тім'яної частки карта тіла: зона ноги найвище, потім тулуб, рука, голова (не перевернута: лоб, верхня щелепа, нижня щелепа, внизу язик). Зона язика пірнає в бічну борозну, до острівцевої частки, де смакові центри, тому тактильна, температурна та смакова чутливість язика збираються в єдиний смаковий образ. Задня частина лобної частки це премоторна і моторна кора, де генеруються довільні рухи (нові рухи в нових умовах), звідси сигнали йдуть у мозочок і базальні ганглії. Задня частина тім'яної частки це асоціативна кора (мислення, робота зі словами). Передня частина лобної (префронтальна) це центр волі, ініціативи, ухвалення рішень, вибору й запуску поведінкових програм. Інсульти й мікроінсульти ушкоджують відповідні функції.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 8. Сенсорні системи -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">8.</span> Сенсорні системи</h2>
+    <p>Античність називала п'ять чуттів, насправді їх більше. Мозку важлива інформація і про зовнішнє, і про внутрішнє середовище (наприклад, наскільки розтягнутий кишечник чи бронхи). Схема стандартна: рецептор (датчик), нерв (провід) і ЦНС, де сигнал обробляється, запускаються реакції, інформація запам'ятовується. Чим вище, тим складніші обчислення, найскладніші в корі.</p>
+    <p>Рецептори бувають первинночутливі (нейрон або його відросток) і вторинночутливі (ненервові, переважно епітеліальні клітини, які передають сигнал на провідний нейрон). До первинних належать нюх, шкірна, м'язова, больова і внутрішня чутливість. До вторинних зір, слух, вестибулярна система і смак. Разом дев'ять великих сенсорних систем. Критерій системи: свої рецептори, свої шляхи і свої центри. Є ще допоміжна нюхова система, вомероназальний орган (феромони, шлях у гіпоталамус), дуже редукована.</p>
+    <p>Як рецептор реагує: на мембрані чутливі білки, пов'язані з іонними каналами. Канали відкриваються (інколи закриваються), заряд зсувається, виникає потенціал дії.</p>
+    <p><strong>Два базові закони.</strong></p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text"><strong>Інтенсивність кодується частотою потенціалів дії в нерві.</strong> Слабкий сигнал це 20–40 імпульсів за секунду, середній 50–70 Гц, сильний близько 100 Гц, надсильний понад 100 Гц (такі сигнали неприємні: надто яскравий світло, гучний звук, бо є ризик пошкодити рецептори й центри).</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Якість кодується номером каналу.</strong> Якісно різні сигнали діють на різні рецептори. Шкіра: різні ділянки, палець і мізинець. Слух: різні тональності. Зір: різні точки простору. Імпульси скрізь однакові, мозок дізнається, що торкнулися носа чи коліна, тільки за тим, по якому аксону прибіг сигнал. У кібернетиці це кодування номером каналу. Рецепторна поверхня паралельно переноситься на мозок, виникає карта (тіло, сітківка, завитка).</div></div>
+    </div>
+    <p>Орган чуття це не те саме, що сенсорна система: це місце, де рецептору добре (око, завитка, шкіра). Спинний мозок працює з чутливістю тіла (біль, шкіра, м'язи, інтерорецепція). Головні тракти: дорсальні стовпи, спинномозочкові, спіноталамічний (біль). Головний мозок отримує левову частку: нюховий, зоровий, переддвірно-завитковий нерви, плюс лицьовий, язикоглотковий, трійчастий. Таламус це фільтр, який працює на замовлення кори й охоче пропускає нове сильне. Йому допомагає чотиригорбикове тіло. У корі в кожній сенсорній зоні первинна, вторинна й третинна кора. Зір: первинна кора впізнає лінії, вторинна фігури, третинна конкретні обличчя. Далі асоціативна тім'яна кора працює одразу з різними потоками.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 9. Навчання і пам'ять -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">9.</span> Навчання і пам'ять</h2>
+    <p>У поведінці є вроджене й набуте. Приклад: молоді ластівки вміють ліпити гнізда вроджено, але криво, а з роками дедалі краще. У XIX столітті цю тему розвивав Іван Сєченов, потім Павлов, який створив теорію умовних рефлексів і метод. У науці головне придумати метод: усі знали, що тварини навчаються, але як створити умови, щоб собака обов'язково сформувала навичку?</p>
+    <p><strong>Умовний рефлекс.</strong> Спочатку незначущий сигнал (дзвінок), потім їжа, собака її їсть, і після кількох повторів дзвінок викликає слиновиділення. У мозку виникає новий канал: нейрони слухової кори (скроневої) передають сигнал в острівцеву частку, що запускає слиновиділення. Основа цього модифікація синапсів: вони виділяють більше медіатора, рецепторів стає більше. Це асоціативне навчання. Воно потребує біологічно позитивного результату, спрацювання центрів позитивних емоцій і задоволення потреби. Щур, що на лампочку стрибає на полицю, щоб уникнути удару струмом, вчиться на пасивно-оборонній програмі, і порятунок для нього не менша радість, ніж їжа для собаки.</p>
+    <p>Це найскладніший вид. Є й неасоціативні: сумація, довготривала потенціація та імпринтинг.</p>
+    <p><strong>Сумація (короткочасна пам'ять).</strong> Слабкий сигнал не викликає реакції, але якщо він стійко повторюється, нервова система нарешті звертає на нього увагу. Приклад: ви дивитеся телевізор і раптом чуєте, що капає вода з крана (хоча вона капає вже два місяці). Класик вивчення Ерік Кандел (Нобелівська премія 2004), його об'єкт аплізія, великий морський слимак без мушлі з зябрами на поверхні тіла. Сильний тичок змушує сховати зябра, слабкий нічого. Кандел давав м'який потік води через трубочку від коктейлю кожні п'ять секунд: на першу стимуляцію реакції нема, на п'яту є. Механізм: пресинаптичне накопичення кальцію. Після кожного сигналу кальцій не встигає відкачатися, накопичується, й медіатора виділяється дедалі більше. Через кілька хвилин спокою кальцій піде, і мережа забуде. Приклад: вам сказали аудиторію 358, ви йдете й повторюєте «триста п'ятдесят вісім», а потім 5–10 хвилин говорите з подругою по телефону, і мозок уже не пам'ятає. Це ви «дули на жабру».</p>
+    <p><strong>Довготривала потенціація (пам'ять на кілька годин).</strong> Працюють NMDA-рецептори синапсів із глутаматом (головний збуджувальний медіатор). Рецептор закритий магнієвою пробкою. Сильний сигнал вибиває пробку, і синапс проводить сигнал дуже активно. Найбільше таких синапсів у гіпокампі (глибина скроневої частки), який запам'ятовує значущі події дня. Пробки повертаються переважно уві сні: гіпокамп «очищається», інформація стирається чи перезаписується в довготривалу пам'ять. Електричний вплив на гіпокамп вибиває всі пробки, і людина забуває сам момент електрошоку та кілька годин до нього: це ретроградна амнезія.</p>
+    <p><strong>Імпринтинг (довготривала пам'ять).</strong> Прив'язаний до певного періоду життя (народження, статеве дозрівання, емоційно значущої події). Відкрив Конрад Лоренц (Нобелівська премія 1970-х): курча чи гусеня запам'ятовує образ матері. Нейрони, що запам'ятали «це мама», запускають дитячу поведінку: пищати, кликати при небезпеці, ховатися, слідувати. На цих нейронах уперше описали механізми довготривалої пам'яті, і вони пов'язані з ядерною ДНК. У синапсі мало рецепторів. Коли курча довго дивиться на рудий об'єкт, сигнал активує гени, що відповідають за рецептори до глутамату, утворюється інформаційна РНК, рибосоми дають додаткові рецептори, які вбудовуються в мембрану синапсу, і стан зберігається довічно.</p>
+    <p>Логіка асоціативного навчання така сама. Щоб сформувалася довготривала пам'ять, треба «дотягнути» вплив до ядерної ДНК (система вторинних посередників), синтезувати рецептори й вбудувати їх. Проблема: дзвінок короткий. Рішення: гіпокамп запам'ятовує сенсорний сигнал і, коли реального сигналу вже нема, продовжує передавати інформацію про нього на нейронні ланцюги нової кори, імітуючи його. Тому формуються нові канали.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 10. Біологічні потреби -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">10.</span> Біологічні потреби</h2>
+    <p>Потреби це вибіркова залежність організму (насамперед мозку) від чинників середовища: температури, хімії крові тощо. Біологів цікавлять вроджені потреби, бо їх проще вивчати: потреба в їжі, безпеці, розмноженні (центри доступні, часом на простих організмах), на відміну від любування цвітінням сакури. Психологи знають класифікацію Маслоу, а фізіологи класифікацію Павла Симонова (академік, багато років очолював Інститут вищої нервової діяльності). Три групи: вітальні, зоосоціальні й саморозвитку. Центри потреб це генетично задані групи нейронів.</p>
+    <p><strong>Вітальні (vita = життя).</strong> Голод і спрага: центри у середній частині гіпоталамуса (сірий горб). Клітини чутливі до глюкози (знижується: голод), до натрію й хлору (зростають: спрага). Центр голоду у бічних ядрах гіпоталамуса реагує також на інсулін і сигнали від порожнього шлунка. Гіпоталамус «стукає» вгору у великі півкулі: «їсти хочу!», і ми кидаємо все й шукаємо хліб насущний. Спрага ще актуальніша: без їжі кілька тижнів, без води кілька днів. Безпека: центри в задньому гіпоталамусі реагують на біль і на будь-які надто сильні сигнали. Далі два типи реакцій: активно-оборонна (напасти на джерело небезпеки: агресія, лють) і пасивно-оборонна (страх, завмирання, втеча). Зазвичай мозок спершу обирає пасивну, а коли загнали в кут, активну. Легкість переходу це важлива риса темпераменту (меланхолік і холерик ще з Гіппократа). Гомеостатичні програми підтримують сталість внутрішнього середовища (температура, хімія крові, тиск): дихальний, судинорухові центри, сон і неспання. Програми економії сил (мозок прагне мінімуму енергії, на цьому тримається лінь; але розум і воля можуть відірвати від дивана) і програми грумінгу (догляд за тілом).</p>
+    <p><strong>Зоосоціальні.</strong> Внутрішньовидова взаємодія: статева й батьківська поведінка (передній гіпоталамус, залежать від гормонів: андрогени, естрогени, пролактин, окситоцин), поведінка дитинча до матері, лідерство, територіальна поведінка (базальні ганглії, мигдалина у скроневих частках, не плутати з мигдаликами в горлі). Також співпереживання, за яке, як з'ясувалося у 2000-х, відповідають дзеркальні нейрони.</p>
+    <p><strong>Саморозвиток.</strong> Спрямовані «в майбутнє»: дослідницька поведінка (збір нової інформації), рухове наслідування, рефлекси свободи (Павлов), гра. Нова інформація дає позитивні емоції. Центри на різних рівнях: у середньому мозку орієнтувальний рефлекс, у підталамусі пошукова поведінка, у корі нейрони маніпуляцій з предметами (розкрутити, розламати, подивитися всередині).</p>
+    <p><strong>Домінанта.</strong> У кожен момент поведінку веде лише одна потреба, домінуюча, а її реалізація це домінанта. Якщо ціль досягнута (поїли), центр голоду заспокоюється, виникають позитивні емоції, і кора запам'ятовує успішні програми. Якщо ні, потреба зростає, виникають негативні емоції, і кора гальмує невдалі програми. Тому потреби й емоції тісно пов'язані з навчанням.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 11. Сон і неспання -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">11.</span> Сон і неспання</h2>
+    <p>Мозок це арена постійної конкуренції. Конкурують центри сну й неспання, позитивних і негативних емоцій, збуджувальні й гальмівні нейрони. Це виводить організм на оптимальний режим.</p>
+    <p>Головний центр неспання це ретикулярні ядра мосту. Вони приймають будь-які потоки (зір, слух, емоції, мислення, рух), інтегрують і задають тонус. Спочатку їх назвали неспецифічними, потім виявилося, що їхня специфічна функція інтеграція. Ми прокидаємося від будь-якого сигналу: будильник, струс за плече, яскраве світло. Порада: щоб прокинутися вранці, яскравіше світло, гучніша музика, щось бадьоре (ложка гірчиці). Щоб заснути ввечері, поступово зменшувати сенсорний потік: гасити світло, не сидіти перед яскравим екраном.</p>
+    <p>Головний центр сну це центральна сіра речовина середнього мозку. Вона розповсюджує сонний стан через ядра шва (серотонінові нейрони вздовж стовбура). Серотонін спочатку запускає, далі естафету беруть ГАМК-нейрони, які блокують зорові й слухові сигнали (ключова роль ядер таламуса). Ядра шва гальмують ретикулярні ядра мосту. У відповідь діє блакитна пляма (норадреналін): вона гальмує центральну сіру речовину, зсуваючи баланс до неспання. Вона пов'язана з емоціями, небезпекою й стресом. Приклад: завтра важливий іспит, побачення чи політ, а ви боїтеся літати, і блакитна пляма вас бадьорить, коли воно ні до чого.</p>
+    <p>Супрахіазматичні ядра переднього гіпоталамуса це наш біологічний годинник. Ця давня світлочутлива структура є вже у ланцетника (безчерепного, без очей, з світлочутливими клітинами по нервовій трубці: якщо його відкопали з піску, він відчуває світло і закопується назад). У нас там клітини, активні вдень, які шлють сигнали в центри неспання, й клітини, активні вночі, які шлють сигнали в центри сну. Система діє м'яко. Різка зміна поясу на 6–8 годин (приклад: далекий переліт) відчутна, і біологічному годиннику треба тиждень-два, щоб «перевести стрілки». Засинання має бути неквапливим: мавпа, що раптово заснула в невідповідному місці, до ранку буде з'їдена, а прокидатися іноді треба дуже швидко.</p>
+    <p>Допоміжний центр сну в довгастому мозку реагує на внутрішнє середовище: відходи обміну після навантаження, глюкоза після їжі, токсини при хворобі. Усе це зміщує баланс у бік сну (після їжі можна відпочити, при інфекції треба лягти, щоб імунітет зосередився на збудникові). Порівняно з руховими центрами чи пам'яттю, ця система проста, але вміє оцінювати зовнішнє навантаження, внутрішнє середовище, добові ритми й стрес.</p>
+    <p><strong>Фази сну.</strong> За електроенцефалограмою (ЕЕГ) приблизно 50% часу це неглибокий сон, а решту порівну ділять повільнохвильовий і парадоксальний. Повільний сон це насамперед фізіологічний відпочинок: нейрони відновлюють енергію, ліпідні мембрани, білковий обмін (дельта-хвилі). Парадоксальний сон дуже активний стан: ЕЕГ показує, ніби мозок чимось серйозно зайнятий, а розбудити важче. Там швидкі рухи очей. За сучасними уявленнями мозок «розгрібає» накопичену інформацію (за день, місяць, іноді все життя), встановлює коротші оптимальні зв'язки, щось стирає, і саме тоді відбувається перезапис короткочасної пам'яті в довготривалу (гіпокамп активніше впливає на ланцюги нової кори). Запускає його теж блакитна пляма. ЕЕГ відкрили в 30-х роках XX століття, і спершу була ейфорія («побачимо, про що мозок думає»). Тепер відомо, що це підсумована активність мільйонів клітин, і витягти інформацію дуже складно, але для вивчення сну вона дуже корисна.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 12. Умовні рефлекси на комплекс, мова й мислення -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">12.</span> Умовні рефлекси на комплекс, мова й мислення</h2>
+    <p>У лабораторії Павлова собаці давали не просто дзвінок чи лампочку, а комплекс: дзвінок і лампочка разом. Якщо натиснула лапою на педаль при комплексі, отримувала їжу й трохи позитиву. Лише лампочка або лише дзвінок їжі не давали. Три ситуації чергувалися, і приблизно після сотні подач собака тисне педаль лише на комплекс. Значить, у мозку є клітини, які поєднують зорові й слухові сигнали. Це високий рівень діяльності. Для їжака це нерозв'язна задача. Щур розв'язує, лише якщо один із символів дотик. Зорово-слуховий комплекс не потягне. Собака, кішка, кінь можуть. Мавпа легко складе комплекс із п'яти сигналів.</p>
+    <p>Ці нейрони в асоціативній тім'яній корі (задня частина тім'яної частки; шкірна чутливість у передній). Вона лежить в основі умовних рефлексів на комплекс, а також наших мовних здібностей і реакції на слова. Приклад: я бачу мозок (зоровий сигнал) і кажу слово «мозок» (слуховий), десь вони мають з'єднатися, і місце це задня тім'яна кора.</p>
+    <p><strong>Приклад з дитиною:</strong> показуємо плюшевого зайчика, кажемо «зайчик», ближче, щоб розгледів, і чіткіше, бо слухова система ще слабка. Гарна емоція створюється новизною, адже наш мозок дуже допитливий (програми саморозвитку за Симоновим). Вчора сірий плюшевий зайчик, завтра пластмасовий оранжевий, потім картинка в книжці, і все це зайчики. У потиличній корі клітини виділяють спільне (два вуха), і образ зайчика узагальнюється до того, що два пальці це натяк на зайчика. Слухова кора узагальнює слово (голосно, тихо, високий голос), а зона Верніке впізнає слова на слух. Усе сходиться в тім'яній корі. До двох років дитина знає близько 500 слів, до трьох 2000 і більше, і формується мовна модель зовнішнього світу. Дитина бере вас за руку й питає «а це як називається?», бо непорядок: штука є, а слова немає.</p>
+    <p>Центри моделі пов'язані за асоціаціями (одночасністю: сірий зайчик стрибає, їсть моркву, морква помаранчева, росте в бабусі на городі, містить каротин) і за мовним узагальненням, багаторівневим: зайчик, м'ячик, кубики, лялька = іграшки; іграшки, одяг, меблі = предмети; предмети, будинки, люди = об'єкти довкілля, далі до абстрактних філософських і математичних понять.</p>
+    <p>Нервові імпульси рухаються по цій моделі, і це ми називаємо «мисленням». Користь:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Можна гонити сигнал, щоб згадувати приємні події й отримувати позитивні емоції на порожньому місці.</strong> Гонити варто там, де позитив, не там, де негатив («так і до неврозу недалеко»).</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Можна формувати нові узагальнення й зв'язки, тобто отримувати нову інформацію.</strong> Мозок радіє й виділяє дофамін, коли щось відбувається в мовній моделі. Радість творчості, розв'язаної задачі чи вдало підібраної рими це радість тім'яної асоціативної кори.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Головне призначення це прогноз успіху майбутньої діяльності.</strong> Модель це проста конструкція, що відображає суттєві властивості складного (глобус це модель Землі). Ми вносимо вихідні дані «що буде, якщо...?», і модель швидко видає «обов'язково зроби так» або «ні в якому разі». Це інтуїція. Щоб зрозуміти, чому ми дійшли висновку, треба пройти по моделі від центру до центру, найкраще написати чи поговорити. Заклик психологів «давай про це поговоримо» і є пропозицією покроково протестувати модель і знайти, де збій.</div></div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 13. Лобова кора і поясна звивина -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">13.</span> Лобова кора і поясна звивина</h2>
+    <p>Думати й мріяти можна скільки завгодно, важливо, що ми зробимо. За це відповідає асоціативна лобова (префронтальна) кора, центр волі й ініціативи. Вона вибирає й запускає поведінкові програми. Вона займає найпередню частину лобової частки, у задній рухова кора. Етапи:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text"><strong>Вибирає домінанту, тобто найактуальнішу потребу.</strong> Допомагає мигдалина: вона збирає інформацію від центрів інших потреб і щільнішим потоком спрямовує в лобову кору. Лобова кора вирішує: тут і зараз найбільше хочеться їсти.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Враховує результати сенсорних систем: зір, нюх, слух (чи нема десь їжі?).</strong> Також результати мислення, якщо тім'яна кора встигне, бо вона довго думає. Іноді ми діємо майже рефлекторно.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text"><strong>Враховує досвід попередніх реалізацій програм (наприклад, чи вийде зварити манну кашу).</strong> Скільки разів повторювалася, у якому відсотку успіх чи невдача: успіх це позитивні емоції й зміцнення синапсів, невдача гальмування й ослаблення. Добре працююча лобова кора вибирає програму, що з найбільшою ймовірністю дасть успіх. Ушкодження знижує якість вибору, а тяжке може припинити вибір взагалі. Жахлива операція лоботомія середини XX століття перетворювала хворого на безвольну істоту через пошкодження білої речовини під лобовою корою.</div></div>
+    </div>
+    <p>Третя асоціативна зона це поясна звивина (внутрішня поверхня півкуль). Вона допомагає лобовій корі в довгих програмах і оцінює успіх чи невдачу кожного етапу. Приклад: посадив картоплю, їсти її тільки восени, її треба поливати, підгортати, збирати колорадських жуків. Якщо етап пройшов добре, поясна звивина дає позитивні емоції, і лобова кора знає, що програму варто продовжувати. Якщо погано, вона дає негативні емоції, і «головний командир» має обміркувати: продовжувати, змінити чи відмовитися.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 14. Керування рухами -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">14.</span> Керування рухами</h2>
+    <p>Рухових центрів стільки ж, скільки всіх сенсорних систем разом узятих: мозочок, базальні ганглії та інші структури.</p>
+    <p>Мотонейрони працюють із поперечно-смугастими м'язами й запускають скорочення ацетилхоліном. Здебільшого вони в передніх рогах спинного мозку, а решта в головному мозку (через черепні нерви до мімічних, очних, язикових м'язів). Аксон розгалужується, і один мотонейрон керує кількома м'язовими клітинами: це рухова одиниця. Чим тонший рух, тим менша одиниця. Очні м'язи: 5–10 клітин на мотонейрон. Пальці й міміка: кілька десятків. Біцепси й трицепси: кілька сотень. М'язи спини й преса: тисячі, тому тонких рухів вони не роблять. Мотонейрони керуються багатьма центрами, і той самий м'язовий скорочення може входити в різні рухи.</p>
+    <p><strong>Чотири типи рухів.</strong></p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text"><strong>Рефлекторні.</strong> Відповідь на сенсорний сигнал, рефлекторні дуги бувають вродженими або набутими. Немає сигналу немає реакції. Приклади і їхній біологічний сенс:
+<ul class="sub-list">
+        <li><strong>Відсмикування від болю:</strong> захист від пошкодження.</li>
+        <li><strong>Колінний рефлекс</strong> це міотатичний рефлекс, потрібний для утримання пози, «впертість на рівні м'язів». Приклад: ви стоїте посеред вагона метро, він гальмує, ви починаєте падати, сухожилля й м'язи ноги розтягуються, дуги подібні до колінного рефлексу напружують м'яз, і тіло зберігає позу.</li>
+        <li><strong>Захоплення пальця немовлям:</strong> давній рефлекс, що тримав мавпенят на материній шерсті.</li>
+        <li><strong>Кашель очищає дихальні шляхи.</strong> Гикавка, мабуть, дісталася від амфібій: пуголовок, що дихає і легенями, і зябрами, закриває голосову щілину при зануренні, щоб вода не потрапила в легені (звук гикавки це закриття гортані), потім контур використовується для травлення (виганяє зайве повітря зі шлунка).</li>
+        <li><strong>Позіхання загадкове.</strong> Версії: охолодження мозку при вентиляції порожнин голови, посилення кровотоку, активація мозку від мімічних м'язів, а у мавп комунікація (домінуючий самець показує ікла: «я тебе не боюся, мені нудно поруч»). Ймовірно, всі версії співіснують.</li>
+      </ul></div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Локомоція.</strong> Переміщення в просторі: ритмічне згинання й розгинання кінцівок (плавання, ходьба, біг). Здебільшого це вроджені програми, але не рефлекси, бо рух циркулює по замкнутому контуру. Є ритм усередині кожної кінцівки (згиначі й розгиначі: біцепс, трицепс), а для ходьби треба узгодити всі чотири кінцівки. Найпростіший алюр це крок: починає одна задня кінцівка (у людини права нога), потім рука з тієї ж сторони, потім діагональна нога, потім друга рука. Збудження в спинному мозку рухається по «вісімці». Це спадок від чотириногих предків, тому ми махаємо руками, і мозку простіше махати, ніж витрачати сили на ні. Друга швидкість: риссю працюють по діагоналі передня й задня кінцівки (так ми бігаємо, так ходить солдат строєвим кроком). Третя швидкість: галоп, для людини нехарактерний. Кенгуру його роблять. Працюють одночасно дві передні й дві задні кінцівки, плюс потужне розгинання спини. Лектор жартує: якби ми бігали на чотирьох, швидкість була б 60–70 км/год, і можна було б у шоломі виходити на шосе й їхати на роботу, але ми стали на дві лапи. Діти галопувати пробують. Кити й дельфіни теж пливуть галопом (хвостовий плавник замість задніх кінцівок), а риба згинається у вертикальній площині.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text"><strong>Довільні рухи, які генерує кора.</strong> Префронтальна кора вибирає програму, а вона передається на моторну кору (зони Бродмана 4 і 6, головна четверта з м'язовою картою тіла), чиї клітини шлють аксони прямо до мотонейронів. Швидка передача особливо для дрібної моторики пальців. Плюс: нові рухи в нових умовах. Мінус: вони забирають забагато ресурсів кори.</div></div>
+      <div class="num-row"><div class="num-badge">4</div><div class="num-text"><strong>Автоматизовані рухи.</strong> Еволюція придумала їх на випадок повторів довільних. Мозочок і базальні ганглії запам'ятовують параметри рухів, спочатку допомагають корі, потім замінюють її. Це найшвидші й найточніші рухи.</div></div>
+    </div>
+    <div class="final-quote">
+      <div class="final-text">Радість творчості, розв'язаної задачі чи вдало підібраної рими це <strong>радість тім'яної асоціативної кори</strong>.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
