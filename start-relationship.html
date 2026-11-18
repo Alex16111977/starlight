@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<script src="theme.js" data-native="light"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Як почати стосунки: 15 кроків</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+.page-subtitle{text-wrap:balance}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Як почати стосунки: 15 кроків</h1>
+  <p class="page-subtitle">Страх відмови, перша розмова, щирий зв'язок і червоні прапорці</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Відмова не робить тебе поганою.</div>
+      <div class="hero-author">Альберт Сафін</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Вступ -->
+  <div class="section" style="animation-delay:.9s">
+    <p>Він на початку каже, що розуміння етапів допоможе уникнути проблем. Це дев'ять-п'ятнадцять кроків, які він називає здоровим глуздом. Ще він попереджає, що буде жартувати. Сам готує на кухні томлену яловичину, тому часто відволікається.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Крок 1. Розібратися в собі -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">Крок 1.</span> Розібратися в собі</h2>
+    <p>Це робиться до пошуку партнера, а може, ти його вже зустріла і просто не помітила. <strong>Питання до себе:</strong></p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Які в мене цінності, що для мене важливе і як мені важливо жити?</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Які в мене потреби, бажання і межі?</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Що в стосунках для мене прийнятне, а що ні?</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Чому я кажу «так», а чому «ні»?</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Що я шукаю в партнері і на що обираю звертати увагу?</div></div>
+    </div>
+    <p>Якщо цього не знати, схопиш перше, що трапиться, ніби загорнеш у папір. Окремо треба глянути на самооцінку й емоційний стан. Ось установки, які шкодять: «Я хороша, тільки коли догоджаю», «я погана, якщо кажу "ні"», «треба посміхатися й дякувати, навіть коли мені не подобається». Відмова не робить тебе поганою.</p>
+    <p>Заходити в стосунки з дефіциту (самотність, нудьга, бажання заповнити порожнечу) призводить до залежних і нездорових зв'язків. Хтось спитає: а якщо мені не самотньо і не нудно, навіщо стосунки? Сафін відповідає, що можна діяти не з болю, а з бажання, не тому що змушена, а тому що хочу й обираю. Робота над собою, прийняття себе і розвиток інтересів дають міцний фундамент для рівних стосунків, у яких ти людина-суб'єкт, а не брелок на ключах партнера.</p>
+    <p><strong>Метафора:</strong> перш ніж запрошувати когось у свій дім, переконайся, що тобі там затишно, і що ти господиня, а не тимчасова мешканка, яка чекає рятівника. Міфів про «половинок» багато («він прийшов, змінив моє життя і врятував мене»), а це лише верхівка айсберга. Тому спершу турбота про себе, хобі, друзі, саморозвиток. <strong>Корисні питання:</strong> що для мене означає бути готовою до стосунків? Які якості й стани я хочу відчувати в собі? Які мої цінності партнер має поважати? І добре скласти «портрет» якостей, які хочеш бачити в собі й у чоловікові. <strong>Ключова думка:</strong> я вже достатньо хороша, навіть без стосунків.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Крок 2. Подолати страх зробити перший крок -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">Крок 2.</span> Подолати страх зробити перший крок</h2>
+    <p>Перший крок можуть робити всі, і чоловіки, і жінки. Страх відмови природний, він пов'язаний із потребою в прийнятті: людина думає, що відмова її пропозиції означає відмову їй цілком. Що з цим робити:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Ставитися до відмови як до звичайної частини життя.</strong> Боятися можна по-різному: можна мовчати «з зашитим ротом», а можна визнати, що хвилююся, і діяти.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Дивитися на відмову не як на оцінку особистості чи привабливості, а як на інформацію про те, що людина не збігається з тобою або не готова саме зараз.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Зміщувати фокус із результату («щоб погодились») на процес («я наважилась виявити симпатію»).</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Тренуватися з малого:</strong> посмішка, комплімент, коротка розмова.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Оскаржувати ірраціональні переконання:</strong> «відмовили, значить я жахлива», «мені завжди відмовлятимуть». На планеті мільярди людей, тобі вистачить. Не вимагай від себе бути ідеальною.</div></div>
+    </div>
+    <p><strong>Головна тема:</strong> твоя цінність не залежить від реакції іншої людини. Якщо вважаєш, що залежить, будеш боятися відмов. Ніхто не читає думок, тож я можу озвучити, що для мене важливо, а співрозмовник скаже «так» або «ні».</p>
+    <p><strong>Приклад:</strong> Марічка боялася заговорити з симпатичним колегою, бо чекала насмішки й холоду. Вона почала з малого: вітання з посмішкою, нейтральне питання про роботу, побачила доброзичливу реакцію, відчула впевненість і підтримала розмову на загальній зустрічі. А навіть якби реакція була холодною, це не вплинуло б на її цінність.</p>
+    <p><strong>Метафора про яблуко:</strong> ти пропонуєш людині смачне яблуко зі свого кошика. Якщо вона відмовилась, це не означає, що ти поганий садівник чи яблуко погане. Може, вона не голодна чи не любить такий сорт. Ти запропонувала, вибір за нею. Так само з його уроком: Сафін пропонує, а ти вирішуєш, дивитися чи ні. Треба дозволяти іншим казати тобі «ні» і не вивертати їм руки, змушуючи погоджуватись. Ще корисний прийом: якщо змушуєш себе перестати про щось думати, думатимеш ще більше, а якщо переключити увагу на процес і на свої цінності, легше.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Крок 3. Де знайомитися (крім додатків) -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">Крок 3.</span> Де знайомитися (крім додатків)</h2>
+    <p>Місця залежать від інтересів і способу життя. Радить шукати простір, де люди об'єднані спільними захопленнями, бо там є про що розмовляти:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">курси підвищення кваліфікації, майстер-класи, іноземні мови, танці, кулінарія;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">спортзал і секції, туристичні походи;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">тематичні заходи: виставки, концерти, лекції, фестивалі, книжкові події;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">коло друзів і знайомих, професійне середовище (з дотриманням етики);</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">звичайні місця: кафе, парки, громадський транспорт.</div></div>
+    </div>
+    <p>Важливо йти туди, де тобі цікаво, а не вдавати захоплення, щоб тебе помітили. Тоді ти заходиш із позиції достатку, а не дефіциту. <strong>Приклад:</strong> захоплюєшся фотографією, записалась на курси обробки знімків і там зустріла того, кому теж це цікаво. <strong>Метафора:</strong> щоб упіймати рибу, треба хоча б підійти до ставка, а не сподіватись упіймати її в унітазі. <strong>Питання до себе:</strong> які в мене хобі й інтереси, де знайти однодумців, де мені буде добре, навіть якщо чоловіка я не зустріну?</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Крок 4. Як почати розмову -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">Крок 4.</span> Як почати розмову</h2>
+    <p>З незнайомим чи малознайомим, природно й без тиску, і в тверезому стані. Опора на контекст і маленький щирий інтерес. Варіанти:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>коментар про обстановку</strong> («гарна музика», «цікава виставка», «ця робота цікава»);</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>питання за ситуацією</strong> («ви вже пробували цей чай? як вам?», «як пройти вдруге…»);</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">маленьке прохання про допомогу, питання «який зараз час»;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>спільні інтереси:</strong> «бачила вас на цьому заході»;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>щирий комплімент:</strong> хороший вибір книги, цікаво розповідаєш.</div></div>
+    </div>
+    <p>Будь готова до короткої відповіді й не тисни. Посмішка, відкрита мова тіла. <strong>Метафора:</strong> початок розмови це кинути камінчик у воду, створюєш легкий рух, дивишся, чи буде хвиля у відповідь, і якщо є, кидаєш наступний. Можна потренуватись удома: придумати безпечні фрази-«криголами» під свій контекст і манеру говорити, потренувати зоровий контакт хоча б на півтори секунди, посмішку, відкриту позу. Не вимагай від себе справляти враження, можна бути незграбною, хвилюватись, метушитись. Якщо з боку співрозмовника мінімальної готовності нема, не намагайся стиснути в кулак воду зі ставка.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Крок 5. Невербальні сигнали симпатії -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">Крок 5.</span> Невербальні сигнали симпатії</h2>
+    <p>Короткий теплий погляд із легкою посмішкою, повторний контакт сигналить про інтерес. Легкий нахил голови, відкрита поза. Але якщо у відповідь «обличчя-цегла», це нормально, бо твоя цінність не залежить від реакції. Сафін жартує, що з гумором підходити до теми краще, ніж із жорсткою серйозністю: «жах, знайомство» заважає. Невербаліка схожа на тиху музику на фоні: створює настрій відкритості й не вимагає негайної відповіді. Його порада: хоч не кричати мовчки виразом обличчя «іди ти». Можна подивитись у дзеркало, як ти виглядаєш у спілкуванні. Також він зауважує, що старі звички сильніші за нові ідеї (він знає, що м'ясо не треба перевіряти, але рука тягнеться), тому свої звички варто досліджувати.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Крок 6. Виразити інтерес пряміше, але тактовно -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">Крок 6.</span> Виразити інтерес пряміше, але тактовно</h2>
+    <p>Якщо є взаємна симпатія («легка хвиля на воді»), але нічого не розвивається, переходимо до явніших кроків:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Щирий комплімент особистості чи розуму</strong> (подобається твоє почуття гумору, цікаво з тобою обговорювати це), а не лише зовнішності.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Запропонувати продовжити спілкування</strong> (було б здорово разом випити кави, давай обміняємось контактами).</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Запросити на конкретний захід</strong> (збираюсь у караоке, підеш зі мною? можна просто послухати).</div></div>
+    </div>
+    <p><strong>Метафора «воронки продажів»:</strong> показ, клік, інтерес, перша послуга, основна, закріплення. Люди не хапають за руку на вулиці, а поступово дають про себе знати. Так само з м'ясом: не вимагай, щоб приготувалось миттєво, дай йому потомитись (швидко народжуються тільки кошенята). А ще машина любить мастило й ласку: без різких рухів. Якщо чуєш «ні», це нормально, відповідь «окей, буду знати» і «на твій розсуд». Можна поставити відкрите питання («які плани на вихідні?»), обрати розслаблений момент, а можна й не обирати.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Крок 7. Чи нормально жінці проявляти ініціативу? -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">Крок 7.</span> Чи нормально жінці проявляти ініціативу?</h2>
+    <p>Так, нормально й навіть бажано, Сафін «наполягає». Не чекай запрошення, бо так можна чекати все життя. Віра в пасивне очікування («лицар прилетить і врятує від дракона») це пастка. Ініціатива свідчить про впевненість у собі, ясність бажань і повагу до свого життя й часу. Емоційно зрілий чоловік ставиться до неї позитивно. Якщо ж чоловіка ініціатива лякає, це дзвіночок: можливо, він не поділяє погляд на рівні дорослі стосунки, бо є чоловіки, яким потрібна не жінка, а «дівчинка» з дитячо-батьківськими ролями («я рятую й оберігаю, навіть коли їй 59»). Ініціатива має бути поважною й ненав'язливою.</p>
+    <p><strong>Приклад:</strong> Даша завжди чекала першого кроку від чоловіків. Хлопець, який їй подобався, був скромним. Вона наважилась сама запросити його в кіно. Він із радістю погодився й зізнався, що сам боявся відмови. Стосунки схожі на танець: ролі можуть мінятись, головне гармонія й взаємне бажання танцювати.</p>
+    <p><strong>Практика:</strong> дослідити свої переконання про ролі в стосунках («я жінка, перший крок ніколи не зроблю, краще самотність»). Звідки вони? Чи варто їх оскаржити? Чим здорова ініціатива відрізняється від невротичної нав'язливості (відповідь: у здоровій ти дозволяєш іншому сказати «ні»)? Це звучить так: «У п'ятницю цікавий фільм, ходімо разом, що думаєш?»</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Крок 8. Як будувати щирий зв'язок, а не поверхневе спілкування -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">Крок 8.</span> Як будувати щирий зв'язок, а не поверхневе спілкування</h2>
+    <p>Глибокий зв'язок потребує часу, взаємного інтересу й готовності до вразливості. Взаємний інтерес може потроху зростати, але на старті мінімум має бути, інакше це «доїти цапа». Що допомагає:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Активне слухання.</strong> Багато хто слухає лише щоб дочекатись своєї черги. Треба слухати, чути, ставити уточнювальні питання («як ти думаєш? про що це для тебе? розкажи детальніше?»). Інтерес має бути справжнім. Ти зустрічаєшся не з тілом, а з мисленням і картиною світу людини.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Щирість і справжність.</strong> Бути собою, а не вдавати. Любиш реготати, як кінь? Можливо, це й буде найпривабливішим. Фільми й серіали задають стандарти «красивої поведінки», які не мають стосунку до життя. Ділись справжніми думками, сподобалось, то сподобалось, ні, то ні. Якщо на самому старті ти ступаєш, як по уламках скла, нічого хорошого не буде.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Емпатія.</strong> Прагнути зрозуміти почуття й точку зору, навіть якщо не згодна.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Поступове самовідкриття.</strong> Дозовано ділитись особистим і дивитись на взаємність. Не варто на першій зустрічі розповідати всі подробиці про себе.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Якісний час віч-на-віч, а не лише в шумних компаніях.</div></div>
+    </div>
+    <p><strong>Метафора:</strong> побудова зв'язку як вирощування квітів. Спільні інтереси й перше спілкування це насіння, увага й слухання це полив, щирість і емпатія це добриво, ти захищаєш від бур'янів (непорозумінь, поверховості) і даєш час прорости. Це взаємний танець, а не примус.</p>
+    <p><strong>Теми для поглиблення (поступово й безпечно):</strong> що для тебе глибокий зв'язок, спільне життя, дитинство, майбутнє, інтереси, пріоритети. <strong>Питання до себе:</strong> чи вмію я активно слухати? Що для мене означає поступове самовідкриття і встановлення меж? Що допомагає мені розкриватися?</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Крок 9. Типові помилки жінки на початку стосунків -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">Крок 9.</span> Типові помилки жінки на початку стосунків</h2>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text"><strong>Надмірна ідеалізація.</strong> Створити в голові образ ідеального чоловіка й проєктувати його на реальну людину, ігноруючи недоліки й тривожні сигнали. Треба бачити людину реалістично, за фактами й вчинками, а не за фантазіями. Ідеальних людей не буває.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Надмірна наполегливість і нав'язливість.</strong> Нездатність помітити відсутність інтересу, міф «треба змусити його полюбити». Треба поважати чужі межі й уміти відступити, якщо взаємності немає.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text"><strong>Розчинення в партнері.</strong> Відмова від захоплень, друзів, своєї думки. Треба зберігати автентичність, автономію, межі й соціальне коло. Стосунки лише одна зі сфер життя (є ще робота, близькі, друзі, навіть мікрофон у караоке).</div></div>
+      <div class="num-row"><div class="num-badge">4</div><div class="num-text"><strong>Плутати дружелюбність із романтичним інтересом.</strong> Чоловік може бути ввічливим, або дає те, що просять, бо не вміє казати «ні». Спостерігай сукупність вербальних і невербальних сигналів. Не тисни.</div></div>
+      <div class="num-row"><div class="num-badge">5</div><div class="num-text"><strong>Надто швидке емоційне чи фізичне зближення.</strong> Дай довірі й розумінню час, рухайся в комфортному обом темпі. Якщо після першого побачення уявляєш весілля, можеш закохатися у свої фантазії й не помічати, що він скасовує зустрічі, не слухає, ставиться зневажливо.</div></div>
+    </div>
+    <p><strong>Метафора складного замка:</strong> грубою силою (нав'язливість) не відкриєш, перший ключ, що трапився (ідеалізація), не підійде, можна зламати ключ у замку (втрата себе). Допоможуть терпіння, уважність і правильний ключ, тобто реалістичність і повага.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Крок 10. Як зрозуміти, чи він зацікавлений, чи просто ввічливий -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">Крок 10.</span> Як зрозуміти, чи він зацікавлений, чи просто ввічливий</h2>
+    <p>Ознаки інтересу:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>ініціатива:</strong> пише першим, пропонує зустрітись, шукає привід поспілкуватись (а якщо ти тягнеш усе сама, а він «давай, доглядай за мною», це показово);</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>якість уваги:</strong> уважно слухає, пам'ятає деталі розмов, ставить особисті питання, цікавиться тобою як особистістю, а не сприймає як річ;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>невербаліка:</strong> шукає зоровий контакт, усміхається при зустрічі, несвідомо дзеркалить жести, скорочує дистанцію, виділяє тебе з-поміж знайомих;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">особисті компліменти, турбота;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>розмови про спільне майбутнє</strong> («колись можна було б туди піти разом»);</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">легка нервовість і ніяковість теж можуть бути ознакою симпатії.</div></div>
+    </div>
+    <p>Якщо кілька ознак є, імовірність романтичного інтересу вища, а якщо немає жодної, найімовірніше це просто дружелюбність.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Крок 11. Він мовчить, а симпатія взаємна -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">Крок 11.</span> Він мовчить, а симпатія взаємна</h2>
+    <p>Пам'ятай, що жінці не заборонено робити перші кроки. Причини нерішучості: скромність, страх відмови, невпевненість. Не вимагай від людей досконалості, багато порядних і хороших просто соромляться. Варіанти:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>створити сприятливу можливість</strong> (запропонувати прогулятись після роботи, момент для розмови наодинці);</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">«підігріти» невербальними сигналами;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>запропонувати конкретний варіант</strong> (кава, кіно, прогулянка);</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>прояснити ситуацію:</strong> «мені здається, ми чудово ладнаємо, цікаво, куди це нас приведе, що думаєш?».</div></div>
+    </div>
+    <p><strong>Метафора:</strong> двері прочинені, але той, хто за ними, вагається. Можна легенько постукати, створити протяг, щоб відчинились самі, або обережно підштовхнути.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Крок 12. Як запропонувати зустріч, щоб це не виглядало відчайдушно -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">Крок 12.</span> Як запропонувати зустріч, щоб це не виглядало відчайдушно</h2>
+    <p>Діє формула «впевненість, легкість, конкретність». Запрошуй після приємної розмови чи під час обговорення спільних інтересів. Конкретика замість «треба якось зустрітись»: «У суботу йду в караоке, ходімо зі мною, якщо соромишся співати, просто послухаєш». Низька «обов'язковість»: це пропозиція, а не вимога («якщо буде бажання й можливість»). Говори спокійно, дружелюбно, з посмішкою, бо впевненість навіть при внутрішньому страху створює хороше враження. Будь готова до відмови: твоя самоцінність не залежить ні від відмови, ні від згоди.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Крок 13. Як реагувати, якщо відмовили або не зацікавлений -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">Крок 13.</span> Як реагувати, якщо відмовили або не зацікавлений</h2>
+    <p>Відмова неприємна, але це частина процесу пошуку. Ось як:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">прийняти відповідь («добре, я зрозуміла, дякую за чесність»), не переконувати, не сперечатись, не вимагати пояснень;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">зберегти гідність, не показувати надмірного розчарування чи образи (в людини є право сказати «ні», і якщо тобі не подобається відмова, це твоя проблема);</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">завершити розмову ввічливо й спокійно, а якщо це було публічно, не привертати зайвої уваги;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">не звинувачувати себе, нагадати собі, що відмова це інформація про несумісність чи неготовність іншого, а не про твої недоліки (згадай яблука);</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">дозволити собі пережити емоції (образа, роздратування нормальні), потім зайнятись приємним;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">коли емоції вляжуться, без самобичування проаналізувати, який висновок можна зробити;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">не забороняти собі нових знайомств і не узагальнювати й не драматизувати («жах, кошмар»).</div></div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Крок 14. Наскільки відверто говорити на початку -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">Крок 14.</span> Наскільки відверто говорити на початку</h2>
+    <p>Потрібен баланс між щирістю й особистими межами. Надто швидке й глибоке самовідкриття може відлякати або створити хибне відчуття близькості. Не вивалюй на початку минулі травми, проблеми й подробиці невдалих стосунків. Починай із загальних тем (інтереси, захоплення, робота, погляди на життя, мрії), а вразливі теми залишай на пізніше, коли відчуєш, що людина надійна й справді зацікавлена. <strong>Метафора:</strong> довіра це вага, яку не всі здатні втримати, треба переконатись, що в людини достатньо «м'язів».</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Крок 15. Як зберегти справжність і не підлаштовуватися -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">Крок 15.</span> Як зберегти справжність і не підлаштовуватися</h2>
+    <p>Якоюсь мірою ми підлаштовуємось, але розчинятись у партнері не варто. Що допомагає:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>знати себе</strong> (цінності, інтереси, сильні й слабкі сторони, бажання, межі);</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">бути чесною й поважно висловлювати свою думку, навіть якщо вона відрізняється від його;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">не вдавати, що тобі подобається те, що не подобається, лише щоб догодити;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>зберігати свої інтереси й життя, не жертвувати ними заради стосунків.</strong> Стосунки не те, заради чого треба чимось жертвувати, а те, що додає в життя щось прекрасне. Жертви можливі, але з позиції «я обираю», а не «мушу»;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>не боятися бути неідеальною, не створювати образ «дівчини з глянцю».</strong> Страхи людей добре продаються («секрети ідеальності»), а справжність приваблює більше, ніж маска. Маска може зачепити на першій ноті, але для довгих і взаємозбагачувальних стосунків це не працює.</div></div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Червоні прапорці в поведінці чоловіка на початку знайомства -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Червоні прапорці в поведінці чоловіка на початку знайомства</h2>
+    <p>Це ознаки емоційної незрілості чи небезпечної поведінки, ігнорування яких призводить до проблем:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>неповага до твоїх меж, думки, часу, почуттів:</strong> перебивання, знецінення інтересів і досягнень, систематичні запізнення без вибачень (слова теж поведінка, дивись на факти);</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>неповага до персоналу, водіїв, касирів, тварин</strong> (спостерігай, як він поводиться, коли йому нічого не треба);</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>спроби контролю:</strong> надмірні ревнощі на порожньому місці, контроль спілкування, зовнішнього вигляду, часу, фінансів, перевірки телефона, допити про місцезнаходження;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>агресія в будь-якій формі:</strong> фізична, вербальна, систематичне придушення, образи, приниження, крики, погрози, пасивна агресія (сарказм, мовчанка як покарання);</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>нечесність і маніпуляції:</strong> брехня навіть у дрібницях, суперечності в розповідях, приховування, спроби викликати почуття провини чи боргу («ти ж жінка, мусиш мене зрозуміти»);</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>відсутність емпатії:</strong> не ставить себе на твоє місце, байдужий до твоїх проблем, не вміє щиро вибачатись, просити й дякувати (і навпаки, якщо він лише красномовно вибачається, дивись на факти);</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>проблеми із залежностями</strong> (речовини, азартні ігри), зміна поведінки під їхнім впливом;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>емоційні гойдалки, гра в жертву, виклик почуття провини.</strong> Багато жінок вимагають від себе бути «хорошою, коли рятую», але ти не змінишь людину без її запиту. Це ознаки співзалежності: рятуєш, а жити коли?;</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>тиск:</strong> надто швидкі зізнання в коханні («бомбардування любов'ю»), тиск у питаннях інтимної близькості, надто швидкий розвиток стосунків («все разом, один акаунт»), «я чоловік, маю наполягати», ігнорування твоїх відмов, постійний негатив і критика.</div></div>
+    </div>
+    <p><strong>Головна порада:</strong> не намагайся перевиховати, просто помічай і роби висновки. «Ні» означає «ні».</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Підсумок -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Підсумок</h2>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text">Внутрішня підготовка: цінності, бажання, потреби, межі.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text">Подолати страх відмови: це нормально і не впливає на цінність.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text">Розширювати коло, бути там, де «риба водиться».</div></div>
+      <div class="num-row"><div class="num-badge">4</div><div class="num-text">Ініціювати контакт вербально й невербально, поглиблювати спілкування.</div></div>
+      <div class="num-row"><div class="num-badge">5</div><div class="num-text">Розрізняти дружелюбність і закоханість, дивитись на взаємність.</div></div>
+      <div class="num-row"><div class="num-badge">6</div><div class="num-text">Ініціатива до зустрічі, готовність прийняти будь-який результат (впевненість).</div></div>
+      <div class="num-row"><div class="num-badge">7</div><div class="num-text">Зберігати справжність, межі й помічати червоні прапорці.</div></div>
+    </div>
+    <div class="final-quote">
+      <div class="final-text">Я вже <strong>достатньо хороша</strong>, навіть без стосунків.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+<script src="lang.js" defer></script>
+</body>
+</html>

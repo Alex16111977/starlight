@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<script src="theme.js" data-native="light"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Історія Стародавньої Греції</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+.page-subtitle{text-wrap:balance}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Історія Стародавньої Греції</h1>
+  <p class="page-subtitle">Від мінойського Криту до еллінізму: поліс, Спарта, Афіни й Олександр Македонський</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Греки, як писав Платон, жили навколо моря «подібно до жаб навколо ставка».</div>
+      <div class="hero-author">Сергій Карпюк</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 1. Географія і природа -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">1.</span> Географія і природа</h2>
+    <p>Територія Греції розділена на невеликі долини, а в Егейському басейні переважають малі острови. Долини відгороджені гірськими хребтами, і це сильно вплинуло на історію. Єдиної держави не було. У долинах і на островах виникали незалежні поліси (міста-держави), які співпрацювали, але пишалися своєю автономією.</p>
+    <p>Лектор наголошує, що розміри були невеликі, і це треба враховувати. Марафонська дистанція трохи понад 42 км, це від краю до краю однієї з найбільших областей, Аттики. Пелопоннес, який відіграв величезну роль, приблизно 21–22 тис. км².</p>
+    <p>Греки пересувалися морем або пішки. Грецький світ це материкова частина (північ, середина, південь), сотні островів Егейського архіпелагу і західне узбережжя Анатолії.</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Рельєф.</strong> Країна гірська. Найвища гора Олімп (близько 3000 м) — за уявленнями греків, там жили боги. Греки альпінізмом не займалися (його вигадали англійці в XIX ст.) і жили не вище 500–600 м. Родючих долин мало: південь Пелопоннесу (Лаконіка, Мессенія), частина Аттики, Беотія.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Берегова лінія.</strong> Дуже порізана, багато бухт і дрібних островів. З Греції в Малу Азію можна плисти, не втрачаючи землі з очей. Це сприяло ранньому розвитку мореплавання.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Копалини.</strong> Бідна, але є гончарна глина (кераміка), вапняк і мармур (мармур для громадських будівель). Бронзового віку на чолі розвитку Греція не була, бо немає міді та олова. Олово везли здалеку, мідь з Кіпру (латинська назва Cuprum). Заліза досить, використовували болотні руди. Срібло в Аттиці (Лаврій) і Халкідіках, золото у Фракії, електр (природний сплав золота й срібла) у ріках Малої Азії.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Клімат.</strong> Середземноморський: сухе й жарке літо, дощова зима, іноді сніг. Тому землеробство можливе без штучного зрошення. Це відрізняє Грецію від цивілізацій Сходу, де для каналів потрібні колективні зусилля й централізована влада. Греки жили в ранній субатлантичний період, трохи холодніший за сучасність: більше дощів, суворіші зими. Геродот писав, що сніг не лежить довше п'яти днів.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Культури.</strong> Оливка та виноград вважалися «культуротворчими»: греки вважали, що цивілізація може існувати лише там, де росте оливкове дерево, а решта в дикості. У посушливі роки висаджували витриваліші сорти, у менш посушливі пшеницю. Основа зернові, плюс капуста, редька, цибуля. Худоба вівці й кози (влітку на високогірні пасовища, взимку вниз): м'ясо, вовна, молоко (не пили через небезпеку до пастеризації, робили сир). Багато риби й морепродуктів. Вершкового масла не визнавали, вважали його харчем варварів. Оливкова олія в їжу, для натирання й освітлення. Вино пили зранку, вдень і ввечері, розбавляючи приблизно 1:3 водою, і це (за лектором) знижувало ризик малярії, однієї з головних причин смертності.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Тривалість життя.</strong> Менше 30 років через жахливу дитячу смертність, але хто виживав, доживав до зрілого віку (Сократа стратили в ~70). Співвідношення чоловіків і жінок приблизно рівне.</div></div>
+    </div>
+    <p><strong>Застереження:</strong> не слід впадати в географічний детермінізм. Географія це лише одна з умов. Греки навчилися користуватися її перевагами.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 2. Критська (мінойська) цивілізація -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">2.</span> Критська (мінойська) цивілізація</h2>
+    <p>Це кінець III – початок II тис. до н. е., і це найзагадковіша частина історії. Самі греки класичного часу майже нічого не знали: були міфи про царя Міноса, володаря морів, бронзового велетня Талоса, лабіринт і Мінотавра (убитого героєм Тесеєм, якому допомогла Аріадна). Справжні знання з'явилися наприкінці XIX – початку XX ст. завдяки розкопкам. Артур Евенс (англійський археолог, 1-а третина XX ст.) знайшов на Криті розкішні споруди, які назвав палацами: Кносс, Фест, Малія. Кносський палац мав до 300 приміщень на трьох рівнях, це скоріше «мінімісто»: сховища, комори, тронна зала, стіни з фресками.</p>
+    <p>Крит лежить на шляху з Греції в Єгипет і на Близький Схід, тому став центром транзитної торгівлі. Населення було індоєвропейське, але не грецьке. Періоди:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Старі палаци (~1900–1700 до н. е.), найбільший Кносс.</strong> З'являється лінійне письмо А (складове), досі не розшифроване (гадають, звітність чи релігійні тексти).</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Влада в руках царя (або царя-жерця), велику роль у релігії й державі, судячи з фресок, відігравали жінки: жіночі постаті зображені великими, а в архаїчному живописі розмір відповідав соціальному значенню.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Торгівля з Єгиптом (у єгипетських текстах «люди країни Кефтіу»), запозичення в мистецтві й релігії.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Цивілізація була мирною:</strong> великих воєн не зафіксовано, на фресках немає сцен війни й полювання (на відміну від Ассирії та Єгипту). Критяни не прагнули поширювати вплив на материк.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Структура як на Близькому Сході:</strong> цар, воїни й бюрократія, залежне населення платило данину.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Старі палаци загинули внаслідок серії землетрусів.</strong> Нові палаци (~1650–1450): розквіт, вплив на материк. Близько 1450 року вивергання вулкана на Фері (Санторіні) завдало шкоди, і Крит завоювали ахейці (мікенці), які змішалися з місцевим населенням. Тепер Крит периферія, а центр на материку.</div></div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 3. Мікенська цивілізація -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">3.</span> Мікенська цивілізація</h2>
+    <p>Приблизно 1650–1100 до н. е., на материку, під впливом Криту. Назва від міста Мікени на Пелопоннесі. Мікенці воїнственніші. Розквіт бронзового віку, але мідь і олово довозні, тому бронза дорога, мікенські кинджали дуже цінувалися. Володарі жили в палацах, огороджених стінами, ховали їх у шахтних гробницях. Виникають міста, відомі й у класичну добу: Мікени, Аргос, Спарта, Фіви, Афіни.</p>
+    <p>Лінійне письмо Б написане вже грецькою. У середині XX ст. його розшифрував англієць Майкл Вентріс (який набив руку на дешифруванні нацистських кодів) за допомогою вчених. Тексти це бухгалтерія (дари, надходження), але вони дозволяють відновити картину, і в них є імена богів Посейдона, Аполлона, відомі пізніше.</p>
+    <p>Наприкінці XIII – початку XII ст. цивілізація занепадає (учені пов'язують із кліматичними змінами). Останнє успішне підприємство мікенських царів це знаменита Троянська війна (близько 1190 до н. е.). Греки (ахейці, мікенці) об'єдналися, довго облягали місто на березі Дарданелл (давній Гелеспонт) і захопили його. Про неї відомо не лише з міфів, а й з розкопок Шліємана наприкінці XIX ст. (вони були грабіжницькими, він знищив масу артефактів, а «клад Пріама», до війни стосунку не має, він значно давніший). Війна підірвала сили мікенських держав, і в XII ст. їх зруйнували дорійці, наступна хвиля греків, прабатьківщина яких, за лектором, у центрі Балкан (територія нинішніх Сербії та Трансільванії). Перевага дорійців у залізній зброї, дешевшій і масовішій.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 4. «Темні віки» (XI–IX ст. до н. е.) -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">4.</span> «Темні віки» (XI–IX ст. до н. е.)</h2>
+    <p>Назва вигадана вченими за аналогією з європейськими «темними віками». Письменність втрачена, цивілізація розпалася. Греки забули не лише писемність і кваліфіковане ремесло, а навіть гончарне коло, відомий з неоліту. Це повернення до первісного рівня. Позитив: до цього Греція розвивалася шляхом цивілізацій Сходу, і цей шлях закінчився крахом, тому довелося придумувати нове, і воно вивело на європейську цивілізацію. Повернулися до рівня общини.</p>
+    <p>Община поступово стала громадянською общиною, і так зароджувався поліс. Жителі, першопоселенці чи їхні нащадки, вважали себе власниками території, і верховної царської влади не було. «Базилеї» в поемах Гомера це не царі в нашому розумінні, а попередники аристократії (багатої й знатної верхівки). Джерела: археологія (розкопки на Євбеї, зокрема Лефканді, показують, що навіть у X ст. зберігалися окремі ознаки цивілізації) і поеми Гомера (VIII ст. до н. е.), які багатошарові: описують і Троянську війну, і сучасне Гомеру суспільство.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 5. Поліс -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">5.</span> Поліс</h2>
+    <p>Наприкінці IX – у VIII ст. до н. е. виникають поліси, унікальні утворення: громадянські общини, які конструювали себе як міні-держави. Громадянин (чоловік-воїн) вважає себе власником землі на території полісу. Верховний орган народні збори (сходка чоловіків-воїнів), у яких можуть брати участь лише громадяни, і лише вони можуть володіти землею. Два обов'язкові атрибути: акрополь (верхнє місто, фортеця, куди ховалися при нападах) і агора (ринкова площа, місце торгівлі й зборів).</p>
+    <p>Територія була обмеженою. За Арістотелем (IV ст. до н. е.), ідеальний поліс це місце, де не надто багато громадян (за лектором, населення порядку кількох тисяч осіб). Поліс можна було обійти пішки. Крім громадян жили вільні негромадяни (прибульці з інших полісів: торговці, ремісники; мали майнові права, захист життя, але не політичні й не могли володіти землею) і раби (захоплені під час походів чи куплені у варварів, безправні). Отже, три стани, статус успадковувався.</p>
+    <p>Лектор окремо наголошує на психології колективних власників: поліс це власність громадян, тож давньогрецькі історики не могли написати «Спарта воювала з Афінами», бо це абсурд, вони писали, що спартанці воювали з афінянами, беотійці з мілетцями: поліс це не стіни, а люди. Коли оратор у суді в Афінах каже «ми прийняли цей закон», хоча закон прийнято 300 років тому, «ми» це громадянський колектив.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 6. Релігія -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">6.</span> Релігія</h2>
+    <p>Починає оформлюватися класична релігія з дванадцятьма олімпійськими божествами (за віруваннями, на горі Олімп): шість пар чоловічих і жіночих. На чолі Зевс, бог грому й блискавки, податель дощу й снігу (типово для індоєвропейців: греки не казали «іде дощ», а «Зевс дощить»). Гера, покровителька сім'ї. Арес бог війни, Афродіта богиня кохання, Аполлон бог світла й покровитель мистецтв. Багатьох богів запозичили в сусідів: Афродіта це близькосхідна Астарта, Арес запозичений, можливо, у фракійців. Поза олімпійською дванадцяткою Діоніс (бог екстатичних танців) і Гермес (вісник). Були герої (діти богів і смертних жінок, найвідоміший Геракл, потім зарахований до богів) і місцеві божества (джерел, гаїв: німфи, дріади).</p>
+    <p>Греки вважали, що боги всюди, але «згущуються» в красивих місцях, тому храми будували в найкрасивіших місцях, видимих здалеку. Класичний храм оточений колонами з портиками, з мармуру. Поклонялися не в храмах, а біля вівтарів зі східного боку храму. Були язичниками, жертви тваринні та рослинні (можливо, в доісторичну епоху й людські, але це не зафіксовано). Принцип «даю, щоб ти дав»: ритуал як обмін. Боги не обов'язково добрі, можуть бути заздрісними. Мораль це людська етика, не божественні заповіді. Священиків як окремого стану не було. Знання про богів з творів поетів і художників, не було канону й заборон, тому релігія стимулювала мистецтво. Боги антропоморфні, так що часто важко відрізнити зображення людини від бога. Релігія нерозривно пов'язана з полісом, ритуали виконували самі громадяни. Загальногрецькі святилища: Дельфійський оракул, святилище Аполлона на Делосі, Зевса в Олімпії. Кожен поліс мав покровителя (Афіни та Спарта Афіна, інші Гера тощо).</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 7. Архаїчний період (VIII–VI ст. до н. е.) -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">7.</span> Архаїчний період (VIII–VI ст. до н. е.)</h2>
+    <p>Назва вигадана вченими XIX ст., але суть відображає. Період бурхливого зростання економіки. На початку Греція була жебрацькою країною на периферії цивілізованого світу (центр близькосхідні імперії), а наприкінці достатньо багата й сильна, щоб протистояти імперіям. Як це вийшло, історики сперечаються, але головний висновок: форма полісу (громадянська община) звільнила свідомість людей, їхні таланти й виробничі сили. Грекам властива висока конкурентність, не випадково вони придумали олімпійські ігри. Грецькою керамікою «завалили» Середземне й Чорне моря: уламки й цілі вази знаходять від Іспанії до гирла Дону. Швидко освоїли монету. Греки були вправними мореплавцями й конкурували з фінікійцями. Оцінка ВВП: приблизно потроїлося за три століття, темпи, яких не знала навіть епоха промислової революції в Англії (лектор жартує, що, звісно, центрального статистичного управління не було, але є непрямі дані). Кераміка зберігається вічно, а вироби ковалів і дерев'яні майже не збереглися. Вази були і парадним посудом, і тарою для вина й оливкової олії. До кінця періоду по всьому Середземномор'ю поширюється й грецька монета, що в V ст. стала панівною.</p>
+    <p><strong>Гоплітська революція.</strong> Архаїка це розквіт залізного віку. Гопліт (важкоозброєний піший воїн зі списом, щитом, шоломом і мечем) це вже не аристократ, а людина середнього достатку, заможний селянин-громадянин. Фаланга гоплітів стає головною силою. Принцип давнини: яке місце на полі бою, таке й у соціальній ієрархії. Цей середній клас вимагає реальної влади (формально верховні були збори, але реально владу тримала аристократія, нащадки «басилеїв», де знатність збігалася з багатством).</p>
+    <p><strong>Вимога писаних законів:</strong> аристократи судили за звичаєвим правом, яке можна трактувати на свою користь. У VIII ст. греки запозичили в фінікійців і розвинули алфавіт, і наприкінці VII ст. його використали для писаних законів, виставлених на дерев'яних дошках, потім на камені в людних місцях. Це рівність для всіх громадян. Але це час жорсткої внутрішньої боротьби між аристократією і демосом. Для маленького колективу стасіс (внутрішня боротьба) катастрофа. Спочатку обирали посередників (езимнетів). Деякі з них або просто знатні аристократи, спираючись на клани, захоплювали владу і ставали тиранами (нелегітимними правителями). VII–VI ст. епоха старшої тиранії. Тирани це аристократи за походженням, але до демосу лояльні, бо боялися конкуренції інших аристократів. Вони проводили вигідні демосу реформи, заохочували торгівлю, будували великі споруди, сприяли колонізації й релігійним святам. Центри тиранії це найрозвиненіші міста: Коринф, Мегари, Мілет, острів Самос. Тиранія суперечила рівності, на якій тримався поліс, і до кінця VI ст. згасає.</p>
+    <p>Велика грецька колонізація (VIII–VI ст.) поширила грецький світ від Каталонії до Приазов'я, від Ніци у Франції далі. Три причини:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text"><strong>Нестача родючої землі:</strong> ділянку не можна було дробити, вона йшла старшому синові, а молодший мусив іти за море.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Соціальна боротьба:</strong> програла сторона просто сідала на кораблі й пливла.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text"><strong>Торгівля:</strong> колонії були торговими форпостами.</div></div>
+    </div>
+    <p>На захід: Сицилія й Південна Італія (стільки колоній, що область назвали Великою Грецією; відомі Сіракузи, Тарент, Неаполь, тобто «Нове місто»), на півдні Франції Массалія (Марсель) і Емпорії в Каталонії. На південь Кірена (нинішня Лівія) і, з дозволу фараонів, Навкратіс у дельті Нілу. Основний напрямок північний схід: Мармурове (Мармурове море) і Чорне море: Візантій (близько 660 до н. е., пізніше Константинополь і Стамбул), Ольвія в гирлі Бугу, Херсонес (Севастополь), Пантікапей (Керч), Фанагорія на Тамані, пізніше Горгіппія, Танаїс у гирлі Дону. Греки, як писав Платон, жили навколо моря «подібно до жаб навколо ставка». Колонії були незалежними полісами, греки не створювали імперії, а розповсюджували ідею полісу.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 8. Спарта -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">8.</span> Спарта</h2>
+    <p>Спарта (Лакедемон) унікальний поліс, де зберіглися риси архаїчного гоплітського полісу. Витоки у реформах Лікурга (міфічної чи реальної особи другої половини VII ст.), початком яких стало вислів Дельфійського оракула. Мета зробити спартанців боєздатнішими. Спартанці вже підкорили Мессенію (область на захід від Лаконіки) і поневолили місцевих, і для утримання їх у покорі суспільство мало стати військовим табором.</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Родючі землі поділили на 9 тисяч ділянок (клерів); частина істориків вважає, що реально 6–7 тисяч. Кожен спартіат мав клер, який обробляли ілоти (залежні землероби, по 7 сімей на клер), віддаючи половину врожаю. Ілотів вважають то рабами, то кріпаками: клер не можна було продати без ілотів, вони були прикріплені до землі. Це можливо, бо землі Лаконіки й Мессенії були родючими.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Періеки:</strong> вільні негромадяни, лише обмежені в правах: самоуправління, ремесло й торгівля, службу в війську як гопліти, лояльні до Спарти.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Спартіати (спартанські громадяни):</strong> спочатку 9 тисяч, потім їх кількість зменшувалась, до середини IV ст. близько тисячі. Їм законодавчо заборонено ремесло, торгівля й будь-що крім війни. Виховання (агоге): з 7 років хлопчика забирали з сім'ї в загони під жорсткою дисципліною (мета: безстрашність, уміння підкорятися й командувати, жорстокість, ненависть до ілотів). Обряд ініціації криптія: юнаки полювали на ілотів і вбивали найздоровіших. У 20 років отримували деякі права, до 30 повні громадянські права. Без агоге стати спартіатом було неможливо. Дівчат теж виховували: фізичні вправи, ритуали. Жінки в Спарті мали більше свободи, ніж в інших полісах, і виходили заміж не раніше 18 років. Зберігалися архаїчні звичаї, зокрема поліандрія (двоє братів могли мати одну дружину). Усе це для народження якомога більшої кількості здорових і боєздатних спартіатів.</div></div>
+    </div>
+    <p><strong>Державний устрій:</strong> народні збори апелла, які вирішували питання війни й миру й обирали посадових осіб, але, за Арістотелем, «по-дитячому», криком (хто голосніше крикне). Дуже важлива герусія, рада старійшин із 28 геронтів (повноправних спартіатів старших 60 років, довічно) і двох царів, разом 30 осіб. Царі це два спадкові вожді з династії Гераклідів, на війні верховні полководці й жерці Зевса, але в самому місті політичної ролі вони не мали. Дуже важливу роль мали ефори (п'ять «наглядачів», обирались на рік): контролювали, могли усунути будь-яку посадову особу, карати будь-якого спартанця за порушення неписаних звичаїв, навіть усунути царя чи накласти на нього штраф. Раз на дев'ять років вночі спостерігали за зорями, і якщо бачили падаючу зірку, усували царя й запитували Дельфи. Такий розподіл влади забезпечив стабільність: майже 500 років (понад 400) устрій не змінювався, і тиранії в Спарті не було. Афінські аристократи захоплювалися Спартою, звідси «спартанський міф», але він спирається на реальні факти. Армія була дуже боєздатною: подвиг 300 спартанців царя Леоніда. До 371 р. до н. е. спартанці були непереможними в піших боях, їхня фаланга вважалася взірцем, і Спарта відіграла величезну роль у відбитті перського вторгнення: очолювала сухопутне військо, яке розгромило військо царя Ксеркса.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 9. Афіни архаїчного часу: Солон, Пісістрат, Клісфен -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">9.</span> Афіни архаїчного часу: Солон, Пісістрат, Клісфен</h2>
+    <p>У VI ст. Афіни намагалися подолати кризу й розкол суспільства. Давні автори пишуть, що багато афінян потрапляли в боргову кабалу й продавалися в рабство за борги, бо не вистачало врожаю до наступного року. 594 р. до н. е. аристократа Солона обрали архонтом-примирителем із необмеженими повноваженнями. Головний закон сісахфія («струшування тягарів»): скасування боргів, що лежали на землі, тобто боргової кабали. Ті, хто потрапив у боргове рабство, звільнені, а продані за межі Аттики повернуті. Відтоді афінські громадяни мали невід'ємне право бути вільними й не могли бути поневолені за борги. Солон залучив до Аттики багатьох переселенців (метеків), що розвинуло ремесло й торгівлю, і Афіни стали ремісничим центром. Є унікальне джерело VI ст.: посвяти з афінського акрополя, де ремісники, торговці й навіть прачки присвячували богам рельєфи, скульптури й писали, чого бажають, і це свідчить про зростання самосвідомості демосу.</p>
+    <p>Це зростання й боротьба в аристократії привели до тиранії. Пісістрат (561 або 546 до н. е.) після запеклої боротьби захопив тиранічну владу, передав її синам Гіппію і Гіппарху. Як і інші тирани, він вжив багато заходів на користь демосу: роз'їзних суддів для майнових суперечок селян, зменшив податки, провадив колонізаційну політику, був активний у культурі (розквіт Панафінейських свят, зародження афінського театру близько 536). У 514 р. аристократи-тираноубивці Гармодій та Арістогейтон убили молодшого Гіппарха, але старший Гіппій розправився зі змовниками. У 510 р. тиранію скинули спартанці (завжди позиціонували себе ненависниками тиранів) і поставили свого ставленика. Афіни входили в Пелопоннеський союз, але їм це не подобалося, і в 508/507 р. афіняни повстали, замкнули спартанський гарнізон на акрополі й вигнали його. Під проводом аристократа Клісфена з роду Алкмеонідів у 508/507–500 рр. проведено реформи, які поклали початок демократії. Він, як і інші аристократи, вирішив не протистояти демосу, а очолити його, розуміючи, що вихід демосу на політичну арену неминучий.</p>
+    <p><strong>Реформи Клісфена:</strong></p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Посилення й організація екклесії (народних зборів):</strong> збиралися кілька разів на рік, були вищим органом, на них могли бути присутні всі афіняни. Пряма демократія, але реальний кворум на найважливіших рішеннях не перевищував чверті громадян.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Адміністративно-виборча реформа (найважливіша):</strong> Аттику поділено на 10 філ (територіальні виборчі округи). Кожна філа складалася з трьох частин: з міста, з багатого узбережжя і з бідної гористої частини. Мета перемішати населення, щоб аристократи не мали впливу на своїх селян-сусідів. Філа це також полк (за філами служили).</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Вищі посади:</strong> архонти зберігаються, але з церемоніальною роллю, а військові й цивільні справи вели 10 стратегів (по одному від філи, на рік, після чого звітували, їх могли переобрати чи притягти до суду).</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Рада п'ятисот (по 50 від кожної філи):</strong> діяла між зборами й готувала порядок денний, щоб не перетворити збори на хаос. Рік ділили на 10 місяців, і кожна філа по черзі (по 50 осіб) керувала поточними справами. Демократія була безпосередньою.</div></div>
+    </div>
+    <p><strong>Три основи демократії (за греками):</strong> ісономія (рівність перед законом), ісополітія (рівність у здійсненні громадянських прав) і ісегорія (рівна можливість виступати в народних зборах, а не просто «свобода слова»).</p>
+    <p><strong>Остракізм («голосування черепками»):</strong> народних зборів питали, чи є хто з громадян, хто загрожує ладу. Якщо так, через місяць (відводилося 36 днів) проводилося голосування, і на черепках (найдешевший матеріал) писали ім'я того, кого треба вигнати. Хто набирав більшість, висилався з міста на 10 років, але без позбавлення прав і конфіскації майна, і міг повернутися. Лектор вважає це не жорстоким, а внесенням правил у політичну боротьбу: раніше з політичним супротивником просто розправлялися, а тепер його вигнали на час, і він міг повернутися. Це вважається першим зразком демократії (хоча, можливо, були й раніші в інших полісах, але недокументовані). Святкування 2,5 тисяч років демократії в 1993 р. відштовхувалося від реформ Клісфена.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 10. П'ятдесятиліття: Афіни і Перікл -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">10.</span> П'ятдесятиліття: Афіни і Перікл</h2>
+    <p><strong>Греко-перські війни.</strong> Античні автори називали період пентеконтаетія («п'ятдесятиліття») між 479 р. (вигнання персів із Балканської Греції) і 431 р. (початок Пелопоннеської війни). Домінували Афіни, Спарта поступово відсторонилася. 478/477 р. створено Делоський (Афінський морський) союз для боротьби з Персією. Основну силу давав афінський флот, тому Афіни швидко стали домінувати. Перемога при Еврімедонті (469/468) під проводом полководця Кімона. У 454 р. афінський флот потрапив в пастку й був знищений персами в дельті Нілу, після чого скарбницю союзу перенесли з Делоса до Афін. Війна триває, 449 р. Каллієв мир завершує греко-перські війни.</p>
+    <p>У цей час в Афінах відбувається боротьба за розширення демократії на чолі з Періклом (сином Ксантіппа, аристократом). У 450-х роках він ввів оплату державних посад (за Клісфеном усі громадяни могли обіймати посади, але вони не оплачувалися, і це обмежувало бідних). Оплата була невеликою, не більше оплати гопліта в поході (одна драхма на день). Також створено суд присяжних (геліея), присяжні (дикасти) отримували невелику винагороду. До цього Перікл проводив імперську політику щодо союзників: вони платили велику данину (форос) і мали розглядати важливі судові справи в Афінах. Союзники це прибережні держави й острови Егейського моря, зацікавлені в контролі Афін над морською торгівлею.</p>
+    <p>За Перікла будують новий порт Піреї (досі один з найбільших портів Середземномор'я), порто-франко з малим митом 2%, тому торговцям було вигідно перевантажувати товари саме там. Перікл хотів, щоб і торговці, і ремісники (афінські громадяни й метеки) мали заробіток, і розгорнув величезне будівництво (близько 20 років, витрачено 7 тисяч талантів, а талант це близько 26 кг срібла). Добудовано Довгі стіни (коридор стін між Афінами та Піреєм), через що Афіни стали невразливими для сухопутної облоги й мали зв'язок із портом. Мілетський архітектор Гіпподам за пропозицією Перікла спланував Піреї за новим принципом: прямокутні квартали, вулиці під прямим кутом (велика новація). На Акрополі: Пропілеї (парадний вхід), храм Безкрилої Ніки (богиню перемоги зображували з крилами, але Перікл і його соратники хотіли, щоб вона «лишилась» в Афінах), і головне творіння, Парфенон, храм Афіни Діви. Архітектори Іктін і Калікрат, скульптор Фідій створили довершену споруду, прямокутник, оточений колонами, символ європейської цивілізації. У 1687 р. під час венеціансько-турецької війни його зруйнували, тому ми бачимо руїни.</p>
+    <p>Перікл мав величезну популярність серед демосу. Його головний опонент серед аристократів Фукідід (не плутати з істориком, це син Мелесія) був вигнаний остракізмом у 444 р., і після цього Перікла 14 років поспіль обирали стратегом (щороку він звітував і його знову обирали). Афінські срібні тетрадрахми, «сови», поширилися по всьому східному Середземномор'ю. Посилення Афін дратувало Спарту, Коринф та інші поліси, що привело до Пелопоннеської війни. У 430-х роках Перікл втомив людей: почалися судові процеси проти його друзів і його другої дружини Аспасії, і, можливо, це змусило його зректися мирного курсу (він був за мирне суперництво зі Спартою) і не опиратися війні. 431 р. почалася Пелопоннеська війна, що врешті поклала край афінському могутності.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 11. IV ст. до н. е. -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">11.</span> IV ст. до н. е.</h2>
+    <p>Класичний період V–IV ст. вважається «зразковим», бо європейська історіографія XVIII–XIX ст. бачила в мистецтві й державному ладі Греції образець. Перемога над персами дала поштовх економіці, науці, культурі, і на чолі були Афіни. Як і століття в історії відрізняються від календарних (XX ст. історично почався 1914), так IV ст. до н. е. лектор починає з 401 р.: грецькі найманці (загін «десяти тисяч»), які дійшли до центру Перської держави й розбили перське військо, але їхній ватажок Кір Молодший загинув, і їм довелося повертатися через засніжені перевали Вірменії повз озеро Ван до Чорного моря. Історик і полководець Ксенофонт описав момент: він їхав позаду колони, що розтягнулася вузькою гірською дорогою, почув спереду шум, помчав вперед і побачив, що товариші ніби збожеволіли: кричать, качаються по землі. Він подивився вдалечінь і зіскочив з коня, приєднавшись до них. Греки на різних діалектах кричали одне слово: «Таласса! Таласса!», «Море!». Греки морський народ, вони знали: якщо дійдуть до моря, вони врятовані. З цієї історії лектор починає IV століття, час складних перемін. У кінці XX ст. його називали «кризою полісу» (зубожіння селян, економічні труднощі, поширення найманства, коли замість воїна-громадянина використовували найманців), але сучасні історики скептичні: яка ж це криза, якщо розквітало мистецтво, творили Платон, Арістотель, історики, музиканти, поети?</p>
+    <p>Але Пелопоннеська війна внесла розбрат і послабила Грецію, і IV ст. це час безперервної боротьби за гегемонію. У війні перемогла Спарта, ставила своїх губернаторів, страчувала супротивників, але вже скоро греки повстали проти спартанської влади. Проти Спарти виступила й Персія (ті самі найманці, які були втягнені в династичну боротьбу в Перській державі, очолювалися спартанськими полководцями, Персія не пробачила) і допомагала ворогам Спарти. На перські гроші Афіни відбудували флот і довгі стіни, розпочалась Коринфська війна (395–387 рр.), що виснажила Грецію й закінчилась Анталкідовим (Царським) миром (названий так, бо був укладений на умовах перського царя): час найбільшого падіння Греції, коли перси диктували умови.</p>
+    <p>379 р. від спартанської влади звільнилися Фіви (демократія на чолі з молодими вождями Пелопідом та Епамінондом). У 371 р. у битві при Левктрах фіванці вперше в грецькій історії розгромили в відкритому бою спартанську фалангу, Спарта втратила Мессенію і більше ніколи не очолила Грецію. Це дезорганізувало соціальне життя: приклад скіталізм у Аргосі на Пелопоннесі, коли бідні громадяни постановили забити дубинами (скіталами) понад тисячу своїх багатих співгромадян. 362 р. друга вирішальна битва (Мантинея) між Фівами та Спартою (Афіни прийшли на допомогу Спарті, бо Фіви були небезпечніші) закінчилася перемогою фіванців, але з невизначеним результатом: Епамінонд загинув, і Фіви теж не могли претендувати на лідерство. Афіни в 378 р. організували Другий афінський морський союз, пропонуючи союзникам рівноправні умови, і спочатку приєдналися багато приморських міст, але афіняни згадали минуле й почали гнобити союзників, ті повстали й виграли Союзницьку війну (357–355), і союз розпався. У Греції не було лідера.</p>
+    <p>Лідер з'явився поруч, це Македонія. Напівгрецька область, македонський діалект близький до грецького, а пізніше, у римський час, греки поглинули македонців. Македонська знать завжди говорила грецькою, при македонському дворі жили грецькі письменники й філософи (Евріпід), а вихователем наслідника Олександра був Арістотель. Цар Філіпп II (359–336) мріяв про гегемонію над Грецією, але сама Греція йому була потрібна менше: він хотів об'єднати сили Македонії та Греції для походу на Схід і завоювання Перської держави. Він добре знав про похід десяти тисяч греків («Анабасис»). Філіпп поступово послаблював поліси, втручався у внутрішні справи: зруйнував місто Олінф на Халкідіках, підтримав Дельфійський оракул у боротьбі з найманцями (фокідцями), що пограбували святині, розгромив їх і потопив у затоці як блюзнірів, і став володарем Середньої Греції. В Афінах склалася антимакедонська група на чолі з оратором Демосфеном, який закликав витрачати гроші не на видовища, а на військо. Але коли греки врешті створили союз, було вже пізно: 338 р. рішуча битва при Херонеї (Беотія), де кіннотою командував 18-річний син Філіпа Олександр. Пам'ять про неї береже кам'яний лев біля дороги з Дельф до Афін. Греки, попри відчайдушний опір, програли, і незалежності Греції настав кінець. Філіпп був милостивим, бо йому були потрібні союзники: скликав Коринфський конгрес 337 р., і всі поліси, крім Спарти, схвалили «священний» похід проти Персії. Але 336 р. Філіпп став жертвою замаху: його вбив македонський аристократ Павсаній (за версією, підісланий Олімпіадою, матір'ю Олександра: у Філіпа була молода дружина, народився син і спадкоємець, їх треба було усунути; вони теж невдовзі були вбиті). Усіх їх поховано в гробниці, знайденій у Північній Греції у 1970-х.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 12. Олександр Македонський -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">12.</span> Олександр Македонський</h2>
+    <p>Влада перейшла до 20-річного Олександра. Греки спочатку не поставилися до нього серйозно, Фіви повстали, але він швидко з'явився під стінами, зруйнував місто, продав жителів у рабство й підкорив Грецію. 334 р. до н. е. македонська армія (близько 30 тисяч піхотинців і 5–7 тисяч вершників) переправилася через Дарданелли. Спершу Олександр пішов до руїн Трої й приніс жертви троянським героям, вважаючи, що вони мають йому допомагати. Далі:</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Граніка (334):</strong> розгром армії перських сатрапів Малої Азії (її очолював грецький полководець Мемнон, а найбоєздатнішою частиною були грецькі найманці). Олександр загруз у боях у Малій Азії, облягав Мілет і Галікарнас, але здолав, Мемнон загинув. Легенда про Гордіїв вузол у місті Гордіон: розрубав і став претендентом на роль завойовника всієї Азії (світу).</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Ісс (333, осінь, на кордоні сучасних Туреччини та Сирії):</strong> проти Олександра стояла численна армія перського царя Дарія III. Македонська фаланга славилася вишколом і озброєнням, копіями різної довжини, так що в битві брали участь воїни перших п'яти рядів. Олександр вдарив по флангу, де стояв Дарій, прагнучи обернути царя в бігство й дезорганізувати військо. Це вдалося. Македонська кіннота захопила Дамаск, гарем, скарбницю.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Далі Олександр повернув не до Персії, а на південь, у Фінікію й Єгипет. Фінікійські міста захопив (опір зробив лише Тір). Історики сперечаються, чому; вважається, що хотів захопити всі бази перського флоту, що панував у Середземномор'ї. В Єгипті жерці бога Амона оголосили його богом (зима 332/331).</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Гавгамели (331, на півночі Месопотамії):</strong> головна битва з Дарієм, персидська військова техніка: колісниці з косами, бойові слони. Олександр і його воєначальники придумали, як з цим боротися, і Олександр знову переміг, ударивши по флангу, де стояв Дарій, сам брав участь в атаці (збереглася мозаїка з Помпеїв, що зображує Олександра, який наступає на Дарія). Перси розбиті, Олександр урочисто вступив у Вавилон, зробив його столицею.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>330 р.:</strong> захоплює Персеполь, перські скарбниці, ритуально спалює палац у Персеполі «у помсту» за спалення грецьких храмів. Переслідує Дарія, якого захопили й убили сатрапи східних провінцій. Олександр влаштував йому поховання.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Далі Бактрія й Середня Азія (нинішній Афганістан), довгі вперті бої, повстання Спітамена, яке Олександр жорстоко придушив. 326 р. вторгнення в Індію. Мета, очевидно, вже всесвітнє завоювання, за уявленнями греків Земля була оточена океаном, а Індія була не величезним субконтинентом, а «великою країною», тому він прагнув дійти до краю землі. Про Китай тоді не знали. Воїни збунтувалися, і 326 р. Олександр повернув назад, спускаючись на південь по річці, завойовуючи землі, а далі уздовж узбережжя Перської затоки повернувся у Вавилон. Похід тривав з 334 по 325 р., майже 10 років, і Олександр завоював майже всі землі держави Ахеменідів.</div></div>
+    </div>
+    <p>Про політику Олександра знаємо мало. Він прагнув поєднати уявлення нових підданих із грецькими й македонськими, залучав у адміністрацію й еліту персів, бактрійців, мідійців, влаштовував шлюби грецьких та македонських воїнів з місцевими дівчатами і так зміцнював державу. Не всім у його оточенні подобалося, що він оголосив себе богом (македонські царі богами не були). Були, можливо, плани щодо Заходу. 323 р. він помер у Вавилоні у віці 33 років (імовірно від малярії). Спадкоємців лишилося мало: малолітній син і слабоумний зведений брат.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 13. Епоха еллінізму -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">13.</span> Епоха еллінізму</h2>
+    <p>Після походу Олександра виникає новий світ, східний грецький, який називають елліністичним. Епоха тривала приблизно три століття, з 323 до 30 р. до н. е. Назву придумав німецький історик Дройзен у середині XIX ст.; вона невдала, бо характеризує лише грецьку сторону, але утрималася. Це час інтенсивного греко-східного синтезу культури, релігії, цивілізації.</p>
+    <p>Регент Пердікка (мав забезпечити перехід влади) був убитий 321 р., і держава розпалася на царства діадохів (воєначальників і наступників Олександра). Переділ тривав до 301 р. (битва при Іпсі), після чого утвердилися три найбільші держави: Єгипет (династія Птолемеїв), держава Селевкідів (Сирія, Месопотамія, Іран) і Македонія. Було й чимало менших, на кшталт Пергама. Держави постійно воювали, велику роль відігравали армія і флот, наймалися найманці (платили грошима чи давали ділянки землі). Місцевому населенню довіряли мало, боячись повстань. Продовжували існувати поліси (грецькі міста: Александрія в Єгипті, Антіохія в Сирії тощо) з внутрішньою автономією, і їхні мешканці не платили податків, а місцеве населення було обкладене даниною на користь полісів і царів.</p>
+    <p><strong>Наука і культура.</strong> Елліністичні царі давали багато грошей на науку, бо вона була престижною. Птолемеї заснували Александрійську бібліотеку (у середині III ст. близько 300–400 тис. сувоїв, найбільше зібрання у світі). Розвивалася філологія й літературна критика: поняття відмінка, відмінювання, дієвідмінювання придумали александрійські вчені. Цари скуповували рукописи античних авторів (Есхіл, Евріпід, Арістофан) у грецьких містах і переправляли в Єгипет. Також заснували Мусейон (звідси слово «музей»), величезний науково-дослідний інститут, де були зібрані вчені, ботанічний сад і звіринець, проводилися досліди й астрономічні спостереження. Обчислили довжину Землі, її розміри, відстань до Сонця. Багато технічних винаходів: гвинт Архімеда для підйому води на канали й зрошення. Але більшість досягнень не використовувалася у виробництві: парову машину застосовували лише для розсування театральної завіси. Причина: виробництво не потребувало винаходів, бо античне господарство трималося на дешевій рабській праці, і розвиток науки не супроводжувався розвитком виробництва.</p>
+    <p>Грецька мова стає загальною діловою мовою Близького Сходу (її знали освічені верстви). Відбуваються великі міграції. Одна з них: переселення євреїв з Юдеї в Єгипет, що привело до культурного перевороту, бо єгипетські євреї забували арамейську й давньоєврейську, і виникла потреба перекладу священних текстів грецькою: це Септуагінта (переклад 72 перекладачів, III–I ст. до н. е., за переказом з ініціативи Деметрія Фалерського, учня Арістотеля), перший переклад релігійного тексту однієї культури мовою іншої.</p>
+    <p>Елліністичні царства спочатку були успішними, але експансія швидко припинилася. Грецькі колонії в глибині Азії (до нинішнього Узбекистану, Індії) поступово занепадали, а східні території переходили під владу місцевих правителів. Головний суперник Парфянське царство (у III ст. захопило Іран, у II ст. Месопотамію). З заходу наступав Рим: республіка воювала з Македонією, 146 р. до н. е. зруйновано Коринф, а до 30 р. до н. е. усі елліністичні держави підпали під владу Риму. Це було легше, бо Рим спочатку виступав як захисник полісів, і поліси порівняно легко переходили під його владу. Підсумок лектора: епоха еллінізму дала багато відкриттів і змішання уявлень, і, що важливо для нас, це приклад успішного співіснування й співпраці різних культур і цивілізацій.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 14. Окремо: устрій полісу (повторення і доповнення) -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">14.</span> Окремо: устрій полісу (повторення і доповнення)</h2>
+    <p>Лектор ще раз наголошує, що поліси це громадянські общини, власність громадян, нащадків першопоселенців, колективних власників. Три стани, і в кожному полісі вони мають свої назви: громадяни, вільні негромадяни (в Афінах метеки, в Спарті періеки) і раби. Народні збори збираються з тих, хто може носити зброю (зазвичай з 20 років).</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text">Вільні негромадяни це прибульці з інших полісів, зазвичай греки (пізніше могли бути й не греки), торговці й ремісники. Не могли бути землеробами, бо це пов'язано з власністю. Відігравали важливу роль у ремеслі й торгівлі, служили у війську (в Афінах у сухопутній армії й флоті, в Спарті періеки гопліти). Могли мати внутрішнє самоуправління, але повних громадянських прав ніде не мали: в Афінах для представництва в суді потрібно було просити громадянина, бо вони скоріше об'єкти права, ніж суб'єкти.</div></div>
+      <div class="num-row"><div class="num-badge">•</div><div class="num-text"><strong>Раби.</strong> Греки, як і інші цивілізації, використовували рабську працю. Основа право переможця: я захопив місто, милостиво зберіг жителям життя і можу використати їх на роботах. Але називати грецьку цивілізацію «рабовласницькою» (як радянські історики за Марксом) не варто: рабська праця переважала лише в окремі короткі періоди, використовувалась разом із працею вільних. Раби абсолютно безправні, але господарю невигідно було їх вбивати (вони коштували недешево), в Афінах було обмеження: убивство раба прирівнювали до ненавмисного вбивства вільного. З точки зору давніх, головна межа проходила не між рабами й вільними, а між громадянами й негромадянами. Звільнення рабів було звичайною справою (зафіксовані десятки тисяч написів про відпуск на волю), часто господарю вигідніше тримати раба «на оброку». Якщо вільний жив з рабинею, після його смерті вона звільнялася разом із дітьми. Але перехід у громадяни траплявся одиничними випадками: коло власників не можна відкривати для чужаків.</div></div>
+    </div>
+    <p>Громадяни це не лише чоловіки, а й жінки та діти, але головну роль, з точки зору давніх авторів, відігравали чоловіки призовного віку, бо права були пов'язані з обов'язками, і головний обов'язок громадянина захищати поліс. Приклад: Фукідід, описуючи катастрофічну епідемію чуми 430/429 р., пише, що загинуло стільки-то вершників і гоплітів, а жінок, дітей, рабів та «іншого натовпу» незліченна кількість. Це відрізняється від нашого гуманістичного погляду, де діти й жінки перелічуються першими.</p>
+    <p><strong>Жінки.</strong> Мета шлюбу народження законних спадкоємців-громадян, тому шлюб оформляли релігійними церемоніями. Були й шлюби між представниками різних станів (громадянин і метека), визнавалися майнові права, але діти не ставали громадянами; було й просто співжиття господаря з рабинею. Жінки залежали від чоловіків і батьків. Заміжня жінка (якщо була служниця, яка могла піти на ринок) не мала виходити з дому, крім релігійних церемоній і похоронних процесій. Чоловік міг легко дати розлучення (із забезпеченням і часто видавши заміж за знайомого), а жінці було дуже важко вимагати розлучення. Юридичне становище дуже низьке у всіх полісах, крім Спарти, але реальне часто краще, бо не регламентувалось законами. Жінки жили на жіночій половині будинку, далі від входу, куди приходили гості чоловіка (там рабині, служниці й діти). Відносну свободу мали на релігійних святах, наприклад Фесмофоріях (спеціальне жіноче свято, під час якого чоловіки навіть залишали місто, і лишалися тільки жінки з їхніми ритуалами). Значно більше свободи мали гетери (освічені, їх було чимало в Афінах та інших полісах). Ставлення до заміжніх жінок було традиціоналістським: приклад Аспасії, дружини Перікла, що брала участь у розмовах чоловіків, що для афінських звичаїв було неприйнятним. Становище жінок почало поліпшуватися лише в елліністичний період.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- 15. Окремо: смерть Олександра і війни діадохів -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">15.</span> Окремо: смерть Олександра і війни діадохів</h2>
+    <p>Олександр помер 323 р. у Вавилоні, правив 12,5 років. Лишився малолітній син і слабоумний зведений брат Арідей (Філіпп III), тож одразу постало питання про передачу влади. Перед смертю він обрав регентом Пердікку. Проявилися суперечності між регентом і соратниками Олександра, які отримали право правити областями, діадохами. Пердікка був зацікавлений у збереженні влади за спадкоємцями, а діадохи проти, але військо його не підтримало, і 321 р. його вбили. На нараді в Тріпарадісі в Сирії діадохи вирішили, що далі: новим регентом став поважний полководець Антипатр (321–319). Після його смерті 319 р. держава остаточно розпалася, почалися війни діадохів. Діадохи отримали різні області й мали різні інтереси: Птолемей отримав Єгипет, Селевк (через Вавилон), Лісімах, Антигон Одноокий (з сином Деметрієм, база на півдні Малої Азії та Сирії, що розширив володіння і висунув претензії на єдину владу). 311 р. його визнали «першим серед рівних», а 306 р. він прийняв титул царя, але інші діадохи не стерпіли й самі прийняли царські титули. 301 р. у битві при Іпсі в Малій Азії Антигон Одноокий зазнав поразки й загинув. У цих війнах Кассандр, син Антипатра, жорстока людина, наказав убити спочатку Філіппа III, зведеного брата Олександра, потім сина Олександра разом із вдовою Роксаною (311 р.), і династія Аргеадів, династія Олександра Великого, перервалася.</p>
+    <p>Далі війни діадохів між собою. Найуспішнішим був Птолемей: не тому, що мав найбільшу територію, а тому, що мав чіткі й зрозумілі межі, на які інші не могли претендувати: з бази в Єгипті захопив Кіпр, Килікію, Сирію, деякі області Малої Азії і контролював Кіклади. Найбільшу територію отримав Селевк I, якого Антигон Одноокий вибив із Вавилона, потім він повернув собі Вавилон. Близько 300 р. заснував нову столицю Антіохію на Оронті, і прагнув зміщувати вектор впливу ближче до Середземномор'я, але через це почав втрачати контроль над східними областями (індійськими володіннями, Бактрією й Парфією). Селевк убитий зрадницьки 281 р. (родичем Птолемея).</p>
+    <p>Наприкінці 280-х – початку 270-х років на елліністичний світ обрушилися галли (кельтські племена, галати), які вторглися на Балкани й в Малу Азію, де створили «розбійницьку державу» Галатію й тероризували елліністичні держави. Знаменитий Пергамський вівтар присвячений перемозі над галатами; ця перемога дісталась дорого. До середини III ст. склалося три найпотужніші держави: Єгипет Птолемеїв, держава Селевкідів (Сирія) і Македонія, де закріпився онук Антигона Одноокого Антигон II Гонат. Війни діадохів велися здебільшого найманцями. Основна зброя це піхотні списи (довжина близько чотирьох метрів, сариса), кінниця мала допоміжну роль, була легка й важка кавалерія за перським зразком (катафрактарії, «кірасири»). Воїнів набирали переважно з Греції та Македонії, і Македонія значною мірою знелюдніла, бо частина чоловіків пішла в найманці. Системи комплектування різні: у Птолемеїв найманці отримували клер (надділ землі), який здавали в суборенду чи обробляли родичі, у Селевкідів переважав рекрутський набір.</p>
+    <p>У середині III ст. елліністичні держави ще сильні, але сила поступово слабшала, і міжусобні війни були однією з головних причин. Зі сходу наступала Парфія, на заході Рим. Знаковою стала поразка Антіоха III (прозваного Великим за успішні походи в Індію, який позиціонував себе наступником Олександра): у 189 р. в битві при Магнезії його розбив римський полководець Сціпіон. Зірка елліністичних царств згасала, Рим завойовував їх одне за одним, і останнє, Єгипет, упало під натиском Риму в 30 р. до н. е.</p>
+    <div class="final-quote">
+      <div class="final-text">Поліс це <strong>не стіни, а люди</strong>.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>

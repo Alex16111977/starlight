@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<script src="theme.js" data-native="light"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starlight — Роздуми про особисте життя</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Montserrat:wght@100;200;300;400&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html{width:100%;min-height:100%;background:#edecf3;font-family:'Montserrat',sans-serif;color:rgba(52,58,94,.85);scroll-behavior:smooth}
+body{min-height:100vh;position:relative;overflow-x:hidden}
+canvas{position:fixed;inset:0;z-index:0}
+.nebula{position:fixed;inset:0;z-index:1;pointer-events:none}
+.nebula::before{content:'';position:absolute;width:70vw;height:70vw;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(120,160,200,.20) 0%,rgba(80,120,180,.12) 35%,transparent 70%);border-radius:50%;animation:breath 8s ease-in-out infinite alternate}
+.nebula::after{content:'';position:absolute;width:40vw;height:60vw;top:30%;left:60%;transform:translate(-50%,-50%);background:radial-gradient(ellipse,rgba(212,175,110,.16) 0%,transparent 60%);border-radius:50%;animation:breath 11s ease-in-out infinite alternate-reverse}
+@keyframes breath{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-50%) scale(1.15)}}
+
+.content{position:relative;z-index:10;max-width:860px;margin:0 auto;padding:60px 32px 100px}
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:72px;opacity:0;animation:riseIn 1s .2s ease forwards}
+.back{font-size:11px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;text-decoration:none;transition:color .4s;padding-bottom:4px;border-bottom:1px solid transparent}
+.back:hover{color:rgba(52,58,94,.9);border-bottom-color:rgba(52,58,94,.3)}
+.page-logo{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:24px;letter-spacing:.15em;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text}
+
+.page-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(42px,8vw,72px);letter-spacing:.1em;color:transparent;background:linear-gradient(135deg,#8ab0ff 0%,#c8d8ff 30%,#fff 50%,#d4af6e 70%,#c8d8ff 100%);-webkit-background-clip:text;background-clip:text;text-align:center;margin-bottom:16px;opacity:0;animation:riseIn 1.2s .4s ease forwards}
+.page-subtitle{text-align:center;font-size:12px;font-weight:400;letter-spacing:0.16em;color:rgba(52,58,94,.75);text-transform:uppercase;margin-bottom:64px;opacity:0;animation:riseIn 1s .7s ease forwards}
+
+.divider{display:flex;align-items:center;gap:16px;justify-content:center;margin:48px 0}
+.div-dot{width:3px;height:3px;border-radius:50%;background:rgba(52,58,94,.3)}
+.div-dot.big{width:5px;height:5px;background:rgba(52,58,94,.6);box-shadow:0 0 8px rgba(52,58,94,.3)}
+.div-line{width:60px;height:1px;background:linear-gradient(to right,transparent,rgba(52,58,94,.2),transparent)}
+
+.section{opacity:0;animation:riseIn 1s ease forwards;margin-bottom:56px}
+.section-title{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(24px,4vw,32px);letter-spacing:.08em;color:rgba(36,40,68,1);margin-bottom:24px;position:relative;padding-left:20px}
+.section-title::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:6px;height:6px;border-radius:50%;background:#8ab0ff;box-shadow:0 0 12px #8ab0ff}
+.section p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.9);margin-bottom:16px}
+.section p a{color:#3f4a9e;text-decoration:none;border-bottom:1px solid rgba(138,176,255,.35)}
+.section p a:hover{color:#3f4a9e}
+
+.hero-quote{text-align:center;padding:40px 20px;margin-bottom:24px;position:relative}
+.hero-quote::before,.hero-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:80px;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.4),transparent)}
+.hero-quote::before{top:0}.hero-quote::after{bottom:0}
+.hero-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.6vw,32px);line-height:1.4;color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;margin-bottom:18px}
+
+.phrases{display:grid;grid-template-columns:1fr;gap:16px;margin-top:20px}
+.phrase{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px;transition:all .4s;position:relative;overflow:hidden;display:flex;gap:22px;align-items:flex-start}
+.phrase::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.phrase:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.phrase:hover::before{opacity:1}
+.phrase-icon{font-size:28px;flex-shrink:0;width:36px;text-align:center}
+.phrase-body{flex:1;min-width:0}
+.phrase-said{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:17px;line-height:1.5;color:rgba(36,40,68,.92);margin-bottom:12px}
+.reply-label{font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#3c6352;margin-bottom:6px}
+.reply-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:20px}
+.card{background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.14);border-radius:16px;padding:28px 24px;transition:all .4s;position:relative;overflow:hidden}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent);opacity:0;transition:opacity .4s}
+.card:hover{background:rgba(52,58,94,.10);border-color:rgba(52,58,94,.25);transform:translateY(-4px)}
+.card:hover::before{opacity:1}
+.card-icon{font-size:28px;margin-bottom:14px;display:block}
+.card-title{font-family:'Cormorant Garamond',serif;font-weight:400;font-size:18px;letter-spacing:.05em;color:rgba(36,40,68,.95);margin-bottom:10px}
+.card-text{font-size:14px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+
+.highlight{background:linear-gradient(135deg,rgba(138,176,255,.10),rgba(212,175,110,.07));border:1px solid rgba(138,176,255,.20);border-radius:20px;padding:36px 32px;margin-top:20px;position:relative;overflow:hidden}
+.highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.highlight p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(36,40,68,.92);margin:0}
+.highlight em{font-style:normal;color:#7a5410}
+
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05));border:1px solid rgba(178,60,46,.26);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.warn::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(178,60,46,.4),transparent)}
+.warn p{font-size:15px;font-weight:300;line-height:1.85;color:rgba(96,44,32,.92);margin:0 0 12px}
+.warn p:last-child{margin-bottom:0}
+.warn em{font-style:normal;color:#9c2f22}
+
+.compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.col{border-radius:16px;padding:24px;border:1px solid rgba(52,58,94,.14)}
+.col.bad{background:rgba(180,80,120,.06);border-color:rgba(180,80,120,.18)}
+.col.good{background:rgba(138,176,255,.06);border-color:rgba(138,176,255,.18)}
+.col-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:14px}
+.col.bad .col-label{color:#242844}
+.col.good .col-label{color:#505b71}
+.col-text{font-family:'Montserrat',sans-serif;font-weight:400;font-style:normal;font-size:15px;line-height:1.75;color:rgba(36,40,68,.9)}
+.col-note{font-size:12px;font-weight:200;line-height:1.8;color:rgba(52,58,94,.85);margin-top:10px}
+@media (max-width:600px){.compare{grid-template-columns:1fr}}
+
+.question-card{background:linear-gradient(135deg,rgba(138,176,255,.08),rgba(212,175,110,.05));border:1px solid rgba(52,58,94,.15);border-radius:20px;padding:44px 36px;margin-top:24px;text-align:center;position:relative;overflow:hidden}
+.question-card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(212,175,110,.5),transparent)}
+.question-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.3),transparent)}
+.question-label{font-size:11px;font-weight:400;letter-spacing:0.16em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-bottom:18px}
+.question-main{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(22px,3.4vw,30px);color:transparent;background:linear-gradient(135deg,#8ab0ff,#c8d8ff,#fff,#d4af6e);-webkit-background-clip:text;background-clip:text;line-height:1.3}
+
+.final-quote{text-align:center;padding:50px 20px;margin-top:20px;position:relative}
+.final-quote::before,.final-quote::after{content:'';position:absolute;left:50%;transform:translateX(-50%);width:120px;height:1px;background:linear-gradient(to right,transparent,rgba(138,176,255,.4),transparent)}
+.final-quote::before{top:0}.final-quote::after{bottom:0}
+.final-text{font-family:'Cormorant Garamond',serif;font-weight:300;font-style:italic;font-size:clamp(18px,2.6vw,24px);line-height:1.6;color:rgba(52,58,94,.88);max-width:620px;margin:0 auto}
+.final-text strong{font-weight:400;color:#7a5410}
+
+@keyframes riseIn{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.shoot{position:fixed;width:2px;height:2px;background:white;border-radius:50%;z-index:5;pointer-events:none}
+.shoot::after{content:'';position:absolute;top:50%;right:2px;transform:translateY(-50%);width:120px;height:1px;background:linear-gradient(to left,white,transparent)}
+.nav-card.read::after{content:'✓';position:absolute;top:12px;right:12px;width:22px;height:22px;border-radius:50%;background:rgba(212,175,110,.9);color:#080b1a;font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:6;box-shadow:0 0 10px rgba(212,175,110,.5)}
+.read-toggle{display:block;margin:48px auto 0;padding:14px 32px;background:rgba(52,58,94,.06);border:1px solid rgba(52,58,94,.25);border-radius:100px;color:rgba(52,58,94,.8);font-family:'Montserrat',sans-serif;font-size:12px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;cursor:pointer;transition:all .3s;position:relative;z-index:10}.read-toggle:hover{background:rgba(212,175,110,.1);border-color:rgba(212,175,110,.4);color:rgba(36,40,68,.95)}.read-toggle.active{background:rgba(212,175,110,.18);border-color:rgba(212,175,110,.6);color:#7a5410}
+
+/* sl-light-v1 — світла тема (dark→light) */
+html{color:rgba(52,58,94,.9)!important}
+.page-title,.hero-text,.question-main,.page-logo{background:linear-gradient(135deg,#5261c2,#7a5fbe,#313868,#a9772e,#5f63bd)!important;-webkit-background-clip:text!important;background-clip:text!important;color:transparent!important}
+.section-title{color:#242844!important}
+.section-title::before,.div-dot.big{background:#5261c2!important;box-shadow:0 0 12px rgba(82,97,194,.4)!important}
+.section p a{color:#5a3f9e!important;border-bottom-color:rgba(122,95,190,.45)!important}
+.section p a:hover{color:#3f4a9e!important}
+.highlight em,.final-text strong{color:#7a5410!important}
+.warn em{font-style:normal;color:#9c2f22!important}
+.warn p{color:rgba(96,44,32,.92)!important}
+.card,.phrase{background:rgba(52,58,94,.05)!important;border-color:rgba(52,58,94,.14)!important}
+.card:hover,.phrase:hover{background:rgba(52,58,94,.09)!important;border-color:rgba(52,58,94,.25)!important}
+.card-title{color:#242844!important}.card-text{color:rgba(36,40,68,.9)!important}
+.phrase-icon{color:#7a5410!important}
+.phrase-said{color:#242844!important}
+.reply-text{color:rgba(36,40,68,.92)!important}
+.reply-label{color:#146239!important}
+.highlight{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.07))!important;border-color:rgba(52,58,94,.16)!important}
+.highlight p{color:rgba(36,40,68,.9)!important}
+.warn{background:linear-gradient(135deg,rgba(178,60,46,.10),rgba(200,120,40,.05))!important;border-color:rgba(178,60,46,.26)!important}
+.question-card{background:linear-gradient(135deg,rgba(82,97,194,.08),rgba(148,103,23,.06))!important;border-color:rgba(52,58,94,.15)!important}
+.col-label{color:#242844!important}
+.col.bad .col-label{color:#9c2f22!important}
+.col.good .col-label{color:#146239!important}
+.col.good{background:rgba(31,122,77,.07)!important;border-color:rgba(31,122,77,.22)!important}
+.col.bad{background:rgba(178,60,46,.06)!important;border-color:rgba(178,60,46,.20)!important}
+.col-text{color:rgba(36,40,68,.9)!important}
+.col-note{color:rgba(52,58,94,.8)!important}
+.final-text{color:rgba(52,58,94,.9)!important}
+.nebula::before{background:radial-gradient(ellipse,rgba(150,140,220,.16) 0%,rgba(120,150,230,.09) 35%,transparent 70%)!important}
+.nebula::after{background:radial-gradient(ellipse,rgba(220,150,180,.10) 0%,transparent 60%)!important}
+.shoot{background:#7a5fbe!important}
+.shoot::after{background:linear-gradient(to left,#7a5fbe,transparent)!important}
+.read-toggle{color:#4a4f78!important;border-color:rgba(52,58,94,.25)!important}
+.read-toggle:hover{background:rgba(148,103,23,.10)!important;border-color:rgba(148,103,23,.4)!important;color:#2c2c2c!important}
+.read-toggle.active{background:rgba(148,103,23,.16)!important;border-color:rgba(148,103,23,.55)!important;color:#7a5410!important}
+.soft{background:linear-gradient(135deg,rgba(110,200,160,.08),rgba(138,176,255,.05));border:1px solid rgba(110,200,160,.22);border-radius:20px;padding:32px 30px;margin-top:20px;position:relative;overflow:hidden}
+.soft p{font-size:15px;font-weight:300;line-height:1.85;color:#146239;margin:0}
+.soft em{font-style:normal;color:#146239}
+.quote-block{padding:28px 28px;border-left:2px solid rgba(148,103,23,.45);margin:24px 0;background:rgba(212,175,110,.08);border-radius:0 16px 16px 0}
+.quote-block p{font-family:'Cormorant Garamond',serif;font-weight:400;font-style:italic;font-size:18px;line-height:1.6;color:rgba(36,40,68,.94);margin-bottom:10px}
+.qa{font-size:11px;font-weight:400;letter-spacing:0.14em;text-transform:uppercase;color:#7a5410}
+.key-tag{display:inline-block;font-size:9.5px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#7a5410;background:rgba(212,175,110,.14);border:1px solid rgba(212,175,110,.4);border-radius:100px;padding:3px 10px;margin-left:10px;vertical-align:middle}
+.rule-num{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15px;color:rgba(52,58,94,.5);margin-right:8px}
+.safin-note{font-size:12.5px;font-weight:300;font-style:italic;color:rgba(52,58,94,.68);margin-top:8px}
+.hero-author{font-size:11px;font-weight:400;letter-spacing:0.18em;text-transform:uppercase;color:rgba(52,58,94,.85);margin-top:18px}
+.reply{margin-top:14px;padding-top:14px;border-top:1px solid rgba(31,122,77,.32)}
+.reply-label{font-family:'Montserrat',sans-serif;font-size:12px;font-weight:500;letter-spacing:0.1em;text-transform:uppercase;color:#146239;margin-bottom:10px}
+.reply-text{font-family:'Montserrat',sans-serif;font-style:normal;font-size:15px;font-weight:400;line-height:1.75;color:rgba(36,40,68,.92)}
+.num-list{display:grid;gap:10px;margin-top:20px}
+.num-row{display:flex;gap:14px;align-items:flex-start;background:rgba(52,58,94,.05);border:1px solid rgba(52,58,94,.13);border-radius:14px;padding:16px 18px}
+.num-badge{flex-shrink:0;width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:13px;color:#7a5410;background:rgba(212,175,110,.16);border:1px solid rgba(212,175,110,.45)}
+.num-text{font-size:14.5px;font-weight:300;line-height:1.75;color:rgba(36,40,68,.9)}
+.page-subtitle{text-wrap:balance}
+</style></head>
+<body>
+<canvas id="stars"></canvas>
+<div class="nebula"></div>
+
+<div class="content">
+  <div class="header">
+    <a class="back" href="index.html">Home</a>
+    <span class="page-logo">Starlight</span>
+  </div>
+
+  <h1 class="page-title">Роздуми про особисте життя</h1>
+  <p class="page-subtitle">Щастя, звички, стосунки, рішення й духовність у п'яти частинах</p>
+
+  <!-- Hero -->
+  <div class="section" style="animation-delay:.9s">
+    <div class="hero-quote">
+      <div class="hero-text">Хто вважає себе центром всесвіту, той частіше нещасний.</div>
+      <div class="hero-author">Іцхак Адізес</div>
+    </div>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Вступ -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title">Вступ</h2>
+    <p>Адізес писав блог із 2003 року. Він знав, що з ним сперечатимуться, і хотів, щоб читачі просто думали. Книга про особисте життя, бо воно тісно пов'язане з професійним. Він побачив, що його теорії управління змінами працюють і в сім'ї.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Частина 1. Самопізнання -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">Частина 1.</span> Самопізнання</h2>
+    <p><strong>Міфи про щастя.</strong> Автор називає п'ять помилок.</p>
+    <div class="num-list">
+      <div class="num-row"><div class="num-badge">1</div><div class="num-text"><strong>Щастя це задоволення.</strong> Але в Голлівуді повно людей, які можуть купити будь-яку насолоду, і багато хто з них нещасний.</div></div>
+      <div class="num-row"><div class="num-badge">2</div><div class="num-text"><strong>Достатньо здоров'я.</strong> Фізичне здоров'я потрібне, але здорові люди теж бувають нещасними.</div></div>
+      <div class="num-row"><div class="num-badge">3</div><div class="num-text"><strong>Достатньо емоційного благополуччя.</strong> Люди «підсідають» на семінари з розвитку, а щасливішими не стають.</div></div>
+      <div class="num-row"><div class="num-badge">4</div><div class="num-text"><strong>Можна бути щасливим, якщо уникати складних стосунків.</strong> Ми соціальні істоти, тому одиночне ув'язнення і є покаранням.</div></div>
+      <div class="num-row"><div class="num-badge">5</div><div class="num-text"><strong>Можна бути щасливим завжди.</strong> Життя схоже на американські гірки: якщо засмутила дружина, почекай два дні, і буде інакше.</div></div>
+    </div>
+    <p>Усе це потрібне, але недостатнє. Об'єднує його любов: чим більше любові в житті, тим щасливіша людина. Починати треба з себе. Чи ти любиш себе? Чи правильно їси, висипаєшся, рухаєшся? Чи годуєш себе емоційно, інтелектуально й духовно? Потім ідуть родина, дім, робота, книжки, місто, країна, друзі. Любов не те саме, що задоволення. Вподобання завжди має причину, а любов буває попри все. Що більше задоволення дає людина чи річ, то болючіше їх втрачати, а життя змінюється. Тому любов без страждань не буває, і любити треба попри біль.</p>
+    <p>Далі ключова думка: щастя не мета і не шлях, а умова твого шляху. Щоб бути щасливим, потрібна духовність: усвідомлення, що над нами є вищі сили і є абсолютні заповіді. Хто вважає себе центром всесвіту, той частіше нещасний. Самозакохані політики й керівники розчаровані тим, що не можуть контролювати все, чого хоче їхнє его. Автор порівнює це з Галілеєм: Земля крутиться навколо Сонця, і ми теж рухаємось навколо вищої свідомості, а не навпаки. Коли визнаєш свою маленьку роль, стаєш скромнішим і не розчаровуєшся, якщо цілі не здійснились. Бажати й робити для цього все треба, але не розраховувати на гарантований успіх. Нехай буде що буде.</p>
+    <p><strong>Результативність в особистому житті.</strong> У бізнесі система результативна, коли дає те, заради чого створена. Автор питає, заради чого створена людина. Він радить питати не «чому я існую», а «для чого». У багатьох мовах ці слова майже збігаються (сербське «зашто» можна прочитати як «за що» і «для чого»). Питання «для чого» фокусує думки, а «чому» розсіює. Можна спитати й «для кого», і тоді ти на хвилину забуваєш про себе. Хто думає лише про себе, той схожий на ракову пухлину, яка живиться енергією тільки для себе. Мету життя не знайдеш у бочці, як Діоген, чи в печері. Треба вийти на площу й шукати, чим допомогти людям, як Сократ.</p>
+    <p>Потім автор питає: що тебе надихає? Слово «натхнення» від «душа» і «дихання». Це стан, коли ти зливаєшся з вищою силою й забуваєш про час і простір. Вирішальна ознака в тому, що натхнення дає енергію, а не забирає її. Улюблена справа після дня роботи додає сил. Ненависна справа виснажує. Ще одна умова: це має бути служіння іншим, інакше воно схоже на самозадоволення, яке тільки забирає сили. Це особливо важливо з віком, коли діти виросли й ти більше не працюєш. Замість того щоб чекати смерті в будинку для літніх, шукай корисну справу для людей, і будеш молодшим і довше житимеш. Митці, які творять не заради прибутку, теж служать, самим фактом свого існування. Адізес згадує п'єсу Тагора: на питання «Кому ти потрібен?» митець відповідає «уяви світ без нас». Важлива не інтенція, а результат, тобто спадщина: що ти залишаєш по собі.</p>
+    <p><strong>Іноді корисно пригальмувати.</strong> Світ дедалі складніший, мозок працює від ранку до ночі, і ми не помічаємо ні усмішки дитини, ні квітів, ні вітру. Скоро не згадаємо, як діти вчилися ходити. Життя «пролітає між вухами», бо ми дивимось усередину себе, у минуле й майбутнє. Порада «зупинись і понюхай троянди» не працює, бо щоб понюхати квіти, треба їх побачити, а для цього мозок має перестати монополізувати свідомість. Треба контролювати думки, а не підкорятись їм, і щоб вів не мозок, а серце. Півкулі мозку можуть сперечатися роками: права творча й ризикова, ліва обережна й дрібна. Рішення «всім серцем» дає життя без сумнівів, тривог і вічних «навіщо». Спершу треба все обміркувати головою, але коли настав час вирішувати, слухай серце. Серце чути тільки тоді, коли розуму скажеш, що досить міркувати. Ти це не розум, не тіло, не емоції й не дух, ти вище за них. Тоді життя відчувається довшим: більше спогадів і менше розчарувань.</p>
+    <p><strong>Іноді корисно нічого не робити.</strong> Бездіяльність дає змогу подивитися, чи ти йдеш до своєї мети. Роботою ми часто тікаємо від себе, а коли нічого не робиш, доводиться дивитися проблемам в обличчя. Автор помітив, що ті, хто подав на розлучення, часто доходили до цієї думки у відпустці чи на лікарняному, коли не було чим себе зайняти. В індуїзмі порожнеча й нескінченність пов'язані: коли створюєш порожнечу, в ній народжується нове. Багато його клієнтів-підприємців у юності мали вільний час через хворобу чи інші обставини, і саме тоді придумали своє діло. Багато хто відкрив бізнес після звільнення. Потяг, щоб перейти на інші рейки, мусить спершу пригальмувати: на повній швидкості змінити напрямок не вийде. Тому «нічого не робити» це передумова змін.</p>
+    <p>Що не вважається ніщонеробленням: телевізор, книжка в тіні, плавання, серфінг, велосипед. Це відпочинок. «Ніщо» означає, що в тебе немає планів і цілі й нічого не завантажує мозок. У йозі це «поза мерця». Таке ніщо саме не з'явиться, треба свідомо виділити час. Найпростіший шлях це медитація, автор медитує двічі на день по годині. Хто не хоче медитувати, нехай щодня годину сидить і нічого не робить, без почуття провини, з блокнотом поруч. Думки прийдуть цікаві.</p>
+    <p><strong>Осяяння після рейкі.</strong> Автор пройшов курс рейкі, щоб зрозуміти, чи можна «переміщати енергію» в компанії, лікуючи організаційні проблеми.</p>
+    <p><strong>Призначення.</strong> У рейкі вважають, що в кожного є призначення, і його видно за притоком енергії: йдеш за покликом, і сил додається, відхиляєшся, і втрачаєш їх. Автор розповідає, що на докторантурі його відмовляли від менеджменту (область була не модна, мовляв, роботи немає), але він послухав серце, а не розум. Зараз він не сприймає це як роботу, і до кінця дня в нього більше енергії, ніж зранку. Він любить спостерігати, вивчати й навчати менеджменту, але не просить його самого ним займатись. Коли доводиться займатись бухгалтерією чи кадровими проблемами, він втрачає енергію. Пилососом не чистять басейн.</p>
+    <p><strong>П'ять правил рейкі:</strong> сьогодні не турбуйся, не гнівайся, шануй батьків, учителів і старших, працюй старанно, будь вдячним.</p>
+    <p><strong>Не турбуйся.</strong> Турбота спрямована в майбутнє, якого ще немає, або в минуле, яке не змінити. Замість «чому це сталося» питай «для чого», бо це змушує шукати урок. Турбота забирає енергію, і спокій це «внутрішній маркетинг» упевненості. Глибоко віруючі люди зазвичай спокійніші, бо вірять, що Бог допоможе й простить. Невіруючим доводиться самим себе прощати. Важливо, що правило каже «саме сьогодні», а не «ніколи». Ти не обіцяєш не хвилюватися все життя, а дисциплінуєш себе на один день, і так день за днем. Як їсти салямі, шматок за шматком, так і слона.</p>
+    <p><strong>Не гнівайся.</strong> Гнів породжений страхом. Щоразу питай себе, чого я боюсь. Якщо прибрати джерело страху, зникне гнів. Приклад із собакою на повідку: друг порадив її відпустити, бо собака на повідку відчуває слабкість і нападає першою зі страху. Тому перші два правила означають: вір і не бійся, саме сьогодні.</p>
+    <p><strong>Шануй батьків, учителів, старших.</strong> Єврейське слово «кавод» («честь») походить від «каведу» («важкий»). Шанувати означає поважати чиюсь «вагу». Батьки дали тобі «бренд»: ти починаєшся там, де вони закінчились. Учителі й батьки хочуть тебе змінити, а це боляче, але правило вимагає шанувати їх незалежно від того, що ти про них думаєш. Любити не можна наказати (навіть Бог не змусить), а поводитися шанобливо можна. Автор називає це «форма наповнюється функцією»: спершу поведінка, а відчуття прийдуть. Нікого не можна списувати з рахунків заздалегідь, бо ти не знаєш, наскільки він тобі корисний.</p>
+    <p><strong>Працюй старанно.</strong> Цілісна людина не розділяє те, що треба, що хочеться й що вона робить. Це одне й те саме, без сумнівів і безсонних ночей.</p>
+    <p><strong>Будь вдячним.</strong> Це фінальна стадія цілісності, коли ти дякуєш за все, що з тобою відбувається.</p>
+    <p><strong>Усі п'ять правил знімають внутрішні конфлікти.</strong> Автор пояснює, чому це важливо для лікування. Хвороба це розлад, і той, хто лікує, віддає енергію. Хто сам у внутрішньому розладі, той не має надлишку енергії для інших, а в гіршому разі забирає її в пацієнта. Хто не має внутрішніх конфліктів, може віддавати любов, а любов лікує. Такими були Ісус і Будда. Для консультантів за його методом порада така: перед зустріччю з клієнтом двадцять хвилин медитувати, звільнитися від хвилювань і вдячно ставитися до професії.</p>
+    <p><strong>Про медитацію.</strong> Навесні 2008 року Адізес два тижні їздив Індією з гуру медитації (йому 71, гуру за 80). Це була його четверта поїздка, але перша справжня: спав в ашрамі, їв на підлозі з індійцями, медитував. Метод називається Сахадж Марг («природний шлях»). У ньому немає мантри й не треба зосереджуватись на диханні чи свічці, тільки серце. Його привабило те, що як єврей він багато думає і мозку потрібен відпочинок, а під час Другої світової, бачивши, як близьких відправляли на смерть, він «закрив» серце і хотів його знову відкрити.</p>
+    <p><strong>Що він відкрив.</strong> По-перше, думки з голови хочеться обговорювати й заперечувати, а голос серця не обговорюють. На «чому?» відповідь «бо!», як у закоханого. Якщо ти зважуєш варіанти, а серце мовчить, значить, ти ще не готовий: фрукт не дозрів, залиш його на гілці. Краще не вирішувати, ніж вирішувати поспіхом. По-друге, прислухаючись до серця, не помилишся. Помилка це завжди висновок заднім числом: «треба було подумати довше». Коли вирішуєш із серця, ти в злагоді з собою і навіть при поганому результаті не картаєшся, бо зробив найкраще, що міг. Помилка стає предметом цікавості, який урок з неї взяти. Немає місця провині.</p>
+    <p><strong>Як досягти спокою при важкому рішенні:</strong> під час медитації не чіплятися за окремі думки. Нехай пропливають, як хмари. Серце говорить тільки в тиші, тому ми закохуємось у спокої, а не в стресі. Є історія про йельський хор: найгірший хор вийшов на сцену, всі співали різне, а потім замовкали по одному, і лишився один чистий тенор. Так і в голові: безліч голосів, і їх треба вимикати по одному, поки не лишиться голос серця. Йоги називають розум терористом. На одній наклейці було написано: не завжди вір тому, що ти думаєш.</p>
+    <p><strong>Руйнівна природа людей типу Е.</strong> В Ізраїлі автор помітив, що всі скаржаться, хоч країна процвітає. Потім зрозумів, що це не євреї взагалі, а люди-підприємці (тип E в його моделі PAEI, де E це «підприємець», новатор, джерело змін). Вони штовхають зміни (часто заради змін) через глибоке незадоволення собою, ніби чогось не вистачає. Заповнюють внутрішню порожнечу зовнішніми змінами: бізнес-імперіями, революціями. Вони шукають мир ззовні, хоча він можливий тільки зсередини. Висновки автора: до скарг E-типів ставитися скептично, обвинувачення в некомпетентності сприймати як ознаку їхньої внутрішньої боротьби, відрізняти справжні проблеми від потреби мати проблеми, і лишати клієнтам-Е одну невирішену проблему, інакше їм незатишно (це стосується й його).</p>
+    <p><strong>Яке це бути євреєм.</strong> Автор прочитав «Треблінку» Штайнера. В Треблінці загинули його бабуся з дідусем, три дядьки, три тітки й шестеро двоюрідних братів і сестер. Найбільше його зачепила думка книги: головне не правда, а надія. Вона пояснює, чому мільйони людей покірно йшли на смерть і чому євреям так важко приймати рішення. В інтелектуальних питаннях вони люблять сперечатися й крутити предмет з усіх боків (це «пілпуль», суперечка заради суперечки, а не результату), а в особистих і емоційних ховають голову в пісок і чіпляються за надію. Звідси ізраїльське «все буде добре». Автор цитує Бен-Гуріона: щоб бути реалістом в Ізраїлі, треба вірити в чудеса. Гімн Ізраїлю це «Гатіква» («Надія»). Надія корисна, бо не дає зневіритись, але марна надія притупляє страх і заважає вчасно реагувати на небезпеку.</p>
+    <p><strong>Друга думка зі Штайнера:</strong> типова єврейська риса це шукати найважчий шлях, ніколи не вдовольнятись можливим, прагнути недосяжного. Звідси найвищий показник нобелівських лауреатів на душу населення. Але це й тягар: єврейських клієнтів важко консультувати, бо вони завжди кажуть «чудово, але можна ще...» і ускладнюють прості проблеми нескінченними суперечками. Задоволення це «анафема для справжнього єврея».</p>
+    <p><strong>Побажання на Новий рік.</strong> Автор пише про те, що змінитись означає перейти з одного стану в інший, і для цього чимось доведеться пожертвувати. У старого стану є свої плюси, інакше ми б там не сиділи. Силу рішучості можна виміряти тим, чим ти готовий пожертвувати. Новорічні обіцянки рідко виконуються, бо ми міцно тримаємось за старе. Автор розповідає про свої: схуднути на 10 кг, не працювати по суботах, консультувати не більше 10 днів на місяць, щоб писати книги. Платою буде смачна їжа й частина заробітку. Складніше за все виконувати обіцянки, дані собі, бо порушити їх легше, ніж ті, що дав при людях.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Частина 2. Здоровий спосіб життя і шкідливі звички -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">Частина 2.</span> Здоровий спосіб життя і шкідливі звички</h2>
+    <p><strong>«Нові джунглі», частина 1.</strong> У кам'яному віці виживав найсильніший і найшвидший, а ворога було видно (вовк, лев). Тепер це «нові джунглі», які ми самі створили, і вороги ховаються в гарній упаковці. За дослідженням однієї великої мережі супермаркетів, якщо відкинути фрукти й овочі, то 76% з решти 24 тисяч найменувань не мають поживної цінності. Фастфуд, солодкі напої, м'ясо й молочка з жирами й антибіотиками рекламують найвитонченішими психологічними прийомами. Багато людей помирає від інфарктів, інсультів, раку й діабету. У новому середовищі ворог прикидається другом, і ми їмо токсичну їжу, не розуміючи цього. Хто виживе? Не найсильніший і не найрозумніший, а той, хто має організованість і внутрішню дисципліну сказати «ні» спокусам, хто обирає їжу й знаходить час для спорту й відпочинку. Лише великі м'язи без здорового харчування не рятують. Нині цінується не те, як швидко бігаєш, а чи вмієш тримати рот закритим.</p>
+    <p><strong>«Нові джунглі», частина 2.</strong> Дарвінівська адаптація стала небезпечною, бо ми пристосовуємося до шкідливого: нових технологій, наркотиків, їжі. Виживуть ті, хто не пристосовується.</p>
+    <p><strong>Сила «ні» важливіша за «так».</strong> Сказати «так» зарядці не допоможе, коли тобі пропонують улюблений шкідливий звичай. Спершу потрібна сила волі сказати «ні». Автор рахує, скільки разів за день сказав «ні» нездоровому імпульсу й скільки не зміг, і намагається покращувати пропорцію, нагороджуючи себе в кінці тижня.</p>
+    <p>Автор «заздрить» релігійним євреям із шабатом: без телефона, авто, телевізора, чистий спокій і час для родини. Людина відрізняється від тварин тим, що розрізняє священне й буденне. Сучасні спокуси перетворюють усі дні на однакові, і час пролітає. Тому він радить один день на тиждень зробити «днем "ні"»: без телефонів, ТБ, авто. Він сам вибрав суботу й заповнює її читанням мудрих книг (Ошо, «Пірке Авот», збірки анекдотів), бо після них у нього більше енергії. Це має бути повільний день: довгі сніданки, розмови, без дзвінків і зустрічей. Він навіть мріє про нову релігію «Ні!» зі значками.</p>
+    <p>Дітей треба вчити «ні» не лише наркотикам, а й кривавим іграм, фастфуду, надмірному ТБ. Батьки, які обоє працюють, часто кажуть «ні», але не мають сил відстояти його, а теорії «самореалізації» й «свободи вибору» дитини часто прикривають небажання встановлювати норми. Він також критикує те, що Захід експортує по світу: кредити, фастфуд, трудову етику, де праця важливіша за все, і почуття провини, коли зупиняєшся понюхати квіти.</p>
+    <p><strong>Чому я проти абортів.</strong> Автор викладає свою позицію. Сексуальна розкутість призводить до незапланованих вагітностей, і легалізація аборту, на його думку, це лікування симптому, а корінь у комерціалізації сексу. Він не приймає аргумент «це моє тіло», бо тоді чому не вирішувати, чи мати секс чи користуватись контрацепцією, і заперечує, що зародок не людина. За його «універсальною теорією» системи (як зародок підприємства) уже в момент зачаття містять усі кінцеві компоненти. Аборт він допускає при загрозі життю матері чи дитини або при зґвалтуванні. В інших випадках вважає, що треба давати медичну й психологічну допомогу, а після пологів усиновлення. Життя дає Бог, тому він проти й смертної кари.</p>
+    <p><strong>Коли помірності недостатньо.</strong> Прислів'я ладіно з маминого дому: надлишок шкодить. Загальне правило помірності працює, але не для того, що викликає залежність, бо залежність забирає контроль, і помірним бути вже не вийде. Автор питає: до чого прив'язаний ти? Робота, їжа, секс, алкоголь, наркотики, тренування, куріння. Предмет залежності не здається поганим, бо дає задоволення. Тисячоліттями діяло правило «приємне корисне», але воно працювало за дефіциту, а за достатку веде до хвороб. Тест такий: спробуй трохи скоротити кількість чи частоту того, чого в тебе забагато. Якщо важко, значить, ти не контролюєш себе й ти залежний. Про себе автор розповідає, що пристрасть до хліба, сиру, солі, масла й цукру довела його до ризику діабету, а ліки від тиску пошкодили нирки.</p>
+    <p><strong>Про схуднення.</strong> Автор проходив трьохтижневий курс у центрі TrueNorth у Каліфорнії. Він пише, що індустрії схуднення й фармацевтики лікують не причину, а симптом. Зайва вага не причина інфаркту чи високого тиску, а так само наслідок. Причина в тому, що ми неправильно харчуємось, і справа в якості, а не в кількості їжі. Еволюційно нас тягне до калорійного й білкового, бо їжі було мало. Тепер, у достатку, інстинкт «наїстися під зав'язку» шкодить, а харчова індустрія додає жир, цукор і сіль, щоб ми їли ще більше. Результат: ожиріння, закупорка судин, високий тиск, інфаркти, діабет. Липосакція чи зменшення шлунка це як відрізати ногу товстуну, щоб схуднути: симптом зник, але ризик передчасної смерті лишається. Мета це здоров'я, а не схуднення. Автор розповідає анекдот про п'яного, який шукає ключі там, де ліхтар, а не там, де їх загубив: легше працювати з вимірюваним (вагою), ніж міняти харчові звички. Його результат за тиждень: тиск з 140/100 до 100/80, холестерин зі 170 до 117, мінус 2,7 кг за шість днів, без голодування й нових ліків. Він радить книгу «Пастка задоволення».</p>
+    <p><strong>Чому принцип «Нехай клієнт вирішує сам» не працює.</strong> Компанії (тютюнові, харчові, телевізійні) виправдовуються свободою вибору. Автор заперечує. Справжня свобода потребує повної інформації, а на упаковках зазвичай дані (їх можуть приховувати, назвавши цукор по-іншому), а не інформація. Навіть при чесних даних потрібна сила волі, а вона слабне через залежності. Індустрії їжі, алкоголю й телебачення «продають задоволення», бо цим швидко формується залежність, і це вигідний бізнес. Лозунги про свободу вибору це «фіговий листок». Є вибір: заборона шкідливого (сухий закон у США провалився) чи свобода. Автор віддав би перевагу забороні й цензурі на ТБ, бо ціна «свободи вибору» вища.</p>
+    <p><strong>Залежність від високих технологій.</strong> Дзен-історія: селянин веде корову на мотузці, і питання, хто кого веде. Те, що ти контролюєш, контролює тебе. Автор бачить, що на нарадах керівники друкують у смартфонах, а коли прохаєш прибрати, за кілька хвилин знову в блекберрі (його називали «крекберрі»). Дружина не йде з ним у кіно, поки блекберрі вдома не лишиться. Подружжя клієнтів кажуть, що розлучаться через мобільники. Чому так? Це залежність типу I (інтегратор, потреба бути потрібним і належати), бо всім потрібна увага. Тому соцмережі й чати такі міцні: його син-підліток реагує на заборону інтернету як на одиночну камеру. Зупиняти технології не можна й не треба (Унабомбер пробував), а потрібна самодисципліна.</p>
+    <p><strong>Залежність від почуття.</strong> Притча «Шукай поні»: батько посадив сина-песиміста в кімнату з іграшками, а сина-оптиміста в сарай із гноєм. Песиміст ридав, що іграшок забагато й життя жахливе, а оптиміст кидав гній і свистів, бо де стільки гною, там має бути поні. Мораль: коли з тобою сперечаються, дивись крізь «гній» і питай, де поні, чого опонент знає, чого не знаєш ти. А друга мораль: сини самі вибрали, як почуватися. Щастя не залежить від зовнішніх обставин, а залежить від вибору. Проблема не в нестачі свободи вибору між почуттями, а в тому, що людям подобається почуватися погано. Автор думає, що це залежність: звикаєш до стану «жертви обставин», а коли все добре, вигадуєш причини повернутися назад. Як вийти? Без психотерапії, каже він. Проблема в голові, тож рішення в серці: треба інакше реагувати на сигнали зовні, негативно реагувати на ті, що підсилюють залежність. Автор спробував переконати себе, що в нього чутливість до глютену, але самонавіювання не спрацювало, бо він знає, що це неправда. Працює інша стратегія: прибрати спокусу з-перед очей.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Частина 3. Стосунки -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">Частина 3.</span> Стосунки</h2>
+    <p><strong>Методологія Адізеса в сімейному житті.</strong> Усе проходить життєвий цикл: народження, ріст, старіння. Родина теж.</p>
+    <p><strong>Чого хочуть чоловіки.</strong> Підліток шукає гарну дівчину, яка сподобається друзям. Коли шукає дружину, хоче хорошу господиню, підтримку, партнера. З дітьми потрібна хороша мати, яка встановлює правила й виховує. Коли діти виїжджають, потрібен партнер для старості: розумно розпоряджається ресурсами, цікавий співрозмовник, і з ним приємно й мовчати біля каміна.</p>
+    <p><strong>Чого хочуть жінки.</strong> Спершу привабливий і здоровий чоловік, успішний у цікавій їй сфері. Потім хороший годувальник і батько. Коли діти виросли, той, із ким хочеться старіти: підтримує, дбає, цікавий співрозмовник.</p>
+    <p>Звідси головна ідея: потрібна здатність змінюватись. Стиль «керівництва» сім'єю має змінюватись із етапом, а сьогодні подружжя керує спільно, тож обоє мають адаптуватися. Автор іронічно радить обережному чоловікові познайомитись із майбутньою тещею (жінці зі свекром). Він пояснює, чому розпадаються шлюби: сім'я переходить на новий етап, а стиль одного не змінюється. Приклад: чоловік лишається «Пітером Пеном», цікавиться лише сексуальністю дружини, а не материнством. Жінка була чудовою матір'ю, а коли гніздо спорожніло, не знає, що робити. Тому й виникають «серійні шлюби»: старий партнер перестав відповідати новому етапу. Для здорового шлюбу треба вибрати партнера, який здатен змінюватись, а шлюби тепер тривають 30, 40, 50 років.</p>
+    <p><strong>Взаємодоповнююча команда.</strong> Дітям потрібні і жіноча, і чоловіча енергія. Протилежності притягуються (товариський і ризиковий обирає спокійного й обережного), але й конфліктують. Із взаємною довірою і повагою конфлікт стає конструктивним, без них шлюб рано чи пізно закінчується. Окремо автор пише, що в багатьох країнах фізичне насильство досі норма, а у розвинених воно засуджується, але словесні образи залишають шрами не гірші, і однаково болючі для чоловіків і жінок.</p>
+    <p><strong>Передбачуване розлучення.</strong> Автор порівнює підхід психолога й консультанта з організацій. Керівник розповів, що психолог на скаргу «усі збирають свою армію» порадив створити свою. Психолог фокусується на особі: здорові компоненти дадуть здорову систему. Адізес же фокусується на системі: система більша за суму частин, і можливо, що всі здорові, а система не працює. Він переносить це на сім'ю. Якщо дружина почувається нереалізованою (раніше в традиційній сефардській культурі в жінки була своя поважна роль господині, як у його матері, чия кухня була її «імперією»; а тепер поважають переважно тих, хто заробляє), вона йде до психолога, який питає, що зробить її щасливою. Чоловік стає воїнственнішим у відповідь, і, за спостереженням автора, у заможних сім'ях розлучення першою подає саме дружина, яка ходила до психотерапевта. Його порада: не відпускати дружину на терапію одну, а найняти сімейного психолога, який працює з сім'єю як із системою, і ходити разом.</p>
+    <p><strong>Місяць і «американські гірки».</strong> Історія про друга-холостяка: шукав розумну, знайшов, одружився, через рік-два вона здалась йому холодною. Розлучився, одружився з емоційною, через пів року вона задушила його вимогами. Він шукав ідеал. Висновок автора: люди як Місяць, у кожного світла й темна сторона, і ти не знаєш людину, поки не побачиш обидві. Питання в тому, чи любиш світло більше, ніж ненавидиш темряву. Ідеальної людини немає, і ганятися за нею це ганятися за веселкою. Мета в тому, щоб знайти людину, з чиїми недоліками ти готовий миритися. Бог створив закоханість, щоб спершу ми закривали очі на недоліки, але потім доведеться їх побачити й вирішити. Зріла любов означає любити попри якості Є, Ю, Я, а не лише за А, Б, В. Стосунки це американські гірки, і реалістична мета, пережити підйоми й спади разом і витягти уроки.</p>
+    <p><strong>Як вести бізнес із родиною та друзями.</strong> У сербській традиції брату не позичають родичі, у єврейській не радять позичати друзям і родичам. Можна подарувати стільки, скільки не шкода. Бо подарунок не передбачає повернення, а борг породжує підозри: боржник тратить гроші на щось, окрім мінімуму, і виникає образа з обох сторін. Залежність породжує ненависть. Праведний вибір, анонімний дар (цдака). Сімейний бізнес заплутаний, бо в родині не обговорюють деталі й не залучають юристів: «ми ж одна сім'я». Але диявол у деталях, і те, що не зроблено на початку, доводиться робити посеред шляху, коли вже пізно. Чим ближча людина, тим обережніше треба домовлятися. Розлучення краще передбачити ще до весілля. В кінці примітка про прізвище Калдерон: це дівоче прізвище матері, всі родичі з материнської лінії загинули в Треблінці, а прізвище народилося в Іспанії, звідки в 1492 році інквізиція вигнала його родину за відмову відректися від іудаїзму. Він хоче його зберегти.</p>
+    <p><strong>Побічний ефект креативності.</strong> Творчим людям складно будувати близькі стосунки, бо під час творчості автор повністю занурений («мене в кімнаті немає»), а й коли не творить, його свідомість блукає, і співрозмовники вважають його поганим слухачем. Він відпочиває з 15-річним сином у Парижі й розуміє, що якщо свідомість блукає, спогадів про цей час не лишиться, тому намагається бути присутнім.</p>
+    <p><strong>Ознаки дезінтеграції.</strong> Світ ніби зменшується: інтернет, літаки, однакові готелі, поп-музика, автомобілі, новини. Але схожість не означає інтеграцію. Інтеграція залежить від взаємної довіри й поваги, а вона слабшає. Автор наводить приклади: СНІД (презервативи нагадують про недовіру), страх при кашлі в літаку під час епідемії атипової пневмонії, хоровод в Ізраїлі, де тепер кожен танцює сам по собі, шлюбні контракти й навіть страхування від розлучення. Дітей розкидає по світу, ТБ тримає людей удома, а соцмережі збільшують взаємодію, але послаблюють справжні стосунки. Він вважає, що рівень життя виріс, а якість знизилась.</p>
+    <p><strong>Сенс життя.</strong> Автор згадує останні дні матері в лікарні: вона без свідомості, з відкритими очима, і ніби намагається втриматись. Що б вона віддала за ще одну секунду з близьким? Кого б я хотів бачити біля ліжка в останні хвилини і кого б ні? Чому чекати до останнього, щоб звільнити життя від тих, кого не любиш? Кожен вдих наближає кінець, то навіщо витрачати життя на стосунки без любові? Висновок: більшість того, що він робить (блог, консалтинг, лекції), він робить із любові, і добре читає лекції, бо любить аудиторію. Але багато чого робить, щоб догодити, уникнути неприємностей, заробити. Він нагадує собі про лікарняну палату. Далі: любов продовжує життя. Закохані люди сяють, ті, хто ненавидить, виглядають старшими. Матері не стало, коли він відійшов поїсти, а інші люди, яких він опитував, казали те саме: у момент смерті поруч нікого не було. У успішних компаніях багато любові (до клієнтів, співробітників, суспільства). Він любить Ганді: живи так, наче завтра помреш, учись так, наче житимеш вічно.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Частина 4. Розв'язання проблем -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">Частина 4.</span> Розв'язання проблем</h2>
+    <p><strong>Управління змінами в бізнесі й особистому житті.</strong> Промова перед випускниками з чотирьох частин. Зміни прискорюються (за століття стільки нововведень, як за всю попередню історію), стратегічні рішення доводиться ухвалювати кожні 2-3 роки (прадіди ухвалювали одне за життя), а зміни стають системними. Це означає стрес. Управляти означає ухвалювати правильні рішення й виконувати їх, а виконувати стає важче, бо працівники стали освіченішими й хочуть брати участь у рішеннях: наймають мізки, а не руки. Вони не хочуть сліпо слухатись, тому CEO скаржаться, що рішення не впроваджуються.</p>
+    <p><strong>Що робити в особистому житті.</strong> Час для сім'ї й себе не знайдеш, його треба виділяти, як релігійне свято: не «коли закінчу проект», бо одразу з'являється новий. Робота створює роботу, а шабат, Різдво чи інше свято просто настає, і крапка. Нерелігійним складніше, вони мають самі виробити дисципліну. Страх, що без відпочинку тебе обженуть, автор порівнює з шахтою: якщо тільки копати, не зміцнюючи стін, обвалиться на голову. Приклад клієнта, який із дружиною щороку влаштовує собі медовий місяць у річницю весілля, бо одного на все життя замало. Інший клієнт, який втратив усе під час краху ринку нерухомості, залишився бадьорим і пояснив, що головні активи це здоров'я, родина й друзі. Гроші приходять і йдуть. Без здоров'я нічого не важливо, втрата родини схожа на смерть, а вірні друзі допоможуть у кризі. Ці три активи не ростуть самі, в них треба інвестувати. Ми цінуємо здоров'я, поки не захворіємо, демократію, поки не потрапимо під диктатора, друзів, поки не знадобиться допомога.</p>
+    <p><strong>Про бізнес.</strong> Хайєк і Фрідман казали, що бізнес має тільки заробляти. Автор вважає, що саме бізнес сьогодні єдина організація, здатна запобігти екологічній катастрофі (держави бюрократичні, неурядові організації слабкі й залежать від добровольців). Ми як катер з потужним мотором (бізнес) і слабким (решта). Він просить майбутніх лідерів головний принцип медика «не нашкодь»: служити інвесторам, але не ціною майбутніх поколінь. Не руйнувати світ однією рукою й жертвувати на благодійність іншою.</p>
+    <p><strong>Як не вирішувати.</strong> Хто «вирішує не вирішувати», фактично вирішує залишитись. Відкладати можна, поки чекаєш важливу інформацію, але надовго небезпечно, бо тимчасове стає постійним. Автор розповідає, що приїхав до США вчитись і планував лише трохи затриматись, а в підсумку живе там 47 років, так і не ухваливши рішення залишитись. Те саме з першою сигаретою: друга, третя, і ти курець. Повторювана поведінка стає звичкою. Звичка це форма, поведінка це функція, як річка спершу формує береги, а потім береги задають течію. Практикуй «свідоме управління»: усвідомлювати, що й нерішення це дія, і стежити, щоб «тимчасове» не завело тебе туди, куди ти не хотів.</p>
+    <p><strong>Що таке рішучість.</strong> Дивно, що ми вимагаємо від інших змінитись (колега, сусід, чоловік чи дружина), так само як директор вимагав би, щоб клієнти купували більше. Змінюватись має той, хто хоче зміни, починай із себе. У консультуванні проблему формулюють через власні дії: не «коливання ставки непередбачувані», а «у нас немає стратегії реагування на коливання». Рішучість вимірюється ціною, яку ти готовий заплатити (час, гроші, біль у боротьбі з тими, хто протистоїть змінам). Приклад: підприємець вкладає 10 мільйонів (мала частка його коштів), інший вкладає 50 тисяч (усе, що є), другий рішучіший. Безкоштовний сир буває лише в мишоловці. Люди часто мають наміри, за які не готові платити: обіцяють займатись спортом, але не виділяють час, обіцяють контролювати гнів, але не хочуть промовчати й поступитись гордістю, «сідають на дієту», поки не зголодніють. Про шлюб: «серйозно ставлюсь» означає, що готовий, попри спокуси й конфлікти, залишатися вірним і платити ціну за численні «ні». Одної любові недостатньо. Чим швидші зміни у світі, тим більше розлучень і тим довше люди відкладають шлюб. Питання до себе: хто має змінитись, наскільки серйозна зміна, чи відповідає моя рішучість її масштабу, чи не спускаю я великий корабель на мілину.</p>
+    <p><strong>Що пішло не так.</strong> Коли станеться «помилка», люди шукають пояснення, або «Божа воля», або «козел відпущення». Обидва не дозволяють вчитись. Треба розділити помилки рішення й помилки виконання. Якщо рішення було невдалим, не оцінюй («краще було б...»), бо осуд нікого не вчить. Аналізуй процес: хто залучений, чи був конструктивний обмін ідеями, чи врахована вся інформація, чи зважені «за» і «проти». Якщо рішення було правильним, дивись на виконання: хто не виконав, чому (не вистачило часу, складність перевищила компетенції, важливість недооцінили). А якщо і рішення правильне, і виконання бездоганне, а результату немає, урок у смиренні: ми не контролюємо всі змінні, і его треба приборкувати.</p>
+    <p><strong>Чого повчитись у Діона (частина 1).</strong> Діон Фрідланд, бізнесмен із ПАР (клієнт і друг автора понад 30 років), заснував торгові мережі, компанію з тренінгів продажів, галерею, курортний готель на Карибах (продав), компанію з патентом на перетворення води на дезінфікуючі засоби без хімії. Адізес ніколи не бачив його в гніві і не бачив, щоб він не виконав ухваленого рішення. У нього немає «внутрішнього маркетингу» (внутрішнього конфлікту): він вирішує й виконує. Приклад: у 67 років вирішив до 70 виглядати й почуватись краще, ніж у 60. Сувора дієта без відхилень, три години в залі щодня, чотири години роботи, решта час із родиною й друзями, обраними так, щоб давали енергію, а не забирали. Його кредо: або розв'язуй проблему, або забудь. «Не закохуйся безнадійно у бізнес: якщо нафту вже знайшов, припини бурити». Він орієнтований на результат (P), але й підприємливий (E), без хаосу. Головний пріоритет здоров'я, його, сім'ї й бізнесу. Автор порівнює його із Соросом (секрет у швидкому визнанні й виправленні помилок), а ще згадує медиків, і зізнається, що сам погано виконує рішення: любить генерувати ідеї, а втілення це важка праця без задоволення.</p>
+    <p><strong>Чого повчитись у Діона (частина 2).</strong> Як це відтворити в особистому житті? У бізнесі Адізес збирає команду з групою CAPI (об'єднані повноваження, влада й вплив) і шукає спільний результат, тоді навіть болючі зміни виконуються точно за планом. Психолог Дуглас Лісл підказав: нам важко виконувати рішення, бо одночасно займаємось багатьма завданнями, і це як різні інтереси в організації. У Діона одна проста мета, здоров'я. Особливо тяжко з виконанням у людей типу Е: вони хочуть усього одразу (гроші й баланс, подорожі й щасливу сім'ю, роботу цілодобово й хороших дітей), хоч час і енергія обмежені. Пріоритети збігаються під тиском (інфаркт, банкрутство, розлучення), але чекати цього не варто. Якщо не виходить самому, ходи до консультанта, тренера, дієтолога, учителя. Ми потрібні одне одному.</p>
+    <p><strong>Три стовпи.</strong> Мудрість: світ тримається на трьох: праця, правила (Тора) і добрі справи для інших. За PAEI: праця (P), правила (A), інтеграція (I). Не вистачає E, бо у євреїв і так багато підприємництва.</p>
+    <p><strong>Як розв'язувати хронічну проблему.</strong> Адізес поскаржився другу, що йому важко керувати організацією, що він ніби в тюрмі, яку сам збудував, хоч усе життя звільняє інших. Друг цитує «Пірке Авот»: жоден в'язень не може сам звільнитися від ланцюгів. Притча про пекло й рай: і там, і там великий казан із супом і метрові ложки. У пеклі всі голодні, бо не можуть донести ложку до рота. У раю люди годують одне одного. Хронічні проблеми як ланцюги (звички, спосіб життя, злість зі страху бути покинутим). Ми відчуваємо провину й тому заперечуємо ці ланцюги. Знайди того, хто може тебе звільнити, і сам допомагай іншим. Можливо, ланцюги, які ти знімеш із когось, ті самі, в яких ти нещодавно був.</p>
+    <p><strong>Життя це...</strong> Зміни створюють проблеми. Щоб їх розв'язувати, потрібна взаємодоповнююча команда (конфлікт стилів) і спільний інтерес (він рідкісний і мінливий). Тож життя це конфлікт, а конфлікт це біль. Реалістично: життя це біль, і хто каже інакше, мабуть, щось продає (цитата з «Принцеси-нареченої»).</p>
+    <p><strong>Мир і легенди.</strong> Мир (шалом) і цілісність (шалем) мають спільний корінь. Ти в мирі, коли цілісний і не воюєш із собою, тож уся твоя енергія вільна для зовнішніх справ. Слова «цілий» і «святий» в англійській мають спільний корінь. Святий це той, хто настільки цілісний, що в злагоді не тільки із собою, а й зі світом. Такі люди випромінюють енергію, яку видно як ореол. Ще одне осяяння: «союз» і «легенда» в івриті мають спільний корінь. Створення союзу людей це важка проблема, яка після розв'язання стає легендою.</p>
+    <p><strong>Мужність.</strong> Цитата Черчилля: мужність це і встати й заговорити, і сісти й слухати.</p>
+  </div>
+
+  <div class="divider">
+    <div class="div-dot"></div><div class="div-line"></div>
+    <div class="div-dot big"></div><div class="div-line"></div>
+    <div class="div-dot"></div>
+  </div>
+
+  <!-- Частина 5. Духовність і релігія -->
+  <div class="section" style="animation-delay:.9s">
+    <h2 class="section-title"><span class="rule-num">Частина 5.</span> Духовність і релігія</h2>
+    <p><strong>Чого нам бракує.</strong> Клієнт-керівник працює дедалі більше, «щоб купити більший літак», потім пляж, яхту, віллу з гелікоптерним майданчиком. Автор порівнює це з жінками, які мають сотні пар взуття й купують ще. Їм бракує сенсу життя: у грудях діра, яку вони заповнюють речами, а духовна діра бездонна. Хто має духовний зміст, у того матеріальне відходить на другий план. Духовність це не релігія (деякі релігії проповідують вбивства), а відчуття належності до чогось більшого, через дотримання абсолютних моральних принципів. Приклад із консалтингу: виробник апаратів штучного дихання мав проблему якості. Замість найму контролерів автор запропонував відправити кращих працівників до лікарні сфотографувати дітей, які дихають на цих апаратах, і розвісити фото на заводі. Бізнес-школи наповнюють голову й лишають серце порожнім. Він пропонує вимагати від вступників соціальний досвід, волонтерство, будівництво житла для бідних, роботу в бідних районах. Лідерам потрібні голова й душа.</p>
+    <p><strong>Управління змінами для сталого впровадження інновацій.</strong> Промова в школі IEDC. Приклад інновації «розширити отвір у тюбику зубної пасти», щоб витрачали вдвічі швидше. Інноваційно, прибутково, стало, і це «лідерство»? Протилежний приклад: оздоровчий центр із веганською дієтою, який повертає до харчування предків: не інновація, невигідно, але корисно для суспільства. Висновок: гроші, інновації, сталість і навіть лідерство не мета, а засоби. Автор критикує ідею, що мета лише виживання чи відтворення. Технологічно ми живемо краще за предків, але світ не став кращим: ми забруднюємо повітря, воду, землю, діти побачать тварин лише в зоопарку. Справжня мета це «тікун олам», «виправити світ», залишити дітям світ кращий, ніж отримали. Світ без нагляду псується (сад заростає, машина ламається, сім'я розпадається). Прибуток має бути обмеженням, а не метою: не банкрутувати, але позитивний результат має бути вищим за ціну, і не лише для компанії, а й для світу. Ми не передаємо світ дітям, а позичаємо в них.</p>
+    <p><strong>Чи може енергія бути безкінечною.</strong> Автор досі вважав, що енергія обмежена, і та, що йде на внутрішню дезінтеграцію, втрачена для зовнішньої інтеграції. Тепер він припускає інше: енергія безмежна, а ми самі ставимо їй фільтри внутрішнім «шумом». Що голосніший шум у голові, то менше ми відчуваємо Бога й більше намагаємось керувати життям без Нього. Безмежну енергію дає прийняття Бога: коли розумієш, що центр Всесвіту не ти. Духовні люди спокійніші, терплячіші, їхня свідомість не затуманена порожніми хвилюваннями. Парадокс: відмовляючись контролювати долю, вони її фактично контролюють.</p>
+    <p><strong>Нам потрібна нова універсальна релігія.</strong> Раввин запропонував поставити ханукальну менору в аеропорту Сіетла, а в Ізраїлі різдвяну ялинку в аеропорту не дозволили б. Автор не любить дві фрази в молитовнику, про «обраність» і про «відокремлення від неєвреїв». Але всі релігії мають правила для відокремлення (кошерна їжа, шабат, пости). На його думку, їх придумали лідери зі страху асиміляції. Але можна пишатися своїм (він хоче, щоб діти й онуки лишились євреями й несли «тікун олам») і не відгороджуватись: гордість, а не страх. Його не лякає ялинка в аеропорту, поки його не змушують ставити її вдома. Світу потрібна універсальна релігія, що визнає всі інші як рівно законні, як пальці руки: різні, але діють разом.</p>
+    <p><strong>Різдвяна нотатка.</strong> Ісус був євреєм, жив і помер як єврей. Перші християни були євреями (Петро, Павло, апостоли). Було й інших «месій» (Бар-Кохба, Шабтай Цві, а сьогодні хасиди Хабаду вважають мессією Шнеєрсона). Автор у студентські роки працював гідом у Єрусалимі й показував християнським групам місця, де був Ісус. Розкол між євреями й християнами стався приблизно після зруйнування храму (70 р.) і повстання Бар-Кохби (132 р.).</p>
+    <p><strong>Де Бог.</strong> Автора дивують описи Бога в молитовнику: чоловік на троні, всевидящий, мстивий, зі слугами-ангелами і дияволом поруч. Це нагадує Зевса. Він пропонує іншу думку: у людського тіла немає керівника, система керує собою. Тож, можливо, Бог це система, а кожна частина це частина Бога. Систему становлять і компоненти, і зв'язки між ними, а зв'язки тримаються на взаємній повазі й довірі (MTR). Тоді підтримувати повагу й довіру означає служити Богу, а нехтувати ними означає кидати Йому виклик. Далі: якщо повага й довіра потребують абсолютної інтеграції, а вона є любов'ю, то Бог це любов. Хто ненавидить інших «в ім'я Бога», тому не служить.</p>
+    <p><strong>Де був Бог під час Голокосту.</strong> Читач написав: «мого Бога кремували в Голокост». Багато вцілілих (і батько автора) відреклися від віри. Автор погоджується, що такого всемогутнього Зевса, відповідального за все, немає. Бог, у якого він вірить, це система правил, яку ми порушуємо й потрапляємо в біду, а коли дотримуємось, усе добре. Як у тілі: їж, спи, займайся спортом, і хворієш рідше. Зовнішнього керівника немає, захищати тіло мусимо ми самі. Голокост був проявом дезінтеграції (політичної, соціальної, релігійної), коли ненависть замінила любов. Бог не втручається, а закон діє. Любов треба захищати, бо ненавидіти легко, а любити важко, і коли ненависть піднімає голову, любляча людина не повинна відводити очі. Далі автор пише про загрозу ядерної зброї Ірану і питає, чи ми знову звинувачуватимемо Бога, чи візьмемо відповідальність на себе.</p>
+    <p><strong>Сміливість мислити нестандартно.</strong> Формула успіху: успіх = зовнішня інтеграція ÷ внутрішня дезінтеграція. Зовнішня інтеграція це відповідність можливостей ринку й здібностей компанії. Внутрішня дезінтеграція залежить від рівня взаємної поваги й довіри в компанії. Нове: ідеальна інтеграція це стан найбільшої цілісності. Це зустріч усього й нічого, як чорна діра. Земля кругла, і на ній крайнощі сходяться: надмірна любов веде до неприязні, надмірна ненависть іноді стає любов'ю. Медитація вчить заспокоїти розум, і тоді можна знайти Бога, що для автора означає Все. Але досконалої інтеграції, абсолютного щастя чи ідеального здоров'я в житті не існує, бо життя динамічне. Робота менеджменту нескінченна: інтегрувати, а коли досягнуто, свідомо дезінтегрувати («творче руйнування» за Шумпетером) і повторювати. Тож і Бога знаходять у процесі пошуку. Справжній слуга Божий це не той, хто сліпо виконує закони, а той, хто постійно запитує й шукає, і приймає, що остаточної відповіді не знайде. Відповідь на питання про сенс життя полягає в тому, щоб постійно його ставити.</p>
+    <p><strong>Взаємна повага, довіра, Бог і диявол.</strong> Карта управління змінами: щоб розв'язувати проблеми, потрібні рішення, для них потрібна взаємодоповнююча команда, а щоб виконати їх, потрібні спільні інтереси. Всі ці процеси створюють конфлікти, і чим більше змін, тим більше розбіжностей. Зупиняти зміни це утопія, тож вибір між руйнівним конфліктом (легкий шлях, зруйнувати швидше, ніж збудувати) і конструктивним (важчий). Ключ до конструктивного це взаємна повага й довіра, бо вони дають інтеграцію. Все в світі це система з підсистем, які при змінах не змінюються синхронно, тож зміни автоматично викликають дезінтеграцію, а протиотрута це інтеграція (інтеграція відмінностей, а не зрівнялівка). Абсолютна інтеграція це любов, абсолютна любов це Бог. Усі десять заповідей і закони Старого Завіту (до вола, до чужинця, залишати частину поля бідним) проповідують повагу й довіру.</p>
+    <p>Автор вважає, що поряд із Богом існує й диявол: ми всі створені за подобою обох, як Місяць із темним боком. Бог це любов і прощення (інтеграція), диявол це ненависть і помста (дезінтеграція). Питання, кому ми поклоняємось, ухвалюючи рішення. Він розрізняє злиття й інтеграцію. Релігії й політичні ідеології (фундаменталісти, інквізиція, фашисти, комуністи), які вимагають однаковості, здаються інтеграцією, а насправді сіють дезінтеграцію, бо однаковість серед вільних людей недосяжна. Потрібна інтеграція відмінностей, конструктивне різноманіття. Не всяке різноманіття конструктивне: антидемократичні партії користуються демократією, щоб її знищити (нацисти, а сьогодні, за його словами, «Хамас»). Повага й довіра мають бути взаємними й діяти скрізь: у собі, родині, організації, суспільстві, бо сфера, де їх немає, руйнує ту, де вони є. Служити Богу означає любити й вирощувати відмінності.</p>
+    <p><strong>Постскриптум.</strong> Читачі скаржились, що це оскаржує монотеїзм. Автор нагадує про зороастризм, де добре й зле божества разом керують світом, і каже, що дуалізм багато що пояснює: день і ніч, вдих і видих, любов і ненависть.</p>
+    <div class="final-quote">
+      <div class="final-text">Служити Богу означає <strong>любити й вирощувати відмінності</strong>.</div>
+    </div>
+  </div>
+
+</div>
+<script>
+const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
+let W,H,stars=[],mx=0,my=0;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight}
+resize();window.addEventListener('resize',()=>{resize();build()});
+function rand(a,b){return a+Math.random()*(b-a)}
+function build(){stars=[];const N=Math.floor(W*H/1800);for(let i=0;i<N;i++)stars.push({x:rand(0,W),y:rand(0,H),r:rand(.2,1.6),ts:rand(.004,.018),to:rand(0,Math.PI*2),b:rand(.3,1),col:Math.random()<.15?'#b9b7d6':Math.random()<.1?'#d7c9a4':'#b4bdd8',px:rand(.01,.06)})}
+build();
+document.addEventListener('mousemove',e=>{mx=(e.clientX/W-.5)*2;my=(e.clientY/H-.5)*2});
+let t=0;
+function draw(){ctx.clearRect(0,0,W,H);t+=.016;stars.forEach(s=>{const tw=.5+.5*Math.sin(t*s.ts*60+s.to),a=s.b*(.3+.7*tw),px=s.x+mx*s.px*W*.02,py=s.y+my*s.px*H*.02;ctx.beginPath();ctx.arc(px,py,s.r,0,Math.PI*2);ctx.fillStyle=s.col;ctx.globalAlpha=a;ctx.fill();ctx.globalAlpha=1});requestAnimationFrame(draw)}draw();
+function shootStar(){const el=document.createElement('div');el.className='shoot';const sx=rand(W*.1,W*.9),sy=rand(H*.05,H*.4),ang=rand(15,45),dist=rand(200,400),dur=rand(600,1000);el.style.cssText='left:'+sx+'px;top:'+sy+'px;';document.body.appendChild(el);const rad=ang*Math.PI/180;el.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dist*Math.cos(rad)+'px,'+dist*Math.sin(rad)+'px)',opacity:0}],{duration:dur,easing:'ease-in',fill:'forwards'}).onfinish=()=>el.remove()}
+function sched(){shootStar();setTimeout(sched,rand(4000,12000))}setTimeout(sched,3000);
+</script>
+<script>/*sl-readv2*/(function(){try{if(!localStorage.getItem("sl-migrated-v2")){var rm=[];for(var i=0;i<localStorage.length;i++){var sk=localStorage.key(i);if(sk&&sk.indexOf("sl-read-")===0)rm.push(sk);}rm.forEach(function(sk){localStorage.removeItem(sk)});localStorage.setItem("sl-migrated-v2","1");}document.querySelectorAll("a.nav-card").forEach(function(c){var h=c.getAttribute("href");if(h&&localStorage.getItem("sl-read-"+h))c.classList.add("read");});var k=location.pathname.split("/").pop();if(k&&k!=="index.html"&&k!==""){var content=document.querySelector(".content");if(content){var key="sl-read-"+k;var btn=document.createElement("button");btn.className="read-toggle";var update=function(){var isRead=!!localStorage.getItem(key);btn.textContent=isRead?"✓ Прочитано":"Позначити прочитаним";btn.classList.toggle("active",isRead);};btn.onclick=function(){if(localStorage.getItem(key))localStorage.removeItem(key);else localStorage.setItem(key,Date.now());update();};update();content.appendChild(btn);}}}catch(e){}})();</script>
+<script src="nav-drawer.js" defer></script>
+</body>
+</html>
